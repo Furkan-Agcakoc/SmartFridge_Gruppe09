@@ -1,0 +1,12 @@
+.caveat-logfont-home {
+  font-family: "Caveat", cursive;
+  font-weight: 400;
+  font-size: 2rem;
+  font-style: normal;
+  color: #162938;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  top: 50px;
+  margin-bottom: 0px;
+}

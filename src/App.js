@@ -1,8 +1,33 @@
-import logo from "./logo.svg";
-import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Signin from "./pages/Signin";
+import Account from "./pages/Account";
+import Navbar from "./components/navbar";
+import { AuthContextProvider } from "./context/AuthContext";
+import Protected from "./components/protected";
 
-function App() {
-  return <div className="App"></div>;
-}
+const App = () => {
+  return (
+    <>
+      <AuthContextProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />}></Route>
+          <Route path="/signin" element={<Signin />}></Route>
+          <Route
+            path="/account"
+            element={
+              <Protected>
+                <Account />
+              </Protected>
+            }
+          ></Route>
+        </Routes>
+      </AuthContextProvider>
+    </>
+  );
+};
 
 export default App;
+
+// Kommentar

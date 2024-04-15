@@ -1,0 +1,62 @@
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  top: 75px;
+}
+
+.login-box {
+  width: 400px;
+  height: 400px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: space-evenly;
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+
+
+.fridge {
+    position: relative;
+    top: 50px;
+    width: 100px;
+    margin: 0 auto;
+
+}
+
+.btn-log-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.btn-log {
+    position: relative;
+    top: 90px;
+    width: 130px;
+    height: 40px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.4);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+.btn-log:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  
+  /* Kommentar */

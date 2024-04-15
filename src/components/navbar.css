@@ -1,0 +1,55 @@
+.navbar-container {
+  height: 70px;
+  background-color: #13A88A;
+  /* border: 1px black solid; */
+  display: flex;
+  justify-content: space-around;
+}
+
+.space-container {
+  /* border: 2px goldenrod solid; */
+  width: 130px;
+}
+
+.logo-container {
+  height: 140px;
+  /* border: 3px red solid; */
+  width: 50%;
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  width: 120px;
+}
+
+.nav-btn-container {
+  display: flex;
+  /* border: 1px solid black; */
+  justify-content: flex-end;
+}
+
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.signin {
+  width: 130px;
+  height: 40px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.signin:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Kommentar */
