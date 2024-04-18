@@ -32,19 +32,17 @@
     top: 50px;
     width: 100px;
     margin: 0 auto;
-
 }
 
 .btn-log-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    position: relative;
+    top: 100px;
 }
 
 
 .btn-log {
-    position: relative;
-    top: 90px;
     width: 130px;
     height: 40px;
     font-weight: 500;

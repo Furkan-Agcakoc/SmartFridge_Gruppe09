@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Signin from "./pages/Signin";
 import Account from "./pages/Account";
 import Navbar from "./components/navbar";
 import { AuthContextProvider } from "./context/AuthContext";
@@ -13,7 +12,6 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />}></Route>
-          <Route path="/signin" element={<Signin />}></Route>
           <Route
             path="/account"
             element={
