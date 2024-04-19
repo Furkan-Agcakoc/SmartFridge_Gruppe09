@@ -1,0 +1,61 @@
+.wrapper-admin {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 120px;
+  }
+  
+  .login-box-admin {
+    width: 1100px;
+    height: 300px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: space-evenly;
+  }
+  
+  .login-admin {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      bottom: 10px;
+  }
+  
+  .caveat-logfont-admin {
+    font-family: "Caveat", cursive;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: 25px;
+    font-style: normal;
+    color: #162938;
+
+  }
+
+  .btn-log-container-admin {
+      display: flex;
+      justify-content: center;
+
+  }
+  
+  
+  .btn-log-admin {
+      width: 130px;
+      height: 40px;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.4);
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    
+  .btn-log-admin:hover {
+      background: rgba(255, 255, 255, 0.8);
+    }
+    
