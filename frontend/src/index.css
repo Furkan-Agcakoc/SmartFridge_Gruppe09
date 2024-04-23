@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap");
-
 
 body {
   margin: 0;
@@ -16,12 +14,5 @@ code {
     monospace;
 }
 
-.caveat-logfont {
-  font-family: "Caveat", cursive;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-size: 2rem;
-  font-style: normal;
-  color: #162938;
-}
+
 /* Kommentar */
