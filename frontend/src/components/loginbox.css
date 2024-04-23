@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   position: relative;
-  top: 75px;
+  top: 120px;
 }
 
 .login-box {
@@ -25,7 +25,14 @@
     justify-content: flex-start;
 }
 
-
+.caveat-logfont {
+  font-family: "Caveat", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: 25px;
+  font-style: normal;
+  color: #162938;
+}
 
 .fridge {
     position: relative;

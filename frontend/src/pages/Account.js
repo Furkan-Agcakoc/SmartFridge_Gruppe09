@@ -1,14 +1,12 @@
 import React from "react";
-import { UserAuth } from "../context/AuthContext";
-import Kühlschrank from "../components/kühlschrank";
+import Admin from "../components/admin";
+import Überschrift from "../components/überschrift";
 
 const Account = () => {
-  const { user } = UserAuth();
-
   return (
     <>
-      <h2>Welcome, {user?.displayName}</h2>
-      <Kühlschrank />
+    <Überschrift></Überschrift>
+      <Admin></Admin>
     </>
   );
 };
