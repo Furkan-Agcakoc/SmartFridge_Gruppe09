@@ -13,7 +13,7 @@ const firebaseConfig = {
   storageBucket: "smart-fridge-sopra.appspot.com",
   messagingSenderId: "490252132718",
   appId: "1:490252132718:web:1f3f5afac3b48cdf70e17f",
-  measurementId: "G-PH8LLE0YRD"
+  measurementId: "G-PH8LLE0YRD",
 };
 
 // Initialize Firebase
