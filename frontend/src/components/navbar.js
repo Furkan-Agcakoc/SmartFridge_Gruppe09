@@ -29,7 +29,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (user != null) {
-      navigate("/account");
+      navigate("/welcomepage");
     }
   }, [user, navigate]);
 
@@ -39,7 +39,7 @@ const Navbar = () => {
         <div className="navbar-container">
           <div className="space-container"></div>
           <div className="logo-container">
-            <Link to="/home">
+            <Link to="/loginpage">
               <img src={Logo} alt="logo" className="logo" />
             </Link>
           </div>

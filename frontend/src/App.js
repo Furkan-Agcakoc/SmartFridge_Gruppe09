@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Account from "./pages/Account";
+import Loginpage from "./pages/Loginpage";
+import Welcomepage from "./pages/Welcomepage";
 import Navbar from "./components/navbar";
 import { AuthContextProvider } from "./context/AuthContext";
 import Protected from "./components/protected";
@@ -11,12 +11,12 @@ const App = () => {
       <AuthContextProvider>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />}></Route>
+          <Route path="/" element={<Loginpage />}></Route>
           <Route
-            path="/account"
+            path="/welcomepage"
             element={
               <Protected>
-                <Account />
+                <Welcomepage />
               </Protected>
             }
           ></Route>

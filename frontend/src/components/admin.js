@@ -14,13 +14,6 @@ const Admin = () => {
             <div className="btn-log-container-admin">
               <button className="btn-log-admin">Haushalt erstellen</button>
             </div>
-            <h2 className="caveat-logfont-admin">
-              Trete einem bestehenden Haushalt bei, um gemeinsam zu organisieren
-              !
-            </h2>
-            <div className="btn-log-container-admin">
-              <button className="btn-log-admin">Haushalt beitreten</button>
-            </div>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@ import React from "react";
 import Admin from "../components/admin";
 import Überschrift from "../components/überschrift";
 
-const Account = () => {
+const Welcomepage = () => {
   return (
     <>
       <Überschrift></Überschrift>
@@ -11,5 +11,5 @@ const Account = () => {
   );
 };
 
-export default Account;
+export default Welcomepage;
 // Kommentar
