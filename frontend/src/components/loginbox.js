@@ -59,8 +59,3 @@ const Loginbox = () => {
 };
 
 export default Loginbox;
-<<<<<<< HEAD
-// Kommentare
-=======
-// Kommentar
->>>>>>> Furkan
