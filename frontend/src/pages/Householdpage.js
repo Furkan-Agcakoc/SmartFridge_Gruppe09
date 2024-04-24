@@ -1,15 +1,15 @@
 import React from "react";
-import Admin from "../components/admin";
+import Household from "../components/household";
 import Überschrift from "../components/überschrift";
 
-const Welcomepage = () => {
+const Householdpage = () => {
   return (
     <>
       <Überschrift></Überschrift>
-      <Admin></Admin>
+      <Household></Household>
     </>
   );
 };
 
-export default Welcomepage;
+export default Householdpage;
 // Kommentar

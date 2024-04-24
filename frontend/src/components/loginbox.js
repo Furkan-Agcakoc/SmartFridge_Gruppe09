@@ -28,7 +28,7 @@ const Loginbox = () => {
 
   useEffect(() => {
     if (user != null) {
-      navigate("/welcomepage");
+      navigate("/households");
     }
   }, [user, navigate]);
   return (

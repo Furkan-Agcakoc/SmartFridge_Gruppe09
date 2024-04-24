@@ -21,7 +21,7 @@
 .login-admin {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   position: relative;
   bottom: 10px;
@@ -41,6 +41,13 @@
   justify-content: center;
 }
 
+.form-container {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
 .btn-log-admin {
   width: 130px;
   height: 40px;
@@ -54,4 +61,46 @@
 
 .btn-log-admin:hover {
   background: rgba(255, 255, 255, 0.8);
+}
+
+.wrapper-household-box {
+  display: flex;
+  border: 1px black solid;
+  width: 100%;
+  gap: 1.5 rem;
+  /* flex-wrap: wrap; Wenn neue Haushalte hinzugefügt werden mit Backen*/
+}
+
+.household-box {
+  border:2px solid darkolivegreen;
+  width: 200px;
+  height: 125px;
+  border-radius: 10px;
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+}
+
+
+.popup {
+  width: 300px;
+  background: lightgreen;
+  border-radius: 6px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 0 30px 30px;
+  color: #333;
+  visibility: hidden;
+}
+
+
+.open-popup {
+  visibility: visible;
+}
+
+.btn-add {
+
 }

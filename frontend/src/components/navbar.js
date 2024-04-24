@@ -29,7 +29,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (user != null) {
-      navigate("/welcomepage");
+      navigate("/households");
     }
   }, [user, navigate]);
 
