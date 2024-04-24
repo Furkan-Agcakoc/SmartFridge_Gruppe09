@@ -2,9 +2,9 @@ import React from "react";
 import "./loginbox.css";
 import { UserAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import Fridge from "../images/fridge.jpeg";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Logo from "../images/logo.png";
 
 const Loginbox = () => {
   const { user, logOut } = UserAuth();
@@ -37,7 +37,7 @@ const Loginbox = () => {
         <div className="login-box">
           <div className="login">
             <h2 className="caveat-logfont">Login to Smart Fridge!</h2>
-            <img src={Fridge} className="fridge" alt="fridge" />
+            <img src={Logo} className="fridge" alt="fridge" />
             <div className="btn-log-container">
               {user?.displayName ? (
                 <button onClick={handleSignOut} className="btn-log">
@@ -45,7 +45,9 @@ const Loginbox = () => {
                 </button>
               ) : (
                 <Link>
-                  <button className="btn-log" onClick={handleGoogleSignIn}>Signin</button>
+                  <button className="btn-log" onClick={handleGoogleSignIn}>
+                    Signin
+                  </button>
                 </Link>
               )}
             </div>
