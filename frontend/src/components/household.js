@@ -1,13 +1,14 @@
 import React from "react";
 import "./household.css";
 import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
+import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const styleForAdd = {
   width: "6vh",
   height: "auto",
-  color: "darkolivegreen",
+  color: "#065535",
 };
 
 const Household = () => {
@@ -39,41 +40,35 @@ const Household = () => {
               </Link>
               {isPopupOpen && (
                 <div className="popup open-popup">
-                  <form action="" className="form-container">
+                  <form action="Haushalt" className="form-container">
                     <h1>Neuer Haushalt</h1>
-                    <label htmlFor="email">
-                      <b>Haushaltsname:</b>
-                      <br />
+                    <label type="text">
+                      <b>Haushaltsname</b>
                     </label>
                     <input
                       type="text"
-                      placeholder="Haushaltsname hinzufügen"
+                      placeholder="Haushaltsname bestimmen"
                       name="email"
                       required
                     />
-                    <br />
                     <label>
-                      <b>Bewohner hinzufügen:</b>
-                      <br />
+                      <b>Bewohner einladen</b>
                     </label>{" "}
-                    <br />
-                    <input
-                      type="password"
+                    <textarea
+                      type="email"
                       placeholder="Bewohner-E-Mail hinzufügen"
                       name="psw"
                       required
                     />
-                    <br />
-                    <br />
                     <button className="btn-log-admin">
                       Haushalt erstellen
                     </button>
                     <button
                       type="button"
-                      className="btn-log-admin"
+                      className="btn-log-admin-cancel"
                       onClick={closePopup}
                     >
-                      Abbrechen
+                      <HighlightOffRoundedIcon className="exit-icon" />
                     </button>
                   </form>
                 </div>
