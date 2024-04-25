@@ -4,7 +4,7 @@ import { UserAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Logo from "../images/logo-sf.png";
+import Logo from "../images/SFLogo.png";
 
 const Loginbox = () => {
   const { user, logOut } = UserAuth();

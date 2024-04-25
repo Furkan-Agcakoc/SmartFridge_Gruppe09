@@ -1,7 +1,7 @@
 import React from "react";
 import "./navbar.css";
 // import { NavLink } from "react-router-dom";
-import Logo from "../images/logo-sf.png";
+import Logo from "../images/SFLogo.png";
 import { UserAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";

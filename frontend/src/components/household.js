@@ -1,14 +1,20 @@
 import React from "react";
 import "./household.css";
 import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import Tooltip from "@mui/material/Tooltip";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const styleForAdd = {
   width: "6vh",
   height: "auto",
-  color: "#065535",
+};
+
+const styleForIcon = {
+  width: "4vh",
+  height: "auto",
 };
 
 const Household = () => {
@@ -31,49 +37,68 @@ const Household = () => {
               Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
               deine Lebensmittel!
             </h2>
-            <div className="btn-log-container-admin"></div>
             <div className="wrapper-household-box">
               <Link onClick={openPopup}>
                 <div className="household-box">
-                  <AddHomeOutlinedIcon style={styleForAdd} />
+                  <Tooltip
+                    title="Neuen Haushalt hinzufügen"
+                    placement="bottom"
+                    arrow
+                  >
+                    <AddHomeOutlinedIcon
+                      style={styleForAdd}
+                    />
+                  </Tooltip>
                 </div>
               </Link>
-              {isPopupOpen && (
-                <div className="popup open-popup">
-                  <form action="Haushalt" className="form-container">
-                    <h1>Neuer Haushalt</h1>
-                    <label type="text">
-                      <b>Haushaltsname</b>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Haushaltsname bestimmen"
-                      name="email"
-                      required
-                    />
-                    <label>
-                      <b>Bewohner einladen</b>
-                    </label>{" "}
-                    <textarea
-                      type="email"
-                      placeholder="Bewohner-E-Mail hinzufügen"
-                      name="psw"
-                      required
-                    />
-                    <button className="btn-log-admin">
-                      Haushalt erstellen
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-log-admin-cancel"
-                      onClick={closePopup}
-                    >
-                      <HighlightOffRoundedIcon className="exit-icon" />
-                    </button>
-                  </form>
-                </div>
-              )}
             </div>
+            {isPopupOpen && (
+              <div className="open-popup">
+                <form action="Haushalt" className="form-container">
+                  <h1>Neuer Haushalt</h1>
+                  <label type="text">
+                    <b>Haushaltsname</b>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Haushaltsname bestimmen"
+                    name="text"
+                    required
+                  />
+                  <label>
+                    <b>Bewohner einladen</b>
+                  </label>{" "}
+                  <textarea
+                    type="email"
+                    placeholder="Bewohner-E-Mail hinzufügen"
+                    name="email"
+                    required
+                  />
+                  <section className="btn-confirm-exit">
+                    <p className="confirmText">Eingaben bestätigen</p>
+                    <Tooltip
+                      title="Haushalt erstellen"
+                      placement="bottom"
+                      arrow
+                    >
+                      <CheckCircleOutlineRoundedIcon
+                        className="confirm-icon"
+                        style={styleForIcon}
+                        onClick={closePopup}
+                      />
+                    </Tooltip>
+                    <Tooltip title="Abbrechen" placement="bottom" arrow>
+                      <HighlightOffRoundedIcon
+                        className="exit-icon"
+                        style={styleForIcon}
+                        onClick={closePopup}
+                      />
+                    </Tooltip>
+                  </section>
+                </form>
+              </div>
+            )}
+            
           </div>
         </div>
       </div>
