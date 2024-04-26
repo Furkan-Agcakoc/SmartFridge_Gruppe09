@@ -45,9 +45,7 @@ const Household = () => {
                     placement="bottom"
                     arrow
                   >
-                    <AddHomeOutlinedIcon
-                      style={styleForAdd}
-                    />
+                    <AddHomeOutlinedIcon style={styleForAdd} />
                   </Tooltip>
                 </div>
               </Link>
@@ -74,31 +72,32 @@ const Household = () => {
                     name="email"
                     required
                   />
-                  <section className="btn-confirm-exit">
-                    <p className="confirmText">Eingaben bestätigen</p>
-                    <Tooltip
-                      title="Haushalt erstellen"
-                      placement="bottom"
-                      arrow
-                    >
-                      <CheckCircleOutlineRoundedIcon
-                        className="confirm-icon"
-                        style={styleForIcon}
-                        onClick={closePopup}
-                      />
-                    </Tooltip>
-                    <Tooltip title="Abbrechen" placement="bottom" arrow>
-                      <HighlightOffRoundedIcon
-                        className="exit-icon"
-                        style={styleForIcon}
-                        onClick={closePopup}
-                      />
-                    </Tooltip>
+                  <section className="confirmation">
+                    <div className="btn-confirm-exit">
+                      <p className="confirmText">Eingaben bestätigen</p>
+                      <Tooltip
+                        title="Haushalt erstellen"
+                        placement="bottom"
+                        arrow
+                      >
+                        <CheckCircleOutlineRoundedIcon
+                          className="confirm-icon"
+                          style={styleForIcon}
+                          onClick={closePopup}
+                        />
+                      </Tooltip>
+                      <Tooltip title="Abbrechen" placement="bottom" arrow>
+                        <HighlightOffRoundedIcon
+                          className="exit-icon"
+                          style={styleForIcon}
+                          onClick={closePopup}
+                        />
+                      </Tooltip>
+                    </div>
                   </section>
                 </form>
               </div>
             )}
-            
           </div>
         </div>
       </div>

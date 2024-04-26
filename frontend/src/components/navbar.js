@@ -1,7 +1,7 @@
 import React from "react";
 import "./navbar.css";
 // import { NavLink } from "react-router-dom";
-import Logo from "../images/SFLogo.png";
+import Logo from "../images/sopra-logo-rahmen.png";
 import { UserAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
@@ -52,7 +52,7 @@ const Navbar = () => {
               ) : (
                 <Link>
                   <button className="signin" onClick={handleGoogleSignIn}>
-                    Signin
+                    Login
                   </button>
                 </Link>
               )}

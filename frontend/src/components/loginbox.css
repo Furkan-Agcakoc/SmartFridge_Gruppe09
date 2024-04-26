@@ -7,8 +7,8 @@
 }
 
 .login-box {
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.5);
   border-radius: 20px;
@@ -26,7 +26,7 @@
 }
 
 .caveat-logfont {
-  font-family: "Caveat", cursive;
+  font-family: Arial, Helvetica, sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-size: 25px;
@@ -57,11 +57,16 @@
     border: none;
     border-radius: 30px;
     cursor: pointer;
-    transition: 0.3s ease;
+    transition: 0.2s ease;
+    background-color: #13A88A;
+    color: #fbfbfb;
   }
   
 .btn-log:hover {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(29, 151, 35, 0.2);
+    border: 2px solid #8dc4af;
+    color: rgba(29, 151, 35, 0.8);
+    
   }
   
   /* Kommentar */

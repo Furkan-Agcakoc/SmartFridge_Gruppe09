@@ -10,7 +10,7 @@ const Überschrift = () => {
   return (
     <>
       <h2 className="caveat-logfont-header">
-        Welcome Back, {firstName} !
+        Welcome Back, {firstName} !  
         <CelebrationIcon fontSize="large"></CelebrationIcon>
       </h2>
     </>
