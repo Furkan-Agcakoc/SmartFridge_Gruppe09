@@ -3,7 +3,9 @@ import "./kühlschrank.css";
 
 
 const Kühlschrank = () => {
-  return <></>;
+  return <>
+    <div>Kühlschrank</div>
+  </>;
 };
 export default Kühlschrank;
 

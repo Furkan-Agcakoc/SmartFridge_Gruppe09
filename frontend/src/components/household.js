@@ -7,6 +7,9 @@ import Tooltip from "@mui/material/Tooltip";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+
+
+
 const styleForAdd = {
   width: "6vh",
   height: "auto",
@@ -28,8 +31,10 @@ const Household = () => {
     setPopupOpen(false);
   }
 
+
   return (
     <>
+
       <div className="wrapper-admin">
         <div className="login-box-admin">
           <div className="login-admin">
@@ -38,7 +43,7 @@ const Household = () => {
               deine Lebensmittel!
             </h2>
             <div className="wrapper-household-box">
-              <Link onClick={openPopup}>
+              <Link onClick= {openPopup}>
                 <div className="household-box">
                   <Tooltip
                     title="Neuen Haushalt hinzufügen"
@@ -49,29 +54,37 @@ const Household = () => {
                   </Tooltip>
                 </div>
               </Link>
+              {/* <Link to="/homepage">
+                <div className="household-box">
+                </div>
+              </Link> */}
             </div>
+
             {isPopupOpen && (
               <div className="open-popup">
                 <form action="Haushalt" className="form-container">
                   <h1>Neuer Haushalt</h1>
-                  <label type="text">
-                    <b>Haushaltsname</b>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Haushaltsname bestimmen"
-                    name="text"
-                    required
-                  />
-                  <label>
-                    <b>Bewohner einladen</b>
-                  </label>{" "}
-                  <textarea
-                    type="email"
-                    placeholder="Bewohner-E-Mail hinzufügen"
-                    name="email"
-                    required
-                  />
+                  <div className="text-container">
+                    <label type="text">
+                      <b>Haushaltsname</b>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Haushaltsname bestimmen"
+                      name="text"
+                      required
+                    />
+                    <label>
+                      <b>Bewohner einladen</b>
+                    </label>{" "}
+                    <textarea
+                      type="email"
+                      placeholder="Bewohner-E-Mail hinzufügen"
+                      name="email"
+                      required
+                    />
+                  </div>
+                  
                   <section className="confirmation">
                     <div className="btn-confirm-exit">
                       <p className="confirmText">Eingaben bestätigen</p>

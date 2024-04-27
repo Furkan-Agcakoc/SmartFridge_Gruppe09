@@ -44,9 +44,9 @@
 
 .wrapper-household-box {
   display: flex;
-  /* border: 1px black solid; */
+  border: 1px black solid;
   width: 100%;
-  gap: 1.5 rem;
+  justify-content: space-evenly;
   /* border: 5px red solid; */
 
   /* flex-wrap: wrap; Wenn neue Haushalte hinzugefügt werden mit Backen*/
@@ -83,23 +83,33 @@
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 30px;
+  padding: 0 30px 50px 30px;
   border-radius: 50px;
   
 }
 
 .form-container h1 {
   color: #222;
-  font-size: 30pt;
+  font-size: 22pt;
+  text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   /* font-size: clamp(12px, 4vw, 30px); */
 }
-.form-container label {
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+}
+
+
+.text-container label {
   color: #333;
   font-size: 20pt;
 }
 
-.form-container input {
+.text-container input {
   padding: 10px;
   border-radius: 5px;
   border: none;
@@ -107,10 +117,10 @@
   box-shadow: none;
   
 }
-.form-container textarea {
+.text-container textarea {
   padding: 10px;
   border-radius: 5px;
-  border: none;
+  border: 5px solid red; /* später None machen */
   font-size: 11pt;
   font-family: sans-serif;
   box-shadow: none;
@@ -128,6 +138,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  top: 25px;
 }
 
 .btn-confirm-exit {
