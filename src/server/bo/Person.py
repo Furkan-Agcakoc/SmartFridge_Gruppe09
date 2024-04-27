@@ -1,4 +1,4 @@
-import server.bo from BusinessObject import as bo
+from server.bo import BusinessObject as bo
 
 class Person(bo.BusinessObject):
 
