@@ -2,18 +2,10 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../images/sopra-logo-rahmen.png";
 import "./Header.css";
-import { signOut } from "firebase/auth";
 
 class Header extends Component {
-  handleSignOutButtonClicked = () => {
-    const { user } = this.props;
-    if (user) {
-      signOut(user.auth);
-    }
-  };
-
   render() {
-    const { user, onSignIn } = this.props;
+    const { user, onSignIn, onSignOut } = this.props;
 
     return (
       <>
@@ -27,10 +19,7 @@ class Header extends Component {
             </div>
             <div className="nav-btn-container">
               {user ? (
-                <button
-                  className="signin"
-                  onClick={this.handleSignOutButtonClicked}
-                >
+                <button className="signin" onClick={onSignOut}>
                   Logout
                 </button>
               ) : (

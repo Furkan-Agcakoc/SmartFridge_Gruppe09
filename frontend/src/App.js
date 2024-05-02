@@ -14,7 +14,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import firebaseConfig from "./firebaseconfig";
-
+import { signOut } from "firebase/auth";
 import LoginPage from "./components/pages/LoginPage";
 import HouseholdPage from "./components/pages/HouseholdPage";
 import Header from "./components/layout/Header";
@@ -48,6 +48,23 @@ class App extends Component {
 
     auth.languageCode = "en";
     signInWithRedirect(auth, provider);
+  };
+
+  handleSignOut = () => {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    if (auth.currentUser) {
+      signOut(auth)
+        .then(() => {
+          // Sign-out successful.
+          console.log("User signed out successfully.");
+        })
+        .catch((error) => {
+          // An error happened.
+          console.error("Error signing out:", error);
+        });
+    }
   };
 
   componentDidMount() {
@@ -103,7 +120,11 @@ class App extends Component {
     return (
       <>
         <Router>
-          <Header user={currentUser} onSignIn={this.handleSignIn} />
+          <Header
+            user={currentUser}
+            onSignIn={this.handleSignIn}
+            onSignOut={this.handleSignOut}
+          />
           <Routes>
             <Route
               path="/"
@@ -158,7 +179,7 @@ function Secured(props) {
     // than dropping them off on the home page.
     return (
       <Navigate
-        to={process.env.PUBLIC_URL + "/login"}
+        to={process.env.PUBLIC_URL + "/"}
         state={{ from: location }}
         replace
       />
