@@ -29,7 +29,6 @@
   position: relative;
   bottom: -15px;
   /* border: 1px grey solid; */
-
 }
 
 .caveat-logfont-admin {
@@ -40,7 +39,6 @@
   font-style: normal;
   color: #162938;
 }
-
 
 .wrapper-household-box {
   display: flex;
@@ -64,10 +62,8 @@
 }
 
 .household-box:hover {
-  color: #13A88A;
+  color: #13a88a;
 }
-
-
 
 .open-popup {
   visibility: visible;
@@ -85,7 +81,6 @@
   flex-direction: column;
   padding: 0 30px 50px 30px;
   border-radius: 50px;
-  
 }
 
 .form-container h1 {
@@ -100,9 +95,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-
 }
-
 
 .text-container label {
   color: #333;
@@ -115,7 +108,6 @@
   border: none;
   font-size: 11pt;
   box-shadow: none;
-  
 }
 .text-container textarea {
   padding: 10px;
@@ -129,9 +121,7 @@
   min-width: 405px;
   min-height: 50px;
   max-height: 150px;
-
 }
-
 
 .confirmation {
   /* border: 1px solid #333; */
@@ -156,7 +146,6 @@
   border-radius: 100%;
   cursor: pointer;
   transition: 0.3s ease;
-  
 }
 
 .confirm-icon:hover {
@@ -177,7 +166,6 @@
   background: rgba(230, 70, 70);
   color: #f2f2f2;
   border-radius: 100%;
-  
 }
 
 .btn-confirm-exit {
@@ -190,5 +178,5 @@
 .confirmText {
   font-weight: bold;
   font-size: 15pt;
-  color:#222
+  color: #222;
 }
