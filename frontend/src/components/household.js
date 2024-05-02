@@ -1,14 +1,11 @@
 import React from "react";
-import "./household.css";
 import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import Tooltip from "@mui/material/Tooltip";
-import { useState } from "react";
+import "./Household.css";
 import { Link } from "react-router-dom";
-
-
-
+import { useState } from "react";
 
 const styleForAdd = {
   width: "6vh",
@@ -31,10 +28,8 @@ const Household = () => {
     setPopupOpen(false);
   }
 
-
   return (
     <>
-
       <div className="wrapper-admin">
         <div className="login-box-admin">
           <div className="login-admin">
@@ -43,7 +38,7 @@ const Household = () => {
               deine Lebensmittel!
             </h2>
             <div className="wrapper-household-box">
-              <Link onClick= {openPopup}>
+              <Link onClick={openPopup}>
                 <div className="household-box">
                   <Tooltip
                     title="Neuen Haushalt hinzufügen"
@@ -54,10 +49,9 @@ const Household = () => {
                   </Tooltip>
                 </div>
               </Link>
-              {/* <Link to="/homepage">
-                <div className="household-box">
-                </div>
-              </Link> */}
+              <Link to="/home">
+                <div className="household-box"></div>
+              </Link>
             </div>
 
             {isPopupOpen && (
@@ -84,7 +78,7 @@ const Household = () => {
                       required
                     />
                   </div>
-                  
+
                   <section className="confirmation">
                     <div className="btn-confirm-exit">
                       <p className="confirmText">Eingaben bestätigen</p>

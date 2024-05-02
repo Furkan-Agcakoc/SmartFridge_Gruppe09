@@ -1,7 +1,7 @@
 import React from "react";
-import "./fonthome.css";
+import "./FontLogin.css";
 
-const Fonthome = () => {
+const FontLogin = () => {
   return (
     <>
       <h1 className="caveat-logfont-home">Willkommen bei Smart Fridge!</h1>
@@ -10,4 +10,4 @@ const Fonthome = () => {
   );
 };
 
-export default Fonthome;
+export default FontLogin;
