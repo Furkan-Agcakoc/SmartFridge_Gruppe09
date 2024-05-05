@@ -33,7 +33,7 @@ const Household = () => {
       <div className="wrapper-admin">
         <div className="login-box-admin">
           <div className="login-admin">
-            <h2 className="caveat-logfont-admin">
+            <h2 className="logfont-admin">
               Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
               deine Lebensmittel!
             </h2>

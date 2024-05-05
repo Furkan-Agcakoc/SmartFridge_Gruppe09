@@ -17,9 +17,9 @@ const TitleHousehold = () => {
     return unsubscribe;
   }, []);
 
-  const firstName = currentUser?.displayName ? currentUser.displayName.split(" ")[0] : "";
-
-
+  const firstName = currentUser?.displayName
+    ? currentUser.displayName.split(" ")[0]
+    : "";
 
   return (
     <>
