@@ -1,48 +1,35 @@
-.wrapper-admin {
+.container-household {
   display: flex;
   justify-content: center;
   position: relative;
-  top: 120px;
-  /* border: 5px green solid; */
+  top: 150px;
+  border: 5px green solid;
 }
 
-.login-box-admin {
-  width: 1100px;
-  height: 300px;
-  /* border: 5px yellow solid; */
-
-  /* background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: space-evenly; */
-}
-
-.login-admin {
+.container-household-flexbox {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  gap: 10px;
   align-items: center;
-  position: relative;
-  bottom: -15px;
-  /* border: 1px grey solid; */
+  border: 3px red solid;
+  width: 1100px;
+  height: 300px;
 }
 
-.logfont-admin {
+.rules-font-household {
   font-family: Arial, Helvetica, sans-serif;
   font-optical-sizing: auto;
   font-weight: lighter;
   font-size: 25px;
   font-style: normal;
   color: #162938;
+  border: 2px blue solid;
 }
 
 .wrapper-household-box {
   display: flex;
-  border: 1px black solid;
+  border: 4px rgb(229, 26, 192) solid;
   width: 100%;
   justify-content: space-evenly;
   /* border: 5px red solid; */
@@ -66,14 +53,13 @@
 }
 
 .open-popup {
-  visibility: visible;
   border-radius: 10px;
-  width: 485px;
+  width: 500px;
   background-color: #f2f2f2;
   box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25);
   /* border: 2px darkblue solid; */
   position: relative;
-  bottom: 125px;
+  bottom: 145px;
 }
 
 .form-container {
@@ -81,20 +67,14 @@
   flex-direction: column;
   padding: 0 30px 50px 30px;
   border-radius: 50px;
-}
-
-.form-container h1 {
-  color: #222;
-  font-size: 22pt;
-  text-align: center;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  /* font-size: clamp(12px, 4vw, 30px); */
+  font-size: 18px;
 }
 
 .text-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  font-size: 10px;
 }
 
 .text-container label {
