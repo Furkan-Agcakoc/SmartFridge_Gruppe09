@@ -58,63 +58,66 @@ const Household = () => {
                 </Tooltip>
               </div>
             </Link>
-            <Link to="/home">
+            {/* <Link to="/home">
               <div className="household-box"></div>
-            </Link>
+            </Link> */}
           </div>
 
           {isPopupOpen && (
-            <div className="open-popup">
-              <form action="Haushalt" className="form-container">
-                <p>Haushalt erstellen</p>
-                <div className="text-container">
-                  <TextField
-                    required
-                    id="outlined-required"
-                    label="Haushaltsname"
-                    placeholder="Haushaltsname"
-                    inputProps={{ style: { fontSize: "18px" } }}
-                    InputLabelProps={{ style: { fontSize: "15px" } }}
-                  />
-                  <Autocomplete
-                    options={emails}
-                    multiple
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Bewohner hinzufügen"
-                        placeholder="Bewohner hinzufügen"
-                        InputLabelProps={{ style: { fontSize: "15px" } }}
-                      />
-                    )}
-                  />
-                </div>
-
-                <section className="confirmation">
-                  <div className="btn-confirm-exit">
-                    <p className="confirmText">Eingaben bestätigen</p>
-                    <Tooltip
-                      title="Haushalt erstellen"
-                      placement="bottom"
-                      arrow
-                    >
-                      <CheckCircleOutlineRoundedIcon
-                        className="confirm-icon"
-                        style={styleForIcon}
-                        onClick={closePopup}
-                      />
-                    </Tooltip>
-                    <Tooltip title="Abbrechen" placement="bottom" arrow>
-                      <HighlightOffRoundedIcon
-                        className="exit-icon"
-                        style={styleForIcon}
-                        onClick={closePopup}
-                      />
-                    </Tooltip>
+            <>
+              <div className="overlay"></div>
+              <div className="open-popup">
+                <form action="Haushalt" className="form-container">
+                  <h2>Haushalt erstellen</h2>
+                  <div className="text-container">
+                    <TextField
+                      required
+                      id="outlined-required"
+                      label="Haushaltsname"
+                      placeholder="Haushaltsname"
+                      inputProps={{ style: { fontSize: "18px" } }}
+                      InputLabelProps={{ style: { fontSize: "15px" } }}
+                    />
+                    <Autocomplete
+                      options={emails}
+                      multiple
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Bewohner hinzufügen"
+                          placeholder="Bewohner hinzufügen"
+                          InputLabelProps={{ style: { fontSize: "15px" } }}
+                        />
+                      )}
+                    />
                   </div>
-                </section>
-              </form>
-            </div>
+
+                  <section className="confirmation">
+                    <div className="btn-confirm-exit">
+                      <p className="confirmText">Eingaben bestätigen</p>
+                      <Tooltip
+                        title="Haushalt erstellen"
+                        placement="bottom"
+                        arrow
+                      >
+                        <CheckCircleOutlineRoundedIcon
+                          className="confirm-icon"
+                          style={styleForIcon}
+                          onClick={closePopup}
+                        />
+                      </Tooltip>
+                      <Tooltip title="Abbrechen" placement="bottom" arrow>
+                        <HighlightOffRoundedIcon
+                          className="exit-icon"
+                          style={styleForIcon}
+                          onClick={closePopup}
+                        />
+                      </Tooltip>
+                    </div>
+                  </section>
+                </form>
+              </div>
+            </>
           )}
         </div>
       </div>
