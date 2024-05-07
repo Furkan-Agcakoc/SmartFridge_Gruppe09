@@ -88,8 +88,16 @@
 
 .popup-buttons-cnt {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: center;
   position: relative;
   top: 25px;
+  /* border: 5px solid violet; */
+}
+
+.confirm-btn {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  /* flex-direction: column; */
+  /* align-items: center; */
 }
