@@ -19,6 +19,8 @@ import LoginPage from "./components/pages/LoginPage";
 import HouseholdPage from "./components/pages/HouseholdPage";
 import Header from "./components/layout/Header";
 import HomePage from "./components/pages/HomePage";
+import { ThemeProvider } from "@emotion/react";
+import Theme from "./Theme";
 
 class App extends Component {
   constructor(props) {
@@ -119,49 +121,51 @@ class App extends Component {
     const { currentUser } = this.state;
     return (
       <>
-        <Router>
-          <Header
-            user={currentUser}
-            onSignIn={this.handleSignIn}
-            onSignOut={this.handleSignOut}
-          />
-          <Routes>
-            <Route
-              path="/"
-              element={
-                currentUser ? (
-                  <Navigate replace to={"/household"} />
-                ) : (
-                  <LoginPage onSignIn={this.handleSignIn} />
-                )
-              }
+        <ThemeProvider theme={Theme}>
+          <Router>
+            <Header
+              user={currentUser}
+              onSignIn={this.handleSignIn}
+              onSignOut={this.handleSignOut}
             />
-            <Route
-              path="/login"
-              element={
-                <Secured user={currentUser}>
-                  <LoginPage />
-                </Secured>
-              }
-            />
-            <Route
-              path="/household"
-              element={
-                <Secured user={currentUser}>
-                  <HouseholdPage />
-                </Secured>
-              }
-            />
-            <Route
-              path="/home"
-              element={
-                <Secured user={currentUser}>
-                  <HomePage />
-                </Secured>
-              }
-            />
-          </Routes>
-        </Router>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  currentUser ? (
+                    <Navigate replace to={"/household"} />
+                  ) : (
+                    <LoginPage onSignIn={this.handleSignIn} />
+                  )
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <Secured user={currentUser}>
+                    <LoginPage />
+                  </Secured>
+                }
+              />
+              <Route
+                path="/household"
+                element={
+                  <Secured user={currentUser}>
+                    <HouseholdPage />
+                  </Secured>
+                }
+              />
+              <Route
+                path="/home"
+                element={
+                  <Secured user={currentUser}>
+                    <HomePage />
+                  </Secured>
+                }
+              />
+            </Routes>
+          </Router>
+        </ThemeProvider>
       </>
     );
   }

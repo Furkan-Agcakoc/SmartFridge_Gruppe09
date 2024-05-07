@@ -3,7 +3,6 @@
   justify-content: center;
   position: relative;
   top: 150px;
-  border: 5px green solid;
 }
 
 .container-household-flexbox {
@@ -12,7 +11,6 @@
   justify-content: flex-start;
   gap: 10px;
   align-items: center;
-  border: 3px red solid;
   width: 1100px;
   height: 300px;
 }
@@ -24,12 +22,10 @@
   font-size: 25px;
   font-style: normal;
   color: #162938;
-  border: 2px blue solid;
 }
 
 .wrapper-household-box {
   display: flex;
-  border: 4px rgb(229, 26, 192) solid;
   width: 100%;
   justify-content: flex-start;
   /* border: 5px red solid; */
@@ -80,6 +76,7 @@
   padding: 0 30px 50px 30px;
   border-radius: 50px;
   font-size: 18px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .text-container {
@@ -89,60 +86,10 @@
   font-size: 10px;
 }
 
-.confirmation {
-  /* border: 1px solid #333; */
+.popup-buttons-cnt {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
   position: relative;
   top: 25px;
-}
-
-.btn-confirm-exit {
-  border-radius: 50px;
-  height: 43px;
-  width: 73%;
-  background-color: whitesmoke;
-  box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25);
-}
-
-.confirm-icon {
-  color: rgba(0, 205, 34, 0.8);
-  background: transparent;
-  border-radius: 100%;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.confirm-icon:hover {
-  background: rgba(0, 205, 34, 0.8);
-  color: #f2f2f2;
-  border-radius: 100%;
-}
-
-.exit-icon {
-  color: red;
-  background: #f2f2f2;
-  border-radius: 100%;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.exit-icon:hover {
-  background: rgba(230, 70, 70);
-  color: #f2f2f2;
-  border-radius: 100%;
-}
-
-.btn-confirm-exit {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
-.confirmText {
-  font-weight: bold;
-  font-size: 15pt;
-  color: #222;
 }

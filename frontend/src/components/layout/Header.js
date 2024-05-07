@@ -10,7 +10,7 @@ class Header extends Component {
     return (
       <>
         <nav className="navbar">
-          <div className="navbar-container">
+          <div className="navbar-container" >
             <div className="space-container"></div>
             <div className="logo-container">
               <Link>

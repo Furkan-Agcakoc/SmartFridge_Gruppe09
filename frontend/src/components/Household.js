@@ -1,13 +1,13 @@
 import React from "react";
 import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
-import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
-import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import Tooltip from "@mui/material/Tooltip";
 import "./Household.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Autocomplete, TextField } from "@mui/material";
-// import {Autocomplete} from "@mui/material";
+import Button from "@mui/material/Button";
+import CancelIcon from "@mui/icons-material/Cancel";
+import DoneIcon from "@mui/icons-material/Done";
 
 const Household = () => {
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -22,11 +22,6 @@ const Household = () => {
 
   const styleForAdd = {
     width: "6vh",
-    height: "auto",
-  };
-
-  const styleForIcon = {
-    width: "4vh",
     height: "auto",
   };
 
@@ -75,7 +70,6 @@ const Household = () => {
                       id="outlined-required"
                       label="Haushaltsname"
                       placeholder="Haushaltsname"
-                      inputProps={{ style: { fontSize: "18px" } }}
                       InputLabelProps={{ style: { fontSize: "15px" } }}
                     />
                     <Autocomplete
@@ -91,30 +85,37 @@ const Household = () => {
                       )}
                     />
                   </div>
+                  <div className="popup-buttons-cnt">
+                    <Button
+                      variant="contained"
+                      endIcon={<CancelIcon />}
+                      onClick={closePopup}
+                      disableRipple
+                      sx={{
+                        bgcolor: "primary",
+                        color: "secondary",
+                        "&:hover": {
+                          bgcolor: "secondary",
+                          color: "secondary.dark",
+                        },
+                      }}
+                    >
+                      Abbrechen
+                    </Button>
+                    <Button
+                      variant="contained"
+                      endIcon={<DoneIcon />}
+                      disableRipple
+                      sx={{
+                        bgcolor: "secondary",
+                        color: "secondary",
 
-                  <section className="confirmation">
-                    <div className="btn-confirm-exit">
-                      <p className="confirmText">Eingaben bestätigen</p>
-                      <Tooltip
-                        title="Haushalt erstellen"
-                        placement="bottom"
-                        arrow
-                      >
-                        <CheckCircleOutlineRoundedIcon
-                          className="confirm-icon"
-                          style={styleForIcon}
-                          onClick={closePopup}
-                        />
-                      </Tooltip>
-                      <Tooltip title="Abbrechen" placement="bottom" arrow>
-                        <HighlightOffRoundedIcon
-                          className="exit-icon"
-                          style={styleForIcon}
-                          onClick={closePopup}
-                        />
-                      </Tooltip>
-                    </div>
-                  </section>
+                        "&:hover": { bgcolor: "primary.dark" },
+                      }}
+                    >
+                      Erstellen
+                    </Button>
+                  </div>
                 </form>
               </div>
             </>
