@@ -96,7 +96,6 @@ const Household = () => {
                         color: "secondary",
                         "&:hover": {
                           bgcolor: "secondary",
-                          color: "secondary.dark",
                         },
                       }}
                     >

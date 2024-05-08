@@ -1,6 +1,6 @@
 import React from "react";
-import Household from "../Household";
 import TitleHH from "../TitleHousehold";
+import Household from "../Household";
 
 const HouseholdPage = () => {
   return (
