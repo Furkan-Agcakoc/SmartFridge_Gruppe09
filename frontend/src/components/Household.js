@@ -54,12 +54,9 @@ const Household = () => {
                 </Tooltip>
               </div>
             </Link>
-            <Link to="/home">
+            {/* <Link to="/home">
               <div className="household-box"></div>
-            </Link>
-            <Link to="/home">
-              <div className="household-box"></div>
-            </Link>
+            </Link> */}
           </div>
 
           {isPopupOpen && (
@@ -97,28 +94,6 @@ const Household = () => {
                         disableRipple
                         sx={{
                           bgcolor: "secondary",
-<<<<<<< HEAD
-                        },
-                      }}
-                    >
-                      Abbrechen
-                    </Button>
-                    <Button
-                      variant="contained"
-                      endIcon={<DoneIcon />}
-                      disableRipple
-                      sx={{
-                        bgcolor: "secondary",
-                        color: "secondary",
-
-                        "&:hover": { bgcolor: "primary.dark" },
-                      }}
-                    >
-                      Erstellen
-                    </Button>{/* //Wenn MAN HIER KLICKT SOLL SOWOHL onclick{closePopup} und 
-                      onclick{createHousehold} ausgeführt werden
- */}
-=======
                           color: "secondary",
 
                           "&:hover": { bgcolor: "primary.bright" },
@@ -145,7 +120,6 @@ const Household = () => {
                         Abbrechen
                       </Button>
                     </div>
->>>>>>> c1c8dcc8243957a23b073bccdbf704e9a8fe45de
                   </div>
                 </Paper>
               </div>

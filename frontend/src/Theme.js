@@ -1,8 +1,8 @@
 import { createTheme } from "@mui/material";
 
-const white = "#f2f2f2";
-const blue = "#0d7b63";
-const green = "#13a88a";
+// const white = "#f2f2f2";
+// const blue = "#0d7b63";
+// const green = "#13a88a";
 
 const theme = createTheme({
   palette: {
