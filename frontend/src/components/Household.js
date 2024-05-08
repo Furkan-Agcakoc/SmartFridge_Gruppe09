@@ -53,9 +53,12 @@ const Household = () => {
                 </Tooltip>
               </div>
             </Link>
-            {/* <Link to="/home">
+            <Link to="/home">
               <div className="household-box"></div>
-            </Link> */}
+            </Link>
+            <Link to="/home">
+              <div className="household-box"></div>
+            </Link>
           </div>
 
           {isPopupOpen && (
@@ -113,7 +116,9 @@ const Household = () => {
                       }}
                     >
                       Erstellen
-                    </Button>
+                    </Button>{/* //Wenn MAN HIER KLICKT SOLL SOWOHL onclick{closePopup} und 
+                      onclick{createHousehold} ausgeführt werden
+ */}
                   </div>
                 </form>
               </div>

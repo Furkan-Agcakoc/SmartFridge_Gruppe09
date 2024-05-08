@@ -28,6 +28,7 @@
   display: flex;
   width: 100%;
   justify-content: flex-start;
+  gap: 10px;
   /* border: 5px red solid; */
 
   /* flex-wrap: wrap; Wenn neue Haushalte hinzugefügt werden mit Backen*/
