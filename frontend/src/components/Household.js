@@ -1,4 +1,5 @@
 import React from "react";
+import Typography from "@mui/material/Typography";
 import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
 import Tooltip from "@mui/material/Tooltip";
 import "./Household.css";
@@ -38,10 +39,16 @@ const Household = () => {
     <>
       <div className="container-household">
         <div className="container-household-flexbox">
-          <h2 className="rules-font-household">
+          <Typography
+            // className="rules-font-household"
+            fontFamily="Segoe UI"
+            fontSize={"27px"}
+            fontWeight={600}
+            sx={{}}
+          >
             Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
             deine Lebensmittel!
-          </h2>
+          </Typography>
           <div className="wrapper-household-box">
             <Link onClick={openPopup}>
               <div className="household-box">
@@ -63,7 +70,7 @@ const Household = () => {
             <>
               <div className="overlay"></div>
               <div className="open-popup">
-                <Paper action="Haushalt" className="form-container">
+                <Paper action="Haushalt" className="paper-container">
                   <h2>Neuen Haushalt hinzufügen</h2>
                   <div className="text-container">
                     <TextField
@@ -91,29 +98,29 @@ const Household = () => {
                       <Button
                         variant="contained"
                         endIcon={<CheckCircleOutlineRoundedIcon />}
-                        disableRipple
                         sx={{
-                          bgcolor: "secondary",
-                          color: "secondary",
-
-                          "&:hover": { bgcolor: "primary.bright" },
+                          color: "success.dark",
+                          bgcolor: "rgba(29, 151, 35, 0.2)",
+                          border: "2px solid #06871d",
+                          "&:hover": {
+                            bgcolor: "success.dark",
+                            color: "background.default",
+                          },
                         }}
                       >
                         Hinzufügen
                       </Button>
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         endIcon={<HighlightOffRoundedIcon />}
                         onClick={closePopup}
-                        disableRipple
                         sx={{
-                          bgcolor: "#fbfbfb",
-                          color: "#c50000",
-                          borderColor: "#c50000",
+                          bgcolor: "rgba(197, 0, 0, 0.1)",
+                          color: "error.main",
+                          border: "2px solid #c50000 ",
                           "&:hover": {
-                            bgcolor: "#c50000",
-                            color: "#fbfbfb",
-                            borderColor: "#fbfbfb",
+                            bgcolor: "error.main",
+                            color: "background.default",
                           },
                         }}
                       >

@@ -1,11 +1,13 @@
 import React from "react";
 import "./FontLogin.css";
+import { Typography } from "@mui/material";
 
 const FontLogin = () => {
   return (
     <>
-      <h1 className="caveat-logfont-home">Willkommen bei Smart Fridge!</h1>
-      <div></div>
+      <Typography>
+        <h1 className="caveat-logfont-home">Willkommen bei Smart Fridge!</h1>
+      </Typography>
     </>
   );
 };

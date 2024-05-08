@@ -4,6 +4,7 @@ import CelebrationIcon from "@mui/icons-material/Celebration";
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
+import { Typography } from "@mui/material";
 
 const TitleHousehold = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -23,10 +24,12 @@ const TitleHousehold = () => {
 
   return (
     <>
-      <h2 className="caveat-logfont-header">
-        Welcome Back, {firstName} !
-        <CelebrationIcon fontSize="large"></CelebrationIcon>
-      </h2>
+      <Typography>
+        <h2 className="caveat-logfont-header">
+          Welcome Back, {firstName} !
+          <CelebrationIcon fontSize="large"></CelebrationIcon>
+        </h2>
+      </Typography>
     </>
   );
 };
