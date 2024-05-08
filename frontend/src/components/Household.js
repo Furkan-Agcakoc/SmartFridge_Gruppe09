@@ -5,9 +5,10 @@ import "./Household.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Autocomplete, TextField } from "@mui/material";
+import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import CancelIcon from "@mui/icons-material/Cancel";
-import DoneIcon from "@mui/icons-material/Done";
+import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 
 const Household = () => {
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -65,8 +66,8 @@ const Household = () => {
             <>
               <div className="overlay"></div>
               <div className="open-popup">
-                <form action="Haushalt" className="form-container">
-                  <h2>Haushalt erstellen</h2>
+                <Paper action="Haushalt" className="form-container">
+                  <h2>Neuen Haushalt hinzufügen</h2>
                   <div className="text-container">
                     <TextField
                       required
@@ -89,16 +90,14 @@ const Household = () => {
                     />
                   </div>
                   <div className="popup-buttons-cnt">
-                    <Button
-                      variant="contained"
-                      endIcon={<CancelIcon />}
-                      onClick={closePopup}
-                      disableRipple
-                      sx={{
-                        bgcolor: "primary",
-                        color: "secondary",
-                        "&:hover": {
+                    <div className="confirm-btn">
+                      <Button
+                        variant="contained"
+                        endIcon={<CheckCircleOutlineRoundedIcon />}
+                        disableRipple
+                        sx={{
                           bgcolor: "secondary",
+<<<<<<< HEAD
                         },
                       }}
                     >
@@ -119,8 +118,36 @@ const Household = () => {
                     </Button>{/* //Wenn MAN HIER KLICKT SOLL SOWOHL onclick{closePopup} und 
                       onclick{createHousehold} ausgeführt werden
  */}
+=======
+                          color: "secondary",
+
+                          "&:hover": { bgcolor: "primary.bright" },
+                        }}
+                      >
+                        Hinzufügen
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        endIcon={<HighlightOffRoundedIcon />}
+                        onClick={closePopup}
+                        disableRipple
+                        sx={{
+                          bgcolor: "#fbfbfb",
+                          color: "#c50000",
+                          borderColor: "#c50000",
+                          "&:hover": {
+                            bgcolor: "#c50000",
+                            color: "#fbfbfb",
+                            borderColor: "#fbfbfb",
+                          },
+                        }}
+                      >
+                        Abbrechen
+                      </Button>
+                    </div>
+>>>>>>> c1c8dcc8243957a23b073bccdbf704e9a8fe45de
                   </div>
-                </form>
+                </Paper>
               </div>
             </>
           )}
