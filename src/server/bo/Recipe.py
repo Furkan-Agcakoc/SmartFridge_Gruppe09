@@ -7,7 +7,7 @@ class Recipe (bo.BusinessObject):
         self._recipe_name = ""
         self._portions = 0
         self._instruction = ""
-        self._duration = 0
+        self._duration = ""
 
 
     def get_recipe_name(self):
