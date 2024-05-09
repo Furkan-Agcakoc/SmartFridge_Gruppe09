@@ -1,25 +1,25 @@
 from server.bo import BusinessObject as bo
 
-class fridge (bo.BusinessObject):
+class Household (bo.BusinessObject):
 
 
     def __init__(self):
         super().__init__()
-        self._fridge_name = ""
+        self._household_name = ""
 
 
-    def get_fridge_name(self):
-        return self._haushalt_name
+    def get_household_name(self):
+        return self._household_name
 
-    def set_fridge_name(self,new_name):
-        self._fridge_name = new_name
+    def set_household_name(self,new_name):
+        self._household_name = new_name
 
 
     @staticmethod
     def from_dict (dictionary=dict()):
-        obj = fridge()
+        obj = Household()
         obj.set_id(dictionary["id"])
-        obj.set_fridge_name(dictionary["fridge_name"])
+        obj.set_household_name(dictionary["household_name"])
         return obj
 
 
