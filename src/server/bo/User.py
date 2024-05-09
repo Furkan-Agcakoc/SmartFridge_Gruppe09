@@ -1,6 +1,6 @@
 from server.bo import BusinessObject as bo
 
-class Person(bo.BusinessObject):
+class user(bo.BusinessObject):
 
     def __init__(self):
         super().__init__()
@@ -35,7 +35,7 @@ class Person(bo.BusinessObject):
 
     @staticmethod
     def from_dict(dictionary=dict()):
-        obj = Person()
+        obj = user()
         obj.set_id(dictionary["id"])
         obj.set_firstname(dictionary["firstname"])
         obj.set_lastname(dictionary["lastname"])

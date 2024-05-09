@@ -6,10 +6,10 @@ class Groceries (bo.BusinessObject):
         super().__init__()
         self._groceries_name = ""
 
-    def get_description(self):
+    def get_groceries_name(self):
         return self._groceries_name
 
-    def set_desription(self, new_groceries_name):
+    def set_groceries_name(self, new_groceries_name):
         self._groceries_name = new_groceries_name
 
     @staticmethod
