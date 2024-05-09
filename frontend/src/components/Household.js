@@ -1,21 +1,14 @@
 import React from "react";
 import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
-import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
-import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import Tooltip from "@mui/material/Tooltip";
 import "./Household.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-
-const styleForAdd = {
-  width: "6vh",
-  height: "auto",
-};
-
-const styleForIcon = {
-  width: "4vh",
-  height: "auto",
-};
+import { Autocomplete, TextField } from "@mui/material";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 
 const Household = () => {
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -28,84 +21,110 @@ const Household = () => {
     setPopupOpen(false);
   }
 
+  const styleForAdd = {
+    width: "6vh",
+    height: "auto",
+  };
+
+  const emails = [
+    "furkana.gs2002@gmail.com",
+    "meayavuz@gmail.com",
+    "baran2323a@gmail.com",
+    "derzockerlp63@gmail.com",
+    "sead.shat@gmail.com",
+  ];
+
   return (
     <>
-      <div className="wrapper-admin">
-        <div className="login-box-admin">
-          <div className="login-admin">
-            <h2 className="caveat-logfont-admin">
-              Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
-              deine Lebensmittel!
-            </h2>
-            <div className="wrapper-household-box">
-              <Link onClick={openPopup}>
-                <div className="household-box">
-                  <Tooltip
-                    title="Neuen Haushalt hinzufügen"
-                    placement="bottom"
-                    arrow
-                  >
-                    <AddHomeOutlinedIcon style={styleForAdd} />
-                  </Tooltip>
-                </div>
-              </Link>
-              <Link to="/home">
-                <div className="household-box"></div>
-              </Link>
-            </div>
+      <div className="container-household">
+        <div className="container-household-flexbox">
+          <h2 className="rules-font-household">
+            Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
+            deine Lebensmittel!
+          </h2>
+          <div className="wrapper-household-box">
+            <Link onClick={openPopup}>
+              <div className="household-box">
+                <Tooltip
+                  title="Neuen Haushalt hinzufügen"
+                  placement="bottom"
+                  arrow
+                >
+                  <AddHomeOutlinedIcon style={styleForAdd} />
+                </Tooltip>
+              </div>
+            </Link>
+            {/* <Link to="/home">
+              <div className="household-box"></div>
+            </Link> */}
+          </div>
 
-            {isPopupOpen && (
+          {isPopupOpen && (
+            <>
+              <div className="overlay"></div>
               <div className="open-popup">
-                <form action="Haushalt" className="form-container">
-                  <h1>Neuer Haushalt</h1>
+                <Paper action="Haushalt" className="form-container">
+                  <h2>Neuen Haushalt hinzufügen</h2>
                   <div className="text-container">
-                    <label type="text">
-                      <b>Haushaltsname</b>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Haushaltsname bestimmen"
-                      name="text"
+                    <TextField
                       required
+                      id="outlined-required"
+                      label="Haushaltsname"
+                      placeholder="Haushaltsname"
+                      InputLabelProps={{ style: { fontSize: "15px" } }}
                     />
-                    <label>
-                      <b>Bewohner einladen</b>
-                    </label>{" "}
-                    <textarea
-                      type="email"
-                      placeholder="Bewohner-E-Mail hinzufügen"
-                      name="email"
-                      required
+                    <Autocomplete
+                      options={emails}
+                      multiple
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Bewohner hinzufügen"
+                          placeholder="Bewohner hinzufügen"
+                          InputLabelProps={{ style: { fontSize: "15px" } }}
+                        />
+                      )}
                     />
                   </div>
+                  <div className="popup-buttons-cnt">
+                    <div className="confirm-btn">
+                      <Button
+                        variant="contained"
+                        endIcon={<CheckCircleOutlineRoundedIcon />}
+                        disableRipple
+                        sx={{
+                          bgcolor: "secondary",
+                          color: "secondary",
 
-                  <section className="confirmation">
-                    <div className="btn-confirm-exit">
-                      <p className="confirmText">Eingaben bestätigen</p>
-                      <Tooltip
-                        title="Haushalt erstellen"
-                        placement="bottom"
-                        arrow
+                          "&:hover": { bgcolor: "primary.bright" },
+                        }}
                       >
-                        <CheckCircleOutlineRoundedIcon
-                          className="confirm-icon"
-                          style={styleForIcon}
-                          onClick={closePopup}
-                        />
-                      </Tooltip>
-                      <Tooltip title="Abbrechen" placement="bottom" arrow>
-                        <HighlightOffRoundedIcon
-                          className="exit-icon"
-                          style={styleForIcon}
-                          onClick={closePopup}
-                        />
-                      </Tooltip>
+                        Hinzufügen
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        endIcon={<HighlightOffRoundedIcon />}
+                        onClick={closePopup}
+                        disableRipple
+                        sx={{
+                          bgcolor: "#fbfbfb",
+                          color: "#c50000",
+                          borderColor: "#c50000",
+                          "&:hover": {
+                            bgcolor: "#c50000",
+                            color: "#fbfbfb",
+                            borderColor: "#fbfbfb",
+                          },
+                        }}
+                      >
+                        Abbrechen
+                      </Button>
                     </div>
-                  </section>
-                </form>
+                  </div>
+                </Paper>
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </>

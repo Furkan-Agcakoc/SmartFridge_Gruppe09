@@ -1,37 +1,21 @@
-.wrapper-admin {
+.container-household {
   display: flex;
   justify-content: center;
   position: relative;
-  top: 120px;
-  /* border: 5px green solid; */
+  top: 150px;
 }
 
-.login-box-admin {
-  width: 1100px;
-  height: 300px;
-  /* border: 5px yellow solid; */
-
-  /* background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: space-evenly; */
-}
-
-.login-admin {
+.container-household-flexbox {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  gap: 10px;
   align-items: center;
-  position: relative;
-  bottom: -15px;
-  /* border: 1px grey solid; */
+  width: 1100px;
+  height: 300px;
 }
 
-.caveat-logfont-admin {
+.rules-font-household {
   font-family: Arial, Helvetica, sans-serif;
   font-optical-sizing: auto;
   font-weight: lighter;
@@ -42,9 +26,8 @@
 
 .wrapper-household-box {
   display: flex;
-  border: 1px black solid;
   width: 100%;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   /* border: 5px red solid; */
 
   /* flex-wrap: wrap; Wenn neue Haushalte hinzugefügt werden mit Backen*/
@@ -66,14 +49,25 @@
 }
 
 .open-popup {
-  visibility: visible;
   border-radius: 10px;
-  width: 485px;
+  width: 1100px;
   background-color: #f2f2f2;
   box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25);
   /* border: 2px darkblue solid; */
   position: relative;
-  bottom: 125px;
+  bottom: 145px;
+  z-index: 2;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1; /* Stellen Sie sicher, dass der Overlay über allem anderen liegt */
 }
 
 .form-container {
@@ -81,102 +75,29 @@
   flex-direction: column;
   padding: 0 30px 50px 30px;
   border-radius: 50px;
-}
-
-.form-container h1 {
-  color: #222;
-  font-size: 22pt;
-  text-align: center;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  /* font-size: clamp(12px, 4vw, 30px); */
+  font-size: 18px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .text-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  font-size: 10px;
 }
 
-.text-container label {
-  color: #333;
-  font-size: 20pt;
-}
-
-.text-container input {
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  font-size: 11pt;
-  box-shadow: none;
-}
-.text-container textarea {
-  padding: 10px;
-  border-radius: 5px;
-  border: 5px solid red; /* später None machen */
-  font-size: 11pt;
-  font-family: sans-serif;
-  box-shadow: none;
-  width: 405px;
-  max-width: 405px;
-  min-width: 405px;
-  min-height: 50px;
-  max-height: 150px;
-}
-
-.confirmation {
-  /* border: 1px solid #333; */
+.popup-buttons-cnt {
   display: flex;
   justify-content: center;
-  align-items: center;
   position: relative;
   top: 25px;
+  /* border: 5px solid violet; */
 }
 
-.btn-confirm-exit {
-  border-radius: 50px;
-  height: 43px;
-  width: 73%;
-  background-color: whitesmoke;
-  box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25);
-}
-
-.confirm-icon {
-  color: rgba(0, 205, 34, 0.8);
-  background: transparent;
-  border-radius: 100%;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.confirm-icon:hover {
-  background: rgba(0, 205, 34, 0.8);
-  color: #f2f2f2;
-  border-radius: 100%;
-}
-
-.exit-icon {
-  color: red;
-  background: #f2f2f2;
-  border-radius: 100%;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.exit-icon:hover {
-  background: rgba(230, 70, 70);
-  color: #f2f2f2;
-  border-radius: 100%;
-}
-
-.btn-confirm-exit {
+.confirm-btn {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 10px;
-}
-
-.confirmText {
-  font-weight: bold;
-  font-size: 15pt;
-  color: #222;
+  /* flex-direction: column; */
+  /* align-items: center; */
 }

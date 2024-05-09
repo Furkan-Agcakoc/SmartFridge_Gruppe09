@@ -1,7 +1,59 @@
-.fridge{
-    width: 500px;
-    height: 300px;
-    border: 2px red dotted;
-    position: relative;
-    top: 200px;
+.container-fridge-flexbox {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  top: 200px;
+}
+.fridge-flexbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  border: none;
+  border-radius: 30px;
+  box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25);
+  width: 1100px;
+  height: 500px;
+}
+
+.logfont-fridge {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-optical-sizing: auto;
+  font-weight: bold;
+  font-size: 25px;
+  font-style: normal;
+  color: #162938;
+}
+
+.grid-fridge-box {
+  /* border: 5px red solid; */
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.wrapper-fridge-box {
+  display: flex;
+  /* border: 1px black solid; */
+  width: 1100px;
+  justify-content: space-evenly;
+
+  /* border: 5px teal solid; */
+
+  /* flex-wrap: wrap; Wenn neue Haushalte hinzugefügt werden mit Backen*/
+}
+
+.fridge-box {
+  width: 200px;
+  height: 125px;
+  border-radius: 10px;
+  box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25);
+  background-color: lightblue;
+  color: #f2f2f2;
+}
+
+.fridge-box:hover {
+  background-color: #13a88a;
 }
