@@ -5,7 +5,7 @@ class Shoppinglist (bo.BusinessObject):
     def __init__(self):
         super().__init__()
         self._list_name = ""
-        self._food_list = []
+        self._food_list = ""
         self._is_checked = False
 
 
