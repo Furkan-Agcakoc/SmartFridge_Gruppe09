@@ -26,7 +26,10 @@ DROP TABLE IF EXISTS `fride`;
 CREATE TABLE `fridge` (
   `id` int NOT NULL DEFAULT '0',
   `fridge_name` varchar(100) NOT NULL DEFAULT '',
+  `groceriesstatement_id` int NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
+  KEY `groceriesstatement_id_idx` (`groceriesstatement_id`)
+  CONSTRAINT `groceriesstatement_id` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -50,7 +53,10 @@ DROP TABLE IF EXISTS `groceries`;
 CREATE TABLE `groceries` (
   `id` int NOT NULL DEFAULT '0',
   `groceries_name` varchar(100) NOT NULL DEFAULT '',
+  `user_id` int int NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
+  KEY `user_id_idx` (`user_id`)
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -103,7 +109,7 @@ CREATE TABLE `users` (
   `lastname` varchar(256) NOT NULL DEFAULT '',
   `nickname` varchar(128) NOT NULL DEFAULT '',
   `email` varchar(128) NOT NULL DEFAULT '',
-  `google_user_id` varchar(128) NOT NULL DEFAULT '',
+  `google_users_id` varchar(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -133,7 +139,13 @@ DROP TABLE IF EXISTS `household`;
 CREATE TABLE `household` (
   `id` int NOT NULL DEFAULT '0',
   `household_name` varchar(100) NOT NULL DEFAULT '',
+  `user_id` int int NOT NULL DEFAULT '',
+  `fridge_id` int int NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
+  KEY `user_id_idx` (`user_id`)
+  KEY `fridge_id_idx` (`fridge_id`)
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `fridge_id` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -163,7 +175,13 @@ CREATE TABLE `recipe` (
   `duration` varchar(100) NOT NULL DEFAULT '0',
   `portions` int NOT NULL DEFAULT '0',
   `instruction` varchar(1024) NOT NULL DEFAULT '',
+  `user_id` int int NOT NULL DEFAULT '',
+  `groceriesstatement_id` int int NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
+  KEY `user_id_idx` (`user_id`)
+  KEY `groceriesstatement_id_idx` (`groceriesstatement_id`)
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `groceriesstatement_id` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -179,27 +197,6 @@ UNLOCK TABLES;
 --
 -- Table structure for table `shoppinglist`
 --
-
-DROP TABLE IF EXISTS `shoppinglist`;
-/*!40101 SET @saved_cs_client     = @character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `shoppinglist` (
-  `id` int NOT NULL DEFAULT '0',
-  `list_name` varchar(100) NOT NULL DEFAULT '',
-  `food_list` varchar(1000) NOT NULL DEFAULT '',
-  `is_checked` BOOLEAN NOT NULL DEFAULT false,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `accounts`
---
-
-LOCK TABLES `shoppinglist` WRITE;
-/*!40000 ALTER TABLE `shoppinglist` DISABLE KEYS */;
-INSERT INTO `shoppinglist` VALUES (1,'Fehlende Zutaten für Döner','Brot, Fleisch, Tomaten',false),(2,'Fehlende Zutaten für Suppe','Tomaten',true);
-/*!40000 ALTER TABLE `shoppinglist` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
