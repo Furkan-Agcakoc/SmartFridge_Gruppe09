@@ -1,27 +1,32 @@
 import { createTheme } from "@mui/material";
 
-// const white = "#f2f2f2";
-// const blue = "#0d7b63";
-// const green = "#13a88a";
+
+
 
 const theme = createTheme({
   palette: {
     primary: {
       main: "#13a88a",
       light: "#aff3d5",
+      dark: "#0d7b63",
     },
     secondary: {
       main: "#29524a",
+      light: "#53746E",
+      dark: "#0D7560",
     },
     background: {
       default: "#f2f2f2",
       paper: "#fbfbfb",
+      card: "#fbfbfb"
     },
     error: {
       main: "#c50000",
     },
     success: {
       main: "rgba(0,205,34,0.8)",
+      light: "rgba(51, 215, 78, 0.8)",
+      dark: "#06871D",
     },
   },
   typography: {
@@ -30,10 +35,11 @@ const theme = createTheme({
       fontWeight: 600,
       fontSize: "10pt",
       lineHeight: 1.6,
+
     },
   },
   shape: {
-    borderRadius: 30,
+    borderRadius: 20,
   },
   // palette: {
   //   primary: {

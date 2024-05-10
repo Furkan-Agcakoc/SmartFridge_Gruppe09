@@ -6,8 +6,6 @@
 }
 
 .navbar-container {
-  height: 70px;
-  background-color: #13a88a;
   /* border: 1px black solid; */
   display: flex;
   justify-content: space-around;

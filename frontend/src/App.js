@@ -21,6 +21,7 @@ import Header from "./components/layout/Header";
 import HomePage from "./components/pages/HomePage";
 import { ThemeProvider } from "@emotion/react";
 import Theme from "./Theme";
+import Footer from "./components/layout/Footer";
 
 class App extends Component {
   constructor(props) {
@@ -164,6 +165,7 @@ class App extends Component {
                 }
               />
             </Routes>
+            <Footer />
           </Router>
         </ThemeProvider>
       </>

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../images/sopra-logo-rahmen.png";
+import { Box } from "@mui/material";
 import "./Header.css";
 
 class Header extends Component {
@@ -10,7 +11,16 @@ class Header extends Component {
     return (
       <>
         <nav className="navbar">
-          <div className="navbar-container" >
+          <Box
+            className="navbar-container"
+            height={"70px"}
+            width={"100%"}
+            sx={{
+              backgroundColor: "primary.main",
+              position: "fixed",
+              top: "0",
+            }}
+          >
             <div className="space-container"></div>
             <div className="logo-container">
               <Link>
@@ -28,7 +38,7 @@ class Header extends Component {
                 </button>
               )}
             </div>
-          </div>
+          </Box>
         </nav>
       </>
     );
