@@ -1,4 +1,4 @@
-from server.bo import BusinessObject as bo
+"""from server.bo import BusinessObject as bo
 
 class Shoppinglist (bo.BusinessObject):
 
@@ -36,5 +36,6 @@ class Shoppinglist (bo.BusinessObject):
         obj.set_food_list(dictionary["food_list"])
         obj.set_is_checked(dictionary["is_checked"])
         return obj
+        """
 
 
