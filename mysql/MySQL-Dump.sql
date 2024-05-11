@@ -1,9 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `Smartfridge` /*!40100 DEFAULT CHARACTER SET utf8mb3 */;
 USE `Smartfridge`;
 
-
 -- ------------------------------------------------------
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -20,13 +18,16 @@ USE `Smartfridge`;
 -- Table structure for table `fridge`
 --
 
-DROP TABLE IF EXISTS `fride`;
+DROP TABLE IF EXISTS `fridge`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fridge` (
   `id` int NOT NULL DEFAULT '0',
   `fridge_name` varchar(100) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  `groceriesstatement_id` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `groceriesstatement_id_idx` (`groceriesstatement_id`),
+  CONSTRAINT `fridge_groceriesstatement_fk` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -36,7 +37,7 @@ CREATE TABLE `fridge` (
 
 LOCK TABLES `fridge` WRITE;
 /*!40000 ALTER TABLE `fridge` DISABLE KEYS */;
-INSERT INTO `fridge` VALUES (1,'Fridge1');
+INSERT INTO `fridge` VALUES (1,'Fridge1',1);
 /*!40000 ALTER TABLE `fridge` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,7 +51,10 @@ DROP TABLE IF EXISTS `groceries`;
 CREATE TABLE `groceries` (
   `id` int NOT NULL DEFAULT '0',
   `groceries_name` varchar(100) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  `user_id` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id_idx` (`user_id`),
+  CONSTRAINT `groceries_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -60,10 +64,40 @@ CREATE TABLE `groceries` (
 
 LOCK TABLES `groceries` WRITE;
 /*!40000 ALTER TABLE `groceries` DISABLE KEYS */;
-INSERT INTO `groceries` VALUES (1,'Banane'),(2,'Apfel'),(3,'Butter'),(4,'Käse');
+INSERT INTO `groceries` VALUES (1,'Banane',1),(2,'Apfel',1),(3,'Butter',1),(4,'Käse',1);
 /*!40000 ALTER TABLE `groceries` ENABLE KEYS */;
 UNLOCK TABLES;
 
+--
+-- Table structure for table `household`
+--
+
+DROP TABLE IF EXISTS `household`;
+/*!40101 SET @saved_cs_client     = @character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `household` (
+  `id` int NOT NULL DEFAULT '0',
+  `household_name` varchar(100) NOT NULL DEFAULT '',
+  `user_id` int NOT NULL DEFAULT '0',
+  `fridge_id` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id_idx` (`user_id`),
+  KEY `fridge_id_idx` (`fridge_id`),
+  CONSTRAINT `household_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `household_fridge_fk` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `household`
+--
+
+LOCK TABLES `household` WRITE;
+/*!40000 ALTER TABLE `household` DISABLE KEYS */;
+INSERT INTO `household` VALUES (1,'Haus von Sead',1,1),(2,'FamilieAslan',1,1),(3,'KocaHaus',1,1);
+/*!40000 ALTER TABLE `household` ENABLE KEYS */;
+UNLOCK TABLES;
+
+-- Further tables would follow the same pattern for unique foreign key names.
 --
 -- Table structure for table `groceriesstatement`
 --
@@ -73,8 +107,8 @@ DROP TABLE IF EXISTS `groceriesstatement`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `groceriesstatement` (
   `id` int NOT NULL DEFAULT '0',
-  `groceries_name` varchar(100) NOT NULL DEFAULT '0',
-  `description` varchar(1024) NOT NULL DEFAULT '0',
+  `groceries_name` varchar(100) NOT NULL DEFAULT '',
+  `description` varchar(1024) NOT NULL DEFAULT '',
   `quantity` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -103,7 +137,7 @@ CREATE TABLE `users` (
   `lastname` varchar(256) NOT NULL DEFAULT '',
   `nickname` varchar(128) NOT NULL DEFAULT '',
   `email` varchar(128) NOT NULL DEFAULT '',
-  `google_user_id` varchar(128) NOT NULL DEFAULT '',
+  `google_users_id` varchar(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -117,38 +151,6 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES (1,'Baran','Kocabey','baranbey','bk115@hdm-stuttgart.de','GJyAC4Hsx1VVgu3ixb6irDtqsg12');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
---
--- Table structure for table `measure`
---
-
---
--- Table structure for `household`
---
-
-DROP TABLE IF EXISTS `household`;
-/*!40101 SET @saved_cs_client     = @character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `household` (
-  `id` int NOT NULL DEFAULT '0',
-  `household_name` varchar(100) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `household`
---
-
-LOCK TABLES `household` WRITE;
-/*!40000 ALTER TABLE `household` DISABLE KEYS */;
-INSERT INTO `household` VALUES (1,'Haus von Sead'),(2,'FamilieAslan'),(3,'KocaHaus');
-/*!40000 ALTER TABLE `household` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
---  Table structure for `quantity`
---
 
 --
 -- Table structure for table `recipe`
@@ -160,10 +162,16 @@ DROP TABLE IF EXISTS `recipe`;
 CREATE TABLE `recipe` (
   `id` int NOT NULL DEFAULT '0',
   `recipe_name` varchar(100) NOT NULL DEFAULT '',
-  `duration` varchar(100) NOT NULL DEFAULT '0',
+  `duration` varchar(100) NOT NULL DEFAULT '',
   `portions` int NOT NULL DEFAULT '0',
   `instruction` varchar(1024) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  `user_id` int NOT NULL DEFAULT '0',
+  `groceriesstatement_id` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id_idx` (`user_id`),
+  KEY `groceriesstatement_id_idx` (`groceriesstatement_id`),
+  CONSTRAINT `recipe_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `recipe_groceriesstatement_fk` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -172,35 +180,16 @@ CREATE TABLE `recipe` (
 
 LOCK TABLES `recipe` WRITE;
 /*!40000 ALTER TABLE `recipe` DISABLE KEYS */;
-INSERT INTO `recipe` VALUES (1,'Döner','40 Minuten',2,'Schritt 1: Hände waschen. Schritt 2: Brot vorbereiten'),(2,'Mercimek Suppe','15 Minuten',1,'Schritt 1: Hände waschen. Schritt 2: Wasser kochen.');
+INSERT INTO `recipe` (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) VALUES
+(1, 'Döner', '40 Minuten', 2, 'Schritt 1: Hände waschen. Schritt 2: Brot vorbereiten', 0, 0),
+(2, 'Mercimek Suppe', '15 Minuten', 1, 'Schritt 1: Hände waschen. Schritt 2: Wasser kochen.', 0, 0);
 /*!40000 ALTER TABLE `recipe` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `shoppinglist`
---
-
-DROP TABLE IF EXISTS `shoppinglist`;
-/*!40101 SET @saved_cs_client     = @character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `shoppinglist` (
-  `id` int NOT NULL DEFAULT '0',
-  `list_name` varchar(100) NOT NULL DEFAULT '',
-  `food_list` varchar(1000) NOT NULL DEFAULT '',
-  `is_checked` BOOLEAN NOT NULL DEFAULT false,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `accounts`
+-- Reset session to initial settings
 --
-
-LOCK TABLES `shoppinglist` WRITE;
-/*!40000 ALTER TABLE `shoppinglist` DISABLE KEYS */;
-INSERT INTO `shoppinglist` VALUES (1,'Fehlende Zutaten für Döner','Brot, Fleisch, Tomaten',false),(2,'Fehlende Zutaten für Suppe','Tomaten',true);
-/*!40000 ALTER TABLE `shoppinglist` ENABLE KEYS */;
-UNLOCK TABLES;
-
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
@@ -209,5 +198,3 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2022-04-29 19:00:48
