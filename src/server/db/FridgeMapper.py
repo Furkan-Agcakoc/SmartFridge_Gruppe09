@@ -24,10 +24,10 @@ class FridgeMapper (Mapper):
 
         return result
 
-    def find_by_fride_name_id(self, fride_name_id):
+    def find_by_fridge_name_id(self, fridge_name_id):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id,fridge_name FROM fridge WHERE fridge_name={} ORDER BY id".format(fride_name_id)
+        command = "SELECT id,fridge_name FROM fridge WHERE fridge_name={} ORDER BY id".format(fridge_name_id)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
