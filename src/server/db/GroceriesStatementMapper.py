@@ -13,10 +13,12 @@ class GroceriesStatementMapper (Mapper):
         cursor.execute("SELECT * FROM groceriesstatement")
         tuples = cursor.fetchall()
 
-        for (id,groceries_name) in tuples:
+        for (id,groceries_name,description,quantity) in tuples:
             groceriesstatement = GroceriesStatement()
             groceriesstatement.set_id(id)
             groceriesstatement.set_groceries_name(groceries_name)
+            groceriesstatement.set_description(description)
+            groceriesstatement.set_quantity(quantity)
             result.append(groceriesstatement)
 
         self._cnx.commit() #alle änderungen wurden dauerhaft gemacht
@@ -24,18 +26,20 @@ class GroceriesStatementMapper (Mapper):
 
         return result
 
-    def find_by_groceries_name_id(self, groceries_name_id):
+    def find_by_groceries_name(self, groceries_name):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id,groceries_name FROM groceries WHERE groceries_name={} ORDER BY id".format(groceries_name_id)
+        command = "SELECT id,groceries_name,description,quantity FROM groceriesstatement WHERE groceries_name={} ORDER BY id".format(groceries_name)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id,groceries_name) in tuples:
-            groceries = Groceries()
-            groceries.set_id(id)
-            groceries.set_groceries_name(groceries_name)
-            result.append(groceries)
+        for (id,groceries_name,description,quantity) in tuples:
+            groceriesstatement = GroceriesStatement()
+            groceriesstatement.set_id(id)
+            groceriesstatement.set_groceries_name(groceries_name)
+            groceriesstatement.set_description(description)
+            groceriesstatement.set_quantity(quantity)
+            result.append(groceriesstatement)
 
             self._cnx.commit()
             cursor.close()
@@ -52,12 +56,14 @@ class GroceriesStatementMapper (Mapper):
         tuples = cursor.fetchall()
 
         if tuples[0] is not None:
-            (id,groceries_name) = tuples[0]
-            groceries = Groceries()
-            groceries.set_id(id)
-            groceries.set_groceries_name(groceries_name)
+            (id,groceries_name,description,quantity) = tuples[0]
+            groceriesstatement = GroceriesStatement()
+            groceriesstatement.set_id(id)
+            groceriesstatement.set_groceries_name(groceries_name)
+            groceriesstatement.set_description(description)
+            groceriesstatement.set_quantity(quantity)
 
-        result = groceries
+        result = groceriesstatement
 
         self._cnx.commit()
         cursor.close()
@@ -65,42 +71,45 @@ class GroceriesStatementMapper (Mapper):
         return result
 
 
-    def insert(self, groceries):
+    def insert(self, groceriesstatement):
 
         cursor = self._cnx.cursor()
-        cursor.execute("SELECT MAX(id) AS maxid FROM groceries")
+        cursor.execute("SELECT MAX(id) AS maxid FROM groceriesstatement")
         tuples = cursor.fetchall()
 
         for (maxid) in tuples:
-            groceries.set_id(maxid[0]+1)
+            if maxid[0] is not None:
+                groceriesstatement.set_id(maxid[0] + 1)
+            else:
+                groceriesstatement.set_id(1)
 
-        command = "INSERT INTO groceries (id,groceries_name) VALUES (%s,%s)"
-        data = (groceries.get_id(), groceries.get_groceries_name())
+        command = "INSERT INTO groceries (id,groceries_name,description,quantity) VALUES (%s,%s,%s,%s)"
+        data = (groceriesstatement.get_id(), groceriesstatement.get_groceries_name(),groceriesstatement.set_desription(),groceriesstatement.set_quantity())
         cursor.execute(command,data)
 
         self._cnx.commit()
         cursor.close
-        return groceries
+        return groceriesstatement
 
-    def update(self, groceries):
+    def update(self, groceriesstatement):
 
         cursor = self._cnx.cursor()
 
-        command = "UPDATE groceries " + "SET groceries_name=%s WHERE id=%s"
-        data = (groceries.get_id(), groceries.get_groceries_name())
+        command = "UPDATE groceriesstatement " + "SET groceries_name=%s WHERE id=%s" + "SET description=%s WHERE id=%s"+ "SET quantity=%s WHERE id=%s"
+        data = (groceriesstatement.get_id(), groceriesstatement.get_groceries_name())
         cursor.execute(command, data)
 
         self._cnx.commit()
         cursor.close()
 
-    def delete(self, groceries):
+    def delete(self, groceriesstatement):
         """Löschen der Daten eines Account-Objekts aus der Datenbank.
 
         :param account das aus der DB zu löschende "Objekt"
         """
         cursor = self._cnx.cursor()
 
-        command = "DELETE FROM groceries WHERE id={}".format(groceries.get_id())
+        command = "DELETE FROM groceriesstatement WHERE id={}".format(groceriesstatement.get_id())
         cursor.execute(command)
 
         self._cnx.commit()
@@ -108,7 +117,7 @@ class GroceriesStatementMapper (Mapper):
 
 
 if (__name__ == "__main__"):
-    with GroceriesMapper() as mapper:
+    with GroceriesStatementMapper() as mapper:
         result = mapper.find_all()
         for p in result:
             print(p)

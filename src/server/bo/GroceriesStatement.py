@@ -27,3 +27,24 @@ class GroceriesStatement(bo.BusinessObject,Quantity,Groceries,Measure):
 
             else:
                 return "Ihre EInheit ist Ungültig oder die Umrechnung ist nicht Möglich."
+
+
+    def get_groceries_name(self):
+        return self._groceries_name
+
+    def set_groceries_name(self, new_groceries_name):
+        self._groceries_name = new_groceries_name
+
+
+    def get_quantity(self):
+        return self._quantity
+
+    def set_quantity(self,new_quantity):
+        self._quantity = new_quantity
+
+
+    def get_description(self):
+        return self.description
+
+    def set_desription(self, new_description):
+        self._description = new_description
