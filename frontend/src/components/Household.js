@@ -11,6 +11,9 @@ import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import Alert from "@mui/material/Alert";
 import { Box } from "@mui/material";
+import { IconButton } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 
 class Household extends Component {
   constructor(props) {
@@ -73,9 +76,9 @@ class Household extends Component {
     const householdBoxes = households.map((currentName, index) => (
       <Box key={index}>
         <Link to={`/home/${index}`} style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h5"
+          <Box
             sx={{
+              position: "relative",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -88,8 +91,34 @@ class Household extends Component {
               boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
             }}
           >
-            {currentName}
-          </Typography>
+            <IconButton
+              aria-label="Example"
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                width: "20px",
+                height: "20px",
+              }}
+            >
+              <FontAwesomeIcon icon={faEllipsisV} />
+            </IconButton>
+
+            <Typography
+              variant="h5"
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "background.default",
+                width: "200px",
+                maxWidth: "200px",
+                height: "125px",
+              }}
+            >
+              {currentName}
+            </Typography>
+          </Box>
         </Link>
       </Box>
     ));

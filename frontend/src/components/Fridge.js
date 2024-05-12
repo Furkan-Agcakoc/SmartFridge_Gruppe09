@@ -1,27 +1,28 @@
 import React, { Component } from "react";
-import "./Fridge.css";
-import { Link as RouterLink } from "react-router-dom";
+// import { Link as RouterLink } from "react-router-dom";
 import { Paper, Typography, Tooltip } from "@mui/material";
-import { Tabs, Tab } from "@mui/material";
+import { Tab } from "@mui/material";
 import { Box } from "@mui/material";
 import { Link } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 
 class Fridge extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tabindex: 0,
+      value: "1",
     };
+    this.handleTabChange = this.handleTabChange.bind(this);
   }
 
-  handleTabChange(e, newIndex) {
+  handleTabChange(event, newValue) {
     this.setState({
-      tabindex: newIndex,
+      value: newValue,
     });
   }
 
   render() {
-    const { tabindex } = this.state;
+    const { value } = this.state;
 
     return (
       <>
@@ -48,7 +49,11 @@ class Fridge extends Component {
               /* border: "5px red solid", */
             }}
           >
-            <Box
+            <Typography
+              variant="h5"
+              fontSize={"27px"}
+              fontWeight={700}
+              padding={2}
               sx={{
                 display: "flex",
                 justifyContent: "flex-start",
@@ -56,89 +61,70 @@ class Fridge extends Component {
                 /* border: "3px solid brown", */
               }}
             >
-              <Typography
-                variant="h5"
-                fontFamily="Segoe UI"
-                fontSize={"27px"}
-                fontWeight={700}
-                padding={2}
-              >
-                gespeicherter Haushaltsname!
-              </Typography>
-            </Box>
+              gespeicherter Haushaltsname!
+            </Typography>
 
             <Box sx={{ width: "1100px" }}>
-              <Tabs
-                value={tabindex}
-                onChange={this.handleTabChange}
-                sx={{
-                  bgcolor: "background.default",
-                  borderRadius: 10 + "px",
-                  boxShadow: 1,
-                }}
-                centered
-              >
-                <Tab
-                  label="Lebensmittel"
-                  component={RouterLink}
-                  to={"/lebensmittel"}
-                />
-                <Tab label="Rezepte" component={RouterLink} to={"/rezepte"} />
-              </Tabs>
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                width: "1100px",
-                justifyContent: "flex-start",
-                border: "5px teal solid",
-              }}
-            >
-              <Link>
-                <Tooltip
-                  title="Neues Lebensmittel hinzufügen"
-                  placement="bottom"
-                  arrow
-                >
-                  <Box
-                    sx={{
-                      width: "200px",
-                      height: "125px",
-                      borderRadius: "10px",
-                      boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-                      backgroundColor: "lightblue",
-                      color: "#f2f2f2",
-                      border: "3px solid brown",
-                      "&:hover": {
-                        color: "primary.main",
-                      },
-                    }}
-                  ></Box>
-                </Tooltip>
-              </Link>
-              <Link>
-                <Tooltip
-                  title="Neues Rezept hinzufügen"
-                  placement="bottom"
-                  arrow
-                >
-                  <Box
-                    sx={{
-                      width: "200px",
-                      height: "125px",
-                      borderRadius: "10px",
-                      boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-                      backgroundColor: "lightcoral",
-                      color: "#f2f2f2",
-                      border: "3px solid brown",
-                      "&:hover": {
-                        color: "primary.main",
-                      },
-                    }}
-                  ></Box>
-                </Tooltip>
-              </Link>
+              <TabContext value={value} sx={{ width: "1100px" }}>
+                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                  <TabList
+                    onChange={this.handleTabChange}
+                    aria-label="simple tabs example"
+                    centered
+                  >
+                    <Tab label="Lebensmittel" value="1" />
+                    <Tab label="Rezept" value="2" />
+                  </TabList>
+                </Box>
+                <TabPanel value="1">
+                  <Link>
+                    <Tooltip
+                      title="Neues Lebensmittel hinzufügen"
+                      placement="bottom"
+                      arrow
+                    >
+                      <Box
+                        sx={{
+                          width: "200px",
+                          height: "125px",
+                          borderRadius: "10px",
+                          boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                          backgroundColor: "lightblue",
+                          color: "#f2f2f2",
+                          border: "3px solid brown",
+                          "&:hover": {
+                            color: "primary.main",
+                          },
+                        }}
+                      ></Box>
+                    </Tooltip>
+                  </Link>
+                </TabPanel>
+                <TabPanel value="2">
+                  <Link>
+                    <Tooltip
+                      title="Neues Rezept hinzufügen"
+                      placement="bottom"
+                      arrow
+                    >
+                      <Box
+                        sx={{
+                          width: "200px",
+                          height: "125px",
+                          borderRadius: "10px",
+                          boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                          backgroundColor: "lightcoral",
+                          color: "#f2f2f2",
+                          border: "3px solid brown",
+                          "&:hover": {
+                            color: "primary.main",
+                          },
+                        }}
+                      ></Box>
+                    </Tooltip>
+                  </Link>
+                </TabPanel>
+              </TabContext>
             </Box>
           </Paper>
         </Box>
