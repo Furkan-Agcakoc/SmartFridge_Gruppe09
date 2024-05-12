@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import FontLogin from "../FontLogin";
 import Logo from "../../images/Fridge_Logo.png";
-import "../LogBox.css";
 import { Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
+import { Box } from "@mui/material";
 
 class LoginPage extends Component {
   render() {
@@ -13,39 +13,69 @@ class LoginPage extends Component {
     return (
       <>
         <FontLogin />
-        <div className="wrapper">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            position: "relative",
+            top: "175px",
+          }}
+        >
           <Card
-            className="login-box"
             sx={{
               background: "transparent",
               border: "2px solid rgba(255, 255, 255, 0.5)",
               boxShadow: "0 0 30px rgba(0, 0, 0, 0.25)",
               backdropFilter: "blur(20px)",
+              width: " 500px",
+              height: "500px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "space-evenly",
             }}
           >
-            <div className="login">
-              <div className="logfont">
-                <Typography
-                  fontFamily="Segoe UI"
-                  fontSize={"25px"}
-                  fontWeight={650}
-                  top={"50px"}
-                  color={"#162938"}
-                >
-                  Anmeldung bei Smart Fridge!
-                </Typography>
-              </div>
-              <img
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Typography
+                fontSize={"30px"}
+                fontWeight={600}
+                color={"#162938"}
+                position={"relative"}
+                top={"40px"}
+              >
+                Anmeldung bei Smart Fridge!
+              </Typography>
+              <Box
+                component={"img"}
                 src={Logo}
-                className="fridge-img"
-                alt="fridge"
-                onClick={onSignIn}
+                alt="fridge-logo"
+                sx={{
+                  width: "100px",
+                  position: "relative",
+                  top: "90px",
+                  margin: "0 auto",
+                }}
               />
-              <div className="btn-log-container">
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  position: "relative",
+                  top: "150px",
+                }}
+              >
                 <Button
-                  className="btn-log"
                   onClick={onSignIn}
                   sx={{
+                    width: "250px",
+                    height: "40px",
+                    cursor: "pointer",
+                    transition: "0.2s ease ",
                     background: "rgba(255, 255, 255, 0.4)",
                     backgroundColor: "primary.main",
                     color: "#fbfbfb",
@@ -57,7 +87,7 @@ class LoginPage extends Component {
                   }}
                 >
                   <Typography
-                    fontFamily="Segoe UI"
+                    // fontFamily="Segoe UI"
                     fontSize={"18px"}
                     fontWeight={600}
                     top={"50px"}
@@ -65,10 +95,10 @@ class LoginPage extends Component {
                     Login
                   </Typography>
                 </Button>
-              </div>
-            </div>
+              </Box>
+            </Box>
           </Card>
-        </div>
+        </Box>
       </>
     );
   }
