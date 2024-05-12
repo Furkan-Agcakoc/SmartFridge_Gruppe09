@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Typography from "@mui/material/Typography";
 import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
 import Tooltip from "@mui/material/Tooltip";
-import "./Household.css";
 import { Link } from "react-router-dom";
 // import { useState } from "react";
 import { Autocomplete, TextField } from "@mui/material";
@@ -11,6 +10,7 @@ import Button from "@mui/material/Button";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import Alert from "@mui/material/Alert";
+import { Box } from "@mui/material";
 
 class Household extends Component {
   constructor(props) {
@@ -21,11 +21,6 @@ class Household extends Component {
       households: [],
       currentName: "",
       showAlert: false,
-    };
-
-    this.styleForAdd = {
-      width: "6vh",
-      height: "auto",
     };
 
     this.emails = [
@@ -57,7 +52,6 @@ class Household extends Component {
         households: [...prevState.households, prevState.currentName],
         currentName: "",
         showAlert: false,
-        
       }));
     }
   };
@@ -74,61 +68,141 @@ class Household extends Component {
   };
 
   render() {
-    const { households } = this.state;
+    const { households, popupOpen, showAlert } = this.state;
 
     const householdBoxes = households.map((currentName, index) => (
-      <div key={index}>
+      <Box key={index}>
         <Link to={`/home/${index}`} style={{ textDecoration: "none" }}>
           <Typography
-            className="household-box"
+            variant="h5"
             sx={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              color: "background.paper",
+              backgroundColor: "primary.light",
+              color: "background.default",
+              width: "200px",
+              maxWidth: "200px",
+              height: "125px",
+              borderRadius: "10px",
+              boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
             }}
           >
             {currentName}
           </Typography>
         </Link>
-      </div>
+      </Box>
     ));
     return (
       <>
-        <div className="container-household">
-          <div className="container-household-flexbox">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            position: "relative",
+            top: "150px",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              gap: "10px",
+              alignItems: "center",
+              width: "1100px",
+              height: "300px",
+            }}
+          >
             <Typography
-              className="rules-font-household"
               variant="h5"
-              fontFamily="Segoe UI"
               fontSize={"27px"}
               fontWeight={600}
-              sx={{}}
+              sx={{ color: "third.main" }}
             >
               Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
               deine Lebensmittel!
             </Typography>
-            <div className="wrapper-household-box">
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "flex-start",
+                gap: "50px",
+                maxWidth: "950px",
+                flexWrap: "wrap",
+                paddingBottom: "200px",
+              }}
+            >
               <Link onClick={this.openPopup}>
-                <div className="add-household-box">
+                <Box
+                  sx={{
+                    width: "200px",
+                    height: "125px",
+                    borderRadius: "10px",
+                    boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                    backgroundColor: "primary.light",
+                    display: "flex",
+                    justifyContent: "center",
+                    color: "background.default",
+                    "&:hover": {
+                      color: "primary.main",
+                    },
+                  }}
+                >
                   <Tooltip
                     title="Neuen Haushalt hinzufügen"
                     placement="bottom"
                     arrow
                   >
-                    <AddHomeOutlinedIcon style={this.styleForAdd} />
+                    <AddHomeOutlinedIcon
+                      sx={{ width: "6vh", height: "auto" }}
+                    />
                   </Tooltip>
-                </div>
+                </Box>
               </Link>
+
               {householdBoxes}
-            </div>
-            {this.state.popupOpen && (
+            </Box>
+            {popupOpen && (
               <>
-                <div className="overlay"></div>
-                <div className="open-popup">
-                  <Paper action="Haushalt" className="paper-container">
-                    <h2>Neuen Haushalt hinzufügen</h2>
-                    {this.state.showAlert && (
+                <Box
+                  sx={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backdropFilter: "blur(10px)",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    zIndex: 1,
+                  }}
+                />
+                <Box
+                  sx={{
+                    width: "1100px",
+                    position: "fixed",
+                    zIndex: 2,
+                  }}
+                >
+                  <Paper
+                    action="Haushalt"
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      padding: "0 30px 50px 30px",
+                      borderRadius: "50px",
+                      fontSize: "18px",
+                      // fontFamily: "Arial, Helvetica, sans-serif",
+                    }}
+                  >
+                    <Typography
+                      variant="h4"
+                      sx={{ marginBottom: "20px", marginTop: "20px" }}
+                    >
+                      Neuen Haushalt hinzufügen
+                    </Typography>
+                    {showAlert && (
                       <Alert
                         severity="error"
                         onClose={this.handleCloseAlert}
@@ -137,7 +211,14 @@ class Household extends Component {
                         Bitte geben Sie einen Haushaltsnamen ein !
                       </Alert>
                     )}
-                    <div className="text-container">
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "10px",
+                        fontSize: "10px",
+                      }}
+                    >
                       <TextField
                         required
                         id="outlined-required"
@@ -159,9 +240,22 @@ class Household extends Component {
                           />
                         )}
                       />
-                    </div>
-                    <div className="popup-buttons-cnt">
-                      <div className="confirm-btn">
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        position: "relative",
+                        top: "25px",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          gap: "10px",
+                        }}
+                      >
                         <Button
                           variant="contained"
                           endIcon={<CheckCircleOutlineRoundedIcon />}
@@ -194,14 +288,14 @@ class Household extends Component {
                         >
                           Abbrechen
                         </Button>
-                      </div>
-                    </div>
+                      </Box>
+                    </Box>
                   </Paper>
-                </div>
+                </Box>
               </>
             )}
-          </div>
-        </div>
+          </Box>
+        </Box>
       </>
     );
   }

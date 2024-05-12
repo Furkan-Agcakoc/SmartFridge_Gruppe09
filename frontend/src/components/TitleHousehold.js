@@ -1,5 +1,4 @@
 import React from "react";
-import "./TitleHousehold.css";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
@@ -24,11 +23,21 @@ const TitleHousehold = () => {
 
   return (
     <>
-      <Typography>
-        <h2 className="caveat-logfont-header">
-          Welcome Back, {firstName} !
-          <CelebrationIcon fontSize="large"></CelebrationIcon>
-        </h2>
+      <Typography
+        sx={{
+          fontWeight: "bold",
+          fontSize: "2rem",
+          fontStyle: "normal",
+          color: "third.main",
+          display: "flex",
+          justifyContent: "center",
+          position: "relative",
+          top: "130px",
+          marginBottom: "0px",
+        }}
+      >
+        Welcome Back, {firstName} !
+        <CelebrationIcon fontSize="large" />
       </Typography>
     </>
   );

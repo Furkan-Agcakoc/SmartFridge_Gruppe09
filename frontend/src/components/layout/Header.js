@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../images/sopra-logo-rahmen.png";
 import { Box } from "@mui/material";
-import "./Header.css";
+import { Button } from "@mui/material";
 
 class Header extends Component {
   render() {
@@ -10,36 +10,89 @@ class Header extends Component {
 
     return (
       <>
-        <nav className="navbar">
-          <Box
-            className="navbar-container"
-            height={"70px"}
-            width={"100%"}
+        <Box
+          height={"70px"}
+          width={"100%"}
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            width: "100%",
+            zIndex: 1,
+            backgroundColor: "primary.main",
+            position: "fixed",
+            top: "0",
+          }}
+        >
+          <Box //spacer Box for Header
             sx={{
-              backgroundColor: "primary.main",
-              position: "fixed",
-              top: "0",
+              width: "130px",
+              height: "40px",
+            }}
+          ></Box>
+          <Box
+            sx={{
+              height: "180px",
+              width: "1000px",
+              /* border: '3px red solid', */
+              alignItems: "center",
+              display: "flex",
+              justifyContent: "center",
+              position: "relative",
+              top: "35px",
             }}
           >
-            <div className="space-container"></div>
-            <div className="logo-container">
-              <Link>
-                <img src={Logo} alt="logo" className="logo" />
-              </Link>
-            </div>
-            <div className="nav-btn-container">
-              {user ? (
-                <button className="signin" onClick={onSignOut}>
-                  Logout
-                </button>
-              ) : (
-                <button className="signin" onClick={onSignIn}>
-                  Login
-                </button>
-              )}
-            </div>
+            <Link to="/home">
+              <Box
+                component={"img"}
+                src={Logo}
+                alt="fridge-logo"
+                sx={{ width: "130px" }}
+              ></Box>
+            </Link>
           </Box>
-        </nav>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            {user ? (
+              <Button
+                onClick={onSignOut}
+                sx={{
+                  width: "130px",
+                  height: "40px",
+                  fontWeight: 500,
+                  backgroundColor: "background.paper",
+                  border: "none",
+                  borderRadius: "30px",
+                  cursor: "pointer",
+                  transition: "0.3s ease",
+                  "&:hover": {
+                    background: "rgba(255, 255, 255, 0.8)",
+                  },
+                }}
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button
+                onClick={onSignIn}
+                sx={{
+                  width: "130px",
+                  height: "40px",
+                  fontWeight: 500,
+                  backgroundColor: "background.paper",
+                  border: "none",
+                  borderRadius: "30px",
+                  cursor: "pointer",
+                  transition: "0.3s ease",
+                  "&:hover": {
+                    background: "rgba(255, 255, 255, 0.8)",
+                  },
+                }}
+              >
+                Login
+              </Button>
+            )}
+          </Box>
+        </Box>
       </>
     );
   }
