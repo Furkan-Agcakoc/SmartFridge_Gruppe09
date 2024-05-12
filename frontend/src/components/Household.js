@@ -161,7 +161,6 @@ class Household extends Component {
                   </Tooltip>
                 </Box>
               </Link>
-
               {householdBoxes}
             </Box>
             {popupOpen && (
