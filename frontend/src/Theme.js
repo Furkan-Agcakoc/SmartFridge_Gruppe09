@@ -1,8 +1,5 @@
 import { createTheme } from "@mui/material";
 
-
-
-
 const theme = createTheme({
   palette: {
     primary: {
@@ -18,7 +15,7 @@ const theme = createTheme({
     background: {
       default: "#f2f2f2",
       paper: "#fbfbfb",
-      card: "#fbfbfb"
+      card: "#fbfbfb",
     },
     error: {
       main: "#c50000",
@@ -28,6 +25,9 @@ const theme = createTheme({
       light: "rgba(51, 215, 78, 0.8)",
       dark: "#06871D",
     },
+    text: {
+      primary: "rgba(20,19,19,0.87)",
+    },
   },
   typography: {
     fontSize: 16,
@@ -35,7 +35,11 @@ const theme = createTheme({
       fontWeight: 600,
       fontSize: "10pt",
       lineHeight: 1.6,
-
+    },
+    tabs: {
+      fontWeight: 800,
+      fontSize: "12pt",
+      lineHeight: 1.6,
     },
   },
   shape: {

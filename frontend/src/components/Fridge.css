@@ -10,38 +10,31 @@
   align-items: center;
   gap: 15px;
   border: none;
-  border-radius: 30px;
-  box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25);
+  /* border-radius: 30px; */
+  /* box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25); */
   width: 1100px;
-  height: 500px;
+  height: auto;
+  padding: 0px 50px 30px 50px;
+  /* border: 5px red solid; */
 }
 
-.logfont-fridge {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-optical-sizing: auto;
-  font-weight: bold;
-  font-size: 25px;
-  font-style: normal;
-  color: #162938;
+.household-name {
+  display: flex;
+  justify-content: flex-start;
+  width: 1100px;
+  /* border: 3px solid brown; */
 }
 
 .grid-fridge-box {
   /* border: 5px red solid; */
-  height: 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .wrapper-fridge-box {
   display: flex;
-  /* border: 1px black solid; */
   width: 1100px;
-  justify-content: space-evenly;
+  justify-content: flex-start;
 
-  /* border: 5px teal solid; */
-
+  border: 5px teal solid;
   /* flex-wrap: wrap; Wenn neue Haushalte hinzugefügt werden mit Backen*/
 }
 
@@ -52,8 +45,22 @@
   box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25);
   background-color: lightblue;
   color: #f2f2f2;
+  border: 3px solid brown;
 }
 
 .fridge-box:hover {
   background-color: #13a88a;
 }
+
+.recipe-box {
+  width: 200px;
+  height: 125px;
+  border-radius: 10px;
+  box-shadow: 3px 3px 6px 2px rgba(0, 0, 0, 0.25);
+  background-color: lightcoral;
+  color: #f2f2f2;
+}
+.recipe-box:hover {
+  background-color: #13a88a;
+}
+

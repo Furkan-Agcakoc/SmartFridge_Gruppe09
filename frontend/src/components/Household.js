@@ -120,6 +120,9 @@ class Household extends Component {
                   </Tooltip>
                 </div>
               </Link>
+              <Link to="/home">
+              <div className="household-box"></div>
+              </Link>
               {householdBoxes}
             </div>
             {this.state.popupOpen && (
