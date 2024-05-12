@@ -1,105 +1,150 @@
-// import React from "react";
+import React, { Component } from "react";
 import "./Fridge.css";
-import { Link } from "react-router-dom";
-import { Paper, Tooltip, Typography, Box } from "@mui/material";
-import React, { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { Paper, Typography, Tooltip } from "@mui/material";
+import { Tabs, Tab } from "@mui/material";
+import { Box } from "@mui/material";
+import { Link } from "@mui/material";
 
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+class Fridge extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tabindex: 0,
+    };
+  }
 
-function CustomTabPanel(props) {
-  const { children, value, index, ...other } = props;
+  handleTabChange(e, newIndex) {
+    this.setState({
+      tabindex: newIndex,
+    });
+  }
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
+  render() {
+    const { tabindex } = this.state;
 
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
-const Fridge = () => {
-  const [value, setValue] = useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  return (
-    <div className="container-fridge-flexbox">
-      <Paper className="fridge-flexbox">
-        <div className="household-name">
-          <Typography
-            variant="h5"
-            fontFamily="Segoe UI"
-            fontSize={"27px"}
-            fontWeight={700}
-            padding={2}
-          >
-            gespeicherter Haushaltsname!
-          </Typography>
-        </div>
-
-        <div style={{ width: 1100 + "px" }} className="grid-fridge-box">
-          <Tabs
-            value={value}
-            onChange={handleChange}
+    return (
+      <>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            position: "relative",
+            top: "200px",
+          }}
+        >
+          <Paper
             sx={{
-              bgcolor: "background.default",
-              borderRadius: 10 + "px",
-              boxShadow: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "15px",
+              border: "none",
+              /* borderRadius: "30px", */
+              /* boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)", */
+              width: "1100px",
+              height: "auto",
+              padding: "0px 50px 30px 50px",
+              /* border: "5px red solid", */
             }}
-            centered
           >
-            <Tab label="Lebensmittel" {...a11yProps(0)} />
-            <Tab label="Rezepte" {...a11yProps(1)} />
-          </Tabs>
-        </div>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-start",
+                width: "1100px",
+                /* border: "3px solid brown", */
+              }}
+            >
+              <Typography
+                variant="h5"
+                fontFamily="Segoe UI"
+                fontSize={"27px"}
+                fontWeight={700}
+                padding={2}
+              >
+                gespeicherter Haushaltsname!
+              </Typography>
+            </Box>
 
-        <div className="wrapper-fridge-box">
-          <CustomTabPanel value={value} index={0}>
-            <Link>
-              <div className="fridge-box">
+            <Box sx={{ width: "1100px" }}>
+              <Tabs
+                value={tabindex}
+                onChange={this.handleTabChange}
+                sx={{
+                  bgcolor: "background.default",
+                  borderRadius: 10 + "px",
+                  boxShadow: 1,
+                }}
+                centered
+              >
+                <Tab
+                  label="Lebensmittel"
+                  component={RouterLink}
+                  to={"/lebensmittel"}
+                />
+                <Tab label="Rezepte" component={RouterLink} to={"/rezepte"} />
+              </Tabs>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                width: "1100px",
+                justifyContent: "flex-start",
+                border: "5px teal solid",
+              }}
+            >
+              <Link>
                 <Tooltip
                   title="Neues Lebensmittel hinzufügen"
                   placement="bottom"
                   arrow
-                ></Tooltip>
-              </div>
-            </Link>
-          </CustomTabPanel>
-
-          <CustomTabPanel value={value} index={1}>
-            <Link>
-              <div className="recipe-box">
+                >
+                  <Box
+                    sx={{
+                      width: "200px",
+                      height: "125px",
+                      borderRadius: "10px",
+                      boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                      backgroundColor: "lightblue",
+                      color: "#f2f2f2",
+                      border: "3px solid brown",
+                      "&:hover": {
+                        color: "primary.main",
+                      },
+                    }}
+                  ></Box>
+                </Tooltip>
+              </Link>
+              <Link>
                 <Tooltip
-                  title="Neues Lebensmittel hinzufügen"
+                  title="Neues Rezept hinzufügen"
                   placement="bottom"
                   arrow
-                ></Tooltip>
-              </div>
-            </Link>
-          </CustomTabPanel>
-        </div>
-      </Paper>
-    </div>
-  );
-};
+                >
+                  <Box
+                    sx={{
+                      width: "200px",
+                      height: "125px",
+                      borderRadius: "10px",
+                      boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                      backgroundColor: "lightcoral",
+                      color: "#f2f2f2",
+                      border: "3px solid brown",
+                      "&:hover": {
+                        color: "primary.main",
+                      },
+                    }}
+                  ></Box>
+                </Tooltip>
+              </Link>
+            </Box>
+          </Paper>
+        </Box>
+      </>
+    );
+  }
+}
 
 export default Fridge;

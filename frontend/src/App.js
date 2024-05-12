@@ -22,6 +22,8 @@ import HomePage from "./components/pages/HomePage";
 import { ThemeProvider } from "@emotion/react";
 import Theme from "./Theme";
 import Footer from "./components/layout/Footer";
+import Grocerie from "./components/Grocerie";
+import Recipe from "./components/Recipe";
 
 class App extends Component {
   constructor(props) {
@@ -161,6 +163,22 @@ class App extends Component {
                 element={
                   <Secured user={currentUser}>
                     <HomePage />
+                  </Secured>
+                }
+              />
+              <Route
+                path="/groceries"
+                element={
+                  <Secured user={currentUser}>
+                    <Grocerie />
+                  </Secured>
+                }
+              />
+              <Route
+                path="/recipes"
+                element={
+                  <Secured user={currentUser}>
+                    <Grocerie />
                   </Secured>
                 }
               />
