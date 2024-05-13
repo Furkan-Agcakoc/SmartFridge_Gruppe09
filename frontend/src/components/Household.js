@@ -12,8 +12,15 @@ import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlin
 import Alert from "@mui/material/Alert";
 import { Box } from "@mui/material";
 import { IconButton } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
+import EditIcon from "@mui/icons-material/Edit";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import ArchiveIcon from "@mui/icons-material/Archive";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ListItemIcon from "@mui/material/ListItemIcon";
 
 class Household extends Component {
   constructor(props) {
@@ -24,6 +31,7 @@ class Household extends Component {
       households: [],
       currentName: "",
       showAlert: false,
+      anchorEl: null,
     };
 
     this.emails = [
@@ -70,39 +78,108 @@ class Household extends Component {
     this.setState({ showAlert: false });
   };
 
+  handleAnchorClick = (event) => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleAnchorClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
+
   render() {
     const { households, popupOpen, showAlert } = this.state;
+    const { anchorEl } = this.state;
+    const open = Boolean(anchorEl);
 
     const householdBoxes = households.map((currentName, index) => (
       <Box key={index}>
-        <Link to={`/home/${index}`} style={{ textDecoration: "none" }}>
-          <Box
-            sx={{
-              position: "relative",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "primary.light",
-              color: "background.default",
-              width: "200px",
-              maxWidth: "200px",
-              height: "125px",
-              borderRadius: "10px",
-              boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+        <Box
+          sx={{
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "primary.light",
+            color: "background.default",
+            width: "200px",
+            maxWidth: "200px",
+            height: "125px",
+            borderRadius: "10px",
+            boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+          }}
+        >
+          <IconButton
+            aria-label="more"
+            id="long-button"
+            aria-controls={open ? "long-menu" : undefined}
+            aria-expanded={open ? "true" : undefined}
+            aria-haspopup="true"
+            onClick={this.handleAnchorClick}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              width: "20px",
+              height: "20px",
             }}
           >
-            <IconButton
-              aria-label="Example"
-              style={{
-                position: "absolute",
-                top: "10px",
-                right: "10px",
-                width: "20px",
-                height: "20px",
-              }}
+            <MoreVertIcon />
+          </IconButton>
+
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              "aria-labelledby": "long-button",
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={this.handleAnchorClose}
+
+          >
+            <MenuItem
+              onClick={this.handleAnchorClose}
+              className="menu-item"
+              disableRipple
             >
-              <FontAwesomeIcon icon={faEllipsisV} />
-            </IconButton>
+              <ListItemIcon>
+                <EditIcon />
+              </ListItemIcon>
+              Edit
+            </MenuItem>
+            <MenuItem
+              onClick={this.handleAnchorClose}
+              className="menu-item"
+              disableRipple
+            >
+              <ListItemIcon>
+                <FileCopyIcon />
+              </ListItemIcon>
+              Duplicate
+            </MenuItem>
+            <Divider sx={{ my: 0.5 }} />
+            <MenuItem
+              onClick={this.handleAnchorClose}
+              className="menu-item"
+              disableRipple
+            >
+              <ListItemIcon>
+                <ArchiveIcon />
+              </ListItemIcon>
+              Archive
+            </MenuItem>
+            <MenuItem
+              onClick={this.handleAnchorClose}
+              className="menu-item"
+              disableRipple
+            >
+              <ListItemIcon>
+                <MoreHorizIcon />
+              </ListItemIcon>
+              More
+            </MenuItem>
+          </Menu>
+          <Link to={`/home/${index}`} style={{ textDecoration: "none" }}>
 
             <Typography
               variant="h5"
@@ -114,12 +191,12 @@ class Household extends Component {
                 width: "200px",
                 maxWidth: "200px",
                 height: "125px",
-              }}
+             }}
             >
               {currentName}
             </Typography>
-          </Box>
-        </Link>
+          </Link>
+        </Box>
       </Box>
     ));
     return (
