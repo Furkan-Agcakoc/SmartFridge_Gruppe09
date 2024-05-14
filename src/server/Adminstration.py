@@ -33,7 +33,7 @@ class Adminstration (object):
         with FridgeMapper() as mapper:
             return mapper.insert(fridge)
 
-    def get_fride_by_name(self,fridge_name):
+    def get_fridge_by_name(self,fridge_name):
 
         with FridgeMapper() as mapper:
             return mapper.find_by_fride_name(fridge_name)
@@ -112,5 +112,78 @@ class Adminstration (object):
                     self.delete_fridge(a)
 
             mapper.delete(household)"""
+
+
+    """Recipe Spezifische Methoden"""
+
+
+    def create_recipe(self, recipe_name):
+        recipe = Recipe()
+        recipe.set_recipe_name(recipe_name)
+        recipe.set_id(1)
+
+        with RecipeMapper() as mapper:
+            return mapper.insert(recipe)
+
+
+    def get_recipe_by_name(self, recipe_name):
+        with RecipeMapper() as mapper:
+            return mapper.find_by_recipe_name(recipe_name)
+
+
+    def get_recipe_by_id(self, number):
+        with RecipeMapper() as mapper:
+            return mapper.find_by_key(number)
+
+
+    def get_all_recipes(self):
+        with RecipeMapper() as mapper:
+            return mapper.find_all()
+
+
+    def update_recipe(self, recipe):
+        with RecipeMapper() as mapper:
+            mapper.update(recipe)
+
+    def delete_recipe(self, recipe):
+        with RecipeMapper() as mapper:
+            mapper.delete(recipe)
+
+
+"""Groceries Spezifische Methoden"""
+
+
+def create_groceries(self, groceries_name):
+    groceries = Groceries()
+    groceries.set_groceries_name(groceries_name)
+    groceries.set_id(1)
+
+    with GroceriesMapper() as mapper:
+        return mapper.insert(groceries)
+
+
+def get_groceries_by_name(self, groceries_name):
+    with GroceriesMapper() as mapper:
+        return mapper.find_by_groceries_name(groceries_name)
+
+
+def get_groceries_by_id(self, number):
+    with GroceriesMapper() as mapper:
+        return mapper.find_by_key(number)
+
+
+def get_all_groceries(self):
+    with GroceriesMapper() as mapper:
+        return mapper.find_all()
+
+
+def update_groceries(self, groceries):
+    with GroceriesMapper() as mapper:
+        mapper.update(groceries)
+
+
+def delete_groceries(self, groceries):
+    with GroceriesMapper() as mapper:
+        mapper.delete(groceries)
 
 
