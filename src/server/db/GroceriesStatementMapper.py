@@ -46,6 +46,26 @@ class GroceriesStatementMapper (Mapper):
 
             return result
 
+    def find_by_fridge_id(self, fridge):
+        result = []
+        cursor = self._cnx.cursor()
+        command = "SELECT id,groceries_name,description,quantoty FROM fridge WHERE fridge={} ORDER BY id".format(fridge)
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+
+        for (id,groceries_name,description,quantity) in tuples:
+            groceriesstatement = GroceriesStatement()
+            groceriesstatement.set_id(id)
+            groceriesstatement.set_groceries_name(groceries_name)
+            groceriesstatement.set_description(description)
+            groceriesstatement.set_quantity(quantity)
+            result.append(groceriesstatement)
+
+            self._cnx.commit()
+            cursor.close()
+
+            return result
+
     def find_by_key(self, key):
 
         result = None
