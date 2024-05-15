@@ -2,6 +2,7 @@ from server.bo.Fridge import Fridge
 from server.bo.Groceries import Groceries
 from server.bo.GroceriesStatement import GroceriesStatement
 from server.bo.Household import Household
+from server.bo.User import User
 from server.bo.Measure import Measure
 from server.bo.Quantity import Quantity
 from server.bo.Recipe import Recipe
@@ -11,6 +12,7 @@ from server.db.FridgeMapper import FridgeMapper
 from server.db.GroceriesMapper import GroceriesMapper
 from server.db.GroceriesStatementMapper import GroceriesStatementMapper
 from server.db.HouseholdMapper import HouseholdMapper
+from server.db.UserMapper import UserMapper
 from server.db.RecipeMapper import RecipeMapper
 from server.db.UserMapper import UserMapper
 
@@ -201,3 +203,46 @@ class Adminstration(object):
     def delete_groceriesstatement(self, groceriesstatement):
         with GroceriesStatementMapper() as mapper:
             mapper.delete(groceriesstatement)
+
+    """
+       User Spezifische Methoden
+    """
+
+    def create_user(self, firstname, lastname, nickname, email, user_id):
+        user = User()
+        user.set_firstname(firstname)
+        user.set_lastname(lastname)
+        user.set_nickname(nickname)
+        user.set_email(email)
+        user.set_user_id(user_id)
+        user.set_id(1)
+        with UserMapper() as mapper:
+            return mapper.insert(user)
+
+    def get_user_by_firstname(self, firstsname):
+        with UserMapper() as mapper:
+            return mapper.find_by_firstname(firstsname)
+
+    def get_user_by_lastname(self, lastname):
+        with UserMapper() as mapper:
+            return mapper.find_by_lastname(lastname)
+
+    def get_user_by_nickname(self, nickname):
+        with UserMapper() as mapper:
+            return mapper.find_by_nickname(nickname)
+
+    def get_user_by_email(self, email):
+        with UserMapper() as mapper:
+            return mapper.find_by_email(email)
+
+    def get_by_user_id(self, google_user_id):
+        with UserMapper() as mapper:
+            return mapper.find_by_user_id(google_user_id)
+
+    def update_user(self, user):
+        with UserMapper() as mapper:
+            return mapper.update(user)
+
+    def delet_user(self, user):
+        with UserMapper() as mapper:
+            return mapper.delet(user)
