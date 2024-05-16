@@ -40,7 +40,7 @@ def secured(function):
                 if claims is not None:
                     adm = Adminstration()
 
-                    google_user_id = claims.get("google_user_id")
+                    google_user_id = claims.get("user_id")
                     email = claims.get("email")
                     firstname = claims.get("firstname")
                     lastname = claims.get("lastname")

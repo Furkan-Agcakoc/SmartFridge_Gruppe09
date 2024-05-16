@@ -41,11 +41,33 @@ groceries = api.inherit('Groceries',bo, {
 
 groceriesstatement = api.inherit('Groceriesstatement',bo, {
     'groceries_name' : fields.String(attribut='_groceries_name', description='Name eines Lebensmitells'),
-    'description' : fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittel'),
-    'quantity' : fields.Integer(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel')
+    'description' : fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittels'),
+    'quantity' : fields.Integer(attribut='_quantity', description='Die Mengenangabe eines Lebensmittels')
 })
 
 household = api.inherit('Household',bo, {
     'household_name' : fields.String(attribut='_household_name', description='Name eines Haushaltes')
 })
 
+measure = api.inherit('Measure',bo, {
+    'description' : fields.string(attribut='_description', description='Die Maßeinheit eines Lebensmittels')
+})
+
+quantity = api.inherit('Quantity',bo, {
+    'quantity' : fields.string(attribut='_quantity', description='Die Mengenangabe eines Lebensmittels')
+})
+
+recipe = api.inherit('Recipe',bo, {
+    'recipe_name' : fields.string(attribut='_recipe_name', description='Name des Rezepts'),
+    'portions' : fields.string(attribut='_portions', description='Anzahl der Portionen'),
+    'instruction' : fields.string(attribut='_instruction', description='Anweisung zum Rezept'),
+    'duration' : fields.string(attribut='_duration', description='Dauer des Rezepts')
+})
+
+user = api.inherit('User',bo, {
+    'first_name' : fields.String(attribut='__first_name', description='Vorname des Users'),
+    'last_name' : fields.String(attribut='__last_name', description='Nachname des Users'),
+    'nickname' : fields.String(attribut='__nickname', description='Nickname des Users'),
+    'email' : fields.String(attribut='__email', description='Email des Users'),
+    'user_id' : fields.Integer(attribut='__user_id', description='Google-ID des Users')
+})
