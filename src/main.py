@@ -15,7 +15,7 @@ from server.bo.Quantity import Quantity
 from server.bo.Recipe import Recipe
 from server.bo.User import User
 
-#Hier kommt noch import secured
+from SecurityDecorater import secured
 
 app = Flask(__name__)
 
@@ -25,4 +25,27 @@ api = Api(app, version='1.0', title='Smartfridge API',
           description='Eine rudimentäre Demo-API für einen Smartfridge.')
 
 smartfridge = api.namespaces('Smartfridge',description='Funktion einer Smartfridge')
+
+bo = api.model('BusinessObject', {
+    'id' : fields.Integer(attribut='_id', description='Eindeutige Zuordnung von BusinessObjects')
+})
+
+fridge = api.inherit('Fridge',bo, {
+    'fridge_name' : fields.String(attribut='_fridge_name', description='Name eines Kühlschranks'),
+    'household' : fields.Integer(attribut='_household', description='Eindeutige Zuordnung des Kühlschrankes zu einem Haushalt')
+})
+
+groceries = api.inherit('Groceries',bo, {
+    'groceries_name' : fields.String(attribut='_groceries_name', description='Name eines Lebensmitells'),
+})
+
+groceriesstatement = api.inherit('Groceriesstatement',bo, {
+    'groceries_name' : fields.String(attribut='_groceries_name', description='Name eines Lebensmitells'),
+    'description' : fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittel'),
+    'quantity' : fields.Integer(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel')
+})
+
+household = api.inherit('Household',bo, {
+    'household_name' : fields.String(attribut='_household_name', description='Name eines Haushaltes')
+})
 

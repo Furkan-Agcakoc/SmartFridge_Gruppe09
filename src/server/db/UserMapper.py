@@ -127,11 +127,11 @@ class UserMapper (Mapper):
 
         return result
 
-    def find_by_google_user_id(self, google_user_id):
+    def find_by_google_user_id(self, user_id):
 
         result = None
         cursor = self._cnx.cursor()
-        command = "SELECT * from users WHERE google_user_id={}".format(google_user_id)
+        command = "SELECT * from users WHERE google_user_id={}".format(user_id)
         cursor.execute(command)
         tuples = cursor.fetchall()
 

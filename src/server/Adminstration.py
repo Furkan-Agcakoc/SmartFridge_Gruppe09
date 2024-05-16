@@ -208,13 +208,13 @@ class Adminstration(object):
        User Spezifische Methoden
     """
 
-    def create_user(self, firstname, lastname, nickname, email, user_id):
+    def create_user(self, firstname, lastname, nickname, email, google_user_id):
         user = User()
         user.set_firstname(firstname)
         user.set_lastname(lastname)
         user.set_nickname(nickname)
         user.set_email(email)
-        user.set_user_id(user_id)
+        user.set_user_id(google_user_id)
         user.set_id(1)
         with UserMapper() as mapper:
             return mapper.insert(user)
@@ -235,14 +235,19 @@ class Adminstration(object):
         with UserMapper() as mapper:
             return mapper.find_by_email(email)
 
-    def get_by_user_id(self, google_user_id):
+
+    def get_user_by_id(self,number):
         with UserMapper() as mapper:
-            return mapper.find_by_user_id(google_user_id)
+            return mapper.find_by_key(number)
+
+    def get_user_by_google_user_id(self, id):
+        with UserMapper() as mapper:
+            return mapper.find_by_google_user_id(id)
 
     def update_user(self, user):
         with UserMapper() as mapper:
             return mapper.update(user)
 
-    def delet_user(self, user):
+    def delete_user(self, user):
         with UserMapper() as mapper:
             return mapper.delet(user)
