@@ -2,15 +2,18 @@ from server.bo import BusinessObject as bo
 from server.bo import Quantity
 from server.bo import Groceries
 from server.bo import Measure
-class GroceriesStatement(bo.BusinessObject,Quantity,Groceries,Measure):
 
+class GroceriesStatement(bo.BusinessObject):
     def __init__(self):
         super().__init__()
+        self.quantity_obj = Quantity() # eventuelle Lösung, jedoch nciht aufrufbar stand jetzt
+        self.groceries_obj = Groceries()
+        self.measure_obj = Measure()
         self._groceries_name = ""
         self._description = ""
         self._quantity = 0.0
 
-    def conversion(value,unit_from,unit_to):
+    def conversion(self, value, unit_from, unit_to):
 
             if unit_from == "g" and unit_to == "kg":
                 return value / 1000
@@ -44,7 +47,7 @@ class GroceriesStatement(bo.BusinessObject,Quantity,Groceries,Measure):
 
 
     def get_description(self):
-        return self.description
+        return self._description
 
     def set_desription(self, new_description):
         self._description = new_description

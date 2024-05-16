@@ -15,11 +15,11 @@ from server.bo.Quantity import Quantity
 from server.bo.Recipe import Recipe
 from server.bo.User import User
 
-from SecurityDecorater import secured
+#Hier kommt noch import secured
 
 app = Flask(__name__)
 
-CORS(app,resources=r'/Smartfridge/*')
+CORS(app, resources=r'/Smartfridge/*')
 
 api = Api(app, version='1.0', title='Smartfridge API',
           description='Eine rudimentäre Demo-API für einen Smartfridge.')
@@ -27,47 +27,29 @@ api = Api(app, version='1.0', title='Smartfridge API',
 smartfridge = api.namespaces('Smartfridge',description='Funktion einer Smartfridge')
 
 bo = api.model('BusinessObject', {
-    'id' : fields.Integer(attribut='_id', description='Eindeutige Zuordnung von BusinessObjects')
+    'id': fields.Integer(attribute='_id', description='Der Unique Identifier eines Business Object'), #unique identifier = etwas eindeutiges?
 })
 
-fridge = api.inherit('Fridge',bo, {
-    'fridge_name' : fields.String(attribut='_fridge_name', description='Name eines Kühlschranks'),
-    'household' : fields.Integer(attribut='_household', description='Eindeutige Zuordnung des Kühlschrankes zu einem Haushalt')
+user = api.inherit('User', bo, {
+    'firstname': fields.String(attribute='_firstname', description='Vorname eines Benutzers'),
+    'lastname': fields.String(attribute='_lasttname', description='Nachname eines Benutzers'),
+    'nickname': fields.String(attribute='_nickname', description='Nickname eines Benutzers'),
+    'email': fields.String(attribute='_email', description='E-Mail-Adresse eines Benutzers'),
+    'user_id': fields.String(attribute='_user_id', description='Google User ID eines Benutzers')})
+
+fridge = api.inherit('Fridge', bo, {
+    'fridge_name': fields.String(attribute='_fridge_name', description='Name eines Kühlschranks'),
+    'household': fields.Integer(attribute='_household', description='Haushalt Id in welchem der Kühlschrank ist.'),  # so richitg weil Fremdschlüssel?
 })
 
-groceries = api.inherit('Groceries',bo, {
-    'groceries_name' : fields.String(attribut='_groceries_name', description='Name eines Lebensmitells'),
+
+recipe = api.inherit('Recipe', bo, {
+    'recipename': fields.String(attribute='_recipename', description='Name eines Rezepts'),
+    'portions': fields.Integer(attribute='_portions', description='Portionen eines Rezepts'),
+    'instructions': fields.String(attribute='_instrctions', description='Anleitung eines Rezepts'),
+    'duration': fields.String(attribute='_duration', description='Dauer eines Rezepts'),
 })
 
-groceriesstatement = api.inherit('Groceriesstatement',bo, {
-    'groceries_name' : fields.String(attribut='_groceries_name', description='Name eines Lebensmitells'),
-    'description' : fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittels'),
-    'quantity' : fields.Integer(attribut='_quantity', description='Die Mengenangabe eines Lebensmittels')
-})
-
-household = api.inherit('Household',bo, {
-    'household_name' : fields.String(attribut='_household_name', description='Name eines Haushaltes')
-})
-
-measure = api.inherit('Measure',bo, {
-    'description' : fields.string(attribut='_description', description='Die Maßeinheit eines Lebensmittels')
-})
-
-quantity = api.inherit('Quantity',bo, {
-    'quantity' : fields.string(attribut='_quantity', description='Die Mengenangabe eines Lebensmittels')
-})
-
-recipe = api.inherit('Recipe',bo, {
-    'recipe_name' : fields.string(attribut='_recipe_name', description='Name des Rezepts'),
-    'portions' : fields.string(attribut='_portions', description='Anzahl der Portionen'),
-    'instruction' : fields.string(attribut='_instruction', description='Anweisung zum Rezept'),
-    'duration' : fields.string(attribut='_duration', description='Dauer des Rezepts')
-})
-
-user = api.inherit('User',bo, {
-    'first_name' : fields.String(attribut='__first_name', description='Vorname des Users'),
-    'last_name' : fields.String(attribut='__last_name', description='Nachname des Users'),
-    'nickname' : fields.String(attribut='__nickname', description='Nickname des Users'),
-    'email' : fields.String(attribut='__email', description='Email des Users'),
-    'user_id' : fields.Integer(attribut='__user_id', description='Google-ID des Users')
+groceries = api.inherit('Groceries', bo, {
+    'groceries_name': fields.String(attribute='_groceries_name', description='Name eines Lebensmittels'),
 })

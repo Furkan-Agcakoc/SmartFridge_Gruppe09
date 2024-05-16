@@ -148,7 +148,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Baran','Kocabey','baranbey','bk115@hdm-stuttgart.de','GJyAC4Hsx1VVgu3ixb6irDtqsg12');
+INSERT INTO `users` VALUES (1,'Baran','Kocabey','baranbey','bk115@hdm-stuttgart.de','GJyAC4Hsx1VVgu3ixb6irDtqsg12'),(2,'Mustafa','Aslan','DerAslan','ma144@hdm-stuttgart.de','ewdjewidjidnenwdZEBeuhd23'),(3,'Sead','Shatrollli','Albaner','ss34@hdm-stuttgart.de','rfrefrefegre7897');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
