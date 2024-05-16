@@ -17,7 +17,7 @@ from server.db.RecipeMapper import RecipeMapper
 from server.db.UserMapper import UserMapper
 
 
-class Adminstration(object):
+class Adminstration():
 
     def __init__(self):
         pass
