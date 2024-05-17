@@ -244,6 +244,11 @@ class Adminstration():
         with UserMapper() as mapper:
             return mapper.find_by_google_user_id(id)
 
+
+    def get_all_users(self):
+        with UserMapper() as mapper:
+            return mapper.find_all()
+
     def update_user(self, user):
         with UserMapper() as mapper:
             return mapper.update(user)
