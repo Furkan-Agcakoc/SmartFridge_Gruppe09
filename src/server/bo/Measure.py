@@ -7,7 +7,7 @@ class Measure (bo.BusinessObject):
         self._description = ""
 
     def get_description(self):
-        return self.description
+        return self._description
 
     def set_desription(self, new_description):
         self._description = new_description
