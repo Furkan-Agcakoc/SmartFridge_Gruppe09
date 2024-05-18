@@ -118,6 +118,93 @@ class UserOperations(Resource):
 
 # Muss hier eventuell noch eine route mit Haushalt ? Create_Household_for_User
 
+'''''
+@smartfridge.route('/user/google_user_id/<string:google_user_id>')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('google_user_id', 'Die Google ID des User-Objekts')
+class GoogleOperations(Resource):
+    @smartfridge.marshal_with(user)
+    def get(self, google_user_id):
+
+        adm = Adminstration()
+        user = adm.get_user_by_google_user_id(google_user_id)
+
+        return user
+
+
+@smartfridge.route('/household')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+class HouseholdListOperations(Resource):
+    @smartfridge.marshal_list_with(Household)
+    @secured
+    def get(self):
+        adm = Adminstration()
+        household_list = adm.get_all_householdes()
+
+        if len(household_list) == 0:
+            return {'message': 'Liste ist leer'}
+
+        return household_list
+
+    @smartfridge.marshal_list_with(Household, code=200)
+    @smartfridge.expect(Household)
+
+    def post(self):
+
+        adm = Adminstration()
+        household = Household.from_dict(api.playload)
+
+        if household is not None:
+
+            house = adm.create_household(household)
+            return '', 200
+
+        else:
+            return '', 500
+
+@smartfridge.route('/household/<int:id>')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('id', 'Die ID des Haushalts.')
+class HouseholdOperations(Resource):
+    @smartfridge.marshal_with(Household)
+    @secured
+
+    def get(self, id):
+
+        adm = Adminstration()
+        household = adm.get_household_by_id(id)
+
+        if household is None:
+            return "Haushalt mit der ID " + str(id) + "wurde nicht gefunden."
+
+        return household, 200
+
+    def delet(self, id):
+
+        adm = Adminstration()
+        household = adm.get_household_by_id(id)
+
+        try:
+            adm.delete_household(household)
+            return '', 200
+        except Exception as a:
+            return  {'message': str(a)}, 500
+
+    @smartfridge.marshal_with(Household)
+    @smartfridge.expect(Household, validate=True)
+    def put(self, id):
+
+        adm = Adminstration()
+        house = Household.from_dict(api.payload)
+
+        if house is not None:
+            house.set_id(id)
+            adm.update_household(house)
+            return '', 200
+        else:
+            return '', 500
+'''  # Wenn man es ausführt kommt ein Fehler auf der API website??
+
 
 
 if __name__ == '__main__':
