@@ -190,7 +190,142 @@ class HouseholdOperations(Resource):
         else:
             return '', 500
 
+'''
+groceries
+'''
 
+@smartfridge.route('/groceries')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+class GroceriesListOperations(Resource):
+    @smartfridge.marshal_list_with(groceries)
+    @secured
+    def get(self):
+        adm = Adminstration()
+        groceries_list = adm.get_all_groceries()
+        return groceries_list
+
+    @smartfridge.marshal_with(groceries, code=200)
+    @smartfridge.expect(groceries)
+    @secured
+    def post(self):
+        adm = Adminstration()
+        groceries = Groceries.from_dict(api.payload)
+        if groceries is not None:
+            g = adm.create_groceries(groceries)
+            return g, 200
+        else:
+            return '', 500
+
+@smartfridge.route('/groceries/<int:id>')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('id', 'Die ID des Groceries-Objekts')
+class GroceriesOperations(Resource):
+    @smartfridge.marshal_with(groceries)
+    @secured
+    def get(self, id):
+        adm = Adminstration()
+        groceries = adm.get_groceries_by_id(id)
+        return groceries
+
+    @secured
+    def delete(self, id):
+        adm = Adminstration()
+        groceries = adm.get_groceries_by_id(id)
+        adm.delete_groceries(groceries)
+        return '', 200
+
+    @smartfridge.marshal_with(groceries)
+    @smartfridge.expect(groceries, validate=True)
+    @secured
+    def put(self, id):
+        adm = Adminstration()
+        g = Groceries.from_dict(api.payload)
+        if g is not None:
+            g.set_id(id)
+            adm.update_groceries(g)
+            return '', 200
+        else:
+            return '', 500
+
+@smartfridge.route('/groceries/groceries_name/<string:groceries_name>')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('groceries_name', 'Der name des grocerie-Objekts')
+class GroceriesNameOperations(Resource):
+    @smartfridge.marshal_with(groceries)
+    def get(self, groceries_name):
+        adm = Adminstration()
+        groceries = adm.get_groceries_by_name(groceries_name)
+        return groceries
+
+
+
+
+'''
+recipe
+'''
+
+@smartfridge.route('/recipe')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+class RecipeListOperations(Resource):
+    @smartfridge.marshal_list_with(recipe)
+    @secured
+    def get(self):
+        adm = Adminstration()
+        recipe_list = adm.get_all_recipes()
+        return recipe_list
+
+    @smartfridge.marshal_with(recipe, code=200)
+    @smartfridge.expect(recipe)
+    @secured
+    def post(self):
+        adm = Adminstration()
+        recipe = Recipe.from_dict(api.payload)
+        if recipe is not None:
+            r = adm.create_recipe(recipe)
+            return r, 200
+        else:
+            return '', 500
+
+@smartfridge.route('/recipe/<int:id>')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('id', 'Die ID des Recipe-Objekts')
+class RecipeOperations(Resource):
+    @smartfridge.marshal_with(recipe)
+    @secured
+    def get(self, id):
+        adm = Adminstration()
+        recipe = adm.get_recipe_by_id(id)
+        return recipe
+
+    @secured
+    def delete(self, id):
+        adm = Adminstration()
+        recipe = adm.get_recipe_by_id(id)
+        adm.delete_recipe(recipe)
+        return '', 200
+
+    @smartfridge.marshal_with(recipe)
+    @smartfridge.expect(recipe, validate=True)
+    @secured
+    def put(self, id):
+        adm = Adminstration()
+        r = Recipe.from_dict(api.payload)
+        if r is not None:
+            r.set_id(id)
+            adm.update_recipe(r)
+            return '', 200
+        else:
+            return '', 500
+
+@smartfridge.route('/recipe/recipe_name/<string:recipe_name>')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('recipe_name', 'Der name des recipe-Objekts')
+class RecipeNameOperations(Resource):
+    @smartfridge.marshal_with(recipe)
+    def get(self, recipe_name):
+        adm = Adminstration()
+        recipe = adm.get_recipe_by_name(recipe_name)
+        return recipe
 
 
 
