@@ -133,6 +133,8 @@ class Adminstration():
         with RecipeMapper() as mapper:
             mapper.delete(recipe)
 
+#recipe of user?
+
     """
     Groceries Spezifische Methoden
     """

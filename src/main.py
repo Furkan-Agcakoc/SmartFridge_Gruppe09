@@ -58,6 +58,12 @@ household = api.inherit('Household', bo, {
     'household_name': fields.String(attribute='_household_name', description='Name des Haushalts')
 })
 
+groceriesstatement = api.inherit('GroceriesStatement', bo, {
+    'groceries_name': fields.String(attribute='_groceries_name', description='Name eines Lebensmittels'),
+    'description' : fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittel'),
+    'quantity' : fields.Integer(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel')
+})
+
 '''
 User
 '''
@@ -326,6 +332,166 @@ class RecipeNameOperations(Resource):
         adm = Adminstration()
         recipe = adm.get_recipe_by_name(recipe_name)
         return recipe
+
+#recipe related to user ?
+
+"""
+fridge
+"""
+
+@smartfridge.route('/fridge')
+@smartfridge.response(500,'Falls es zu einem Server-seitigen Fehler kommt.')
+class FridgeListOperations(Resource):
+    @smartfridge.marshal_list_with(fridge)
+    @secured
+    def get(self):
+        adm = Adminstration()
+        fridge_list = adm.get_all_fridges()
+        return fridge_list
+
+@smartfridge.route('/fridge/<int:id>')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('id', 'Die ID des Fridge-Objekts')
+class FridgeOperations(Resource):
+    @smartfridge.marshal_list_with(fridge)
+    @secured
+    def get(self,id):
+
+        adm = Adminstration()
+        fri = adm.get_fridge_by_id(id)
+        return fri
+
+    @secured
+    def delete(self,id):
+
+        adm = Adminstration()
+        fri = adm.get_fridge_by_id(id)
+        adm.delete_fridge(fri)
+        return '',200
+
+    @smartfridge.marshal_with(fridge)
+    @secured
+    def put(self,id):
+
+        adm = Adminstration()
+        fri = Fridge.from_dict(api.payload)
+
+        if fri is not None:
+            fri.set_id(id)
+            adm.update_fridge(fri)
+            return '',200
+        else:
+            return '',500
+
+@smartfridge.route('/household/<int:id>/fridge')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('id', 'Die ID des Household-Objekts')
+class HouseholdRelatedFridgeOperations(Resource):
+    @smartfridge.marshal_with(fridge)
+    @secured
+    def get(self,id):
+        adm = Adminstration()
+        house = adm.get_household_by_id(id)
+
+        if house is not None:
+
+            fridge_list = adm.get_fridge_of_household(house)
+            return fridge_list
+        else:
+            return " Household not found", 500
+
+    @smartfridge.marshal_with(fridge, code=201)
+    @secured
+    def post(self,id):
+        adm = Adminstration()
+
+        house = adm.get_household_by_id(id)
+
+        if house is not None:
+            result = adm.create_fridge_of_household(house)
+            return result
+        else:
+            return "Household unkown", 500
+
+#Hier noch das gleiche mit Groceriesstatement related to fridge
+'''
+@smartfridge.route('/groceriesstatement/<int:id>/fridge')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('id', 'Die ID des Household-Objekts')
+class GroceriesstatementRelatedFridgeOperations(Resource):
+    @smartfridge.marshal_with(fridge)
+    @secured
+    def get(self,id):
+        adm = Adminstration()
+        gst = adm.get_groceriesstatement_by_id(id)
+
+        if gst is not None:
+
+            fridge_list = adm.get_groceriesstatement_by_fridge(gst)
+            return fridge_list
+        else:
+            return " Grocerie not found", 500
+
+    @smartfridge.marshal_with(fridge, code=201)
+    @secured
+    def post(self,id):
+        adm = Adminstration()
+
+        gst = adm.get_groceriesstatement_by_id(id)
+
+        if gst is not None:
+            result = adm.create_groceriesstatement_for_fridge(gst) #methode muss implementiert werden
+            return result
+        else:
+            return "Grocerie unkown", 500
+'''
+"""
+groceriesstatement
+"""
+@smartfridge.route('/groceriesstatement')
+@smartfridge.response(500,'Falls es zu einem Server-seitigen Fehler kommt.')
+class GroceriesstatementListOperations(Resource):
+    @smartfridge.marshal_list_with(groceriesstatement)
+    @secured
+    def get(self):
+        adm = Adminstration()
+        fridge_list = adm.get_all_fridges()
+        return fridge_list
+
+
+@smartfridge.route('/groceriesstatement/<int:id>')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('id', 'Die ID des Groceriesstatement-Objekts')
+class FridgeOperations(Resource):
+    @smartfridge.marshal_list_with(groceriesstatement)
+    @secured
+    def get(self,id):
+
+        adm = Adminstration()
+        gst = adm.get_groceriesstatement_by_id(id)
+        return gst
+
+    @secured
+    def delete(self,id):
+
+        adm = Adminstration()
+        gst = adm.get_groceriesstatement_by_id(id)
+        adm.delete_groceriesstatement(gst)
+        return '',200
+
+    @smartfridge.marshal_with(groceriesstatement)
+    @secured
+    def put(self,id):
+
+        adm = Adminstration()
+        gst = GroceriesStatement.from_dict(api.payload)
+
+        if gst is not None:
+            gst.set_id(id)
+            adm.update_groceriesstatement(gst)
+            return '',200
+        else:
+            return '',500
 
 
 
