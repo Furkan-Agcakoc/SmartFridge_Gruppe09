@@ -2,7 +2,6 @@ from server.bo.Fridge import Fridge
 from server.bo.Groceries import Groceries
 from server.bo.GroceriesStatement import GroceriesStatement
 from server.bo.Household import Household
-from server.bo.User import User
 from server.bo.Measure import Measure
 from server.bo.Quantity import Quantity
 from server.bo.Recipe import Recipe
@@ -12,7 +11,6 @@ from server.db.FridgeMapper import FridgeMapper
 from server.db.GroceriesMapper import GroceriesMapper
 from server.db.GroceriesStatementMapper import GroceriesStatementMapper
 from server.db.HouseholdMapper import HouseholdMapper
-from server.db.UserMapper import UserMapper
 from server.db.RecipeMapper import RecipeMapper
 from server.db.UserMapper import UserMapper
 

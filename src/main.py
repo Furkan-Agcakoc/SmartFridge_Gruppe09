@@ -191,6 +191,88 @@ class HouseholdOperations(Resource):
             return '', 500
 
 
+'''
+Fridge
+'''
+@smartfridge.route('/fridge')
+@smartfridge.response(500,'Falls es zu einem Server-seitigen Fehler kommt.')
+class FridgeListOperations(Resource):
+    @smartfridge.marshal_list_with(fridge)
+    @secured
+    def get(self):
+
+        adm = Adminstration()
+        fridge_list = adm.get_all_fridges()
+        return fridge_list
+
+@smartfridge.route('/fridge/<int:id>')
+@smartfridge.response(500,'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('id', 'Die ID des Fridge-Objekts')
+class FridgeOperations(Resource):
+    @smartfridge.marshal_with(fridge)
+    @secured
+    def get(self,id):
+
+        adm = Adminstration()
+        fri = adm.get_fridge_by_id(id)
+        return fri
+
+    @secured
+    def delete(self,id):
+
+        adm = Adminstration()
+        fri = adm.get_fridge_by_id(id)
+        adm.delete_fridge(fri)
+        return '',200
+
+    @smartfridge.marshal_list_with(fridge)
+    @secured
+    def put(self,id):
+
+        adm = Adminstration()
+        fri = Fridge.from_dict(api.payload)
+
+        if fri is not None:
+
+            fri.set_id(id)
+            adm.update_fridge(fri)
+            return '', 200
+        else:
+            return '', 500
+
+@smartfridge.route('/household/<int:id>/fridge')
+@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.param('id', 'Die ID des household-Objekts')
+class HouseholdRelatedFridgeOperations(Resource):
+    @smartfridge.marshal_with(fridge)
+    @secured
+    def get(self,id):
+        adm = Adminstration()
+        house = adm.get_household_by_id(id)
+
+        if house is not None:
+            fridge_list = adm.get_fridge_of_household(house)
+            return fridge_list
+        else:
+            return "Haushalt wurde nicht gefunden", 500
+
+
+    @smartfridge.marshal_with(fridge, code=201)
+    @secured
+    def post(self,id):
+
+        adm = Adminstration()
+
+        house = adm.get_household_by_id(id)
+
+        if house is not None:
+            result = adm.create_fridge_of_household(house)
+            return result
+        else:
+            return "Household unknown",500
+
+
+
 
 
 
