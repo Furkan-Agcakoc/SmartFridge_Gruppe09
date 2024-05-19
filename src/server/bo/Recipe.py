@@ -8,6 +8,8 @@ class Recipe (bo.BusinessObject):
         self._portions = 0
         self._instruction = ""
         self._duration = ""
+        self._user_id = 0
+        self._groceriesstatement_id = 0
 
 
     def get_recipe_name(self):
@@ -34,6 +36,20 @@ class Recipe (bo.BusinessObject):
     def set_duration(self, new_duration):
         self._duration = new_duration
 
+    def get_user_id(self):
+        return self._user_id
+
+    def set_user_id(self, user_id):
+        self._user_id = user_id
+
+    def get_groceriesstatement_id(self):
+        return self._groceriesstatement_id
+
+    def set_groceriesstatement_id(self, groceriesstatement_id):
+        self._groceriesstatement_id = groceriesstatement_id
+
+
+
     @staticmethod
     def from_dict(dictionary=dict()):
         obj = Recipe()
@@ -42,5 +58,6 @@ class Recipe (bo.BusinessObject):
         obj.set_portions(dictionary["portions"])
         obj.set_instruction(dictionary["instruction"])
         obj.set_duration(dictionary["duration"])
+
         return obj
 

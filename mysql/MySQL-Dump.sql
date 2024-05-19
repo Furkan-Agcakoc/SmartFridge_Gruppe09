@@ -110,7 +110,10 @@ CREATE TABLE `groceriesstatement` (
   `groceries_name` varchar(100) NOT NULL DEFAULT '',
   `description` varchar(1024) NOT NULL DEFAULT '',
   `quantity` float NOT NULL DEFAULT '0',
+  `user_id` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
+  KEY `user_id_idx` (`user_id`),
+  CONSTRAINT `household_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -120,7 +123,7 @@ CREATE TABLE `groceriesstatement` (
 
 LOCK TABLES `groceriesstatement` WRITE;
 /*!40000 ALTER TABLE `groceriesstatement` DISABLE KEYS */;
-INSERT INTO `groceriesstatement` VALUES (1,'Zucker','g',7),(2,'Erdbeere','Stück',8),(3,'Nutella','gramm',20),(4,'Wasser','liter',3);
+INSERT INTO `groceriesstatement` VALUES (1,'Zucker','g',7,1),(2,'Erdbeere','Stück',8,2),(3,'Nutella','gramm',20,3),(4,'Wasser','liter',3,1);
 /*!40000 ALTER TABLE `groceriesstatement` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -181,8 +184,8 @@ CREATE TABLE `recipe` (
 LOCK TABLES `recipe` WRITE;
 /*!40000 ALTER TABLE `recipe` DISABLE KEYS */;
 INSERT INTO `recipe` (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) VALUES
-(1, 'Döner', '40 Minuten', 2, 'Schritt 1: Hände waschen. Schritt 2: Brot vorbereiten', 0, 0),
-(2, 'Mercimek Suppe', '15 Minuten', 1, 'Schritt 1: Hände waschen. Schritt 2: Wasser kochen.', 0, 0);
+(1, 'Döner', '40 Minuten', 2, 'Schritt 1: Hände waschen. Schritt 2: Brot vorbereiten', 1, 0),
+(2, 'Mercimek Suppe', '15 Minuten', 1, 'Schritt 1: Hände waschen. Schritt 2: Wasser kochen.', 2, 0);
 /*!40000 ALTER TABLE `recipe` ENABLE KEYS */;
 UNLOCK TABLES;
 

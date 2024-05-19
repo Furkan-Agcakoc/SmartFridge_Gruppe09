@@ -12,6 +12,7 @@ class GroceriesStatement(bo.BusinessObject):
         self._groceries_name = ""
         self._description = ""
         self._quantity = 0.0
+        self._user_id = 0
 
     def conversion(self, value, unit_from, unit_to):
 
@@ -51,3 +52,19 @@ class GroceriesStatement(bo.BusinessObject):
 
     def set_desription(self, new_description):
         self._description = new_description
+
+    def get_user_id(self):
+        return self._user_id
+
+    def set_user_id(self, user_id):
+        self._user_id = user_id
+
+    @staticmethod
+    def from_dict (dictionary=dict()):
+        obj = GroceriesStatement()
+        obj.set_id(dictionary["id"])
+        obj.set_groceries_name(dictionary["household_name"])
+        obj.set_desription(dictionary["description"])
+        obj.set_quantity(dictionary["quantity"])
+        obj.set_user_id(dictionary["user_id"])
+        return obj
