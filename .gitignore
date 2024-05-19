@@ -126,7 +126,7 @@ node_modules
 # testing
 /frontend/coverage
 
-# ocumentation
+# documentation
 /frontend/styleguide
 
 # production
@@ -143,7 +143,6 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-frontend/package-lock.json
 
 #Default ignored files
 /shelf/

@@ -12,8 +12,15 @@ import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlin
 import Alert from "@mui/material/Alert";
 import { Box } from "@mui/material";
 import { IconButton } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
+import EditIcon from "@mui/icons-material/Edit";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import ArchiveIcon from "@mui/icons-material/Archive";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ListItemIcon from "@mui/material/ListItemIcon";
 
 class Household extends Component {
   constructor(props) {
@@ -24,6 +31,7 @@ class Household extends Component {
       households: [],
       currentName: "",
       showAlert: false,
+      anchorEl: null,
     };
 
     this.emails = [
@@ -70,8 +78,19 @@ class Household extends Component {
     this.setState({ showAlert: false });
   };
 
+  handleAnchorClick = (event) => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleAnchorClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
+
   render() {
     const { households, popupOpen, showAlert } = this.state;
+    const { anchorEl } = this.state;
+    const open = Boolean(anchorEl);
 
     const householdBoxes = households.map((currentName, index) => (
       <Box key={index}>
@@ -89,7 +108,6 @@ class Household extends Component {
               height: "125px",
               borderRadius: "10px",
               boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-              border: "5px solid red",
             }}
           >
             <IconButton
@@ -115,12 +133,12 @@ class Household extends Component {
                 width: "200px",
                 maxWidth: "200px",
                 height: "125px",
-              }}
+             }}
             >
               {currentName}
             </Typography>
-          </Box>
-        </Link>
+          </Link>
+        </Box>
       </Box>
     ));
     return (

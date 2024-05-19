@@ -13,10 +13,11 @@ class FridgeMapper (Mapper):
         cursor.execute("SELECT * FROM fridge")
         tuples = cursor.fetchall()
 
-        for (id,fridge_name) in tuples:
+        for (id,fridge_name,household) in tuples:
             fridge = Fridge()
             fridge.set_id(id)
             fridge.set_fridge_name(fridge_name)
+            fridge.set_household(household)
             result.append(fridge)
 
         self._cnx.commit() #alle änderungen wurden dauerhaft gemacht
@@ -24,17 +25,38 @@ class FridgeMapper (Mapper):
 
         return result
 
-    def find_by_fride_name(self, fride_name):
+    def find_by_fride_name(self, fride_name,household):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id,fridge_name FROM fridge LIKE fridge_name={} ORDER BY id".format(fride_name)
+        command = "SELECT id,fridge_name,household FROM fridge LIKE fridge_name={} ORDER BY id".format(fride_name)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id,fridge_name) in tuples:
+        for (id,fridge_name,household) in tuples:
             fridge = Fridge()
             fridge.set_id(id)
             fridge.set_fridge_name(fridge_name)
+            fridge.set_household(household)
+            result.append(fridge)
+
+            self._cnx.commit()
+            cursor.close()
+
+            return result
+
+
+    def find_by_household_id(self,household):
+        result = []
+        cursor = self._cnx.cursor()
+        command = "SELECT id,fridge_name,household FROM fridge WHERE household={} ORDER BY id".format(household)
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+
+        for (id,fridge_name,household) in tuples:
+            fridge = Fridge()
+            fridge.set_id(id)
+            fridge.set_fridge_name(fridge_name)
+            fridge.set_household(household)
             result.append(fridge)
 
             self._cnx.commit()
@@ -47,15 +69,16 @@ class FridgeMapper (Mapper):
         result = None
 
         cursor = self._cnx.cursor()
-        command = "SELECT id,fridge_name FROM fridge WHERE id={}".format(key)
+        command = "SELECT id,fridge_name,household FROM fridge WHERE id={}".format(key)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
         if tuples[0] is not None:
-            (id,fridge_name) = tuples[0]
+            (id,fridge_name,household) = tuples[0]
             fridge = Fridge()
             fridge.set_id(id)
             fridge.set_fridge_name(fridge_name)
+            fridge.set_household(household)
 
         result = fridge
 
@@ -74,7 +97,7 @@ class FridgeMapper (Mapper):
         for (maxid) in tuples:
             fridge.set_id(maxid[0]+1)
 
-        command = "INSERT INTO fridge (id,fridge_name) VALUES (%s,%s)"
+        command = "INSERT INTO fridge (id,fridge_name,household) VALUES (%s,%s)"
         data = (fridge.get_id(), fridge.get_fridge_name())
         cursor.execute(command,data)
 
@@ -86,7 +109,7 @@ class FridgeMapper (Mapper):
 
         cursor = self._cnx.cursor()
 
-        command = "UPDATE fridge " + "SET fridge_name=%s WHERE id=%s"
+        command = "UPDATE fridge " + "SET fridge_name=%s, household = %s WHERE id=%s"
         data = (fridge.get_id(), fridge.get_fridge_name())
         cursor.execute(command, data)
 
