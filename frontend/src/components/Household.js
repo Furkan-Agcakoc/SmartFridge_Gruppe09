@@ -89,6 +89,7 @@ class Household extends Component {
               height: "125px",
               borderRadius: "10px",
               boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+              border: "5px solid red",
             }}
           >
             <IconButton
@@ -145,9 +146,12 @@ class Household extends Component {
           >
             <Typography
               variant="h5"
-              fontSize={"27px"}
+              fontSize={"24.2px"}
               fontWeight={600}
-              sx={{ color: "third.main" }}
+              sx={{
+                color: "third.main",
+                width: "1000px",
+              }}
             >
               Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
               deine Lebensmittel!
@@ -158,7 +162,7 @@ class Household extends Component {
                 width: "100%",
                 justifyContent: "flex-start",
                 gap: "50px",
-                maxWidth: "950px",
+                maxWidth: "1000px",
                 flexWrap: "wrap",
                 paddingBottom: "200px",
               }}
@@ -185,7 +189,7 @@ class Household extends Component {
                     arrow
                   >
                     <AddHomeOutlinedIcon
-                      sx={{ width: "6vh", height: "auto" }}
+                      sx={{ width: "75px", height: "auto" }}
                     />
                   </Tooltip>
                 </Box>
@@ -219,14 +223,18 @@ class Household extends Component {
                       display: "flex",
                       flexDirection: "column",
                       padding: "0 30px 50px 30px",
-                      borderRadius: "50px",
-                      fontSize: "18px",
+                      borderRadius: "40px",
+                      fontSize: "17px",
                       // fontFamily: "Arial, Helvetica, sans-serif",
                     }}
                   >
                     <Typography
                       variant="h4"
-                      sx={{ marginBottom: "20px", marginTop: "20px" }}
+                      sx={{
+                        marginBottom: "20px",
+                        marginTop: "20px",
+                        fontWeight: 600,
+                      }}
                     >
                       Neuen Haushalt hinzufügen
                     </Typography>

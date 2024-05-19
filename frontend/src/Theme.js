@@ -21,7 +21,6 @@ const theme = createTheme({
       default: "#f2f2f2", //light grey
       paper: "#fbfbfb", //light grey
       card: "#fbfbfb", //light grey
-
     },
     error: {
       main: "#c50000",
@@ -36,8 +35,17 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: ["Merriweather", "Verdana", "serif"],
-  
+    fontFamily: [
+      "Segoe UI",
+      "Roboto",
+      "Oxygen",
+      "Ubuntu",
+      "Cantarell",
+      "Fira Sans",
+      "Droid Sans",
+      "Helvetica Neue",
+      "sans-serif",
+    ],
 
     button: {
       fontWeight: 600,
@@ -45,10 +53,16 @@ const theme = createTheme({
       lineHeight: 1.6,
     },
   },
-
   shape: {
     borderRadius: 20,
   },
+  props: {
+    MuiTooltip: {
+      arrow: true,
+      placement: "bottom",
+    },
+  },
+
   // palette: {
   //   primary: {
   //     main: "#13a88a",
