@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Typography from "@mui/material/Typography";
-import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
+import AddHomeWorkRoundedIcon from "@mui/icons-material/AddHomeWorkRounded";
+// import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
 import Tooltip from "@mui/material/Tooltip";
 import { Link } from "react-router-dom";
 // import { useState } from "react";
@@ -86,7 +87,6 @@ class Household extends Component {
     this.setState({ anchorEl: null });
   };
 
-
   render() {
     const { households, popupOpen, showAlert } = this.state;
     const { anchorEl } = this.state;
@@ -107,6 +107,9 @@ class Household extends Component {
             height: "125px",
             borderRadius: "10px",
             boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+            "&:hover": {
+              border: "0.1px solid #13a88a",
+            },
           }}
         >
           <IconButton
@@ -124,7 +127,7 @@ class Household extends Component {
               height: "20px",
             }}
           >
-            <MoreVertIcon />
+            <MoreVertIcon sx={{ color: "background.default" }} />
           </IconButton>
 
           <Menu
@@ -135,7 +138,6 @@ class Household extends Component {
             anchorEl={anchorEl}
             open={open}
             onClose={this.handleAnchorClose}
-
           >
             <MenuItem
               onClick={this.handleAnchorClose}
@@ -180,7 +182,6 @@ class Household extends Component {
             </MenuItem>
           </Menu>
           <Link to={`/home/${index}`} style={{ textDecoration: "none" }}>
-
             <Typography
               variant="h5"
               sx={{
@@ -191,7 +192,7 @@ class Household extends Component {
                 width: "200px",
                 maxWidth: "200px",
                 height: "125px",
-             }}
+              }}
             >
               {currentName}
             </Typography>
@@ -222,9 +223,12 @@ class Household extends Component {
           >
             <Typography
               variant="h5"
-              fontSize={"27px"}
+              fontSize={"24.2px"}
               fontWeight={600}
-              sx={{ color: "third.main" }}
+              sx={{
+                color: "third.main",
+                width: "1000px",
+              }}
             >
               Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
               deine Lebensmittel!
@@ -235,7 +239,7 @@ class Household extends Component {
                 width: "100%",
                 justifyContent: "flex-start",
                 gap: "50px",
-                maxWidth: "950px",
+                maxWidth: "1000px",
                 flexWrap: "wrap",
                 paddingBottom: "200px",
               }}
@@ -243,26 +247,30 @@ class Household extends Component {
               <Link onClick={this.openPopup}>
                 <Box
                   sx={{
-                    width: "200px",
-                    height: "125px",
-                    borderRadius: "10px",
-                    boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-                    backgroundColor: "primary.light",
-                    display: "flex",
-                    justifyContent: "center",
-                    color: "background.default",
-                    "&:hover": {
-                      color: "primary.main",
-                    },
-                  }}
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "200px",
+                          height: "125px",
+                          borderRadius: "10px",
+                          boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                          backgroundColor: "transparent",
+                          color: "primary.main",
+                          border: "3px solid #13a88a",
+                          "&:hover": {
+                            color: "success.dark",
+                            backgroundColor: "rgba(29, 151, 35, 0.2)",
+                            border: "3px solid #06871D",
+                          },
+                        }}
                 >
                   <Tooltip
                     title="Neuen Haushalt hinzufügen"
                     placement="bottom"
                     arrow
                   >
-                    <AddHomeOutlinedIcon
-                      sx={{ width: "6vh", height: "auto" }}
+                    <AddHomeWorkRoundedIcon
+                      sx={{ width: "75px", height: "auto" }}
                     />
                   </Tooltip>
                 </Box>
@@ -303,7 +311,11 @@ class Household extends Component {
                   >
                     <Typography
                       variant="h4"
-                      sx={{ marginBottom: "20px", marginTop: "20px" }}
+                      sx={{
+                        marginBottom: "20px",
+                        marginTop: "20px",
+                        fontWeight: 600,
+                      }}
                     >
                       Neuen Haushalt hinzufügen
                     </Typography>
