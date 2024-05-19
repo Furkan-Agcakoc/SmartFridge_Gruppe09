@@ -2,7 +2,7 @@ from server.bo import BusinessObject as bo
 
 class Recipe (bo.BusinessObject):
 
-    def __int__(self):
+    def __init__(self):
         super().__init__()
         self._recipe_name = ""
         self._portions = 0

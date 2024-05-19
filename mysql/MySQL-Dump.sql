@@ -37,7 +37,7 @@ CREATE TABLE `fridge` (
 
 LOCK TABLES `fridge` WRITE;
 /*!40000 ALTER TABLE `fridge` DISABLE KEYS */;
-INSERT INTO `fridge` VALUES (1,'Fridge1',1);
+INSERT INTO `fridge` VALUES (1,'Fridge1',1), (2,'Fridge2',2), (3,'Fridge3',3);
 /*!40000 ALTER TABLE `fridge` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +93,7 @@ CREATE TABLE `household` (
 
 LOCK TABLES `household` WRITE;
 /*!40000 ALTER TABLE `household` DISABLE KEYS */;
-INSERT INTO `household` VALUES (1,'Haus von Sead',1,1),(2,'FamilieAslan',1,1),(3,'KocaHaus',1,1);
+INSERT INTO `household` VALUES (1,'Haus von Sead',3,1),(2,'FamilieAslan',2,2),(3,'KocaHaus',1,3);
 /*!40000 ALTER TABLE `household` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -185,8 +185,8 @@ CREATE TABLE `recipe` (
 LOCK TABLES `recipe` WRITE;
 /*!40000 ALTER TABLE `recipe` DISABLE KEYS */;
 INSERT INTO `recipe` (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) VALUES
-(1, 'Döner', '40 Minuten', 2, 'Schritt 1: Hände waschen. Schritt 2: Brot vorbereiten', 1, 0),
-(2, 'Mercimek Suppe', '15 Minuten', 1, 'Schritt 1: Hände waschen. Schritt 2: Wasser kochen.', 2, 0);
+(1, 'Döner', '40 Minuten', 2, 'Schritt 1: Hände waschen. Schritt 2: Brot vorbereiten', 1, 1),
+(2, 'Mercimek Suppe', '15 Minuten', 1, 'Schritt 1: Hände waschen. Schritt 2: Wasser kochen.', 2, 3);
 /*!40000 ALTER TABLE `recipe` ENABLE KEYS */;
 UNLOCK TABLES;
 
