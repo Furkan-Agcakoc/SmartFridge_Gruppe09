@@ -105,17 +105,18 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `groceriesstatement`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `groceriesstatement` (
   `id` int NOT NULL DEFAULT '0',
   `groceries_name` varchar(100) NOT NULL DEFAULT '',
   `description` varchar(1024) NOT NULL DEFAULT '',
   `quantity` float NOT NULL DEFAULT '0',
   `user_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
   KEY `user_id_idx` (`user_id`),
-  CONSTRAINT `household_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `groceriesstatement_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
 
 --
 -- Dumping data for table `groceriesstatement`
