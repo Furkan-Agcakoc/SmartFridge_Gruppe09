@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Typography from "@mui/material/Typography";
-import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
+import AddHomeWorkRoundedIcon from "@mui/icons-material/AddHomeWorkRounded";
+// import AddHomeOutlinedIcon from "@mui/icons-material/AddHomeOutlined";
 import Tooltip from "@mui/material/Tooltip";
 import { Link } from "react-router-dom";
 // import { useState } from "react";
@@ -86,7 +87,6 @@ class Household extends Component {
     this.setState({ anchorEl: null });
   };
 
-
   render() {
     const { households, popupOpen, showAlert } = this.state;
     const { anchorEl } = this.state;
@@ -94,35 +94,94 @@ class Household extends Component {
 
     const householdBoxes = households.map((currentName, index) => (
       <Box key={index}>
-        <Link to={`/home/${index}`} style={{ textDecoration: "none" }}>
-          <Box
-            sx={{
-              position: "relative",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "primary.light",
-              color: "background.default",
-              width: "200px",
-              maxWidth: "200px",
-              height: "125px",
-              borderRadius: "10px",
-              boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+        <Box
+          sx={{
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "primary.light",
+            color: "background.default",
+            width: "200px",
+            maxWidth: "200px",
+            height: "125px",
+            borderRadius: "10px",
+            boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+            "&:hover": {
+              border: "0.1px solid #13a88a",
+            },
+          }}
+        >
+          <IconButton
+            aria-label="more"
+            id="long-button"
+            aria-controls={open ? "long-menu" : undefined}
+            aria-expanded={open ? "true" : undefined}
+            aria-haspopup="true"
+            onClick={this.handleAnchorClick}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              width: "20px",
+              height: "20px",
             }}
           >
-            <IconButton
-              aria-label="Example"
-              style={{
-                position: "absolute",
-                top: "10px",
-                right: "10px",
-                width: "20px",
-                height: "20px",
-              }}
-            >
-              <FontAwesomeIcon icon={faEllipsisV} />
-            </IconButton>
+            <MoreVertIcon sx={{ color: "background.default" }} />
+          </IconButton>
 
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              "aria-labelledby": "long-button",
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={this.handleAnchorClose}
+          >
+            <MenuItem
+              onClick={this.handleAnchorClose}
+              className="menu-item"
+              disableRipple
+            >
+              <ListItemIcon>
+                <EditIcon />
+              </ListItemIcon>
+              Edit
+            </MenuItem>
+            <MenuItem
+              onClick={this.handleAnchorClose}
+              className="menu-item"
+              disableRipple
+            >
+              <ListItemIcon>
+                <FileCopyIcon />
+              </ListItemIcon>
+              Duplicate
+            </MenuItem>
+            <Divider sx={{ my: 0.5 }} />
+            <MenuItem
+              onClick={this.handleAnchorClose}
+              className="menu-item"
+              disableRipple
+            >
+              <ListItemIcon>
+                <ArchiveIcon />
+              </ListItemIcon>
+              Archive
+            </MenuItem>
+            <MenuItem
+              onClick={this.handleAnchorClose}
+              className="menu-item"
+              disableRipple
+            >
+              <ListItemIcon>
+                <MoreHorizIcon />
+              </ListItemIcon>
+              More
+            </MenuItem>
+          </Menu>
+          <Link to={`/home/${index}`} style={{ textDecoration: "none" }}>
             <Typography
               variant="h5"
               sx={{
@@ -133,7 +192,7 @@ class Household extends Component {
                 width: "200px",
                 maxWidth: "200px",
                 height: "125px",
-             }}
+              }}
             >
               {currentName}
             </Typography>
@@ -188,25 +247,29 @@ class Household extends Component {
               <Link onClick={this.openPopup}>
                 <Box
                   sx={{
-                    width: "200px",
-                    height: "125px",
-                    borderRadius: "10px",
-                    boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-                    backgroundColor: "primary.light",
-                    display: "flex",
-                    justifyContent: "center",
-                    color: "background.default",
-                    "&:hover": {
-                      color: "primary.main",
-                    },
-                  }}
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "200px",
+                          height: "125px",
+                          borderRadius: "10px",
+                          boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                          backgroundColor: "transparent",
+                          color: "primary.main",
+                          border: "3px solid #13a88a",
+                          "&:hover": {
+                            color: "success.dark",
+                            backgroundColor: "rgba(29, 151, 35, 0.2)",
+                            border: "3px solid #06871D",
+                          },
+                        }}
                 >
                   <Tooltip
                     title="Neuen Haushalt hinzufügen"
                     placement="bottom"
                     arrow
                   >
-                    <AddHomeOutlinedIcon
+                    <AddHomeWorkRoundedIcon
                       sx={{ width: "75px", height: "auto" }}
                     />
                   </Tooltip>
@@ -241,8 +304,8 @@ class Household extends Component {
                       display: "flex",
                       flexDirection: "column",
                       padding: "0 30px 50px 30px",
-                      borderRadius: "40px",
-                      fontSize: "17px",
+                      borderRadius: "50px",
+                      fontSize: "18px",
                       // fontFamily: "Arial, Helvetica, sans-serif",
                     }}
                   >
