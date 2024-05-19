@@ -2,7 +2,7 @@ from server.bo import BusinessObject as bo
 
 class Groceries (bo.BusinessObject):
 
-    def __int__(self):
+    def __init__(self):
         super().__init__()
         self._groceries_name = ""
         self._user_id = 0 #fremdschlüssel
