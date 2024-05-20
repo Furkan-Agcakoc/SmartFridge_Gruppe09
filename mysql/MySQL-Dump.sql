@@ -24,9 +24,12 @@ DROP TABLE IF EXISTS `fridge`;
 CREATE TABLE `fridge` (
   `id` int NOT NULL DEFAULT '0',
   `fridge_name` varchar(100) NOT NULL DEFAULT '',
+  `household_id` int NOT NULL DEFAULT '0',
   `groceriesstatement_id` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  KEY `household_id_idx` (`household_id`),
   KEY `groceriesstatement_id_idx` (`groceriesstatement_id`),
+  CONSTRAINT `household_fk` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `household` (`id`),
   CONSTRAINT `fridge_groceriesstatement_fk` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -37,7 +40,7 @@ CREATE TABLE `fridge` (
 
 LOCK TABLES `fridge` WRITE;
 /*!40000 ALTER TABLE `fridge` DISABLE KEYS */;
-INSERT INTO `fridge` VALUES (1,'Fridge1',1), (2,'Fridge2',2), (3,'Fridge3',3);
+INSERT INTO `fridge` VALUES (1,'Fridge1',1, 2), (2,'Fridge2',2, 2), (3,'Fridge3',3, 2);
 /*!40000 ALTER TABLE `fridge` ENABLE KEYS */;
 UNLOCK TABLES;
 

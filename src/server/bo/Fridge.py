@@ -5,20 +5,20 @@ class Fridge (bo.BusinessObject):
     def __init__(self):
         super().__init__()
         self._fridge_name = ""
-        self._household = "" #fremdschlüsselbeziehung
+        self._household_id = 0 #fremdschlüsselbeziehung
         self._groceriesstatement_id = 0
 
     def get_fridge_name(self):
         return self._fridge_name
 
-    def set_fridge_name(self,new_name):
+    def set_fridge_name(self, new_name):
         self._fridge_name = new_name
 
-    def get_household(self):
+    def get_household_id(self):
         return self._household
 
-    def set_household(self,household):
-        self._household = household
+    def set_household_id(self, household_id):
+        self._household = household_id
 
     def get_groceriesstatement_id(self):
         return self._groceriesstatement_id

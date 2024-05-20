@@ -6,9 +6,9 @@ from server.bo import Measure
 class GroceriesStatement(bo.BusinessObject):
     def __init__(self):
         super().__init__()
-        self.quantity_obj = Quantity() # eventuelle Lösung, jedoch nciht aufrufbar stand jetzt
-        self.groceries_obj = Groceries()
-        self.measure_obj = Measure()
+        #self.quantity_obj = Quantity() # eventuelle Lösung, jedoch nciht aufrufbar stand jetzt
+        #self.groceries_obj = Groceries()
+        #self.measure_obj = Measure()
         self._groceries_name = ""
         self._description = ""
         self._quantity = 0.0
@@ -50,7 +50,7 @@ class GroceriesStatement(bo.BusinessObject):
     def get_description(self):
         return self._description
 
-    def set_desription(self, new_description):
+    def set_description(self, new_description):
         self._description = new_description
 
     def get_user_id(self):
@@ -64,7 +64,7 @@ class GroceriesStatement(bo.BusinessObject):
         obj = GroceriesStatement()
         obj.set_id(dictionary["id"])
         obj.set_groceries_name(dictionary["household_name"])
-        obj.set_desription(dictionary["description"])
+        obj.set_description(dictionary["description"])
         obj.set_quantity(dictionary["quantity"])
         obj.set_user_id(dictionary["user_id"])
         return obj
