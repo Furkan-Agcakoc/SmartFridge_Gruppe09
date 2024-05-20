@@ -2,7 +2,7 @@ from flask import request
 from google.auth.transport import requests
 import google.oauth2.id_token
 
-from server.Adminstration import Adminstration
+from server.Administration import Administration
 
 
 def secured(function):
@@ -38,7 +38,7 @@ def secured(function):
                     id_token, firebase_request_adapter)
 
                 if claims is not None:
-                    adm = Adminstration()
+                    adm = Administration()
 
                     google_user_id = claims.get("user_id")
                     email = claims.get("email")

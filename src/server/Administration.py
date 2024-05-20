@@ -2,8 +2,6 @@ from server.bo.Fridge import Fridge
 from server.bo.Groceries import Groceries
 from server.bo.GroceriesStatement import GroceriesStatement
 from server.bo.Household import Household
-from server.bo.Measure import Measure
-from server.bo.Quantity import Quantity
 from server.bo.Recipe import Recipe
 from server.bo.User import User
 
@@ -15,7 +13,7 @@ from server.db.RecipeMapper import RecipeMapper
 from server.db.UserMapper import UserMapper
 
 
-class Adminstration():
+class Administration():
 
     def __init__(self):
         pass
@@ -25,6 +23,13 @@ class Adminstration():
     """
 
     def create_fridge_of_household(self, fridge_name, household):
+
+        existing_fridge = self.get_fridge_of_household(household)
+
+        if existing_fridge:
+            print("Kühlschrank besteht schon")
+            return None
+
         fridge = Fridge()
         fridge.set_fridge_name(fridge_name)
         fridge.set_household(household.get_id())
@@ -43,7 +48,7 @@ class Adminstration():
 
     def get_fridge_of_household(self, household):  # müssen die logik prüfen
         with FridgeMapper() as mapper:
-            return mapper.find_by_household_id(household.get_id())
+            return mapper.find_by_household_id(household.get_id()) #prüfen
 
     def get_all_fridges(self):
         with FridgeMapper() as mapper:
@@ -198,7 +203,7 @@ class Adminstration():
 
     def get_groceriesstatement_by_fridge(self,fridge):
         with GroceriesStatementMapper() as mapper:
-            mapper.find_by_fridge_id(fridge.get_id(fridge))
+            return mapper.find_by_fridge_id(fridge.get_id(fridge)) #prüfen
 
     def update_groceriesstatement(self, groceriesstatement):
         with GroceriesStatementMapper() as mapper:
@@ -260,3 +265,4 @@ class Adminstration():
     def delete_user(self, user):
         with UserMapper() as mapper:
             return mapper.delet(user)
+
