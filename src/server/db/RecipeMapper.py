@@ -239,7 +239,7 @@ class RecipeMapper (Mapper):
 
         command = "INSERT INTO recipe (id, recipe_name, duration, portions, instruction, user_id, " \
                   "groceriesstatement_id) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        data = (recipe.get_id(), recipe.get_recipe_name(), recipe.get_duration(), recipe.set_portions(), recipe.get_instruction(), recipe.get_user_id, recipe.get_groceriesstatement_id)
+        data = (recipe.get_id(), recipe.get_recipe_name(), recipe.get_duration(), recipe.set_portions(), recipe.get_instruction(), recipe.get_user_id(), recipe.get_groceriesstatement_id())
         cursor.execute(command, data)
 
         self._cnx.commit()

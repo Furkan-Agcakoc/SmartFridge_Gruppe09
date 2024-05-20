@@ -112,6 +112,32 @@ class HouseholdMapper (Mapper):
         self._cnx.commit()
         cursor.close()
 
+
+'''
+    def checkinhabitent(self, user_id, household_id):
+        cursor = self._cnx.cursor()
+        command = "SELECT `user_id`, `household_id` FROM household_members WHERE `user_id`={} AND `household_id`={}".format(user_id, household_id) #müssen dann hier neue datenbank mit household_members
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+        cursor.close()
+
+        return len(tuples) > 0
+
+    def createinhabitent(self, user_id, household_id):
+        if not self.checkinhabitent(user_id, household_id):
+            try:
+                cursor = self._cnx.cursor()
+                command = "INSERT INTO household_members (user_id, household_id) VALUES (%s, %s)"
+                cursor.execute(command, (user_id, household_id))
+                self._cnx.commit()
+                cursor.close()
+                return "Added user {} to household {}".format(user_id, household_id)
+            except Exception as e:
+                return str(e)
+        else:
+            return "Bewohner ist bereits drinnen"
+
+'''
 if (__name__ == "__main__"):
     with HouseholdMapper() as mapper:
         result = mapper.find_all()

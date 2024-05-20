@@ -110,9 +110,10 @@ class Administration():
     Recipe Spezifische Methoden
     """
 
-    def create_recipe(self, recipe_name):
+    def create_recipe_from_user(self, recipe_name,user): #drüber schauen
         recipe = Recipe()
         recipe.set_recipe_name(recipe_name)
+        recipe.set_user_id(user.get_user_id(user)) #neu
         recipe.set_id(1)
 
         with RecipeMapper() as mapper:
@@ -229,6 +230,8 @@ class Administration():
         with UserMapper() as mapper:
             return mapper.insert(user)
 
+    #user of household
+
     def get_user_by_firstname(self, firstsname):
         with UserMapper() as mapper:
             return mapper.find_by_firstname(firstsname)
@@ -267,3 +270,13 @@ class Administration():
         with UserMapper() as mapper:
             return mapper.delet(user)
 
+'''
+#inhabitent
+
+    def createinhabitent(self,user_id,household_id):
+        with HouseholdMapper() as mapper:
+            return mapper.createinhabitent(user_id,household_id)
+
+
+#delete inhabitent 
+'''
