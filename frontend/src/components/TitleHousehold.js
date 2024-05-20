@@ -1,5 +1,5 @@
 import React from "react";
-import CelebrationIcon from "@mui/icons-material/Celebration";
+import CelebrationRoundedIcon from '@mui/icons-material/CelebrationRounded';
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
@@ -28,16 +28,16 @@ const TitleHousehold = () => {
           fontWeight: "bold",
           fontSize: "2rem",
           fontStyle: "normal",
-          color: "third.main",
+          color: "text.primary",
           display: "flex",
           justifyContent: "center",
           position: "relative",
-          top: "130px",
+          top: "135px",
           marginBottom: "0px",
         }}
       >
         Welcome Back, {firstName} !
-        <CelebrationIcon fontSize="large" />
+        <CelebrationRoundedIcon fontSize="large" />
       </Typography>
     </>
   );
