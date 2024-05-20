@@ -10,13 +10,16 @@ class HouseholdMapper (Mapper):
 
         result = []
         cursor = self._cnx.cursor()
-        cursor.execute("SELCET * FROM household")
+        cursor.execute("SELECT * FROM household")
         tuples = cursor.fetchall()
 
-        for (id,household_name) in tuples:
+        for (id, household_name, user_id, fridge_id) in tuples:
             household = Household()
             household.set_id(id)
             household.set_household_name(household_name)
+            household.set_user_id(user_id)
+            household.set_fridge_id(fridge_id)
+
             result.append(household)
 
         self._cnx.commit()
@@ -31,11 +34,12 @@ class HouseholdMapper (Mapper):
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, household_name) in tuples:
+        for (id, household_name, user_id, fridge_id) in tuples:
             household = Household()
             household.set_id(id)
-            household.set_household_name(household)
-            result.append(household)
+            household.set_household_name(household_name)
+            household.set_user_id(user_id)
+            household.set_fridge_id(fridge_id)
 
             self._cnx.commit()
             cursor.close()
@@ -52,10 +56,12 @@ class HouseholdMapper (Mapper):
         tuples = cursor.fetchall()
 
         if tuples[0] is not None:
-            (id,household_name) = tuples[0]
+            (id,household_name, user_id, fridge_id) = tuples[0]
             household = Household()
             household.set_id(id)
             household.set_household_name(household_name)
+            household.set_user_id(user_id)
+            household.set_fridge_id(fridge_id)
 
             result = household
 
@@ -76,8 +82,8 @@ class HouseholdMapper (Mapper):
             else:
                 household.set_id(1)
 
-        command = "INSERT INTO household (id,household_name) VALUES (%s,%s)"
-        data = (household.get_id(), household.get_household_name())
+        command = "INSERT INTO household (id,household_name,user_id,fridge_id) VALUES (%s,%s,%s,%s)"
+        data = (household.get_id(), household.get_household_name(), household.get_user_id(), household.get_fridge_id())
         cursor.execute(command,data)
 
         self._cnx.commit()
@@ -88,8 +94,8 @@ class HouseholdMapper (Mapper):
 
         cursor = self._cnx.cursor()
 
-        command = "UPDATE household" + "SET household_name=%s WHERE id=%s"
-        data = (household.get_id,household.get_household_name())
+        command = "UPDATE household" + "SET household_name=%s,user_id=%s,fridge_id=%s  WHERE id=%s"
+        data = (household.get_id(), household.get_household_name(), household.get_user_id(), household.get_fridge_id())
         cursor.excecute(command, data)
 
         self._cnx.commit()
@@ -111,4 +117,3 @@ if (__name__ == "__main__"):
         result = mapper.find_all()
         for p in result:
             print(p)
-

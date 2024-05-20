@@ -37,5 +37,3 @@ class Household (bo.BusinessObject):
         obj.set_user_id(dictionary["user_id"])
         obj.set_fridge_id(dictionary["fridge_id"])
         return obj
-
-
