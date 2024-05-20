@@ -5,7 +5,7 @@ from flask_restx import Api, Resource, fields
 # Wir benutzen noch eine Flask-Erweiterung für Cross-Origin Resource Sharing
 from flask_cors import CORS
 
-from server.Adminstration import Adminstration
+from server.Administration import Administration
 from server.bo.Fridge import Fridge
 from server.bo.Groceries import Groceries
 from server.bo.GroceriesStatement import GroceriesStatement
@@ -73,7 +73,7 @@ class UserListOperations(Resource):
     @smartfridge.marshal_list_with(user)
     @secured
     def get(self):
-        adm = Adminstration()
+        adm = Administration()
         user_list = adm.get_all_users()
         return user_list
 
@@ -81,7 +81,7 @@ class UserListOperations(Resource):
     @smartfridge.expect(user)
     @secured
     def post(self):
-        adm = Adminstration()
+        adm = Administration()
         user = User.from_dict(api.payload)
         if user is not None:
             u = adm.create_user(user)
@@ -96,13 +96,13 @@ class UserOperations(Resource):
     @smartfridge.marshal_with(user)
     @secured
     def get(self, id):
-        adm = Adminstration()
+        adm = Administration()
         user = adm.get_user_by_id(id)
         return user
 
     @secured
     def delete(self, id):
-        adm = Adminstration()
+        adm = Administration()
         user = adm.get_user_by_id(id)
         adm.delete_user(user)
         return '', 200
@@ -111,7 +111,7 @@ class UserOperations(Resource):
     @smartfridge.expect(user, validate=True)
     @secured
     def put(self, id):
-        adm = Adminstration()
+        adm = Administration()
         u = User.from_dict(api.payload)
         if u is not None:
             u.set_id(id)
@@ -126,7 +126,7 @@ class UserOperations(Resource):
 class GoogleOperations(Resource):
     @smartfridge.marshal_with(user)
     def get(self, google_user_id):
-        adm = Adminstration()
+        adm = Administration()
         user = adm.get_user_by_google_user_id(google_user_id)
         return user
 
@@ -142,7 +142,7 @@ class HouseholdListOperations(Resource):
     @smartfridge.marshal_list_with(household)
     @secured
     def get(self):
-        adm = Adminstration()
+        adm = Administration()
         household_list = adm.get_all_households()
         if len(household_list) == 0:
             return {'message': 'Liste ist leer'}
@@ -152,7 +152,7 @@ class HouseholdListOperations(Resource):
     @smartfridge.expect(household)
     @secured
     def post(self):
-        adm = Adminstration()
+        adm = Administration()
         household = Household.from_dict(api.payload)
         if household is not None:
             house = adm.create_household(household)
@@ -167,7 +167,7 @@ class HouseholdOperations(Resource):
     @smartfridge.marshal_with(household)
     @secured
     def get(self, id):
-        adm = Adminstration()
+        adm = Administration()
         household = adm.get_household_by_id(id)
         if household is None:
             return "Haushalt mit der ID " + str(id) + " wurde nicht gefunden.", 404
@@ -175,7 +175,7 @@ class HouseholdOperations(Resource):
 
     @secured
     def delete(self, id):
-        adm = Adminstration()
+        adm = Administration()
         household = adm.get_household_by_id(id)
         try:
             adm.delete_household(household)
@@ -187,7 +187,7 @@ class HouseholdOperations(Resource):
     @smartfridge.expect(household, validate=True)
     @secured
     def put(self, id):
-        adm = Adminstration()
+        adm = Administration()
         house = Household.from_dict(api.payload)
         if house is not None:
             house.set_id(id)
@@ -206,7 +206,7 @@ class GroceriesListOperations(Resource):
     @smartfridge.marshal_list_with(groceries)
     @secured
     def get(self):
-        adm = Adminstration()
+        adm = Administration()
         groceries_list = adm.get_all_groceries()
         return groceries_list
 
@@ -214,7 +214,7 @@ class GroceriesListOperations(Resource):
     @smartfridge.expect(groceries)
     @secured
     def post(self):
-        adm = Adminstration()
+        adm = Administration()
         groceries = Groceries.from_dict(api.payload)
         if groceries is not None:
             g = adm.create_groceries(groceries)
@@ -229,13 +229,13 @@ class GroceriesOperations(Resource):
     @smartfridge.marshal_with(groceries)
     @secured
     def get(self, id):
-        adm = Adminstration()
+        adm = Administration()
         groceries = adm.get_groceries_by_id(id)
         return groceries
 
     @secured
     def delete(self, id):
-        adm = Adminstration()
+        adm = Administration()
         groceries = adm.get_groceries_by_id(id)
         adm.delete_groceries(groceries)
         return '', 200
@@ -244,7 +244,7 @@ class GroceriesOperations(Resource):
     @smartfridge.expect(groceries, validate=True)
     @secured
     def put(self, id):
-        adm = Adminstration()
+        adm = Administration()
         g = Groceries.from_dict(api.payload)
         if g is not None:
             g.set_id(id)
@@ -259,7 +259,7 @@ class GroceriesOperations(Resource):
 class GroceriesNameOperations(Resource):
     @smartfridge.marshal_with(groceries)
     def get(self, groceries_name):
-        adm = Adminstration()
+        adm = Administration()
         groceries = adm.get_groceries_by_name(groceries_name)
         return groceries
 
@@ -276,7 +276,7 @@ class RecipeListOperations(Resource):
     @smartfridge.marshal_list_with(recipe)
     @secured
     def get(self):
-        adm = Adminstration()
+        adm = Administration()
         recipe_list = adm.get_all_recipes()
         return recipe_list
 
@@ -284,7 +284,7 @@ class RecipeListOperations(Resource):
     @smartfridge.expect(recipe)
     @secured
     def post(self):
-        adm = Adminstration()
+        adm = Administration()
         recipe = Recipe.from_dict(api.payload)
         if recipe is not None:
             r = adm.create_recipe(recipe)
@@ -299,13 +299,13 @@ class RecipeOperations(Resource):
     @smartfridge.marshal_with(recipe)
     @secured
     def get(self, id):
-        adm = Adminstration()
+        adm = Administration()
         recipe = adm.get_recipe_by_id(id)
         return recipe
 
     @secured
     def delete(self, id):
-        adm = Adminstration()
+        adm = Administration()
         recipe = adm.get_recipe_by_id(id)
         adm.delete_recipe(recipe)
         return '', 200
@@ -314,7 +314,7 @@ class RecipeOperations(Resource):
     @smartfridge.expect(recipe, validate=True)
     @secured
     def put(self, id):
-        adm = Adminstration()
+        adm = Administration()
         r = Recipe.from_dict(api.payload)
         if r is not None:
             r.set_id(id)
@@ -329,7 +329,7 @@ class RecipeOperations(Resource):
 class RecipeNameOperations(Resource):
     @smartfridge.marshal_with(recipe)
     def get(self, recipe_name):
-        adm = Adminstration()
+        adm = Administration()
         recipe = adm.get_recipe_by_name(recipe_name)
         return recipe
 
@@ -345,7 +345,7 @@ class FridgeListOperations(Resource):
     @smartfridge.marshal_list_with(fridge)
     @secured
     def get(self):
-        adm = Adminstration()
+        adm = Administration()
         fridge_list = adm.get_all_fridges()
         return fridge_list
 
@@ -357,14 +357,14 @@ class FridgeOperations(Resource):
     @secured
     def get(self,id):
 
-        adm = Adminstration()
+        adm = Administration()
         fri = adm.get_fridge_by_id(id)
         return fri
 
     @secured
     def delete(self,id):
 
-        adm = Adminstration()
+        adm = Administration()
         fri = adm.get_fridge_by_id(id)
         adm.delete_fridge(fri)
         return '',200
@@ -373,7 +373,7 @@ class FridgeOperations(Resource):
     @secured
     def put(self,id):
 
-        adm = Adminstration()
+        adm = Administration()
         fri = Fridge.from_dict(api.payload)
 
         if fri is not None:
@@ -390,7 +390,7 @@ class HouseholdRelatedFridgeOperations(Resource):
     @smartfridge.marshal_with(fridge)
     @secured
     def get(self,id):
-        adm = Adminstration()
+        adm = Administration()
         house = adm.get_household_by_id(id)
 
         if house is not None:
@@ -403,7 +403,7 @@ class HouseholdRelatedFridgeOperations(Resource):
     @smartfridge.marshal_with(fridge, code=201)
     @secured
     def post(self,id):
-        adm = Adminstration()
+        adm = Administration()
 
         house = adm.get_household_by_id(id)
 
@@ -422,7 +422,7 @@ class GroceriesstatementRelatedFridgeOperations(Resource):
     @smartfridge.marshal_with(fridge)
     @secured
     def get(self,id):
-        adm = Adminstration()
+        adm = Administration()
         gst = adm.get_groceriesstatement_by_id(id)
 
         if gst is not None:
@@ -435,7 +435,7 @@ class GroceriesstatementRelatedFridgeOperations(Resource):
     @smartfridge.marshal_with(fridge, code=201)
     @secured
     def post(self,id):
-        adm = Adminstration()
+        adm = Administration()
 
         gst = adm.get_groceriesstatement_by_id(id)
 
@@ -454,7 +454,7 @@ class GroceriesstatementListOperations(Resource):
     @smartfridge.marshal_list_with(groceriesstatement)
     @secured
     def get(self):
-        adm = Adminstration()
+        adm = Administration()
         fridge_list = adm.get_all_fridges()
         return fridge_list
 
@@ -467,14 +467,14 @@ class FridgeOperations(Resource):
     @secured
     def get(self,id):
 
-        adm = Adminstration()
+        adm = Administration()
         gst = adm.get_groceriesstatement_by_id(id)
         return gst
 
     @secured
     def delete(self,id):
 
-        adm = Adminstration()
+        adm = Administration()
         gst = adm.get_groceriesstatement_by_id(id)
         adm.delete_groceriesstatement(gst)
         return '',200
@@ -483,7 +483,7 @@ class FridgeOperations(Resource):
     @secured
     def put(self,id):
 
-        adm = Adminstration()
+        adm = Administration()
         gst = GroceriesStatement.from_dict(api.payload)
 
         if gst is not None:
