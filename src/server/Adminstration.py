@@ -133,6 +133,10 @@ class Adminstration():
         with RecipeMapper() as mapper:
             mapper.delete(recipe)
 
+    def get_recipe_by_user(self, user_id):
+        with RecipeMapper() as mapper:
+            return mapper.find_by_user_id(user_id)
+
 #recipe of user?
 
     """
