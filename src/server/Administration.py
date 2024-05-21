@@ -22,9 +22,9 @@ class Administration():
     Fridge Spezifische Methoden
     """
 
-    def create_fridge_of_household(self, fridge_name, household):
+    def create_fridge_of_household(self, fridge_name, household_id,groceriesstatement_id): #hier darauf achten
 
-        existing_fridge = self.get_fridge_of_household(household)
+        existing_fridge = self.get_fridge_of_household(household_id)
 
         if existing_fridge:
             print("Kühlschrank besteht schon")
@@ -32,7 +32,8 @@ class Administration():
 
         fridge = Fridge()
         fridge.set_fridge_name(fridge_name)
-        fridge.set_household(household.get_id())
+        fridge.set_household_id(household_id)
+        fridge.set_groceriesstatement_id(groceriesstatement_id)
         fridge.set_id(1)
 
         with FridgeMapper() as mapper:
@@ -46,9 +47,9 @@ class Administration():
         with FridgeMapper() as mapper:
             return mapper.find_by_key(number)
 
-    def get_fridge_of_household(self, household):  # müssen die logik prüfen
+    def get_fridge_of_household(self, household_id):  # müssen die logik prüfen
         with FridgeMapper() as mapper:
-            return mapper.find_by_household_id(household.get_id()) #prüfen
+            return mapper.find_by_household_id(household_id) #prüfen
 
     def get_all_fridges(self):
         with FridgeMapper() as mapper:
@@ -72,9 +73,11 @@ class Administration():
     Haushalt Spezifische Methoden
     """
 
-    def create_household(self, household_name):
+    def create_household(self, household_name,user_id,fridge_id):
         household = Household()
         household.set_household_name(household_name)
+        household.set_user_id(user_id)
+        household.set_fridge_id(fridge_id)
         household.set_id(1)
 
         with HouseholdMapper() as mapper:

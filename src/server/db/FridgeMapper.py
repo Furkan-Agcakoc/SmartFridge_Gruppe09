@@ -91,7 +91,6 @@ class FridgeMapper (Mapper):
 
         return result
 
-
     def insert(self, fridge):
 
         cursor = self._cnx.cursor()
@@ -99,14 +98,18 @@ class FridgeMapper (Mapper):
         tuples = cursor.fetchall()
 
         for (maxid) in tuples:
-            fridge.set_id(maxid[0]+1)
+            if maxid[0] is not None:
+                fridge.set_id(maxid[0] + 1)
+            else:
+                fridge.set_id(1)
 
-        command = "INSERT INTO fridge (id,fridge_name,household_id, groceriesstatement_id) VALUES (%s,%s)"
-        data = (fridge.get_id(), fridge.get_fridge_name())
-        cursor.execute(command,data)
+        command = "INSERT INTO groceries (id, groceries_name,household_id,groceriesstatement_id) VALUES (%s,%s,%s,%s)"
+        data = (fridge.get_id(), fridge.get_fridge_name(),fridge.get_household_id(),fridge.get_groceriesstatement_id())
+        cursor.execute(command, data)
 
         self._cnx.commit()
-        cursor.close
+        cursor.close()
+
         return fridge
 
     def update(self, fridge):

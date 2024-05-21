@@ -12,10 +12,12 @@ class Groceries (bo.BusinessObject):
     def set_groceries_name(self, new_groceries_name):
         self._groceries_name = new_groceries_name
 
-
     @staticmethod
     def from_dict(dictionary=dict()):
+        """Umwandeln eines Python dict() in ein Groceries()."""
         obj = Groceries()
-        obj.set_id(dictionary["id"]) #erbt von BusinessObjekt
+        obj.set_id(dictionary["id"])  # eigentlich Teil von BusinessObject !
         obj.set_groceries_name(dictionary["groceries_name"])
+
+
         return obj

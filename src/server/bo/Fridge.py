@@ -15,7 +15,7 @@ class Fridge (bo.BusinessObject):
         self._fridge_name = new_name
 
     def get_household_id(self):
-        return self._household
+        return self._household_id
 
     def set_household_id(self, household_id):
         self._household = household_id
@@ -30,6 +30,6 @@ class Fridge (bo.BusinessObject):
     def from_dict(dictionary=dict()):
         obj = Fridge()
         obj.set_id(dictionary["id"])
-        obj.set_fridge_name(dictionary["fidge_name"])
+        obj.set_fridge_name(dictionary["fridge_name"])
         obj.set_groceriesstatement_id(dictionary["groceriesstatement_id"])
         return obj

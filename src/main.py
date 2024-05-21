@@ -10,8 +10,6 @@ from server.bo.Fridge import Fridge
 from server.bo.Groceries import Groceries
 from server.bo.GroceriesStatement import GroceriesStatement
 from server.bo.Household import Household
-from server.bo.Measure import Measure
-from server.bo.Quantity import Quantity
 from server.bo.Recipe import Recipe
 from server.bo.User import User
 
@@ -40,7 +38,8 @@ user = api.inherit('User', bo, {
 
 fridge = api.inherit('Fridge', bo, {
     'fridge_name': fields.String(attribute='_fridge_name', description='Name eines Kühlschranks'),
-    'household': fields.Integer(attribute='_household', description='Haushalt Id in welchem der Kühlschrank ist.')
+    'household_id': fields.Integer(attribute='_household_id', description='Haushalt Id in welchem der Kühlschrank ist.'),
+    'groceriesstatement_id': fields.Integer(attribute='_groceriesstatement_id', description='Groceriesstatement Id in welchem der Kühlschrank ist.')
 })
 
 recipe = api.inherit('Recipe', bo, {
@@ -55,7 +54,9 @@ groceries = api.inherit('Groceries', bo, {
 })
 
 household = api.inherit('Household', bo, {
-    'household_name': fields.String(attribute='_household_name', description='Name des Haushalts')
+    'household_name': fields.String(attribute='_household_name', description='Name des Haushalts'),
+    'user_id' :fields.Integer(attribute='_user_id', description='Die Id eines Users'),
+    'fridge_id' :fields.Integer(attribute='_fridge_id', description='Die Id eines Fridges'),
 })
 
 groceriesstatement = api.inherit('GroceriesStatement', bo, {
@@ -71,7 +72,7 @@ User
 @smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
 class UserListOperations(Resource):
     @smartfridge.marshal_list_with(user)
-    @secured
+   # @secured
     def get(self):
         adm = Administration()
         user_list = adm.get_all_users()
@@ -79,7 +80,7 @@ class UserListOperations(Resource):
 
     @smartfridge.marshal_with(user, code=200)
     @smartfridge.expect(user)
-    @secured
+    #@secured
     def post(self):
         adm = Administration()
         user = User.from_dict(api.payload)
@@ -94,13 +95,13 @@ class UserListOperations(Resource):
 @smartfridge.param('id', 'Die ID des User-Objekts')
 class UserOperations(Resource):
     @smartfridge.marshal_with(user)
-    @secured
+   # @secured
     def get(self, id):
         adm = Administration()
         user = adm.get_user_by_id(id)
         return user
 
-    @secured
+   # @secured
     def delete(self, id):
         adm = Administration()
         user = adm.get_user_by_id(id)
@@ -109,7 +110,7 @@ class UserOperations(Resource):
 
     @smartfridge.marshal_with(user)
     @smartfridge.expect(user, validate=True)
-    @secured
+   # @secured
     def put(self, id):
         adm = Administration()
         u = User.from_dict(api.payload)
@@ -140,7 +141,7 @@ Household
 @smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
 class HouseholdListOperations(Resource):
     @smartfridge.marshal_list_with(household)
-    @secured
+   # @secured
     def get(self):
         adm = Administration()
         household_list = adm.get_all_households()
@@ -149,15 +150,22 @@ class HouseholdListOperations(Resource):
         return household_list
 
     @smartfridge.marshal_with(household, code=200)
+
     @smartfridge.expect(household)
-    @secured
+    # @secured
     def post(self):
+        """Erstellen eines Household Objekts"""
+
         adm = Administration()
-        household = Household.from_dict(api.payload)
-        if household is not None:
-            house = adm.create_household(household)
-            return house, 200
+
+        proposal = Household.from_dict(api.payload)
+
+        if proposal is not None:
+            hh = adm.create_household(
+                proposal.get_household_name(), proposal.get_user_id(),proposal.get_fridge_id())
+            return hh, 200
         else:
+            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
 @smartfridge.route('/household/<int:id>')
@@ -165,16 +173,18 @@ class HouseholdListOperations(Resource):
 @smartfridge.param('id', 'Die ID des Haushalts.')
 class HouseholdOperations(Resource):
     @smartfridge.marshal_with(household)
-    @secured
+   # @secured
     def get(self, id):
+        """Wiedergeben von Household ID"""
         adm = Administration()
         household = adm.get_household_by_id(id)
         if household is None:
             return "Haushalt mit der ID " + str(id) + " wurde nicht gefunden.", 404
         return household, 200
 
-    @secured
+   # @secured
     def delete(self, id):
+        """Löschen eines Household Objekts"""
         adm = Administration()
         household = adm.get_household_by_id(id)
         try:
@@ -185,8 +195,9 @@ class HouseholdOperations(Resource):
 
     @smartfridge.marshal_with(household)
     @smartfridge.expect(household, validate=True)
-    @secured
+   # @secured
     def put(self, id):
+        """Updaten eines Household Objekts"""
         adm = Administration()
         house = Household.from_dict(api.payload)
         if house is not None:
@@ -204,37 +215,52 @@ groceries
 @smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
 class GroceriesListOperations(Resource):
     @smartfridge.marshal_list_with(groceries)
-    @secured
+    #@secured
     def get(self):
+        """Wiedergebe eines Groceries Objekts"""
         adm = Administration()
         groceries_list = adm.get_all_groceries()
         return groceries_list
 
     @smartfridge.marshal_with(groceries, code=200)
+
     @smartfridge.expect(groceries)
-    @secured
+    #@secured
     def post(self):
+        """Erstellen eines Groceries Objekts"""
+
         adm = Administration()
-        groceries = Groceries.from_dict(api.payload)
-        if groceries is not None:
-            g = adm.create_groceries(groceries)
+
+        proposal = Groceries.from_dict(api.payload)
+
+        if proposal is not None:
+            g = adm.create_groceries(
+                proposal.get_groceries_name())
             return g, 200
         else:
+            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
+
+
+
+
+
 
 @smartfridge.route('/groceries/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Groceries-Objekts')
 class GroceriesOperations(Resource):
     @smartfridge.marshal_with(groceries)
-    @secured
+    #@secured
     def get(self, id):
+        """Wiedergabe eines Groceries Objekts durch ID"""
         adm = Administration()
         groceries = adm.get_groceries_by_id(id)
         return groceries
 
-    @secured
+    #@secured
     def delete(self, id):
+        """Löschen eines Groceries Objekts"""
         adm = Administration()
         groceries = adm.get_groceries_by_id(id)
         adm.delete_groceries(groceries)
@@ -242,8 +268,9 @@ class GroceriesOperations(Resource):
 
     @smartfridge.marshal_with(groceries)
     @smartfridge.expect(groceries, validate=True)
-    @secured
+    #@secured
     def put(self, id):
+        """Updaten eines Household Objekts"""
         adm = Administration()
         g = Groceries.from_dict(api.payload)
         if g is not None:
@@ -274,7 +301,7 @@ recipe
 @smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
 class RecipeListOperations(Resource):
     @smartfridge.marshal_list_with(recipe)
-    @secured
+   # @secured
     def get(self):
         adm = Administration()
         recipe_list = adm.get_all_recipes()
@@ -282,7 +309,7 @@ class RecipeListOperations(Resource):
 
     @smartfridge.marshal_with(recipe, code=200)
     @smartfridge.expect(recipe)
-    @secured
+   # @secured
     def post(self):
         adm = Administration()
         recipe = Recipe.from_dict(api.payload)
@@ -297,13 +324,13 @@ class RecipeListOperations(Resource):
 @smartfridge.param('id', 'Die ID des Recipe-Objekts')
 class RecipeOperations(Resource):
     @smartfridge.marshal_with(recipe)
-    @secured
+   # @secured
     def get(self, id):
         adm = Administration()
         recipe = adm.get_recipe_by_id(id)
         return recipe
 
-    @secured
+   # @secured
     def delete(self, id):
         adm = Administration()
         recipe = adm.get_recipe_by_id(id)
@@ -312,7 +339,7 @@ class RecipeOperations(Resource):
 
     @smartfridge.marshal_with(recipe)
     @smartfridge.expect(recipe, validate=True)
-    @secured
+   # @secured
     def put(self, id):
         adm = Administration()
         r = Recipe.from_dict(api.payload)
@@ -343,25 +370,44 @@ fridge
 @smartfridge.response(500,'Falls es zu einem Server-seitigen Fehler kommt.')
 class FridgeListOperations(Resource):
     @smartfridge.marshal_list_with(fridge)
-    @secured
+    # @secured
     def get(self):
         adm = Administration()
         fridge_list = adm.get_all_fridges()
         return fridge_list
+
+    @smartfridge.marshal_with(fridge, code=200)
+    @smartfridge.expect(fridge)
+    # @secured
+    def post(self):
+        adm = Administration()
+
+        proposal = Fridge.from_dict(api.payload)
+
+        if proposal is not None:
+            fri = adm.create_fridge_of_household(
+                proposal.get_fridge_name(), proposal.get_household_id(), proposal.get_groceriesstatement_id())
+            return fri, 200
+        else:
+            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
+            return '', 500
+
+
+
 
 @smartfridge.route('/fridge/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Fridge-Objekts')
 class FridgeOperations(Resource):
     @smartfridge.marshal_list_with(fridge)
-    @secured
+   # @secured
     def get(self,id):
 
         adm = Administration()
         fri = adm.get_fridge_by_id(id)
         return fri
 
-    @secured
+   # @secured
     def delete(self,id):
 
         adm = Administration()
@@ -370,7 +416,7 @@ class FridgeOperations(Resource):
         return '',200
 
     @smartfridge.marshal_with(fridge)
-    @secured
+   # @secured
     def put(self,id):
 
         adm = Administration()
@@ -388,7 +434,7 @@ class FridgeOperations(Resource):
 @smartfridge.param('id', 'Die ID des Household-Objekts')
 class HouseholdRelatedFridgeOperations(Resource):
     @smartfridge.marshal_with(fridge)
-    @secured
+   # @secured
     def get(self,id):
         adm = Administration()
         house = adm.get_household_by_id(id)
@@ -401,7 +447,7 @@ class HouseholdRelatedFridgeOperations(Resource):
             return " Household not found", 500
 
     @smartfridge.marshal_with(fridge, code=201)
-    @secured
+   # @secured
     def post(self,id):
         adm = Administration()
 
@@ -452,7 +498,7 @@ groceriesstatement
 @smartfridge.response(500,'Falls es zu einem Server-seitigen Fehler kommt.')
 class GroceriesstatementListOperations(Resource):
     @smartfridge.marshal_list_with(groceriesstatement)
-    @secured
+   # @secured
     def get(self):
         adm = Administration()
         fridge_list = adm.get_all_fridges()
@@ -464,14 +510,14 @@ class GroceriesstatementListOperations(Resource):
 @smartfridge.param('id', 'Die ID des Groceriesstatement-Objekts')
 class FridgeOperations(Resource):
     @smartfridge.marshal_list_with(groceriesstatement)
-    @secured
+   # @secured
     def get(self,id):
 
         adm = Administration()
         gst = adm.get_groceriesstatement_by_id(id)
         return gst
 
-    @secured
+   # @secured
     def delete(self,id):
 
         adm = Administration()
@@ -480,7 +526,7 @@ class FridgeOperations(Resource):
         return '',200
 
     @smartfridge.marshal_with(groceriesstatement)
-    @secured
+   # @secured
     def put(self,id):
 
         adm = Administration()
