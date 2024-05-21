@@ -47,21 +47,41 @@ class Household extends Component {
   openPopup = () => {
     this.setState({
       popupOpen: true,
+      currentlyEditing: null,
     });
   };
 
   closePopup = () => {
-    this.setState({ popupOpen: false });
+    this.setState({ popupOpen: false, currentlyEditing: null });
   };
 
   handleCreateHousehold = () => {
-    if (this.state.currentName.trim() === "") {
+    const { currentName, currentlyEditing, households } = this.state;
+
+    if (currentName.trim() === "") {
       this.setState({ showAlert: true });
+      return;
+    }
+
+    if (currentlyEditing) {
+      // Haushalt bearbeiten
+      const updatedHouseholds = households.map((household) =>
+        household === currentlyEditing.householdId ? currentName : household
+      );
+
+      this.setState({
+        households: updatedHouseholds,
+        popupOpen: false,
+        currentName: "",
+        showAlert: false,
+        currentlyEditing: null,
+      });
     } else {
+      // Neuen Haushalt erstellen
       this.setState((prevState) => ({
         householdCount: prevState.householdCount + 1,
         popupOpen: false,
-        households: [...prevState.households, prevState.currentName],
+        households: [...prevState.households, currentName],
         currentName: "",
         showAlert: false,
       }));
@@ -69,10 +89,13 @@ class Household extends Component {
   };
 
   handleChange = (event) => {
-    this.setState({
+    this.setState((prevState) => ({
       currentName: event.target.value,
       showAlert: false,
-    });
+      currentlyEditing: prevState.currentlyEditing
+        ? { ...prevState.currentlyEditing, householdName: event.target.value }
+        : null,
+    }));
   };
 
   handleCloseAlert = () => {
@@ -87,11 +110,310 @@ class Household extends Component {
     this.setState({ anchorEl: null });
   };
 
+  handleAnchorEdit = (household) => {
+    // this.setState({ anchorEl: null });
+    // this.setState({
+    //   popupOpen: true,
+    //   currentName: this.props.currentName,
+    // });
+    this.setState({
+      currentlyEditing: household,
+      currentName: household.householdName,
+      anchorEl: null,
+    });
+  };
+
+  handleAnchorDelete = (household) => {
+    this.setState({
+      currentlyDeleting: household,
+      anchorEl: null,
+    });
+    this.handleHouseholdDelete(household);
+  };
+
+  handleHouseholdDelete = (household) => {
+    this.setState((prevState) => ({
+      households: prevState.households.filter(
+        (h) => h !== household.householdId
+      ),
+      currentlyDeleting: null,
+    }));
+  };
+
   render() {
-    const { households, popupOpen, showAlert } = this.state;
+    const { households, popupOpen, showAlert, currentlyEditing } = this.state;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
+    const editpopup = currentlyEditing && (
+      <>
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backdropFilter: "blur(10px)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1,
+          }}
+        />
+        <Box
+          sx={{
+            width: "1100px",
+            position: "fixed",
+            zIndex: 2,
+          }}
+        >
+          <Paper
+            action="Haushalt"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              padding: "0 30px 50px 30px",
+              borderRadius: "50px",
+              fontSize: "18px",
+              // fontFamily: "Arial, Helvetica, sans-serif",
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                marginBottom: "20px",
+                marginTop: "20px",
+                fontWeight: 600,
+              }}
+            >
+              Neuen Haushalt hinzufügen
+            </Typography>
+            {showAlert && (
+              <Alert
+                severity="error"
+                onClose={this.handleCloseAlert}
+                sx={{ marginBottom: "20px" }}
+              >
+                Bitte geben Sie einen Haushaltsnamen ein !
+              </Alert>
+            )}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+                fontSize: "10px",
+              }}
+            >
+              <TextField
+                required
+                id="outlined-required"
+                label="Haushaltsname"
+                value={this.state.currentName}
+                placeholder="Haushaltsname"
+                InputLabelProps={{ style: { fontSize: "15px" } }}
+                onChange={this.handleChange}
+              />
+              <Autocomplete
+                options={this.emails}
+                multiple
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Bewohner hinzufügen"
+                    placeholder="Bewohner hinzufügen"
+                    InputLabelProps={{ style: { fontSize: "15px" } }}
+                  />
+                )}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                position: "relative",
+                top: "25px",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  endIcon={<CheckCircleOutlineRoundedIcon />}
+                  onClick={this.handleCreateHousehold}
+                  sx={{
+                    color: "success.dark",
+                    bgcolor: "rgba(29, 151, 35, 0.2)",
+                    border: "2px solid #06871d",
+                    "&:hover": {
+                      bgcolor: "success.dark",
+                      color: "background.default",
+                    },
+                  }}
+                >
+                  Hinzufügen
+                </Button>
+                <Button
+                  variant="contained"
+                  endIcon={<HighlightOffRoundedIcon />}
+                  onClick={this.closePopup}
+                  sx={{
+                    bgcolor: "rgba(197, 0, 0, 0.1)",
+                    color: "error.main",
+                    border: "2px solid #c50000 ",
+                    "&:hover": {
+                      bgcolor: "error.main",
+                      color: "background.default",
+                    },
+                  }}
+                >
+                  Abbrechen
+                </Button>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
+      </>
+    );
+
+    const createpopup = popupOpen && (
+      <>
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backdropFilter: "blur(10px)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1,
+          }}
+        />
+        <Box
+          sx={{
+            width: "1100px",
+            position: "fixed",
+            zIndex: 2,
+          }}
+        >
+          <Paper
+            action="Haushalt"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              padding: "0 30px 50px 30px",
+              borderRadius: "50px",
+              fontSize: "18px",
+              // fontFamily: "Arial, Helvetica, sans-serif",
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                marginBottom: "20px",
+                marginTop: "20px",
+                fontWeight: 600,
+              }}
+            >
+              Neuen Haushalt hinzufügen
+            </Typography>
+            {showAlert && (
+              <Alert
+                severity="error"
+                onClose={this.handleCloseAlert}
+                sx={{ marginBottom: "20px" }}
+              >
+                Bitte geben Sie einen Haushaltsnamen ein !
+              </Alert>
+            )}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+                fontSize: "10px",
+              }}
+            >
+              <TextField
+                required
+                id="outlined-required"
+                label="Haushaltsname"
+                placeholder="Haushaltsname"
+                InputLabelProps={{ style: { fontSize: "15px" } }}
+                value={this.state.name}
+                onChange={this.handleChange}
+              />
+              <Autocomplete
+                options={this.emails}
+                multiple
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Bewohner hinzufügen"
+                    placeholder="Bewohner hinzufügen"
+                    InputLabelProps={{ style: { fontSize: "15px" } }}
+                  />
+                )}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                position: "relative",
+                top: "25px",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  endIcon={<CheckCircleOutlineRoundedIcon />}
+                  onClick={this.handleCreateHousehold}
+                  sx={{
+                    color: "success.dark",
+                    bgcolor: "rgba(29, 151, 35, 0.2)",
+                    border: "2px solid #06871d",
+                    "&:hover": {
+                      bgcolor: "success.dark",
+                      color: "background.default",
+                    },
+                  }}
+                >
+                  Hinzufügen
+                </Button>
+                <Button
+                  variant="contained"
+                  endIcon={<HighlightOffRoundedIcon />}
+                  onClick={this.closePopup}
+                  sx={{
+                    bgcolor: "rgba(197, 0, 0, 0.1)",
+                    color: "error.main",
+                    border: "2px solid #c50000 ",
+                    "&:hover": {
+                      bgcolor: "error.main",
+                      color: "background.default",
+                    },
+                  }}
+                >
+                  Abbrechen
+                </Button>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
+      </>
+    );
     const householdBoxes = households.map((currentName, index) => (
       <Box key={index}>
         <Box
@@ -140,7 +462,12 @@ class Household extends Component {
             onClose={this.handleAnchorClose}
           >
             <MenuItem
-              onClick={this.handleAnchorClose}
+              onClick={() =>
+                this.handleAnchorEdit({
+                  householdId: currentName,
+                  householdName: currentName,
+                })
+              }
               className="menu-item"
               disableRipple
             >
@@ -161,14 +488,14 @@ class Household extends Component {
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />
             <MenuItem
-              onClick={this.handleAnchorClose}
+              onClick={this.handleAnchorDelete}
               className="menu-item"
               disableRipple
             >
               <ListItemIcon>
                 <ArchiveIcon />
               </ListItemIcon>
-              Archive
+              Delete
             </MenuItem>
             <MenuItem
               onClick={this.handleAnchorClose}
@@ -181,7 +508,9 @@ class Household extends Component {
               More
             </MenuItem>
           </Menu>
-          <Link to={`/home/${index}`} style={{ textDecoration: "none" }}>
+          <Link style={{ textDecoration: "none" }}>
+            {" "}
+            {/* to={`/home/${index}`}  */}
             <Typography
               variant="h5"
               sx={{
@@ -247,22 +576,22 @@ class Household extends Component {
               <Link onClick={this.openPopup}>
                 <Box
                   sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          width: "200px",
-                          height: "125px",
-                          borderRadius: "10px",
-                          boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-                          backgroundColor: "transparent",
-                          color: "primary.main",
-                          border: "3px solid #13a88a",
-                          "&:hover": {
-                            color: "success.dark",
-                            backgroundColor: "rgba(29, 151, 35, 0.2)",
-                            border: "3px solid #06871D",
-                          },
-                        }}
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "200px",
+                    height: "125px",
+                    borderRadius: "10px",
+                    boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                    backgroundColor: "transparent",
+                    color: "primary.main",
+                    border: "3px solid #13a88a",
+                    "&:hover": {
+                      color: "success.dark",
+                      backgroundColor: "rgba(29, 151, 35, 0.2)",
+                      border: "3px solid #06871D",
+                    },
+                  }}
                 >
                   <Tooltip
                     title="Neuen Haushalt hinzufügen"
@@ -277,140 +606,8 @@ class Household extends Component {
               </Link>
               {householdBoxes}
             </Box>
-            {popupOpen && (
-              <>
-                <Box
-                  sx={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    backdropFilter: "blur(10px)",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    zIndex: 1,
-                  }}
-                />
-                <Box
-                  sx={{
-                    width: "1100px",
-                    position: "fixed",
-                    zIndex: 2,
-                  }}
-                >
-                  <Paper
-                    action="Haushalt"
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      padding: "0 30px 50px 30px",
-                      borderRadius: "50px",
-                      fontSize: "18px",
-                      // fontFamily: "Arial, Helvetica, sans-serif",
-                    }}
-                  >
-                    <Typography
-                      variant="h4"
-                      sx={{
-                        marginBottom: "20px",
-                        marginTop: "20px",
-                        fontWeight: 600,
-                      }}
-                    >
-                      Neuen Haushalt hinzufügen
-                    </Typography>
-                    {showAlert && (
-                      <Alert
-                        severity="error"
-                        onClose={this.handleCloseAlert}
-                        sx={{ marginBottom: "20px" }}
-                      >
-                        Bitte geben Sie einen Haushaltsnamen ein !
-                      </Alert>
-                    )}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                        fontSize: "10px",
-                      }}
-                    >
-                      <TextField
-                        required
-                        id="outlined-required"
-                        label="Haushaltsname"
-                        placeholder="Haushaltsname"
-                        InputLabelProps={{ style: { fontSize: "15px" } }}
-                        value={this.state.name}
-                        onChange={this.handleChange}
-                      />
-                      <Autocomplete
-                        options={this.emails}
-                        multiple
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label="Bewohner hinzufügen"
-                            placeholder="Bewohner hinzufügen"
-                            InputLabelProps={{ style: { fontSize: "15px" } }}
-                          />
-                        )}
-                      />
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        position: "relative",
-                        top: "25px",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          gap: "10px",
-                        }}
-                      >
-                        <Button
-                          variant="contained"
-                          endIcon={<CheckCircleOutlineRoundedIcon />}
-                          onClick={this.handleCreateHousehold}
-                          sx={{
-                            color: "success.dark",
-                            bgcolor: "rgba(29, 151, 35, 0.2)",
-                            border: "2px solid #06871d",
-                            "&:hover": {
-                              bgcolor: "success.dark",
-                              color: "background.default",
-                            },
-                          }}
-                        >
-                          Hinzufügen
-                        </Button>
-                        <Button
-                          variant="contained"
-                          endIcon={<HighlightOffRoundedIcon />}
-                          onClick={this.closePopup}
-                          sx={{
-                            bgcolor: "rgba(197, 0, 0, 0.1)",
-                            color: "error.main",
-                            border: "2px solid #c50000 ",
-                            "&:hover": {
-                              bgcolor: "error.main",
-                              color: "background.default",
-                            },
-                          }}
-                        >
-                          Abbrechen
-                        </Button>
-                      </Box>
-                    </Box>
-                  </Paper>
-                </Box>
-              </>
-            )}
+            {createpopup}
+            {editpopup}
           </Box>
         </Box>
       </>
