@@ -47,10 +47,10 @@ class FridgeMapper (Mapper):
             return result
 
 
-    def find_by_household_id(self,household):
+    def find_by_household_id(self,household_id):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id, fridge_name, household_id FROM fridge WHERE household_id={} ORDER BY household_id".format(household)
+        command = "SELECT id, fridge_name, household_id FROM fridge WHERE household_id={} ORDER BY household_id".format(household_id)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
@@ -103,8 +103,8 @@ class FridgeMapper (Mapper):
             else:
                 fridge.set_id(1)
 
-        command = "INSERT INTO groceries (id, groceries_name,household_id,groceriesstatement_id) VALUES (%s,%s,%s,%s)"
-        data = (fridge.get_id(), fridge.get_fridge_name(),fridge.get_household_id(),fridge.get_groceriesstatement_id())
+        command = "INSERT INTO fridge (id, fridge_name, household_id, groceriesstatement_id) VALUES (%s,%s,%s,%s)"
+        data = (fridge.get_id(), fridge.get_fridge_name(), fridge.get_household_id(), fridge.get_groceriesstatement_id())
         cursor.execute(command, data)
 
         self._cnx.commit()

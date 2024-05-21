@@ -143,8 +143,9 @@ class HouseholdListOperations(Resource):
     @smartfridge.marshal_list_with(household)
    # @secured
     def get(self):
+        "Wiedergabe der Household Objekts"
         adm = Administration()
-        household_list = adm.get_all_households()
+        household_list = adm.get_all_householdes()
         if len(household_list) == 0:
             return {'message': 'Liste ist leer'}
         return household_list
@@ -372,6 +373,7 @@ class FridgeListOperations(Resource):
     @smartfridge.marshal_list_with(fridge)
     # @secured
     def get(self):
+        "Wiedergabe eines Fridge Objekts"
         adm = Administration()
         fridge_list = adm.get_all_fridges()
         return fridge_list
@@ -380,6 +382,7 @@ class FridgeListOperations(Resource):
     @smartfridge.expect(fridge)
     # @secured
     def post(self):
+        "Erstellen eines Fridge Objekts"
         adm = Administration()
 
         proposal = Fridge.from_dict(api.payload)
@@ -402,6 +405,7 @@ class FridgeOperations(Resource):
     @smartfridge.marshal_list_with(fridge)
    # @secured
     def get(self,id):
+        "Wiedergabe eines Fridge Objekts durch ID"
 
         adm = Administration()
         fri = adm.get_fridge_by_id(id)

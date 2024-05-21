@@ -101,6 +101,12 @@ class Administration():
 
     def delete_household(self, household): #prüfen
         with HouseholdMapper() as mapper:
+
+            return mapper.delete(household) #hier fehlt dann die funktion das der fridge sich auch löschen soll
+
+    """
+    def delete_household(self, household):  # prüfen
+        with HouseholdMapper() as mapper:
             fridge = self.get_fridge_of_household(household)
 
             if not (fridge is None):
@@ -108,6 +114,10 @@ class Administration():
                     self.delete_fridge(a)
 
             mapper.delete(household)
+
+    """
+
+
 
     """
     Recipe Spezifische Methoden
@@ -273,7 +283,9 @@ class Administration():
         with UserMapper() as mapper:
             return mapper.delet(user)
 
-'''
+
+
+    '''
 #inhabitent
 
     def createinhabitent(self,user_id,household_id):
@@ -282,4 +294,4 @@ class Administration():
 
 
 #delete inhabitent 
-'''
+    '''
