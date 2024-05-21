@@ -13,11 +13,10 @@ class GroceriesMapper (Mapper):
         cursor.execute("SELECT * FROM groceries")
         tuples = cursor.fetchall()
 
-        for (id,groceries_name,user_id) in tuples:
+        for (id,groceries_name) in tuples:
             groceries = Groceries()
             groceries.set_id(id)
             groceries.set_groceries_name(groceries_name)
-            groceries.set_user_id(user_id)
             result.append(groceries)
 
         self._cnx.commit()
@@ -28,15 +27,15 @@ class GroceriesMapper (Mapper):
     def find_by_groceries_name_id(self, groceries_name_id):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id, groceries_name, user_id FROM groceries WHERE groceries_name={} ORDER BY id".format(groceries_name_id)
+        command = "SELECT id, groceries_name FROM groceries WHERE groceries_name={} ORDER BY id".format(groceries_name_id)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id,groceries_name,user_id) in tuples:
+        for (id,groceries_name) in tuples:
             groceries = Groceries()
             groceries.set_id(id)
             groceries.set_groceries_name(groceries_name)
-            groceries.set_user_id(user_id)
+
             result.append(groceries)
 
         self._cnx.commit()
@@ -49,7 +48,7 @@ class GroceriesMapper (Mapper):
         result = None
 
         cursor = self._cnx.cursor()
-        command = "SELECT id, groceries_name, user_id FROM groceries WHERE id={}".format(key)
+        command = "SELECT id, groceries_name FROM groceries WHERE id={}".format(key)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
@@ -58,7 +57,6 @@ class GroceriesMapper (Mapper):
             groceries = Groceries()
             groceries.set_id(id)
             groceries.set_groceries_name(groceries_name)
-            groceries.set_user_id(user_id)
 
         result = groceries
 
@@ -77,8 +75,8 @@ class GroceriesMapper (Mapper):
         for (maxid) in tuples:
             groceries.set_id(maxid[0]+1)
 
-        command = "INSERT INTO groceries (id,groceries_name,user_id) VALUES (%s,%s,%s)"
-        data = (groceries.get_id(), groceries.get_groceries_name(),groceries.get_user_id())
+        command = "INSERT INTO groceries (id,groceries_name) VALUES (%s,%s)"
+        data = (groceries.get_id(), groceries.get_groceries_name())
         cursor.execute(command,data)
 
         self._cnx.commit()
@@ -89,8 +87,8 @@ class GroceriesMapper (Mapper):
 
         cursor = self._cnx.cursor()
 
-        command = "UPDATE groceries " + "SET groceries_name=%s" + "SET user_id WHERE id=%s"
-        data = (groceries.get_id(), groceries.get_groceries_name(),groceries.get_user_id())
+        command = "UPDATE groceries " + "SET groceries_name=%s WHERE id=%s"
+        data = (groceries.get_id(), groceries.get_groceries_name())
         cursor.execute(command, data)
 
         self._cnx.commit()

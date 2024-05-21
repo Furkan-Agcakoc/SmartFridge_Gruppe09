@@ -185,7 +185,7 @@ class Administration():
     def create_groceriesstatement(self, groceriesname, description, quantity):
         groceriesstatement = GroceriesStatement()
         groceriesstatement.set_groceries_name(groceriesname)
-        groceriesstatement.set_desription(description)
+        groceriesstatement.set_description(description)
         groceriesstatement.set_quantity(quantity)
 
         with HouseholdMapper() as mapper:

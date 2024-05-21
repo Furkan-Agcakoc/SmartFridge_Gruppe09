@@ -54,10 +54,7 @@ DROP TABLE IF EXISTS `groceries`;
 CREATE TABLE `groceries` (
   `id` int NOT NULL DEFAULT '0',
   `groceries_name` varchar(100) NOT NULL DEFAULT '',
-  `user_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `user_id_idx` (`user_id`),
-  CONSTRAINT `groceries_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -67,7 +64,7 @@ CREATE TABLE `groceries` (
 
 LOCK TABLES `groceries` WRITE;
 /*!40000 ALTER TABLE `groceries` DISABLE KEYS */;
-INSERT INTO `groceries` VALUES (1,'Banane',1),(2,'Apfel',1),(3,'Butter',1),(4,'Käse',1);
+INSERT INTO `groceries` VALUES (1,'Banane'),(2,'Apfel'),(3,'Butter'),(4,'Käse');
 /*!40000 ALTER TABLE `groceries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -114,10 +111,7 @@ CREATE TABLE `groceriesstatement` (
   `groceries_name` varchar(100) NOT NULL DEFAULT '',
   `description` varchar(1024) NOT NULL DEFAULT '',
   `quantity` float NOT NULL DEFAULT '0',
-  `user_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `user_id_idx` (`user_id`),
-  CONSTRAINT `groceriesstatement_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 
@@ -127,7 +121,7 @@ CREATE TABLE `groceriesstatement` (
 
 LOCK TABLES `groceriesstatement` WRITE;
 /*!40000 ALTER TABLE `groceriesstatement` DISABLE KEYS */;
-INSERT INTO `groceriesstatement` VALUES (1,'Zucker','g',7,1),(2,'Erdbeere','Stück',8,2),(3,'Nutella','gramm',20,3),(4,'Wasser','liter',3,1);
+INSERT INTO `groceriesstatement` VALUES (1,'Zucker','g',7),(2,'Erdbeere','Stück',8),(3,'Nutella','gramm',20),(4,'Wasser','liter',3);
 /*!40000 ALTER TABLE `groceriesstatement` ENABLE KEYS */;
 UNLOCK TABLES;
 
