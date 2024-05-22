@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Paper,
@@ -29,9 +29,23 @@ const PopupGrocerie = ({
     handleCreateGroceries(customMeasurement);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (event.target.classList.contains('popup-background')) {
+        closePopup();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [closePopup]);
+
   return (
     <>
       <Box
+        className="popup-background"
         sx={{
           position: "fixed",
           top: 0,
@@ -63,7 +77,6 @@ const PopupGrocerie = ({
             padding: "0 30px 50px 30px",
             borderRadius: "40px",
             fontSize: "17px",
-            // border: "5px solid red",
           }}
         >
           <Typography
@@ -107,7 +120,6 @@ const PopupGrocerie = ({
                 display: "flex",
                 justifyContent: "center",
                 gap: "10px",
-                // border: "5px solid red",
               }}
             >
               <TextField
@@ -151,7 +163,6 @@ const PopupGrocerie = ({
                 display: "flex",
                 justifyContent: "center",
                 gap: "10px",
-                // border: "5px solid red",
               }}
             >
               <Button

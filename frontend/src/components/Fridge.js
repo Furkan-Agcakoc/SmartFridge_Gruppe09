@@ -51,7 +51,7 @@ class Fridge extends Component {
   };
 
   closePopup = () => {
-    this.setState({ popupOpen: false });
+    this.setState({ popupOpen: false, showAlert: false });
   };
 
   handleCreateGroceries = (customMeasurement) => {
@@ -72,14 +72,14 @@ class Fridge extends Component {
     }
   };
 
-  handleCreateRecipes = () => {
-    if (this.state.currentName.trim() === "") {
+  handleCreateRecipes = (title) => {
+    if (title.trim() === "") {
       this.setState({ showAlert: true });
     } else {
       this.setState((prevState) => ({
         recipesCount: prevState.recipesCount + 1,
         popupOpen: false,
-        recipes: [...prevState.recipes, prevState.currentName],
+        recipes: [...prevState.recipes, title],
         currentName: "",
         showAlert: false,
       }));

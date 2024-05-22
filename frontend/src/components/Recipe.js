@@ -1,8 +1,6 @@
 import React from "react";
 import { Box, Link, Typography, IconButton, Paper } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 
 const Recipe = ({ currentName, index }) => (
   <Box key={index}>
