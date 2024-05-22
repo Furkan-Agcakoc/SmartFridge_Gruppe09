@@ -34,11 +34,11 @@ class User (bo.BusinessObject):
     def set_email(self,new_email):
         self._email = new_email
 
-    def get_user_id(self):
+    def get_google_user_id(self):
         return self._google_user_id
 
-    def set_user_id(self, new_user_id):
-        self._google_user_id = new_user_id
+    def set_google_user_id(self, google_user_id):
+        self._google_user_id = google_user_id
 
 
     @staticmethod
@@ -49,5 +49,5 @@ class User (bo.BusinessObject):
         obj.set_lastname(dictionary["lastname"])
         obj.set_nickname(dictionary["nickname"])
         obj.set_email(dictionary["email"])
-        obj.set_user_id(dictionary["google_user_id"])
+        obj.set_google_user_id(dictionary["google_user_id"])
         return obj

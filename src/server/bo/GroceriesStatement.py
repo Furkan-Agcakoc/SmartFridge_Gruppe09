@@ -1,17 +1,14 @@
-from server.bo import BusinessObject as bo
-from server.bo import Quantity
-from server.bo import Groceries
-from server.bo import Measure
+from server.bo.Measure import Measure
+from server.bo.Quantity import Quantity
+from server.bo.Groceries import Groceries
 
-class GroceriesStatement(bo.BusinessObject):
-    def __init__(self):
+class GroceriesStatement(Measure, Quantity, Groceries):
+    def __init__(self, groceries_name,description, quantity):
         super().__init__()
-        self.quantity_obj = Quantity() # eventuelle Lösung, jedoch nciht aufrufbar stand jetzt
-        self.groceries_obj = Groceries()
-        self.measure_obj = Measure()
-        self._groceries_name = ""
-        self._description = ""
-        self._quantity = 0.0
+        self.groceries_name = groceries_name
+        self.description = description
+        self.quantity = quantity
+
 
     def conversion(self, value, unit_from, unit_to):
 
@@ -49,5 +46,14 @@ class GroceriesStatement(bo.BusinessObject):
     def get_description(self):
         return self._description
 
-    def set_desription(self, new_description):
+    def set_description(self, new_description):
         self._description = new_description
+
+    @staticmethod
+    def from_dict (dictionary=dict()):
+        obj = GroceriesStatement()
+        obj.set_id(dictionary["id"])
+        obj.set_groceries_name(dictionary["groceries_name"])
+        obj.set_description(dictionary["description"])
+        obj.set_quantity(dictionary["quantity"])
+        return obj

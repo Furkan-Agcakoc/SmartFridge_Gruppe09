@@ -21,8 +21,8 @@ class RecipeMapper (Mapper):
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            #recipe.set_user_id(user_id)  Anschauen wegen fremschlüssel
-            # recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
 
@@ -48,8 +48,8 @@ class RecipeMapper (Mapper):
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            # recipe.set_user_id(user_id)  Anschauen wegen fremschlüssel
-            # recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
         self._cnx.commit()
@@ -74,8 +74,8 @@ class RecipeMapper (Mapper):
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            # recipe.set_user_id(user_id)  Anschauen wegen fremschlüssel
-            # recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
         self._cnx.commit()
@@ -83,7 +83,7 @@ class RecipeMapper (Mapper):
 
         return result
 
-    def find_by_portions(self, portions):   #nochmal anschauen
+    def find_by_portions(self, portions):
 
         result = []
 
@@ -100,8 +100,8 @@ class RecipeMapper (Mapper):
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            # recipe.set_user_id(user_id)  Anschauen wegen fremschlüssel
-            # recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set.groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
         self._cnx.commit()
@@ -126,8 +126,8 @@ class RecipeMapper (Mapper):
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            # recipe.set_user_id(user_id)  Anschauen wegen fremschlüssel
-            # recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set.groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
         self._cnx.commit()
@@ -152,9 +152,11 @@ class RecipeMapper (Mapper):
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            # recipe.set_user_id(user_id)  Anschauen wegen fremschlüssel
-            # recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set.groceriesstatement_id(groceriesstatement_id)
+
             result = recipe
+
         except IndexError:
             resukt = None
 
@@ -181,9 +183,11 @@ class RecipeMapper (Mapper):
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            # recipe.set_user_id(user_id)  Anschauen wegen fremschlüssel
-            # recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set.groceriesstatement_id(groceriesstatement_id)
+
             result = recipe
+
         except IndexError:
             resukt = None
 
@@ -211,9 +215,11 @@ class RecipeMapper (Mapper):
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            # recipe.set_user_id(user_id)  Anschauen wegen fremschlüssel
-            # recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set.groceriesstatement_id(groceriesstatement_id)
+
             result = recipe
+
         except IndexError:
             resukt = None
 
@@ -233,7 +239,7 @@ class RecipeMapper (Mapper):
 
         command = "INSERT INTO recipe (id, recipe_name, duration, portions, instruction, user_id, " \
                   "groceriesstatement_id) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        data = (recipe.get_id(), recipe.get_recipe_name(), recipe.get_duration(), recipe.set_portions(), recipe.get_instruction(), recipe.get_user_id, recipe.get_groceriesstatement_id)
+        data = (recipe.get_id(), recipe.get_recipe_name(), recipe.get_duration(), recipe.set_portions(), recipe.get_instruction(), recipe.get_user_id(), recipe.get_groceriesstatement_id())
         cursor.execute(command, data)
 
         self._cnx.commit()

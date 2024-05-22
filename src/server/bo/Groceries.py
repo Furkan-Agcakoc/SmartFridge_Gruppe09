@@ -2,7 +2,7 @@ from server.bo import BusinessObject as bo
 
 class Groceries (bo.BusinessObject):
 
-    def __int__(self):
+    def __init__(self):
         super().__init__()
         self._groceries_name = ""
 
@@ -14,7 +14,10 @@ class Groceries (bo.BusinessObject):
 
     @staticmethod
     def from_dict(dictionary=dict()):
+        """Umwandeln eines Python dict() in ein Groceries()."""
         obj = Groceries()
-        obj.set_id(dictionary["id"]) #erbt von BusinessObjekt
+        obj.set_id(dictionary["id"])  # eigentlich Teil von BusinessObject !
         obj.set_groceries_name(dictionary["groceries_name"])
+
+
         return obj

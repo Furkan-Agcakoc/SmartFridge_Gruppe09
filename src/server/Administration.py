@@ -2,8 +2,6 @@ from server.bo.Fridge import Fridge
 from server.bo.Groceries import Groceries
 from server.bo.GroceriesStatement import GroceriesStatement
 from server.bo.Household import Household
-from server.bo.Measure import Measure
-from server.bo.Quantity import Quantity
 from server.bo.Recipe import Recipe
 from server.bo.User import User
 
@@ -15,7 +13,7 @@ from server.db.RecipeMapper import RecipeMapper
 from server.db.UserMapper import UserMapper
 
 
-class Adminstration():
+class Administration():
 
     def __init__(self):
         pass
@@ -24,10 +22,12 @@ class Adminstration():
     Fridge Spezifische Methoden
     """
 
-    def create_fridge_of_household(self, fridge_name, household):
+    def create_fridge_of_household(self, fridge_name, household_id,groceriesstatement_id): #hier darauf achten
+
         fridge = Fridge()
         fridge.set_fridge_name(fridge_name)
-        fridge.set_household(household.get_id())
+        fridge.set_household_id(household_id)
+        fridge.set_groceriesstatement_id(groceriesstatement_id)
         fridge.set_id(1)
 
         with FridgeMapper() as mapper:
@@ -41,9 +41,9 @@ class Adminstration():
         with FridgeMapper() as mapper:
             return mapper.find_by_key(number)
 
-    def get_fridge_of_household(self, household):  # müssen die logik prüfen
+    def get_fridge_of_household(self, household_id):  # müssen die logik prüfen
         with FridgeMapper() as mapper:
-            return mapper.find_by_household_id(household.get_id())
+            return mapper.find_by_household_id(household_id) #prüfen
 
     def get_all_fridges(self):
         with FridgeMapper() as mapper:
@@ -55,21 +55,17 @@ class Adminstration():
 
     def delete_fridge(self, fridge):
         with FridgeMapper() as mapper:
-            groceries = self.get_groceriesstatement_by_fridge(fridge)  # Variable nicht vollständig definiert
-
-            if not (groceries is None):
-                for a in fridge:
-                    self.delete_groceriesstatement(a)  # Ggf. Logik hier einfügen
-
             mapper.delete(fridge)
 
     """
     Haushalt Spezifische Methoden
     """
 
-    def create_household(self, household_name):
+    def create_household(self, household_name,user_id,fridge_id):
         household = Household()
         household.set_household_name(household_name)
+        household.set_user_id(user_id)
+        household.set_fridge_id(fridge_id)
         household.set_id(1)
 
         with HouseholdMapper() as mapper:
@@ -93,6 +89,12 @@ class Adminstration():
 
     def delete_household(self, household): #prüfen
         with HouseholdMapper() as mapper:
+
+            return mapper.delete(household) #hier fehlt dann die funktion das der fridge sich auch löschen soll
+
+    """
+    def delete_household(self, household):  # prüfen
+        with HouseholdMapper() as mapper:
             fridge = self.get_fridge_of_household(household)
 
             if not (fridge is None):
@@ -102,12 +104,17 @@ class Adminstration():
             mapper.delete(household)
 
     """
+
+
+
+    """
     Recipe Spezifische Methoden
     """
 
-    def create_recipe(self, recipe_name):
+    def create_recipe_from_user(self, recipe_name,user): #drüber schauen
         recipe = Recipe()
         recipe.set_recipe_name(recipe_name)
+        recipe.set_user_id(user.get_user_id(user)) #neu
         recipe.set_id(1)
 
         with RecipeMapper() as mapper:
@@ -132,6 +139,11 @@ class Adminstration():
     def delete_recipe(self, recipe):
         with RecipeMapper() as mapper:
             mapper.delete(recipe)
+
+    def get_recipe_by_user(self, user_id):
+        with RecipeMapper() as mapper:
+            return mapper.find_by_user_id(user_id)
+
 
 #recipe of user?
 
@@ -174,7 +186,7 @@ class Adminstration():
     def create_groceriesstatement(self, groceriesname, description, quantity):
         groceriesstatement = GroceriesStatement()
         groceriesstatement.set_groceries_name(groceriesname)
-        groceriesstatement.set_desription(description)
+        groceriesstatement.set_description(description)
         groceriesstatement.set_quantity(quantity)
 
         with HouseholdMapper() as mapper:
@@ -194,7 +206,7 @@ class Adminstration():
 
     def get_groceriesstatement_by_fridge(self,fridge):
         with GroceriesStatementMapper() as mapper:
-            mapper.find_by_fridge_id(fridge.get_id(fridge))
+            return mapper.find_by_fridge_id(fridge) #prüfen
 
     def update_groceriesstatement(self, groceriesstatement):
         with GroceriesStatementMapper() as mapper:
@@ -208,16 +220,18 @@ class Adminstration():
        User Spezifische Methoden
     """
 
-    def create_user(self, firstname, lastname, nickname, email, google_user_id):
+    def create_user(self, firstname, lastname, nickname,email,google_user_id):
         user = User()
         user.set_firstname(firstname)
         user.set_lastname(lastname)
         user.set_nickname(nickname)
         user.set_email(email)
-        user.set_user_id(google_user_id)
+        user.set_google_user_id(google_user_id)
         user.set_id(1)
         with UserMapper() as mapper:
             return mapper.insert(user)
+
+    #user of household
 
     def get_user_by_firstname(self, firstsname):
         with UserMapper() as mapper:
@@ -256,3 +270,16 @@ class Adminstration():
     def delete_user(self, user):
         with UserMapper() as mapper:
             return mapper.delet(user)
+
+
+
+    '''
+#inhabitent
+
+    def createinhabitent(self,user_id,household_id):
+        with HouseholdMapper() as mapper:
+            return mapper.createinhabitent(user_id,household_id)
+
+
+#delete inhabitent 
+    '''
