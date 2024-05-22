@@ -102,7 +102,7 @@ CREATE TABLE `users` (
   `lastname` varchar(256) NOT NULL DEFAULT '',
   `nickname` varchar(128) NOT NULL DEFAULT '',
   `email` varchar(128) NOT NULL DEFAULT '',
-  `google_users_id` varchar(128) NOT NULL DEFAULT '',
+  `google_user_id` varchar(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;

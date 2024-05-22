@@ -72,7 +72,7 @@ class FridgeMapper (Mapper):
 
         cursor = self._cnx.cursor()
         command = "SELECT id, fridge_name, household_id, groceriesstatement_id FROM fridge WHERE id={}".format(key)
-        cursor.execute(command)
+        cursor.execute(command,)
         tuples = cursor.fetchall()
 
         if tuples[0] is not None:
@@ -116,22 +116,17 @@ class FridgeMapper (Mapper):
 
         cursor = self._cnx.cursor()
 
-        command = "UPDATE fridge " + "SET fridge_name=%s, household_id = %s, groceriesstatement_id = %s WHERE id=%s"
-        data = (fridge.get_id(), fridge.get_fridge_name(), fridge.get_household_id(), fridge.get_groceriesstatement_id())
+        command = "UPDATE fridge " + "SET fridge_name=%s, household_id=%s, groceriesstatement_id=%s WHERE id=%s"
+        data = (fridge.get_fridge_name(), fridge.get_household_id(), fridge.get_groceriesstatement_id(),fridge.get_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
         cursor.close()
 
     def delete(self, fridge):
-        """Löschen der Daten eines Account-Objekts aus der Datenbank.
-
-        :param account das aus der DB zu löschende "Objekt"
-        """
         cursor = self._cnx.cursor()
-
-        command = "DELETE FROM fridge WHERE id={}".format(fridge.get_id())
-        cursor.execute(command)
+        command = "DELETE FROM fridge WHERE id=%s"
+        cursor.execute(command, (fridge.get_id(),))
 
         self._cnx.commit()
         cursor.close()
