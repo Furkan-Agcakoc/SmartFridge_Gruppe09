@@ -187,18 +187,18 @@ class Administration():
     Groceriesstatement Spezifische Methoden
     """
 
-    def create_groceriesstatement(self, groceriesname, description, quantity):
-        groceriesstatement = GroceriesStatement()
-        groceriesstatement.set_groceries_name(groceriesname)
+    def create_groceriesstatement(self, groceries_name, description, quantity):
+        groceriesstatement = GroceriesStatement()  # anschauen
+        groceriesstatement.set_groceries_name(groceries_name)
         groceriesstatement.set_description(description)
         groceriesstatement.set_quantity(quantity)
 
-        with HouseholdMapper() as mapper:
+        with GroceriesStatementMapper() as mapper:
             return mapper.insert(groceriesstatement)
 
-    def get_groceriesstatement_by_name(self, groceriesname):
+    def get_groceriesstatement_by_name(self, groceries_name):
         with GroceriesStatementMapper() as mapper:
-            return mapper.find_by_groceries_name(groceriesname)
+            return mapper.find_by_groceries_name(groceries_name)
 
     def get_groceriesstatement_by_id(self, number):
         with GroceriesStatementMapper() as mapper:
@@ -214,7 +214,7 @@ class Administration():
 
     def update_groceriesstatement(self, groceriesstatement):
         with GroceriesStatementMapper() as mapper:
-            mapper.update(GroceriesStatementMapper)
+            mapper.update(groceriesstatement)
 
     def delete_groceriesstatement(self, groceriesstatement):
         with GroceriesStatementMapper() as mapper:

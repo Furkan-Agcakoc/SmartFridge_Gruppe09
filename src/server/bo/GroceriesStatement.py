@@ -3,7 +3,7 @@ from server.bo.Quantity import Quantity
 from server.bo.Groceries import Groceries
 
 class GroceriesStatement(Measure, Quantity, Groceries):
-    def __init__(self, groceries_name, description, quantity):
+    def __init__(self, groceries_name = "", description="", quantity=0.0):
         super().__init__()
         self.groceries_name = groceries_name
         self.description = description
