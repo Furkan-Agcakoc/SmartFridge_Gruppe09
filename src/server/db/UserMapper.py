@@ -14,14 +14,14 @@ class UserMapper (Mapper):
         cursor.execute("SELECT * FROM users")
         tuples = cursor.fetchall()
 
-        for (id, firstname, lastname, nickname, email, user_id) in tuples:
+        for (id, firstname, lastname, nickname, email, google_user_id) in tuples:
             user = User()
             user.set_id(id)
             user.set_firstname(firstname)
             user.set_lastname(lastname)
             user.set_nickname(nickname)
             user.set_email(email)
-            user.set_user_id(user_id)
+            user.set_google_user_id(google_user_id)
             result.append(user)
 
         self._cnx.commit()
@@ -37,14 +37,14 @@ class UserMapper (Mapper):
         cursor.excecute(command)
         tuples = cursor.fetchall()
 
-        for (id, firstname, lastname, nickname, email, user_id) in tuples:
+        for (id, firstname, lastname, nickname, email, google_user_id) in tuples:
             user = User()
             user.set_id(id)
             user.set_firstname(firstname)
             user.set_lastname(lastname)
             user.set_nickname(nickname)
             user.set_email(email)
-            user.set_user_id(user_id)
+            user.set_google_user_id(google_user_id)
             result.append(user)
 
         self._cnx.commit()
@@ -60,14 +60,14 @@ class UserMapper (Mapper):
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, firstname, lastname, nickname, email, user_id) in tuples:
+        for (id, firstname, lastname, nickname, email, google_user_id) in tuples:
             user = User()
             user.set_id(id)
             user.set_firstname(firstname)
             user.set_lastname(lastname)
             user.set_nickname(nickname)
             user.set_email(email)
-            user.set_user_id(user_id)
+            user.set_google_user_id(google_user_id)
             result.append(user)
 
         self._cnx.commit()
@@ -84,14 +84,14 @@ class UserMapper (Mapper):
         tuples = cursor.fetchall()
 
         try:
-            (id, firstname, lastname, nickname, email, user_id) = tuples=[0]
+            (id, firstname, lastname, nickname, email, google_user_id) = tuples=[0]
             user = User()
             user.set_id(id)
             user.set_firstname(firstname)
             user.set_lastname(lastname)
             user.set_nickname(nickname)
             user.set_email(email)
-            user.set_user_id(user_id)
+            user.set_google_user_id(google_user_id)
             result = user
         except IndexError:
             result = None
@@ -110,14 +110,14 @@ class UserMapper (Mapper):
         tuples = cursor.fetchall()
 
         try:
-            (id, firstname, lastname, nickname, email, user_id) = tuples[0]
+            (id, firstname, lastname, nickname, email, google_user_id) = tuples[0]
             user = User()
             user.set_id(id)
             user.set_firstname(firstname)
             user.set_lastname(lastname)
             user.set_nickname(nickname)
             user.set_email(email)
-            user.set_user_id(user_id)
+            user.set_google_user_id(google_user_id)
             result = None
         except IndexError:
             result = None
@@ -127,23 +127,23 @@ class UserMapper (Mapper):
 
         return result
 
-    def find_by_google_user_id(self, user_id):
+    def find_by_google_user_id(self, google_user_id):
 
         result = None
         cursor = self._cnx.cursor()
-        command = "SELECT * from users WHERE google_user_id={}".format(user_id)
+        command = "SELECT * from users WHERE google_user_id={}".format(google_user_id)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
         try:
-            (id, firstname, lastname, nickname, email, user_id) = tuples[0]
+            (id, firstname, lastname, nickname, email, google_user_id) = tuples[0]
             user = User()
             user.set_id(id)
             user.set_firstname(firstname)
             user.set_lastname(lastname)
             user.set_nickname(nickname)
             user.set_email(email)
-            user.set_user_id(user_id)
+            user.set_google_user_id(google_user_id)
             result = user
 
         except IndexError:
@@ -163,14 +163,14 @@ class UserMapper (Mapper):
         tuples = cursor.fetchall()
 
         try:
-            (id, firstname, lastname, nickname, email, user_id) = tuples[0]
+            (id, firstname, lastname, nickname, email, google_user_id) = tuples[0]
             user = User()
             user.set_id(id)
             user.set_firstname(firstname)
             user.set_lastname(lastname)
             user.set_nickname(nickname)
             user.set_email(email)
-            user.set_user_id(user_id)
+            user.set_google_user_id(google_user_id)
             result = user
 
         except IndexError:
@@ -184,7 +184,7 @@ class UserMapper (Mapper):
     def insert(self, user):
 
         cursor = self._cnx.cursor()
-        cursor.execute("SELECT MAX(id) AS maxid FROM users")
+        cursor.execute("SELECT MAX(id) AS maxid FROM users ")
         tuples = cursor.fetchall()
 
         for (maxid) in tuples:
@@ -192,21 +192,24 @@ class UserMapper (Mapper):
 
                 user.set_id(maxid[0] + 1)
             else:
+
                 user.set_id(1)
 
-        command = "INSERT INTO users (id, firstname, lastname, nickname, email, google_user_id) VALUES (%s,%s,%s,%s,%s,%s)"
-        data = (user.get_id(), user.get_firstname(),user.get_lastname(), user.get_nickname(), user.get_email(), user.get_user_id())
+        command = "INSERT INTO users (id, firstname, lastname, email, nickname,google_user_id) VALUES (%s,%s,%s,%s,%s,%s)"
+        data = (user.get_id(), user.get_firstname(), user.get_lastname(),user.get_email(), user.get_google_user_id(), user.get_nickname())
         cursor.execute(command, data)
 
         self._cnx.commit()
         cursor.close()
+
+        return user
 
     def update(self, user):
 
         cursor = self._cnx.cursor()
 
         command = "UPDATE users" + "SET firstname=%s, lastname=%s, nickname=%s, email=%s WHERE google_user_id=%s"
-        data = (user.get_firstname(), user.get_lastname(), user.get_nickname(), user.get_email(), user.get_user_id())
+        data = (user.get_firstname(), user.get_lastname(), user.get_nickname(), user.get_email(), user.get_google_user_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
@@ -215,7 +218,7 @@ class UserMapper (Mapper):
     def delete(self, user):
 
         cursor = self._cnx.cursor()
-        command = "DELETE FROM users WHERE id={}".format(user.get_user_id())
+        command = "DELETE FROM users WHERE id={}".format(user.get_google_user_id())
         cursor.execute(command)
 
         self._cnx.commit()

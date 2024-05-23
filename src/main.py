@@ -33,7 +33,7 @@ user = api.inherit('User', bo, {
     'lastname': fields.String(attribute='_lastname', description='Nachname eines Benutzers'),  # korrigiert '_lasttname'
     'nickname': fields.String(attribute='_nickname', description='Nickname eines Benutzers'),
     'email': fields.String(attribute='_email', description='E-Mail-Adresse eines Benutzers'),
-    'user_id': fields.String(attribute='_user_id', description='Google User ID eines Benutzers')
+    'google_user_id': fields.String(attribute='_google_user_id', description='Google User ID eines Benutzers')
 })
 
 fridge = api.inherit('Fridge', bo, {
@@ -76,20 +76,30 @@ class UserListOperations(Resource):
     @smartfridge.marshal_list_with(user)
    # @secured
     def get(self):
+        "Wiedergabe der Household Objekts"
         adm = Administration()
         user_list = adm.get_all_users()
+        if len(user_list) == 0:
+            return {'message': 'Liste ist leer'}
         return user_list
 
     @smartfridge.marshal_with(user, code=200)
+
     @smartfridge.expect(user)
-    #@secured
+    # @secured
     def post(self):
+        """Erstellen eines User Objekts"""
+
         adm = Administration()
-        user = User.from_dict(api.payload)
-        if user is not None:
-            u = adm.create_user(user)
+
+        proposal = User.from_dict(api.payload)
+
+        if proposal is not None:
+            u = adm.create_user(
+                proposal.get_nickname(),proposal.get_firstname(),proposal.get_lastname(),proposal.get_nickname(),proposal.get_email())
             return u, 200
         else:
+            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
 @smartfridge.route('/user/<int:id>')
@@ -426,6 +436,7 @@ class FridgeOperations(Resource):
 
    # @secured
     def delete(self,id):
+        "Löschen eines Fridge Objekts"
 
         adm = Administration()
         fri = adm.get_fridge_by_id(id)
@@ -433,8 +444,10 @@ class FridgeOperations(Resource):
         return '',200
 
     @smartfridge.marshal_with(fridge)
+    @smartfridge.expect(fridge, validate=True)
    # @secured
     def put(self,id):
+        "Updaten eines Fridge Objekts"
 
         adm = Administration()
         fri = Fridge.from_dict(api.payload)
@@ -520,7 +533,7 @@ class GroceriesstatementListOperations(Resource):
         adm = Administration()
         fridge_list = adm.get_all_fridges()
         return fridge_list
-
+#post
 
 @smartfridge.route('/groceriesstatement/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')

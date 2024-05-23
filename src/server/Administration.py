@@ -24,12 +24,6 @@ class Administration():
 
     def create_fridge_of_household(self, fridge_name, household_id,groceriesstatement_id): #hier darauf achten
 
-        existing_fridge = self.get_fridge_of_household(household_id)
-
-        if existing_fridge:
-            print("Kühlschrank besteht schon")
-            return None
-
         fridge = Fridge()
         fridge.set_fridge_name(fridge_name)
         fridge.set_household_id(household_id)
@@ -61,12 +55,6 @@ class Administration():
 
     def delete_fridge(self, fridge):
         with FridgeMapper() as mapper:
-            groceries = self.get_groceriesstatement_by_fridge(fridge)  # Variable nicht vollständig definiert
-
-            if not (groceries is None):
-                for a in fridge:
-                    self.delete_groceriesstatement(a)  # Ggf. Logik hier einfügen
-
             mapper.delete(fridge)
 
     """
@@ -222,7 +210,7 @@ class Administration():
 
     def get_groceriesstatement_by_fridge(self,fridge):
         with GroceriesStatementMapper() as mapper:
-            return mapper.find_by_fridge_id(fridge.get_id(fridge)) #prüfen
+            return mapper.find_by_fridge_id(fridge) #prüfen
 
     def update_groceriesstatement(self, groceriesstatement):
         with GroceriesStatementMapper() as mapper:
@@ -236,13 +224,13 @@ class Administration():
        User Spezifische Methoden
     """
 
-    def create_user(self, firstname, lastname, nickname, email, google_user_id):
+    def create_user(self, firstname, lastname, nickname,email,google_user_id):
         user = User()
         user.set_firstname(firstname)
         user.set_lastname(lastname)
         user.set_nickname(nickname)
         user.set_email(email)
-        user.set_user_id(google_user_id)
+        user.set_google_user_id(google_user_id)
         user.set_id(1)
         with UserMapper() as mapper:
             return mapper.insert(user)

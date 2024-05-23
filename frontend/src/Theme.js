@@ -21,6 +21,7 @@ const theme = createTheme({
       default: "#f2f2f2", //light grey
       paper: "#fbfbfb", //light grey
       card: "#fbfbfb", //light grey
+      white: "#fff", // white
     },
     error: {
       main: "#c50000",
@@ -29,6 +30,7 @@ const theme = createTheme({
       main: "rgba(0,205,34,0.8)",
       light: "rgba(51, 215, 78, 0.8)",
       dark: "#06871D",
+      gwhite: "#F6FFED",
     },
     text: {
       primary: "rgba(20,19,19,0.87)",
