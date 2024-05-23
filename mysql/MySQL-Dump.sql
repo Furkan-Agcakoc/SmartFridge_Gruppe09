@@ -26,7 +26,7 @@ CREATE TABLE `fridge` (
   `fridge_name` varchar(100) NOT NULL DEFAULT '',
   `household_id` int NOT NULL DEFAULT '0',
   `groceriesstatement_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`id`)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -61,8 +61,7 @@ CREATE TABLE `household` (
   `household_name` varchar(100) NOT NULL DEFAULT '',
   `user_id` int NOT NULL DEFAULT '0',
   `fridge_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  --hier noch die key verbindungen
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -117,18 +116,14 @@ DROP TABLE IF EXISTS `recipe`;
 /*!40101 SET @saved_cs_client     = @character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `recipe` (
-  `id` int NOT NULL DEFAULT '0',
+  `id` int(20) NOT NULL AUTO_INCREMENT,
   `recipe_name` varchar(100) NOT NULL DEFAULT '',
   `duration` varchar(100) NOT NULL DEFAULT '',
   `portions` int NOT NULL DEFAULT '0',
   `instruction` varchar(1024) NOT NULL DEFAULT '',
   `user_id` int NOT NULL DEFAULT '0',
   `groceriesstatement_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `user_id_idx` (`user_id`),
-  KEY `groceriesstatement_id_idx` (`groceriesstatement_id`),
-  CONSTRAINT `recipe_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `recipe_groceriesstatement_fk` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

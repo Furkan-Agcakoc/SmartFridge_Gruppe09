@@ -111,10 +111,14 @@ class Administration():
     Recipe Spezifische Methoden
     """
 
-    def create_recipe_from_user(self, recipe_name,user): #drüber schauen
+    def create_recipe(self, recipe_name, portions, instruction, duration, user_id, groceriesstatement_id):
         recipe = Recipe()
         recipe.set_recipe_name(recipe_name)
-        recipe.set_user_id(user.get_user_id(user)) #neu
+        recipe.set_portions(portions)
+        recipe.set_instruction(instruction)
+        recipe.set_duration(duration)
+        recipe.set_user_id(user_id)
+        recipe.set_groceriesstatement_id(groceriesstatement_id)
         recipe.set_id(1)
 
         with RecipeMapper() as mapper:
@@ -128,7 +132,7 @@ class Administration():
         with RecipeMapper() as mapper:
             return mapper.find_by_key(number)
 
-    def get_all_recipes(self):
+    def get_all_recipe(self):
         with RecipeMapper() as mapper:
             return mapper.find_all()
 
@@ -140,9 +144,9 @@ class Administration():
         with RecipeMapper() as mapper:
             mapper.delete(recipe)
 
-    def get_recipe_by_user(self, user_id):
-        with RecipeMapper() as mapper:
-            return mapper.find_by_user_id(user_id)
+   # def get_recipe_by_user(self, user_id):
+   #    with RecipeMapper() as mapper:
+      #      return mapper.find_by_user_id(user_id)
 
 
 #recipe of user?
