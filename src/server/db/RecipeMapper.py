@@ -32,28 +32,24 @@ class RecipeMapper (Mapper):
         return result
 
     def find_by_recipe_name(self, recipe_name):
+        result = None
 
-        result = []
+        with self._cnx.cursor() as cursor:
+            command = "SELECT * FROM recipe WHERE recipe_name = %s"
+            cursor.execute(command, (recipe_name,))
+            tuples = cursor.fetchall()
 
-        cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id FROM " \
-                  "recipe WHERE recipe_name LIKE '{}' ORDER BY recipe_name".format(recipe_name)
-        cursor.execute(command)
-        tuples = cursor.fetchall()
-
-        for (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id ) in tuples:
-            recipe = Recipe()
-            recipe.set_id(id)
-            recipe.set_recipe_name(recipe_name)
-            recipe.set_duration(duration)
-            recipe.set_portions(portions)
-            recipe.set_instruction(instruction)
-            recipe.set_user_id(user_id)
-            recipe.set_groceriesstatement_id(groceriesstatement_id)
-            result.append(recipe)
-
-        self._cnx.commit()
-        cursor.close()
+            if tuples:
+                (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) = tuples[0]
+                recipe = Recipe()
+                recipe.set_id(id)
+                recipe.set_recipe_name(recipe_name)
+                recipe.set_duration(duration)
+                recipe.set_portions(portions)
+                recipe.set_instruction(instruction)
+                recipe.set_user_id(user_id)
+                recipe.set_groceriesstatement_id(groceriesstatement_id)
+                result = recipe
 
         return result
 

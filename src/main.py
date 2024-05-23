@@ -386,8 +386,9 @@ class RecipeOperations(Resource):
 class RecipeNameOperations(Resource):
     @smartfridge.marshal_with(recipe)
     def get(self, recipe_name):
+        """Wiedergabe eines Recipe Objekts durch Name"""
         adm = Administration()
-        recipe = adm.get_groceries_by_name(recipe_name)
+        recipe = adm.get_recipe_by_name(recipe_name)
         return recipe
 
 """
