@@ -40,24 +40,30 @@ class Recipe (bo.BusinessObject):
         return self._user_id
 
     def set_user_id(self, user_id):
-        self._user_id = user_id
+       self._user_id = user_id
 
     def get_groceriesstatement_id(self):
         return self._groceriesstatement_id
 
     def set_groceriesstatement_id(self, groceriesstatement_id):
-        self._groceriesstatement_id = groceriesstatement_id
+       self._groceriesstatement_id = groceriesstatement_id
 
 
 
     @staticmethod
+    @staticmethod
     def from_dict(dictionary=dict()):
+        """Umwandeln eines Python dict() in ein Recipe()."""
         obj = Recipe()
-        obj.set_id(dictionary["id"]) #erbt von BusinessObjekt
+        obj.set_id(dictionary["id"])  # eigentlich Teil von BusinessObject !
         obj.set_recipe_name(dictionary["recipe_name"])
         obj.set_portions(dictionary["portions"])
         obj.set_instruction(dictionary["instruction"])
         obj.set_duration(dictionary["duration"])
+        obj.set_user_id(dictionary["user_id"])
+        obj.set_groceriesstatement_id(dictionary["groceriesstatement_id"])
+
+
 
         return obj
 
