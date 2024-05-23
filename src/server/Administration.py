@@ -269,7 +269,7 @@ class Administration():
 
     def delete_user(self, user):
         with UserMapper() as mapper:
-            return mapper.delet(user)
+            return mapper.delete(user)
 
 
 

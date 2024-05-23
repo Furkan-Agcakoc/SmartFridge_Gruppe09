@@ -55,14 +55,14 @@ groceries = api.inherit('Groceries', bo, {
 
 household = api.inherit('Household', bo, {
     'household_name': fields.String(attribute='_household_name', description='Name des Haushalts'),
-    'user_id' :fields.Integer(attribute='_user_id', description='Die Id eines Users'),
-    'fridge_id' :fields.Integer(attribute='_fridge_id', description='Die Id eines Fridges'),
+    'user_id':fields.Integer(attribute='_user_id', description='Die Id eines Users'),
+    'fridge_id':fields.Integer(attribute='_fridge_id', description='Die Id eines Fridges'),
 })
 
 groceriesstatement = api.inherit('GroceriesStatement', bo, {
     'groceries_name': fields.String(attribute='_groceries_name', description='Name eines Lebensmittels'),
-    'description' : fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittel'),
-    'quantity' : fields.Integer(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel')
+    'description': fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittel'),
+    'quantity': fields.Integer(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel')
 })
 
 '''
@@ -94,7 +94,7 @@ class UserListOperations(Resource):
 
         if proposal is not None:
             u = adm.create_user(
-                proposal.get_nickname(),proposal.get_firstname(),proposal.get_lastname(),proposal.get_nickname(),proposal.get_email())
+                proposal.get_firstname(),proposal.get_lastname(),proposal.get_nickname(),proposal.get_email(),proposal.get_google_user_id())
             return u, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
@@ -107,12 +107,14 @@ class UserOperations(Resource):
     @smartfridge.marshal_with(user)
    # @secured
     def get(self, id):
+        "Wiedergabe eines User Objekts durch ID"
         adm = Administration()
         user = adm.get_user_by_id(id)
         return user
 
    # @secured
     def delete(self, id):
+        "Löschen eines User Objekts"
         adm = Administration()
         user = adm.get_user_by_id(id)
         adm.delete_user(user)
@@ -122,6 +124,7 @@ class UserOperations(Resource):
     @smartfridge.expect(user, validate=True)
    # @secured
     def put(self, id):
+        "Updaten eines User Objekts"
         adm = Administration()
         u = User.from_dict(api.payload)
         if u is not None:
@@ -137,6 +140,7 @@ class UserOperations(Resource):
 class GoogleOperations(Resource):
     @smartfridge.marshal_with(user)
     def get(self, google_user_id):
+        "Wiedergabe eines User Objekts durch GoogleID"
         adm = Administration()
         user = adm.get_user_by_google_user_id(google_user_id)
         return user

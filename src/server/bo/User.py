@@ -40,11 +40,9 @@ class User (bo.BusinessObject):
     def set_google_user_id(self, google_user_id):
         self._google_user_id = google_user_id
 
-
     @staticmethod
     def from_dict(dictionary=dict()):
         obj = User()
-        obj.set_id(dictionary["id"])
         obj.set_firstname(dictionary["firstname"])
         obj.set_lastname(dictionary["lastname"])
         obj.set_nickname(dictionary["nickname"])
