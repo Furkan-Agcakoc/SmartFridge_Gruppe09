@@ -116,11 +116,13 @@ DROP TABLE IF EXISTS `recipe`;
 /*!40101 SET @saved_cs_client     = @character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `recipe` (
-  `id`int(20) NOT NULL AUTO_INCREMENT,
+  `id` int(20) NOT NULL AUTO_INCREMENT,
   `recipe_name` varchar(100) NOT NULL DEFAULT '',
   `duration` varchar(100) NOT NULL DEFAULT '',
   `portions` int NOT NULL DEFAULT '0',
   `instruction` varchar(1024) NOT NULL DEFAULT '',
+  `user_id` int NOT NULL DEFAULT '0',
+  `groceriesstatement_id` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

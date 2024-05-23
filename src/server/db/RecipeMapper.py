@@ -14,15 +14,15 @@ class RecipeMapper (Mapper):
         cursor.execute("SELECT * from recipe")
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction) in tuples:
+        for (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            #recipe.set_user_id(user_id)
-            #recipe.set_groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
 
@@ -36,20 +36,20 @@ class RecipeMapper (Mapper):
         result = []
 
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction FROM " \
+        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id FROM " \
                   "recipe WHERE recipe_name LIKE '{}' ORDER BY recipe_name".format(recipe_name)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction) in tuples:
+        for (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id ) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            #recipe.set_user_id(user_id)
-            #recipe.set_groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
         self._cnx.commit()
@@ -62,20 +62,20 @@ class RecipeMapper (Mapper):
         result = []
 
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction FROM " \
+        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id FROM " \
                   "recipe WHERE duration={}".format(duration)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction) in tuples:
+        for (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            #recipe.set_user_id(user_id)
-            #recipe.set_groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
         self._cnx.commit()
@@ -88,20 +88,20 @@ class RecipeMapper (Mapper):
         result = []
 
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction FROM " \
+        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id FROM " \
                   "recipe WHERE portions={}".format(portions)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction) in tuples:
+        for (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            #recipe.set_user_id(user_id)
-            #recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
         self._cnx.commit()
@@ -114,20 +114,20 @@ class RecipeMapper (Mapper):
         result = []
 
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction FROM " \
+        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id FROM " \
                   "recipe WHERE instruction LIKE '{}' ORDER BY instruction".format(instruction)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction) in tuples:
+        for (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            #recipe.set_user_id(user_id)
-            #recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
             result.append(recipe)
 
         self._cnx.commit()
@@ -145,15 +145,15 @@ class RecipeMapper (Mapper):
         tuples = cursor.fetchall()
 
         try:
-            (id, recipe_name, duration, portions, instruction) = tuples[0]
+            (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id ) = tuples[0]
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
             recipe.set_portions(portions)
             recipe.set_instruction(instruction)
-            #recipe.set_user_id(user_id)
-            #recipe.set.groceriesstatement_id(groceriesstatement_id)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
 
             result = recipe
 
@@ -165,67 +165,67 @@ class RecipeMapper (Mapper):
 
         return result
 
-#    def find_by_user_id(self, user_id):
-#
-#        result = None
+    def find_by_user_id(self, user_id):
 
-#        cursor = self._cnx.cursor()
-#        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id FROM " \
-#                  "customers WHERE user_id={}".format(user_id)
-#        cursor.execute(command)
-#        tuples = cursor.fetchall()
+        result = None
 
-#        try:
-#            (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) = tuples[0]
-#            recipe = Recipe()
-#            recipe.set_id(id)
-#            recipe.set_recipe_name(recipe_name)
-#            recipe.set_duration(duration)
-#            recipe.set_portions(portions)
-#            recipe.set_instruction(instruction)
-           # recipe.set_user_id(user_id)
-           # recipe.set.groceriesstatement_id(groceriesstatement_id)
+        cursor = self._cnx.cursor()
+        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id FROM " \
+                  "customers WHERE user_id={}".format(user_id)
+        cursor.execute(command)
+        tuples = cursor.fetchall()
 
-#            result = recipe
+        try:
+            (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) = tuples[0]
+            recipe = Recipe()
+            recipe.set_id(id)
+            recipe.set_recipe_name(recipe_name)
+            recipe.set_duration(duration)
+            recipe.set_portions(portions)
+            recipe.set_instruction(instruction)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
 
-#        except IndexError:
-#            result = None
+            result = recipe
 
-#       self._cnx.commit()
-#       cursor.close()
+        except IndexError:
+            result = None
 
-#       return result
+        self._cnx.commit()
+        cursor.close()
 
-#    def find_by_groceriesstatement_id(self, groceriesstatement_id):
-#
-#       result = None
-#
-#        cursor = self._cnx.cursor()
-#        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id FROM " \
-#                  "customers WHERE groceriesstatement_id={}".format(groceriesstatement_id)
-#        cursor.execute(command)
-#        tuples = cursor.fetchall()
+        return result
 
-#        try:
-#            (id, recipe_name, duration, portions, instruction) = tuples[0]
-#            recipe = Recipe()
-#            recipe.set_id(id)
-#            recipe.set_recipe_name(recipe_name)
-#            recipe.set_duration(duration)
-#            recipe.set_portions(portions)
-#            recipe.set_instruction(instruction)
-#            #recipe.set_user_id(user_id)
-#            #recipe.set.groceriesstatement_id(groceriesstatement_id)
+    def find_by_groceriesstatement_id(self, groceriesstatement_id):
 
-#            result = recipe
+       result = None
 
-#        except IndexError:
-#            resukt = None
+       cursor = self._cnx.cursor()
+       command = "SELECT id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id FROM " \
+                  "customers WHERE groceriesstatement_id={}".format(groceriesstatement_id)
+       cursor.execute(command)
+       tuples = cursor.fetchall()
 
-#        self._cnx.commit()
-#        cursor.close()
+       try:
+            (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) = tuples[0]
+            recipe = Recipe()
+            recipe.set_id(id)
+            recipe.set_recipe_name(recipe_name)
+            recipe.set_duration(duration)
+            recipe.set_portions(portions)
+            recipe.set_instruction(instruction)
+            recipe.set_user_id(user_id)
+            recipe.set_groceriesstatement_id(groceriesstatement_id)
 
-#        return result
+            result = recipe
+
+       except IndexError:
+        result = None
+
+        self._cnx.commit()
+        cursor.close()
+
+        return result
 
     def insert(self, recipe):
         cursor = self._cnx.cursor()
@@ -238,9 +238,9 @@ class RecipeMapper (Mapper):
             else:
                 recipe.set_id(1)
 
-        command = "INSERT INTO recipe (id, recipe_name, duration, portions, instruction) VALUES (%s,%s,%s,%s,%s)"
+        command = "INSERT INTO recipe (id, recipe_name, duration, portions, instruction, user_id, groceriesstatement_id) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         data = (recipe.get_id(), recipe.get_recipe_name(), recipe.get_duration(), recipe.get_portions(),
-                recipe.get_instruction())
+                recipe.get_instruction(), recipe.get_user_id(), recipe.get_groceriesstatement_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
@@ -249,12 +249,10 @@ class RecipeMapper (Mapper):
         return recipe
 
     def update(self, recipe):
-
         cursor = self._cnx.cursor()
-
-        command = "UPDATE recipe " + "SET recipe_name=%s, duration=%s, portions=%s, instruction=%s WHERE id=%s"
+        command = "UPDATE recipe SET recipe_name=%s, duration=%s, portions=%s, instruction=%s, user_id=%s, groceriesstatement_id=%s WHERE id=%s"
         data = (recipe.get_recipe_name(), recipe.get_duration(), recipe.get_portions(), recipe.get_instruction(),
-                recipe.get_id())
+                recipe.get_user_id(), recipe.get_groceriesstatement_id(), recipe.get_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
