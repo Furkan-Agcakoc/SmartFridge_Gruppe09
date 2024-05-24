@@ -370,7 +370,7 @@ class RecipeOperations(Resource):
     @smartfridge.expect(recipe, validate=True)
     #@secured
     def put(self, id):
-        """Updaten eines Household Objekts"""
+        """Updaten eines Recipe Objekts"""
         adm = Administration()
         r = Recipe.from_dict(api.payload)
         if r is not None:
@@ -535,7 +535,7 @@ class GroceriesstatementListOperations(Resource):
     @smartfridge.marshal_list_with(groceriesstatement)
    # @secured
     def get(self):
-        """Wiedergabe eines Groceriesstatement Objekts"""
+        """Wiedergabe der Groceriesstatement Objekte"""
         adm = Administration()
         groceriesstatement_list = adm.get_all_groceriesstatements()
         return groceriesstatement_list

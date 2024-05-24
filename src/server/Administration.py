@@ -206,7 +206,7 @@ class Administration():
 
     def get_all_groceriesstatements(self):
         with GroceriesStatementMapper() as mapper:
-            mapper.find_all()
+            return mapper.find_all()
 
     def get_groceriesstatement_by_fridge(self,fridge):
         with GroceriesStatementMapper() as mapper:
