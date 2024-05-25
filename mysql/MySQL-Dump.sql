@@ -26,7 +26,9 @@ CREATE TABLE `fridge` (
   `fridge_name` varchar(100) NOT NULL DEFAULT '',
   `household_id` int NOT NULL DEFAULT '0',
   `groceriesstatement_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `household_id` (`household_id`),
+  CONSTRAINT `household_id_fk` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -60,8 +62,9 @@ CREATE TABLE `household` (
   `id` int NOT NULL DEFAULT '0',
   `household_name` varchar(100) NOT NULL DEFAULT '',
   `user_id` int NOT NULL DEFAULT '0',
-  `fridge_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -146,20 +149,20 @@ CREATE TABLE `inhabitant` (
 
   PRIMARY KEY (`household_id`, `user_id`),
   KEY `household_id` (`household_id`),
+  KEY `user_id` (`user_id`),
   CONSTRAINT `inhabitant_fk1` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`),
     CONSTRAINT `inhabitant_fk2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-DROP TABLE IF EXISTS `recipeplace`;
+DROP TABLE IF EXISTS `recipelocation`;
 /*!40101 SET @saved_cs_client     = @character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `recipeplace` (
+CREATE TABLE `recipelocation` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `household_id`   int NOT NULL DEFAULT '0',
   `recipe_id` int NOT NULL DEFAULT '0',
-
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

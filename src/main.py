@@ -57,8 +57,7 @@ groceries = api.inherit('Groceries', bo, {
 
 household = api.inherit('Household', bo, {
     'household_name': fields.String(attribute='_household_name', description='Name des Haushalts'),
-    'user_id':fields.Integer(attribute='_user_id', description='Die Id eines Users'),
-    'fridge_id':fields.Integer(attribute='_fridge_id', description='Die Id eines Fridges'),
+    'user_id': fields.Integer(attribute='_user_id', description='Die Id eines Users')
 })
 
 groceriesstatement = api.inherit('GroceriesStatement', bo, {
@@ -70,7 +69,7 @@ groceriesstatement = api.inherit('GroceriesStatement', bo, {
 
 # Membership
 
-@smartfridge.route('/Inhabitant')
+@smartfridge.route('/inhabitant')
 @smartfridge.response(500, 'If an server sided error occures')
 class InhabitantOperations(Resource):
 
@@ -89,9 +88,9 @@ class InhabitantOperations(Resource):
 
 @smartfridge.route('/inhabitant/<int:household_id>')
 @smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
-@smartfridge.param('groupid', 'Group ID')
+@smartfridge.param('household_id', 'household_id')
 class MembershipGroupOperations(Resource):
-    @smartfridge.marshal_list_with(User)
+    @smartfridge.marshal_list_with(user)
     #@secured
     def get(self, household_id):
 
@@ -213,7 +212,7 @@ class HouseholdListOperations(Resource):
 
         if proposal is not None:
             hh = adm.create_household(
-                proposal.get_household_name(), proposal.get_user_id(),proposal.get_fridge_id())
+                proposal.get_household_name(),proposal.get_user_id())
             return hh, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
@@ -450,7 +449,7 @@ class FridgeListOperations(Resource):
         proposal = Fridge.from_dict(api.payload)
 
         if proposal is not None:
-            fri = adm.create_fridge_of_household(
+            fri = adm.create_fridge(
                 proposal.get_fridge_name(), proposal.get_household_id(), proposal.get_groceriesstatement_id())
             return fri, 200
         else:

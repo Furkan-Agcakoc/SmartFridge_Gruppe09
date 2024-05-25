@@ -22,8 +22,8 @@ class Administration():
     Fridge Spezifische Methoden
     """
 
-    def create_fridge_of_household(self, fridge_name, household_id,groceriesstatement_id): #hier darauf achten
 
+    def create_fridge(self, fridge_name, household_id, groceriesstatement_id):
         fridge = Fridge()
         fridge.set_fridge_name(fridge_name)
         fridge.set_household_id(household_id)
@@ -61,11 +61,10 @@ class Administration():
     Haushalt Spezifische Methoden
     """
 
-    def create_household(self, household_name,user_id,fridge_id):
+    def create_household(self, household_name,user_id):
         household = Household()
         household.set_household_name(household_name)
         household.set_user_id(user_id)
-        household.set_fridge_id(fridge_id)
         household.set_id(1)
 
         with HouseholdMapper() as mapper:
@@ -280,7 +279,7 @@ class Administration():
     '''
 #inhabitent '''
 
-    def createinhabitent(self,user_id,household_id):
+    def create_inhabitant(self,user_id,household_id):
         with HouseholdMapper() as mapper:
             return mapper.createinhabitent(user_id,household_id)
 
