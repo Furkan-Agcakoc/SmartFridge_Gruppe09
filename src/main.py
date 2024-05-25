@@ -67,11 +67,45 @@ groceriesstatement = api.inherit('GroceriesStatement', bo, {
     'quantity': fields.Float(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel')
 })
 
+
+# Membership
+
+@smartfridge.route('/Inhabitant')
+@smartfridge.response(500, 'If an server sided error occures')
+class InhabitantOperations(Resource):
+
+    @secured
+    def post(self):
+
+        'Erstellen eines Inhabitant Objekts.'
+
+        user_id = api.payload["user_id"]
+        household_id = api.payload["household_id"]
+
+        adm = Administration()
+        return adm.create_inhabitant(user_id, household_id)
+
+
+
+@smartfridge.route('/inhabitant/<int:household_id>')
+@smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
+@smartfridge.param('groupid', 'Group ID')
+class MembershipGroupOperations(Resource):
+    @smartfridge.marshal_list_with(User)
+    #@secured
+    def get(self, household_id):
+
+        'Wiedergabe eines Users durch Household ID'
+
+        adm = Administration()
+        return adm.get_users_by_household_id(household_id)
+
+
 '''
 User
 '''
 @smartfridge.route('/user')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class UserListOperations(Resource):
     @smartfridge.marshal_list_with(user)
    # @secured

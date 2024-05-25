@@ -1,13 +1,11 @@
-from server.bo.Measure import Measure
-from server.bo.Quantity import Quantity
-from server.bo.Groceries import Groceries
+from server.bo import BusinessObject as bo
 
-class GroceriesStatement(Measure, Quantity, Groceries):
-    def __init__(self, groceries_name = "", description="", quantity=0.0):
+class GroceriesStatement(bo.BusinessObject):
+    def __init__(self):
         super().__init__()
-        self.groceries_name = groceries_name
-        self.description = description
-        self.quantity = quantity
+        self._groceries_name = ""
+        self._description = ""
+        self._quantity = 0.0
 
 
     def conversion(self, value, unit_from, unit_to):
@@ -26,7 +24,7 @@ class GroceriesStatement(Measure, Quantity, Groceries):
 
 
             else:
-                return "Ihre EInheit ist Ungültig oder die Umrechnung ist nicht Möglich."
+                return "Ihre EInheit ist ungültig oder die Umrechnung ist nicht möglich."
 
 
     def get_groceries_name(self):

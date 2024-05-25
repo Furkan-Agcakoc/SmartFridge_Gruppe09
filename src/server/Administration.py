@@ -278,12 +278,17 @@ class Administration():
 
 
     '''
-#inhabitent
+#inhabitent '''
 
     def createinhabitent(self,user_id,household_id):
         with HouseholdMapper() as mapper:
             return mapper.createinhabitent(user_id,household_id)
 
 
-#delete inhabitent 
-    '''
+    def get_users_by_household_id(self, household_id):
+        with HouseholdMapper() as mapper:
+            user_id = mapper.get_users_from_household_id(household_id)
+
+
+
+
