@@ -105,6 +105,41 @@ class HouseholdMapper(Mapper):
         self._cnx.commit()
         cursor.close()
 
+    def checkInhabitant(self, user_id, household_id):
+        cursor = self._cnx.cursor()
+        command = "SELECT `user_id`, `group_id` FROM inhabitant WHERE `user_id` = %s AND `household_id` = %s"
+        cursor.execute(command, (user_id, household_id))
+        tuples = cursor.fetchall()
+        cursor.close()
+        return len(tuples) > 0
+
+    def createInhabitant(self, user_id, household_id):
+        if not self.checkInhabitant(user_id, household_id):
+            cursor = self._cnx.cursor()
+            command = "INSERT INTO inhabitant (user_id, household_id) VALUES (%s, %s)"
+            cursor.execute(command, (user_id, household_id))
+            self._cnx.commit()
+            cursor.close()
+            return f"added usernr. {user_id} to householdnr. {household_id}"
+        else:
+            print("inhabitance already exists")
+            return "inhabitance already exists"
+
+    def deleteInhabitant(self, user_id, household_id):
+        cursor = self._cnx.cursor()
+        command = "DELETE FROM inhabitant WHERE user_id = %s AND household_id = %s"
+        cursor.execute(command, (user_id, household_id))
+        self._cnx.commit()
+        cursor.close()
+        return f"deleted usernr. {user_id} from householdnr. {household_id}"
+
+    def get_users_from_household_id(self, household_id):
+        cursor = self._cnx.cursor()
+        command = "SELECT user_id FROM inhabitant WHERE household_id = %s"
+        cursor.execute(command, (household_id,))
+        tuples = cursor.fetchall()
+        cursor.close()
+        return [i[0] for i in tuples]
 
 if (__name__ == "__main__"):
     with HouseholdMapper() as mapper:
