@@ -39,7 +39,6 @@ user = api.inherit('User', bo, {
 fridge = api.inherit('Fridge', bo, {
     'fridge_name': fields.String(attribute='_fridge_name', description='Name eines Kühlschranks'),
     'household_id': fields.Integer(attribute='_household_id', description='Haushalt Id in welchem der Kühlschrank ist.'),
-    'groceriesstatement_id': fields.Integer(attribute='_groceriesstatement_id', description='Groceriesstatement Id in welchem der Kühlschrank ist.')
 })
 
 recipe = api.inherit('Recipe', bo, {
@@ -56,21 +55,21 @@ groceries = api.inherit('Groceries', bo, {
 })
 
 household = api.inherit('Household', bo, {
-    'household_name': fields.String(attribute='_household_name', description='Name des Haushalts'),
-    'user_id': fields.Integer(attribute='_user_id', description='Die Id eines Users')
+    'household_name': fields.String(attribute='_household_name', description='Name des Haushalts')
 })
 
 groceriesstatement = api.inherit('GroceriesStatement', bo, {
     'groceries_name': fields.String(attribute='_groceries_name', description='Name eines Lebensmittels'),
     'description': fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittel'),
-    'quantity': fields.Float(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel')
+    'quantity': fields.Float(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel'),
+    'fridge_id': fields.Integer(attribut='_fridge_id', description='Die ID des Kühlschranks')
 })
 
 
-# Membership
+# Inhabitant
 
 @smartfridge.route('/inhabitant')
-@smartfridge.response(500, 'If an server sided error occures')
+@smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class InhabitantOperations(Resource):
 
     @secured
@@ -94,7 +93,7 @@ class MembershipGroupOperations(Resource):
     #@secured
     def get(self, household_id):
 
-        'Wiedergabe eines Users durch Household ID'
+        'Wiedergabe von Users durch Household ID'
 
         adm = Administration()
         return adm.get_users_by_household_id(household_id)
@@ -136,7 +135,7 @@ class UserListOperations(Resource):
             return '', 500
 
 @smartfridge.route('/user/<int:id>')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des User-Objekts')
 class UserOperations(Resource):
     @smartfridge.marshal_with(user)
@@ -170,7 +169,7 @@ class UserOperations(Resource):
             return '', 500
 
 @smartfridge.route('/user/google_user_id/<string:google_user_id>')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('google_user_id', 'Die Google ID des User-Objekts')
 class GoogleOperations(Resource):
     @smartfridge.marshal_with(user)
@@ -187,7 +186,7 @@ Household
 '''
 
 @smartfridge.route('/household')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class HouseholdListOperations(Resource):
     @smartfridge.marshal_list_with(household)
    # @secured
@@ -211,15 +210,14 @@ class HouseholdListOperations(Resource):
         proposal = Household.from_dict(api.payload)
 
         if proposal is not None:
-            hh = adm.create_household(
-                proposal.get_household_name(),proposal.get_user_id())
+            hh = adm.create_household(proposal.get_household_name())
             return hh, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
 @smartfridge.route('/household/<int:id>')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Haushalts.')
 class HouseholdOperations(Resource):
     @smartfridge.marshal_with(household)
@@ -262,7 +260,7 @@ groceries
 '''
 
 @smartfridge.route('/groceries')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class GroceriesListOperations(Resource):
     @smartfridge.marshal_list_with(groceries)
     #@secured
@@ -297,7 +295,7 @@ class GroceriesListOperations(Resource):
 
 
 @smartfridge.route('/groceries/<int:id>')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Groceries-Objekts')
 class GroceriesOperations(Resource):
     @smartfridge.marshal_with(groceries)
@@ -331,7 +329,7 @@ class GroceriesOperations(Resource):
             return '', 500
 
 @smartfridge.route('/groceries/groceries_name/<string:groceries_name>')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('groceries_name', 'Der name des grocerie-Objekts')
 class GroceriesNameOperations(Resource):
     @smartfridge.marshal_with(groceries)
@@ -348,7 +346,7 @@ recipe
 '''
 
 @smartfridge.route('/recipe')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class RecipeListOperations(Resource):
     @smartfridge.marshal_list_with(recipe)
     #@secured
@@ -380,7 +378,7 @@ class RecipeListOperations(Resource):
             return '', 500
 
 @smartfridge.route('/recipe/<int:id>')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Recipe-Objekts')
 class RecipeOperations(Resource):
     @smartfridge.marshal_with(recipe)
@@ -414,7 +412,7 @@ class RecipeOperations(Resource):
             return '', 500
 
 @smartfridge.route('/recipe/recipe_name/<string:recipe_name>')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('recipe_name', 'Der Name des Recipe-Objekts')
 class RecipeNameOperations(Resource):
     @smartfridge.marshal_with(recipe)
@@ -429,7 +427,7 @@ fridge
 """
 
 @smartfridge.route('/fridge')
-@smartfridge.response(500,'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500,'Falls es zu einem Server Fehler kommt.')
 class FridgeListOperations(Resource):
     @smartfridge.marshal_list_with(fridge)
     # @secured
@@ -450,7 +448,7 @@ class FridgeListOperations(Resource):
 
         if proposal is not None:
             fri = adm.create_fridge(
-                proposal.get_fridge_name(), proposal.get_household_id(), proposal.get_groceriesstatement_id())
+                proposal.get_fridge_name(), proposal.get_household_id())
             return fri, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
@@ -460,7 +458,7 @@ class FridgeListOperations(Resource):
 
 
 @smartfridge.route('/fridge/<int:id>')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Fridge-Objekts')
 class FridgeOperations(Resource):
     @smartfridge.marshal_list_with(fridge)
@@ -498,7 +496,7 @@ class FridgeOperations(Resource):
             return '',500
 
 @smartfridge.route('/household/<int:id>/fridge')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Household-Objekts')
 class HouseholdRelatedFridgeOperations(Resource):
     @smartfridge.marshal_with(fridge)
@@ -530,7 +528,7 @@ class HouseholdRelatedFridgeOperations(Resource):
 #Hier noch das gleiche mit Groceriesstatement related to fridge
 '''
 @smartfridge.route('/groceriesstatement/<int:id>/fridge')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Household-Objekts')
 class GroceriesstatementRelatedFridgeOperations(Resource):
     @smartfridge.marshal_with(fridge)
@@ -563,7 +561,7 @@ class GroceriesstatementRelatedFridgeOperations(Resource):
 groceriesstatement
 """
 @smartfridge.route('/groceriesstatement')
-@smartfridge.response(500,'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500,'Falls es zu einem Server Fehler kommt.')
 class GroceriesstatementListOperations(Resource):
     @smartfridge.marshal_list_with(groceriesstatement)
    # @secured
@@ -584,7 +582,7 @@ class GroceriesstatementListOperations(Resource):
 
         if proposal is not None:
             gs = adm.create_groceriesstatement(
-                proposal.get_groceries_name(), proposal.get_description(), proposal.get_quantity()
+                proposal.get_groceries_name(), proposal.get_description(), proposal.get_quantity(), proposal.get_fridge_id()
             )
             return gs, 200
         else:
@@ -593,7 +591,7 @@ class GroceriesstatementListOperations(Resource):
 
 
 @smartfridge.route('/groceriesstatement/<int:id>')
-@smartfridge.response(500, 'Falls es zu einem Server-seitigen Fehler kommt.')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Groceriesstatement-Objekts')
 class FridgeOperations(Resource):
     @smartfridge.marshal_list_with(groceriesstatement)

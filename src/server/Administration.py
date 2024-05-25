@@ -23,11 +23,10 @@ class Administration():
     """
 
 
-    def create_fridge(self, fridge_name, household_id, groceriesstatement_id):
+    def create_fridge(self, fridge_name, household_id):
         fridge = Fridge()
         fridge.set_fridge_name(fridge_name)
         fridge.set_household_id(household_id)
-        fridge.set_groceriesstatement_id(groceriesstatement_id)
         fridge.set_id(1)
 
         with FridgeMapper() as mapper:
@@ -61,10 +60,9 @@ class Administration():
     Haushalt Spezifische Methoden
     """
 
-    def create_household(self, household_name,user_id):
+    def create_household(self, household_name):
         household = Household()
         household.set_household_name(household_name)
-        household.set_user_id(user_id)
         household.set_id(1)
 
         with HouseholdMapper() as mapper:
@@ -186,10 +184,11 @@ class Administration():
     Groceriesstatement Spezifische Methoden
     """
 
-    def create_groceriesstatement(self, groceries_name, description, quantity):
+    def create_groceriesstatement(self, groceries_name, description, quantity, fridge_id):
         groceriesstatement = GroceriesStatement()  # anschauen
         groceriesstatement.set_groceries_name(groceries_name)
         groceriesstatement.set_description(description)
+        groceriesstatement.set_fridge_id(fridge_id)
         groceriesstatement.set_quantity(quantity)
 
         with GroceriesStatementMapper() as mapper:
@@ -279,9 +278,9 @@ class Administration():
     '''
 #inhabitent '''
 
-    def create_inhabitant(self,user_id,household_id):
+    def create_inhabitant(self, user_id, household_id):
         with HouseholdMapper() as mapper:
-            return mapper.createinhabitent(user_id,household_id)
+            return mapper.create_inhabitent(user_id, household_id)
 
 
     def get_users_by_household_id(self, household_id):

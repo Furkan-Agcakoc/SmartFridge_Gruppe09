@@ -25,7 +25,6 @@ CREATE TABLE `fridge` (
   `id` int NOT NULL DEFAULT '0',
   `fridge_name` varchar(100) NOT NULL DEFAULT '',
   `household_id` int NOT NULL DEFAULT '0',
-  `groceriesstatement_id` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `household_id` (`household_id`),
   CONSTRAINT `household_id_fk` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`)
@@ -62,9 +61,7 @@ CREATE TABLE `household` (
   `id` int NOT NULL DEFAULT '0',
   `household_name` varchar(100) NOT NULL DEFAULT '',
   `user_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -86,7 +83,10 @@ CREATE TABLE `groceriesstatement` (
   `groceries_name` varchar(100) NOT NULL DEFAULT '',
   `description` varchar(1024) NOT NULL DEFAULT '',
   `quantity` float NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  `fridge_id` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `fridge_id` (`fridge_id`),
+    CONSTRAINT `fridge_id_fk` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 
@@ -151,7 +151,7 @@ CREATE TABLE `inhabitant` (
   KEY `household_id` (`household_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `inhabitant_fk1` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`),
-    CONSTRAINT `inhabitant_fk2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `inhabitant_fk2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

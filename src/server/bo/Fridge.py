@@ -6,7 +6,6 @@ class Fridge (bo.BusinessObject):
         super().__init__()
         self._fridge_name = ""
         self._household_id = 0 #fremdschlüsselbeziehung
-        self._groceriesstatement_id = 0
 
     def get_fridge_name(self):
         return self._fridge_name
@@ -18,13 +17,8 @@ class Fridge (bo.BusinessObject):
         return self._household_id
 
     def set_household_id(self, household_id):
-        self._household = household_id
+        self._household_id = household_id
 
-    def get_groceriesstatement_id(self):
-        return self._groceriesstatement_id
-
-    def set_groceriesstatement_id(self, groceriesstatement_id):
-        self._groceriesstatement_id = groceriesstatement_id
 
     @staticmethod
     def from_dict(dictionary=dict()):
@@ -32,5 +26,4 @@ class Fridge (bo.BusinessObject):
         obj.set_id(dictionary["id"])
         obj.set_fridge_name(dictionary["fridge_name"])
         obj.set_household_id(dictionary["household_id"])
-        obj.set_groceriesstatement_id(dictionary["groceriesstatement_id"])
         return obj

@@ -1,12 +1,12 @@
-from server.bo import BusinessObject as bo
+from server.bo.BusinessObject import BusinessObject
 
-class GroceriesStatement(bo.BusinessObject):
+class GroceriesStatement(BusinessObject):
     def __init__(self):
         super().__init__()
-        self._groceries_name = ""
-        self._description = ""
-        self._quantity = 0.0
-
+        self.groceries_name = ""
+        self.description = ""
+        self.quantity = 0
+        self.fridge_id = 0
 
     def conversion(self, value, unit_from, unit_to):
 
@@ -22,10 +22,8 @@ class GroceriesStatement(bo.BusinessObject):
             elif unit_from == "l" and unit_to == "ml":
                 return value * 1000
 
-
             else:
-                return "Ihre EInheit ist ungültig oder die Umrechnung ist nicht möglich."
-
+                return "Ihre EInheit ist Ungültig oder die Umrechnung ist nicht Möglich."
 
     def get_groceries_name(self):
         return self._groceries_name
@@ -33,19 +31,23 @@ class GroceriesStatement(bo.BusinessObject):
     def set_groceries_name(self, new_groceries_name):
         self._groceries_name = new_groceries_name
 
-
     def get_quantity(self):
         return self._quantity
 
     def set_quantity(self,new_quantity):
         self._quantity = new_quantity
 
-
     def get_description(self):
         return self._description
 
     def set_description(self, new_description):
         self._description = new_description
+
+    def get_fridge_id(self):
+        return self._fridge_id
+
+    def set_fridge_id(self, fridge_id):
+        self._fridge_id = fridge_id
 
     @staticmethod
     def from_dict (dictionary=dict()):
@@ -54,4 +56,5 @@ class GroceriesStatement(bo.BusinessObject):
         obj.set_groceries_name(dictionary["groceries_name"])
         obj.set_description(dictionary["description"])
         obj.set_quantity(dictionary["quantity"])
+        obj.set_fridge_id(dictionary["fridge_id"])
         return obj
