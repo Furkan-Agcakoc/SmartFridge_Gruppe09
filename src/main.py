@@ -44,10 +44,9 @@ fridge = api.inherit('Fridge', bo, {
 recipe = api.inherit('Recipe', bo, {
     'recipe_name': fields.String(attribute='_recipe_name', description='Name eines Rezepts'),
     'portions': fields.Integer(attribute='_portions', description='Portionen eines Rezepts'),
-    'instruction': fields.String(attribute='_instruction', description='Anleitung eines Rezepts'),  # korrigiert '_instrctions'
+    'instruction': fields.String(attribute='_instruction', description='Anleitung eines Rezepts'),
     'duration': fields.String(attribute='_duration', description='Dauer eines Rezepts'),
     'user_id': fields.Integer(attribute='_user_id', description='Die Id eines Users'),
-    'groceriesstatement_id': fields.Integer(attribute='_groceriesstatement_id', description='Die Id eines Groceriesstatement')
 })
 
 groceries = api.inherit('Groceries', bo, {
@@ -62,7 +61,6 @@ groceriesstatement = api.inherit('GroceriesStatement', bo, {
     'groceries_name': fields.String(attribute='_groceries_name', description='Name eines Lebensmittels'),
     'description': fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittel'),
     'quantity': fields.Float(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel'),
-    'fridge_id': fields.Integer(attribut='_fridge_id', description='Die ID des Kühlschranks')
 })
 
 
@@ -369,7 +367,7 @@ class RecipeListOperations(Resource):
 
         if proposal is not None:
             r = adm.create_recipe(
-                proposal.get_recipe_name(), proposal.get_portions(), proposal.get_instruction(), proposal.get_duration(), proposal.get_user_id(), proposal.get_groceriesstatement_id())
+                proposal.get_recipe_name(), proposal.get_portions(), proposal.get_instruction(), proposal.get_duration(), proposal.get_user_id())
 
 
             return r, 200
@@ -582,7 +580,7 @@ class GroceriesstatementListOperations(Resource):
 
         if proposal is not None:
             gs = adm.create_groceriesstatement(
-                proposal.get_groceries_name(), proposal.get_description(), proposal.get_quantity(), proposal.get_fridge_id()
+                proposal.get_groceries_name(), proposal.get_description(), proposal.get_quantity()
             )
             return gs, 200
         else:

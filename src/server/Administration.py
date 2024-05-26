@@ -108,14 +108,13 @@ class Administration():
     Recipe Spezifische Methoden
     """
 
-    def create_recipe(self, recipe_name, portions, instruction, duration, user_id, groceriesstatement_id):
+    def create_recipe(self, recipe_name, portions, instruction, duration, user_id):
         recipe = Recipe()
         recipe.set_recipe_name(recipe_name)
         recipe.set_portions(portions)
         recipe.set_instruction(instruction)
         recipe.set_duration(duration)
         recipe.set_user_id(user_id)
-        recipe.set_groceriesstatement_id(groceriesstatement_id)
         recipe.set_id(1)
 
         with RecipeMapper() as mapper:
@@ -184,11 +183,10 @@ class Administration():
     Groceriesstatement Spezifische Methoden
     """
 
-    def create_groceriesstatement(self, groceries_name, description, quantity, fridge_id):
+    def create_groceriesstatement(self, groceries_name, description, quantity):
         groceriesstatement = GroceriesStatement()  # anschauen
         groceriesstatement.set_groceries_name(groceries_name)
         groceriesstatement.set_description(description)
-        groceriesstatement.set_fridge_id(fridge_id)
         groceriesstatement.set_quantity(quantity)
 
         with GroceriesStatementMapper() as mapper:

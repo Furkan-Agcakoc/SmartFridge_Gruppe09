@@ -6,7 +6,6 @@ class GroceriesStatement(BusinessObject):
         self.groceries_name = ""
         self.description = ""
         self.quantity = 0
-        self.fridge_id = 0
 
     def conversion(self, value, unit_from, unit_to):
 
@@ -43,11 +42,6 @@ class GroceriesStatement(BusinessObject):
     def set_description(self, new_description):
         self._description = new_description
 
-    def get_fridge_id(self):
-        return self._fridge_id
-
-    def set_fridge_id(self, fridge_id):
-        self._fridge_id = fridge_id
 
     @staticmethod
     def from_dict (dictionary=dict()):
@@ -56,5 +50,4 @@ class GroceriesStatement(BusinessObject):
         obj.set_groceries_name(dictionary["groceries_name"])
         obj.set_description(dictionary["description"])
         obj.set_quantity(dictionary["quantity"])
-        obj.set_fridge_id(dictionary["fridge_id"])
         return obj
