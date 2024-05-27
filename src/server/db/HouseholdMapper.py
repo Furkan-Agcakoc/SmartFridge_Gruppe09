@@ -99,41 +99,80 @@ class HouseholdMapper(Mapper):
         self._cnx.commit()
         cursor.close()
 
-    def checkInhabitant(self, household_id, user_id):
-        cursor = self._cnx.cursor()
-        command = "SELECT `user_id`, `household_id` FROM inhabitant WHERE `user_id` = %s AND `household_id` = %s"
-        cursor.execute(command, (user_id, household_id))
-        tuples = cursor.fetchall()
-        cursor.close()
-        return len(tuples) > 0
+    def checkInhabitant(self, user_id, household_id):
+        try:
+            cursor = self._cnx.cursor()
+            command = "SELECT `user_id`,`household_id` FROM inhabitant WHERE `user_id`={0} AND `household_id`={1}".format(
+                user_id, household_id)
+            cursor.execute(command)
+            tuples = cursor.fetchall()
+
+            if len(tuples) < 1:
+                return False
+            else:
+                return True
+
+
+        except Exception as e:
+            print("exception in checkInhabitant", e)
+            return None
 
     def createInhabitant(self, user_id, household_id):
-        if not self.checkInhabitant(user_id, household_id):
+
+        if self.checkInhabitant(user_id, household_id) == False:
+            try:
+                cursor = self._cnx.cursor()
+                command = "INSERT INTO inhabitant (user_id, household_id) VALUES ('{0}', '{1}')".format(user_id, household_id)
+                cursor.execute(command)
+                self._cnx.commit()
+                cursor.close()
+                return "added userid. {0} to householdid. {1}".format(user_id, household_id)
+
+            except Exception as e:
+                return str(e)
+        else:
+            print("user already in this household")
+            return "user already in this household"
+
+    def deleteMembership(self, user_id, household_id):
+
+        try:
             cursor = self._cnx.cursor()
-            command = "INSERT INTO inhabitant (user_id, household_id) VALUES (%s, %s)"
-            cursor.execute(command, (user_id, household_id))
+            command = "DELETE FROM inhabitant WHERE user_id = {0} AND groupe_id =  {1}".format(
+                user_id, household_id)
+            cursor.execute(command)
             self._cnx.commit()
             cursor.close()
-            return f"added usernr. {user_id} to householdnr. {household_id}"
-        else:
-            print("inhabitance already exists")
-            return "inhabitance already exists"
+            return "deleted userid. {0} to househldid. {1}".format(user_id, household_id)
 
-    def deleteInhabitant(self, user_id, household_id):
-        cursor = self._cnx.cursor()
-        command = "DELETE FROM inhabitant WHERE user_id = %s AND household_id = %s"
-        cursor.execute(command, (user_id, household_id))
-        self._cnx.commit()
-        cursor.close()
-        return f"deleted usernr. {user_id} from householdnr. {household_id}"
+        except Exception as e:
+            return str(e)
 
-    def get_users_from_household_id(self, household_id):
-        cursor = self._cnx.cursor()
-        command = "SELECT user_id FROM inhabitant WHERE household_id = %s"
-        cursor.execute(command, (household_id,))
-        tuples = cursor.fetchall()
-        cursor.close()
-        return [i[0] for i in tuples]
+    def get_users_by_household_id(self, household_id):
+
+        try:
+            cursor = self._cnx.cursor()
+            command = "SELECT user_id from inhabitant WHERE household_id = {0}".format(household_id)
+            cursor.execute(command)
+            tuples = cursor.fetchall()
+            re = []
+            result =[]
+            for i in tuples:
+                re.append(i[0])
+
+            self._cnx.commit()
+            cursor.close()
+            user_ids = re
+
+            """
+            in shopping admin: create user objects from ids
+            """
+            return re
+
+        except Exception as e:
+            print(e)
+
+            return None
 
 if (__name__ == "__main__"):
     with HouseholdMapper() as mapper:

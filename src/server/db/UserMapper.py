@@ -206,11 +206,11 @@ class UserMapper (Mapper):
         cursor.close()
 
     def delete(self, user):
-
+        if user is None:
+            return
         cursor = self._cnx.cursor()
         command = "DELETE FROM users WHERE id={}".format(user.get_id())
         cursor.execute(command)
-
         self._cnx.commit()
         cursor.close()
 

@@ -32,9 +32,10 @@ class Administration():
         with FridgeMapper() as mapper:
             return mapper.insert(fridge)
 
-    def get_fridge_by_name(self, fridge_name):
+    def get_frdige_by_household_id(self, household_id):
+        """  Wiedergabe des Kühlschranks eines Haushalts """
         with FridgeMapper() as mapper:
-            return mapper.find_by_fride_name(fridge_name)
+            return mapper.find_by_household_id(household_id)
 
     def get_fridge_by_id(self, number):
         with FridgeMapper() as mapper:
@@ -84,10 +85,32 @@ class Administration():
         with HouseholdMapper() as mapper:
             mapper.update(household)
 
-    def delete_household(self, household): #prüfen
+    def delete_household(self, household):
         with HouseholdMapper() as mapper:
 
-            return mapper.delete(household) #hier fehlt dann die funktion das der fridge sich auch löschen soll
+            fridge = self.get_frdige_by_household_id(household.get_id())
+            users = self.get_users_by_householdid(household.get_id())
+
+            try:
+                for i in fridge:
+                    self.delete_fridge(i)
+
+                if len(users) > 0:
+                    for i in users:
+                        self.delete_inhabitant(i.get_id(), household.get_id(), outercall=True)
+
+
+
+            except Exception as e:
+                print("Error in delete_household in Administration: " + str(e))
+                house = "Error in delete_household in Administration: " + str(e)
+
+            try:
+                house = mapper.delete(household)
+            except Exception as e:
+                house = str(e) + " error in del household"
+
+            return house
 
     """
     def delete_household(self, household):  # prüfen
@@ -108,7 +131,7 @@ class Administration():
     Recipe Spezifische Methoden
     """
 
-    def create_recipe(self, recipe_name, portions, instruction, duration, user_id):
+    def create_recipe(self, recipe_name, duration, portions, instruction, user_id):
         recipe = Recipe()
         recipe.set_recipe_name(recipe_name)
         recipe.set_portions(portions)
@@ -127,6 +150,14 @@ class Administration():
     def get_recipe_by_id(self, number):
         with RecipeMapper() as mapper:
             return mapper.find_by_key(number)
+
+
+    def get_recipe_by_user_id(self, user_id):
+        """  Wiedergabe deines Rezepts mit der User_Id """
+        with RecipeMapper() as mapper:
+            return mapper.find_by_user_id(user_id)
+
+
 
     def get_all_recipe(self):
         with RecipeMapper() as mapper:
@@ -269,7 +300,23 @@ class Administration():
 
     def delete_user(self, user):
         with UserMapper() as mapper:
-            return mapper.delete(user)
+
+            recipe = self.get_recipe_by_user_id(user.get_id())
+
+            try:
+                for i in recipe:
+                    self.delete_recipe(i)
+
+            except Exception as e:
+                print("Error in delete_user in Administration: " + str(e))
+                u = "Error in delete_user in Administration: " + str(e)
+
+            try:
+                u = mapper.delete(user)
+            except Exception as e:
+                u = str(e) + " error in del user"
+
+            return u
 
 
 
@@ -277,13 +324,32 @@ class Administration():
 #inhabitent '''
 
     def create_inhabitant(self, user_id, household_id):
-        with HouseholdMapper() as mapper:
-            return mapper.create_inhabitent(user_id, household_id)
 
-
-    def get_users_by_household_id(self, household_id):
         with HouseholdMapper() as mapper:
-            user_id = mapper.get_users_from_household_id(household_id)
+            return mapper.createMembership(user_id, household_id)
+
+    def delete_inhabitant(self, user_id, household_id, outercall=False):
+
+        with HouseholdMapper() as mapper:
+            a = mapper.deleteMembership(user_id, household_id)
+            if outercall == False:
+                if len(self.get_users_by_householdid(household_id)) < 1:
+                    house = self.get_household_by_id(household_id)
+                    self.delete_household(house)
+                    print("deleted household {0} ".format(str(house)))
+            return a
+
+    def get_users_by_householdid(self, household_id):
+
+        with HouseholdMapper() as mapper:
+            user_ids = mapper.get_users_by_household_id(household_id)
+            result = []
+
+            # creating user objects from ids
+            for i in user_ids:
+                r = self.get_user_by_id(i)
+                result.append(r)
+            return result
 
 
 
