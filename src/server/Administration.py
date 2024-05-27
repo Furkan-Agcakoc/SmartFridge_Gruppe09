@@ -99,7 +99,8 @@ class Administration():
                     for i in users:
                         self.delete_inhabitant(i.get_id(), household.get_id(), outercall=True)
 
-
+                if i in fridge:
+                    self.delete_fridge(i)
 
             except Exception as e:
                 print("Error in delete_household in Administration: " + str(e))
@@ -131,13 +132,14 @@ class Administration():
     Recipe Spezifische Methoden
     """
 
-    def create_recipe(self, recipe_name, duration, portions, instruction, user_id):
+    def create_recipe(self, recipe_name, duration, portions, instruction, user_id, household_id):
         recipe = Recipe()
         recipe.set_recipe_name(recipe_name)
         recipe.set_portions(portions)
         recipe.set_instruction(instruction)
         recipe.set_duration(duration)
         recipe.set_user_id(user_id)
+        recipe.set_household_id(household_id)
         recipe.set_id(1)
 
         with RecipeMapper() as mapper:
@@ -156,6 +158,11 @@ class Administration():
         """  Wiedergabe deines Rezepts mit der User_Id """
         with RecipeMapper() as mapper:
             return mapper.find_by_user_id(user_id)
+
+    def get_recipe_by_household_id(self, household_id):
+        """  Wiedergabe deines Rezepts mit der Household_Id """
+        with RecipeMapper() as mapper:
+            return mapper.find_by_household_id(household_id)
 
 
 

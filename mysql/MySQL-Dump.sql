@@ -27,7 +27,7 @@ CREATE TABLE `fridge` (
   `household_id` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `household_id` (`household_id`),
-  CONSTRAINT `household_id_fk` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`)
+  CONSTRAINT `household_id_fk` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`) ON DELETE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -108,26 +108,12 @@ CREATE TABLE `recipe` (
   `portions` int NOT NULL DEFAULT '0',
   `instruction` varchar(1024) NOT NULL DEFAULT '',
   `user_id` int NOT NULL DEFAULT '0',
+  `household_id` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-    KEY `user_id` (`user_id`),
-    CONSTRAINT `recipe_fk1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Table structure for table `recipe_in_household
---
-
-DROP TABLE IF EXISTS `recipe_in_household`;
-/*!40101 SET @saved_cs_client     = @character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `recipe_in_household` (
-  `household_id`   int NOT NULL DEFAULT '0',
-  `recipe_id` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`household_id`, `recipe_id`),
-    KEY `household_id` (`household_id`),
-    KEY `recipe_id` (`recipe_id`),
-    CONSTRAINT `recipe_in_household_fk1` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`),
-    CONSTRAINT `recipe_in_household_fk2` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`)
+  KEY `user_id` (`user_id`),
+  KEY `household_id` (`household_id`),
+  CONSTRAINT `recipe_fk1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `recipe_fk2` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

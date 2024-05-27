@@ -47,6 +47,7 @@ recipe = api.inherit('Recipe', bo, {
     'instruction': fields.String(attribute='_instruction', description='Anleitung eines Rezepts'),
     'duration': fields.String(attribute='_duration', description='Dauer eines Rezepts'),
     'user_id': fields.Integer(attribute='_user_id', description='Die Id eines Users'),
+    'household_id': fields.Integer(attribute='_household_id', description='Die Id eines Haushalts'),
 })
 
 groceries = api.inherit('Groceries', bo, {
@@ -361,16 +362,17 @@ recipe
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class RecipeOperations(Resource):
     @smartfridge.marshal_list_with(recipe)
-    @smartfridge.param('user_id', 'ID von dem User, der das Rezept erstellt hat.')
-    # @secured
+    @smartfridge.param('user_id', 'ID des Users, der das Rezept erstellt hat')
+    @smartfridge.param('household_id', 'ID des Haushalts, zu dem das Rezept gehört')
     def get(self):
         """
-        Wiedergabe von einerm bestimmten Rezept Objekt.
-.
+        Wiedergabe von Rezepten basierend auf User- und Haushalts-ID.
         """
         user_id = request.args.get('user_id')
+        household_id = request.args.get('household_id')
         adm = Administration()
-        return adm.get_recipe_by_user_id(user_id)
+        return adm.get_recipe_by_user_id(user_id), adm.get_recipe_by_household_id(household_id)
+
 
     @smartfridge.marshal_with(recipe, code=200)
     @smartfridge.expect(recipe)
@@ -383,7 +385,7 @@ class RecipeOperations(Resource):
 
         if proposal is not None:
             fri = adm.create_recipe(
-                proposal.get_recipe_name(), proposal.get_duration(), proposal.get_portions(), proposal.get_instruction(), proposal.get_user_id())
+                proposal.get_recipe_name(), proposal.get_duration(), proposal.get_portions(), proposal.get_instruction(), proposal.get_user_id(), proposal.get_household_id())
             return fri, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
