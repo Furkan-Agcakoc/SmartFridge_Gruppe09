@@ -37,14 +37,34 @@ CREATE TABLE `fridge` (
 -- Table structure for table `groceries`
 --
 
-DROP TABLE IF EXISTS `groceries`;
+DROP TABLE IF EXISTS `grocery`;
 /*!40101 SET @saved_cs_client     = @character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groceries` (
+CREATE TABLE `grocery` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `groceries_name` varchar(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `groceries`
+--
+
+DROP TABLE IF EXISTS `unit`;
+CREATE TABLE `unit` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `unit_name` varchar(128) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+INSERT INTO `unit` (`unit_name`) VALUES
+('g'),
+('kg'),
+('ml'),
+('l'),
+('Priese'),
+('Esslöffel'),
+('Teelöffel');
 
 --
 -- Table structure for table `household`
@@ -63,17 +83,21 @@ CREATE TABLE `household` (
 -- Table structure for table `groceriesstatement`
 --
 
-DROP TABLE IF EXISTS `groceriesstatement`;
+DROP TABLE IF EXISTS `grocerystatement`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 
 
-CREATE TABLE `groceriesstatement` (
+CREATE TABLE `grocerystatement` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `groceries_name` varchar(100) NOT NULL DEFAULT '',
-  `description` varchar(1024) NOT NULL DEFAULT '',
+  `grocery_name` int NOT NULL DEFAULT '0',
+  `unit`  int NOT NULL DEFAULT '0',
   `quantity` float NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+    KEY `groceries_name` (`grocery_name`),
+    KEY `unit` (`unit`),
+    CONSTRAINT `grocerystatement_fk1` FOREIGN KEY (`grocery_name`) REFERENCES `grocery` (`id`),
+    CONSTRAINT `grocerystatement_fk2` FOREIGN KEY (`unit`) REFERENCES `unit` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
@@ -105,7 +129,7 @@ CREATE TABLE `recipe` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `recipe_name` varchar(100) NOT NULL DEFAULT '',
   `duration` varchar(100) NOT NULL DEFAULT '',
-  `portions` int NOT NULL DEFAULT '0',
+  `portion` int NOT NULL DEFAULT '0',
   `instruction` varchar(1024) NOT NULL DEFAULT '',
   `user_id` int NOT NULL DEFAULT '0',
   `household_id` int NOT NULL DEFAULT '0',
@@ -120,35 +144,35 @@ CREATE TABLE `recipe` (
 -- Table structure for table `groceries_in_recipe`
 --
 
-DROP TABLE IF EXISTS `groceries_in_recipe`;
+DROP TABLE IF EXISTS `grocery_in_recipe`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 
-CREATE TABLE `groceries_in_recipe` (
-  `groceriesstatement_id` int NOT NULL DEFAULT '0',
+CREATE TABLE `grocery_in_recipe` (
+  `grocerystatement_id` int NOT NULL DEFAULT '0',
   `recipe_id` int NOT NULL DEFAULT '0',
-    PRIMARY KEY (`groceriesstatement_id`, `recipe_id`),
-    KEY `groceriesstatement_id` (`groceriesstatement_id`),
+    PRIMARY KEY (`grocerystatement_id`, `recipe_id`),
+    KEY `groceriesstatement_id` (`grocerystatement_id`),
     KEY `recipe_id` (`recipe_id`),
-    CONSTRAINT `groceries_in_recipe_fk1` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`),
-    CONSTRAINT `groceries_in_recipe_fk2` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`)
+    CONSTRAINT `grocerie_in_recipe_fk1` FOREIGN KEY (`grocerystatement_id`) REFERENCES `grocerystatement` (`id`),
+    CONSTRAINT `grocerie_in_recipe_fk2` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Table structure for table `groceries_in_fridge`
 --
 
-DROP TABLE IF EXISTS `groceries_in_fridge`;
+DROP TABLE IF EXISTS `grocery_in_fridge`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 
-CREATE TABLE `groceries_in_fridge` (
-  `groceriesstatement_id` int NOT NULL DEFAULT '0',
+CREATE TABLE `grocery_in_fridge` (
+  `grocerystatement_id` int NOT NULL DEFAULT '0',
   `fridge_id` int NOT NULL DEFAULT '0',
-    PRIMARY KEY (`groceriesstatement_id`, `fridge_id`),
-    KEY `groceriesstatement_id` (`groceriesstatement_id`),
+    PRIMARY KEY (`grocerystatement_id`, `fridge_id`),
+    KEY `groceriesstatement_id` (`grocerystatement_id`),
     KEY `fridge_id` (`fridge_id`),
-    CONSTRAINT `groceries_in_fridge_fk1` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`),
+    CONSTRAINT `groceries_in_fridge_fk1` FOREIGN KEY (`grocerystatement_id`) REFERENCES `grocerystatement` (`id`),
     CONSTRAINT `groceries_in_fridge_fk2` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
