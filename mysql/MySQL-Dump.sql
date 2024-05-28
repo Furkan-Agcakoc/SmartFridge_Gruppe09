@@ -130,8 +130,8 @@ CREATE TABLE `groceries_in_recipe` (
     PRIMARY KEY (`groceriesstatement_id`, `recipe_id`),
     KEY `groceriesstatement_id` (`groceriesstatement_id`),
     KEY `recipe_id` (`recipe_id`),
-    CONSTRAINT `groceries_in_recipe_fk1` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`),
-    CONSTRAINT `groceries_in_recipe_fk2` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`)
+    CONSTRAINT `groceries_in_recipe_fk1` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `groceries_in_recipe_fk2` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
@@ -148,8 +148,8 @@ CREATE TABLE `groceries_in_fridge` (
     PRIMARY KEY (`groceriesstatement_id`, `fridge_id`),
     KEY `groceriesstatement_id` (`groceriesstatement_id`),
     KEY `fridge_id` (`fridge_id`),
-    CONSTRAINT `groceries_in_fridge_fk1` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`),
-    CONSTRAINT `groceries_in_fridge_fk2` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`)
+    CONSTRAINT `groceries_in_fridge_fk1` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `groceries_in_fridge_fk2` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
