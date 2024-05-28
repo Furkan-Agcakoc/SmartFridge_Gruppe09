@@ -34,15 +34,15 @@ CREATE TABLE `fridge` (
 
 
 --
--- Table structure for table `groceries`
+-- Table structure for table `grocery`
 --
 
-DROP TABLE IF EXISTS `groceries`;
+DROP TABLE IF EXISTS `grocery`;
 /*!40101 SET @saved_cs_client     = @character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groceries` (
+CREATE TABLE `grocery` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `groceries_name` varchar(128) NOT NULL DEFAULT '',
+  `grocery_name` varchar(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -60,17 +60,17 @@ CREATE TABLE `household` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- Table structure for table `groceriesstatement`
+-- Table structure for table `grocerystatement`
 --
 
-DROP TABLE IF EXISTS `groceriesstatement`;
+DROP TABLE IF EXISTS `grocerystatement`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 
 
-CREATE TABLE `groceriesstatement` (
+CREATE TABLE `grocerystatement` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `groceries_name` varchar(100) NOT NULL DEFAULT '',
+  `grocery_name` varchar(100) NOT NULL DEFAULT '',
   `description` varchar(1024) NOT NULL DEFAULT '',
   `quantity` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -117,39 +117,39 @@ CREATE TABLE `recipe` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Table structure for table `groceries_in_recipe`
+-- Table structure for table `grocery_in_recipe`
 --
 
-DROP TABLE IF EXISTS `groceries_in_recipe`;
+DROP TABLE IF EXISTS `grocery_in_recipe`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 
-CREATE TABLE `groceries_in_recipe` (
-  `groceriesstatement_id` int NOT NULL DEFAULT '0',
+CREATE TABLE `grocery_in_recipe` (
+  `grocerystatement_id` int NOT NULL DEFAULT '0',
   `recipe_id` int NOT NULL DEFAULT '0',
-    PRIMARY KEY (`groceriesstatement_id`, `recipe_id`),
-    KEY `groceriesstatement_id` (`groceriesstatement_id`),
+    PRIMARY KEY (`grocerystatement_id`, `recipe_id`),
+    KEY `grocerystatement_id` (`grocerystatement_id`),
     KEY `recipe_id` (`recipe_id`),
-    CONSTRAINT `groceries_in_recipe_fk1` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `groceries_in_recipe_fk2` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`) ON DELETE CASCADE
+    CONSTRAINT `grocery_in_recipe_fk1` FOREIGN KEY (`grocerystatement_id`) REFERENCES `grocerystatement` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `grocery_in_recipe_fk2` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
--- Table structure for table `groceries_in_fridge`
+-- Table structure for table `grocery_in_fridge`
 --
 
-DROP TABLE IF EXISTS `groceries_in_fridge`;
+DROP TABLE IF EXISTS `grocery_in_fridge`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 
-CREATE TABLE `groceries_in_fridge` (
-  `groceriesstatement_id` int NOT NULL DEFAULT '0',
+CREATE TABLE `grocery_in_fridge` (
+  `grocerystatement_id` int NOT NULL DEFAULT '0',
   `fridge_id` int NOT NULL DEFAULT '0',
-    PRIMARY KEY (`groceriesstatement_id`, `fridge_id`),
-    KEY `groceriesstatement_id` (`groceriesstatement_id`),
+    PRIMARY KEY (`grocerystatement_id`, `fridge_id`),
+    KEY `grocerystatement_id` (`grocerystatement_id`),
     KEY `fridge_id` (`fridge_id`),
-    CONSTRAINT `groceries_in_fridge_fk1` FOREIGN KEY (`groceriesstatement_id`) REFERENCES `groceriesstatement` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `groceries_in_fridge_fk2` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
+    CONSTRAINT `grocery_in_fridge_fk1` FOREIGN KEY (`grocerystatement_id`) REFERENCES `grocerystatement` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `grocery_in_fridge_fk2` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
