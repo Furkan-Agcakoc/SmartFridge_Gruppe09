@@ -371,7 +371,7 @@ class RecipeOperations(Resource):
         user_id = request.args.get('user_id')
         household_id = request.args.get('household_id')
         adm = Administration()
-        return adm.get_recipe_by_user_id(user_id), adm.get_recipe_by_household_id(household_id)
+        return adm.get_recipe_by_user_id(user_id) and adm.get_recipe_by_household_id(household_id)
 
 
     @smartfridge.marshal_with(recipe, code=200)
@@ -384,9 +384,9 @@ class RecipeOperations(Resource):
         proposal = Recipe.from_dict(api.payload)
 
         if proposal is not None:
-            fri = adm.create_recipe(
-                proposal.get_recipe_name(), proposal.get_duration(), proposal.get_portions(), proposal.get_instruction(), proposal.get_user_id(), proposal.get_household_id())
-            return fri, 200
+            rec = adm.create_recipe(
+                proposal.get_recipe_name(), proposal.get_duration(), proposal.get_portions(), proposal.get_instruction(), proposal.get_household_id(), proposal.get_user_id())
+            return rec, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
