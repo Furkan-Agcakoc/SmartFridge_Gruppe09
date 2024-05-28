@@ -7,8 +7,8 @@ from flask_cors import CORS
 
 from server.Administration import Administration
 from server.bo.Fridge import Fridge
-from server.bo.Groceries import Groceries
-from server.bo.GroceriesStatement import GroceriesStatement
+from server.bo.Grocery import Grocery
+from server.bo.GroceryStatement import GroceryStatement
 from server.bo.Household import Household
 from server.bo.Recipe import Recipe
 from server.bo.User import User
@@ -50,16 +50,16 @@ recipe = api.inherit('Recipe', bo, {
     'household_id': fields.Integer(attribute='_household_id', description='Die Id eines Haushalts'),
 })
 
-groceries = api.inherit('Groceries', bo, {
-    'groceries_name': fields.String(attribute='_groceries_name', description='Name eines Lebensmittels')
+grocery = api.inherit('Grocery', bo, {
+    'grocery_name': fields.String(attribute='_grocery_name', description='Name eines Lebensmittels')
 })
 
 household = api.inherit('Household', bo, {
     'household_name': fields.String(attribute='_household_name', description='Name des Haushalts')
 })
 
-groceriesstatement = api.inherit('GroceriesStatement', bo, {
-    'groceries_name': fields.String(attribute='_groceries_name', description='Name eines Lebensmittels'),
+grocerystatement = api.inherit('GroceryStatement', bo, {
+    'grocery_name': fields.String(attribute='_grocery_name', description='Name eines Lebensmittels'),
     'description': fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittel'),
     'quantity': fields.Float(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel'),
 })
@@ -269,34 +269,34 @@ class HouseholdOperations(Resource):
             return '', 500
 
 '''
-groceries
+grocery
 '''
 
-@smartfridge.route('/groceries')
+@smartfridge.route('/grocery')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
-class GroceriesListOperations(Resource):
-    @smartfridge.marshal_list_with(groceries)
+class GroceryListOperations(Resource):
+    @smartfridge.marshal_list_with(grocery)
     #@secured
     def get(self):
-        """Wiedergebe eines Groceries Objekts"""
+        """Wiedergebe eines Grocery Objekts"""
         adm = Administration()
-        groceries_list = adm.get_all_groceries()
-        return groceries_list
+        grocery_list = adm.get_all_grocery()
+        return grocery_list
 
-    @smartfridge.marshal_with(groceries, code=200)
+    @smartfridge.marshal_with(grocery, code=200)
 
-    @smartfridge.expect(groceries)
+    @smartfridge.expect(grocery)
     #@secured
     def post(self):
-        """Erstellen eines Groceries Objekts"""
+        """Erstellen eines Grocery Objekts"""
 
         adm = Administration()
 
-        proposal = Groceries.from_dict(api.payload)
+        proposal = Grocery.from_dict(api.payload)
 
         if proposal is not None:
-            g = adm.create_groceries(
-                proposal.get_groceries_name())
+            g = adm.create_grocery(
+                proposal.get_grocery_name())
             return g, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
@@ -307,49 +307,49 @@ class GroceriesListOperations(Resource):
 
 
 
-@smartfridge.route('/groceries/<int:id>')
+@smartfridge.route('/grocery/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
-@smartfridge.param('id', 'Die ID des Groceries-Objekts')
-class GroceriesOperations(Resource):
-    @smartfridge.marshal_with(groceries)
+@smartfridge.param('id', 'Die ID des Grocery-Objekts')
+class GroceryOperations(Resource):
+    @smartfridge.marshal_with(grocery)
     #@secured
     def get(self, id):
-        """Wiedergabe eines Groceries Objekts durch ID"""
+        """Wiedergabe eines Grocery Objekts durch ID"""
         adm = Administration()
-        groceries = adm.get_groceries_by_id(id)
-        return groceries
+        grocery = adm.get_grocery_by_id(id)
+        return grocery
 
     #@secured
     def delete(self, id):
-        """Löschen eines Groceries Objekts"""
+        """Löschen eines Grocery Objekts"""
         adm = Administration()
-        groceries = adm.get_groceries_by_id(id)
-        adm.delete_groceries(groceries)
+        grocery = adm.get_grocery_by_id(id)
+        adm.delete_grocery(grocery)
         return '', 200
 
-    @smartfridge.marshal_with(groceries)
-    @smartfridge.expect(groceries, validate=True)
+    @smartfridge.marshal_with(grocery)
+    @smartfridge.expect(grocery, validate=True)
     #@secured
     def put(self, id):
-        """Updaten eines Groceries Objekts"""
+        """Updaten eines Grocery Objekts"""
         adm = Administration()
-        g = Groceries.from_dict(api.payload)
+        g = Grocery.from_dict(api.payload)
         if g is not None:
             g.set_id(id)
-            adm.update_groceries(g)
+            adm.update_grocery(g)
             return '', 200
         else:
             return '', 500
 
-@smartfridge.route('/groceries/groceries_name/<string:groceries_name>')
+@smartfridge.route('/grocery/grocery_name/<string:grocery_name>')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
-@smartfridge.param('groceries_name', 'Der name des grocerie-Objekts')
-class GroceriesNameOperations(Resource):
-    @smartfridge.marshal_with(groceries)
-    def get(self, groceries_name):
+@smartfridge.param('grocery_name', 'Der name des grocery-Objekts')
+class GroceryNameOperations(Resource):
+    @smartfridge.marshal_with(grocery)
+    def get(self, grocery_name):
         adm = Administration()
-        groceries = adm.get_groceries_by_name(groceries_name)
-        return groceries
+        grocery = adm.get_grocery_by_name(grocery_name)
+        return grocery
 
 
 
@@ -546,64 +546,64 @@ class HouseholdRelatedFridgeOperations(Resource):
 ''''''
 
 '''
-#Hier noch das gleiche mit Groceriesstatement related to fridge
+#Hier noch das gleiche mit Grocerystatement related to fridge
 '''
-@smartfridge.route('/groceriesstatement/<int:id>/fridge')
+@smartfridge.route('/grocerystatement/<int:id>/fridge')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Household-Objekts')
-class GroceriesstatementRelatedFridgeOperations(Resource):
+class GrocerystatementRelatedFridgeOperations(Resource):
     @smartfridge.marshal_with(fridge)
     @secured
     def get(self,id):
         adm = Administration()
-        gst = adm.get_groceriesstatement_by_id(id)
+        gst = adm.get_grocerystatement_by_id(id)
 
         if gst is not None:
 
-            fridge_list = adm.get_groceriesstatement_by_fridge(gst)
+            fridge_list = adm.get_grocerystatement_by_fridge(gst)
             return fridge_list
         else:
-            return " Grocerie not found", 500
+            return " Grocery not found", 500
 
     @smartfridge.marshal_with(fridge, code=201)
     @secured
     def post(self,id):
         adm = Administration()
 
-        gst = adm.get_groceriesstatement_by_id(id)
+        gst = adm.get_grocerystatement_by_id(id)
 
         if gst is not None:
-            result = adm.create_groceriesstatement_for_fridge(gst) #methode muss implementiert werden
+            result = adm.create_grocerystatement_for_fridge(gst) #methode muss implementiert werden
             return result
         else:
-            return "Grocerie unkown", 500
+            return "Grocery unkown", 500
 '''
 """
-groceriesstatement
+grocerystatement
 """
-@smartfridge.route('/groceriesstatement')
+@smartfridge.route('/grocerystatement')
 @smartfridge.response(500,'Falls es zu einem Server Fehler kommt.')
-class GroceriesstatementListOperations(Resource):
-    @smartfridge.marshal_list_with(groceriesstatement)
+class GrocerystatementListOperations(Resource):
+    @smartfridge.marshal_list_with(grocerystatement)
    # @secured
     def get(self):
-        """Wiedergabe der Groceriesstatement Objekte"""
+        """Wiedergabe der Grocerystatement Objekte"""
         adm = Administration()
-        groceriesstatement_list = adm.get_all_groceriesstatements()
-        return groceriesstatement_list
+        grocerystatement_list = adm.get_all_grocerystatements()
+        return grocerystatement_list
 
-    @smartfridge.marshal_with(groceriesstatement, code=200)
-    @smartfridge.expect(groceriesstatement)
+    @smartfridge.marshal_with(grocerystatement, code=200)
+    @smartfridge.expect(grocerystatement)
     # @secured
     def post(self):
-        "Erstellen eines Groceriesstatement Objekts"
+        "Erstellen eines Grocerystatement Objekts"
         adm = Administration()
 
-        proposal = GroceriesStatement.from_dict(api.payload)
+        proposal = GroceryStatement.from_dict(api.payload)
 
         if proposal is not None:
-            gs = adm.create_groceriesstatement(
-                proposal.get_groceries_name(), proposal.get_description(), proposal.get_quantity()
+            gs = adm.create_grocerystatement(
+                proposal.get_grocery_name(), proposal.get_description(), proposal.get_quantity()
             )
             return gs, 200
         else:
@@ -611,36 +611,36 @@ class GroceriesstatementListOperations(Resource):
             return '', 500
 
 
-@smartfridge.route('/groceriesstatement/<int:id>')
+@smartfridge.route('/grocerystatement/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
-@smartfridge.param('id', 'Die ID des Groceriesstatement-Objekts')
+@smartfridge.param('id', 'Die ID des Grocerystatement-Objekts')
 class FridgeOperations(Resource):
-    @smartfridge.marshal_list_with(groceriesstatement)
+    @smartfridge.marshal_list_with(grocerystatement)
    # @secured
     def get(self,id):
 
         adm = Administration()
-        gst = adm.get_groceriesstatement_by_id(id)
+        gst = adm.get_grocerystatement_by_id(id)
         return gst
 
    # @secured
     def delete(self,id):
 
         adm = Administration()
-        gst = adm.get_groceriesstatement_by_id(id)
-        adm.delete_groceriesstatement(gst)
+        gst = adm.get_grocerystatement_by_id(id)
+        adm.delete_grocerystatement(gst)
         return '',200
 
-    @smartfridge.marshal_with(groceriesstatement)
-    @smartfridge.expect(groceriesstatement, validate=True)
+    @smartfridge.marshal_with(grocerystatement)
+    @smartfridge.expect(grocerystatement, validate=True)
     #@secured
     def put(self, id):
         """Updaten eines Groceiresstatement Objekts"""
         adm = Administration()
-        gst = GroceriesStatement.from_dict(api.payload)
+        gst = GroceryStatement.from_dict(api.payload)
         if gst is not None:
             gst.set_id(id)
-            adm.update_groceriesstatement(gst)
+            adm.update_grocerystatement(gst)
             return '', 200
         else:
             return '', 500
