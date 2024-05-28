@@ -1,12 +1,13 @@
 from server.bo.BusinessObject import BusinessObject
 
-class GroceriesStatement(BusinessObject):
+class GroceryStatement(BusinessObject):
     def __init__(self):
         super().__init__()
-        self.groceries_name = ""
+        self.grocery_name = ""
         self.description = ""
         self.quantity = 0
 
+    ''' Muss in die Admin Klasse verschoben werden
     def conversion(self, value, unit_from, unit_to):
 
             if unit_from == "g" and unit_to == "kg":
@@ -23,17 +24,19 @@ class GroceriesStatement(BusinessObject):
 
             else:
                 return "Ihre EInheit ist Ungültig oder die Umrechnung ist nicht Möglich."
+                
+    '''
 
-    def get_groceries_name(self):
-        return self._groceries_name
+    def get_grocery_name(self):
+        return self._grocery_name
 
-    def set_groceries_name(self, new_groceries_name):
-        self._groceries_name = new_groceries_name
+    def set_grocery_name(self, new_grocery_name):
+        self._grocery_name = new_grocery_name
 
     def get_quantity(self):
         return self._quantity
 
-    def set_quantity(self,new_quantity):
+    def set_quantity(self, new_quantity):
         self._quantity = new_quantity
 
     def get_description(self):
@@ -45,9 +48,9 @@ class GroceriesStatement(BusinessObject):
 
     @staticmethod
     def from_dict (dictionary=dict()):
-        obj = GroceriesStatement()
+        obj = GroceryStatement()
         obj.set_id(dictionary["id"])
-        obj.set_groceries_name(dictionary["groceries_name"])
+        obj.set_grocery_name(dictionary["grocery_name"])
         obj.set_description(dictionary["description"])
         obj.set_quantity(dictionary["quantity"])
         return obj

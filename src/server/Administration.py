@@ -1,13 +1,13 @@
 from server.bo.Fridge import Fridge
-from server.bo.Groceries import Groceries
-from server.bo.GroceriesStatement import GroceriesStatement
+from server.bo.Grocery import Grocery
+from server.bo.GroceryStatement import GroceryStatement
 from server.bo.Household import Household
 from server.bo.Recipe import Recipe
 from server.bo.User import User
 
 from server.db.FridgeMapper import FridgeMapper
-from server.db.GroceriesMapper import GroceriesMapper
-from server.db.GroceriesStatementMapper import GroceriesStatementMapper
+from server.db.GroceryMapper import GroceryMapper
+from server.db.GroceryStatementMapper import GroceryStatementMapper
 from server.db.HouseholdMapper import HouseholdMapper
 from server.db.RecipeMapper import RecipeMapper
 from server.db.UserMapper import UserMapper
@@ -186,73 +186,73 @@ class Administration():
 #recipe of user?
 
     """
-    Groceries Spezifische Methoden
+    Grocery Spezifische Methoden
     """
 
-    def create_groceries(self, groceries_name):
-        groceries = Groceries()
-        groceries.set_groceries_name(groceries_name)
-        groceries.set_id(1)
+    def create_grocery(self, grocery_name):
+        grocery = Grocery()
+        grocery.set_grocery_name(grocery_name)
+        grocery.set_id(1)
 
-        with GroceriesMapper() as mapper:
-            return mapper.insert(groceries)
+        with GroceryMapper() as mapper:
+            return mapper.insert(grocery)
 
-    def get_groceries_by_name(self, groceries_name):
-        with GroceriesMapper() as mapper:
-            return mapper.find_by_groceries_name(groceries_name)
+    def get_grocery_by_name(self, grocery_name):
+        with GroceryMapper() as mapper:
+            return mapper.find_by_grocery_name(grocery_name)
 
-    def get_groceries_by_id(self, number):
-        with GroceriesMapper() as mapper:
+    def get_grocery_by_id(self, number):
+        with GroceryMapper() as mapper:
             return mapper.find_by_key(number)
 
-    def get_all_groceries(self):
-        with GroceriesMapper() as mapper:
+    def get_all_grocery(self):
+        with GroceryMapper() as mapper:
             return mapper.find_all()
 
-    def update_groceries(self, groceries):
-        with GroceriesMapper() as mapper:
-            mapper.update(groceries)
+    def update_grocery(self, grocery):
+        with GroceryMapper() as mapper:
+            mapper.update(grocery)
 
-    def delete_groceries(self, groceries):
-        with GroceriesMapper() as mapper:
-            mapper.delete(groceries)
+    def delete_grocery(self, grocery):
+        with GroceryMapper() as mapper:
+            mapper.delete(grocery)
 
     """
-    Groceriesstatement Spezifische Methoden
+    Grocerystatement Spezifische Methoden
     """
 
-    def create_groceriesstatement(self, groceries_name, description, quantity):
-        groceriesstatement = GroceriesStatement()  # anschauen
-        groceriesstatement.set_groceries_name(groceries_name)
-        groceriesstatement.set_description(description)
-        groceriesstatement.set_quantity(quantity)
+    def create_grocerystatement(self, grocery_name, description, quantity):
+        grocerystatement = GroceryStatement()  # anschauen
+        grocerystatement.set_grocery_name(grocery_name)
+        grocerystatement.set_description(description)
+        grocerystatement.set_quantity(quantity)
 
-        with GroceriesStatementMapper() as mapper:
-            return mapper.insert(groceriesstatement)
+        with GroceryStatementMapper() as mapper:
+            return mapper.insert(grocerystatement)
 
-    def get_groceriesstatement_by_name(self, groceries_name):
-        with GroceriesStatementMapper() as mapper:
-            return mapper.find_by_groceries_name(groceries_name)
+    def get_grocerystatement_by_name(self, grocery_name):
+        with GroceryStatementMapper() as mapper:
+            return mapper.find_by_grocery_name(grocery_name)
 
-    def get_groceriesstatement_by_id(self, number):
-        with GroceriesStatementMapper() as mapper:
+    def get_grocerystatement_by_id(self, number):
+        with GroceryStatementMapper() as mapper:
             return mapper.find_by_key(number)
 
-    def get_all_groceriesstatements(self):
-        with GroceriesStatementMapper() as mapper:
+    def get_all_grocerystatements(self):
+        with GroceryStatementMapper() as mapper:
             return mapper.find_all()
 
-    def get_groceriesstatement_by_fridge(self,fridge):
-        with GroceriesStatementMapper() as mapper:
+    def get_grocerystatement_by_fridge(self,fridge):
+        with GroceryStatementMapper() as mapper:
             return mapper.find_by_fridge_id(fridge) #prüfen
 
-    def update_groceriesstatement(self, groceriesstatement):
-        with GroceriesStatementMapper() as mapper:
-            mapper.update(groceriesstatement)
+    def update_grocerystatement(self, grocerystatement):
+        with GroceryStatementMapper() as mapper:
+            mapper.update(grocerystatement)
 
-    def delete_groceriesstatement(self, groceriesstatement):
-        with GroceriesStatementMapper() as mapper:
-            mapper.delete(groceriesstatement)
+    def delete_grocerystatement(self, grocerystatement):
+        with GroceryStatementMapper() as mapper:
+            mapper.delete(grocerystatement)
 
     """
        User Spezifische Methoden
