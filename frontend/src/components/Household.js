@@ -32,7 +32,9 @@ class Household extends Component {
       households: [],
       currentName: "",
       showAlert: false,
-      anchorEl: null,
+      anchorEls: {},
+      openMenus: {},
+      currentlyEditing: null,
     };
 
     this.emails = [
@@ -63,27 +65,39 @@ class Household extends Component {
       return;
     }
 
-    if (currentlyEditing) {
+    if (currentlyEditing !== null) {
       // Haushalt bearbeiten
-      const updatedHouseholds = households.map((household) =>
-        household === currentlyEditing.householdId ? currentName : household
-      );
 
       this.setState({
-        households: updatedHouseholds,
+        households: this.updateHousehold({
+          householdId: currentlyEditing,
+          householdName: currentName,
+          emails: [],
+        }),
         popupOpen: false,
         currentName: "",
         showAlert: false,
         currentlyEditing: null,
       });
     } else {
+      const id = households.length;
+
       // Neuen Haushalt erstellen
       this.setState((prevState) => ({
         householdCount: prevState.householdCount + 1,
         popupOpen: false,
-        households: [...prevState.households, currentName],
+        // householdId: households.length,
+        households: [
+          ...prevState.households,
+          {
+            householdId: id,
+            householdName: currentName,
+            emails: [],
+          },
+        ],
         currentName: "",
         showAlert: false,
+        openMenus: { ...prevState.openMenus, [id]: false }
       }));
     }
   };
@@ -92,22 +106,42 @@ class Household extends Component {
     this.setState((prevState) => ({
       currentName: event.target.value,
       showAlert: false,
-      currentlyEditing: prevState.currentlyEditing
-        ? { ...prevState.currentlyEditing, householdName: event.target.value }
-        : null,
     }));
   };
+
+  // const households = [
+  //   {
+  //     id: 0,
+  //     name: "Haushalt 1",
+  //     emails: ["abc@gmail.com", "abadfdsa@gmail.com"]
+  //   }
+  // ];
+
+  updateHousehold(household) {
+    return this.state.households.map((e) => {
+      if (household.householdId === e.householdId) {
+        return household;
+      }
+
+      return e;
+    });
+  }
 
   handleCloseAlert = () => {
     this.setState({ showAlert: false });
   };
 
-  handleAnchorClick = (event) => {
-    this.setState({ anchorEl: event.currentTarget });
+  handleAnchorClick = (householdId, event) => {
+    this.setState((prevState) => ({
+      anchorEls: { ...prevState.anchorEls, [householdId]: event.target },
+      openMenus: { ...prevState.openMenus, [householdId]: true }
+    }));
   };
 
-  handleAnchorClose = () => {
-    this.setState({ anchorEl: null });
+  handleAnchorClose = (householdId) => {
+    this.setState((prevState) => ({
+      openMenus: { ...prevState.openMenus, [householdId]: false },
+    }));
   };
 
   handleAnchorEdit = (household) => {
@@ -116,17 +150,16 @@ class Household extends Component {
     //   popupOpen: true,
     //   currentName: this.props.currentName,
     // });
-    this.setState({
-      currentlyEditing: household,
+    this.setState((prevState) => ({
+      currentlyEditing: household.householdId,
       currentName: household.householdName,
-      anchorEl: null,
-    });
+      openMenus: { ...prevState.openMenus, [household.householdId]: false }
+    }));
   };
 
   handleAnchorDelete = (household) => {
     this.setState({
-      currentlyDeleting: household,
-      anchorEl: null,
+      currentlyDeleting: household
     });
     this.handleHouseholdDelete(household);
   };
@@ -139,13 +172,19 @@ class Household extends Component {
       currentlyDeleting: null,
     }));
   };
+  
 
   render() {
-    const { households, popupOpen, showAlert, currentlyEditing } = this.state;
-    const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
+    const {
+      households,
+      popupOpen,
+      showAlert,
+      currentlyEditing,
+      anchorEls,
+      openMenus,
+    } = this.state;
 
-    const editpopup = currentlyEditing && (
+    const editpopup = currentlyEditing !== null && (
       <>
         <Box
           sx={{
@@ -185,7 +224,7 @@ class Household extends Component {
                 fontWeight: 600,
               }}
             >
-              Neuen Haushalt hinzufügen
+              Haushalt bearbeiten
             </Typography>
             {showAlert && (
               <Alert
@@ -345,7 +384,7 @@ class Household extends Component {
                 label="Haushaltsname"
                 placeholder="Haushaltsname"
                 InputLabelProps={{ style: { fontSize: "15px" } }}
-                value={this.state.name}
+                // value={this.state.name}
                 onChange={this.handleChange}
               />
               <Autocomplete
@@ -414,8 +453,8 @@ class Household extends Component {
         </Box>
       </>
     );
-    const householdBoxes = households.map((currentName, index) => (
-      <Box key={index}>
+    const householdBoxes = households.map((household, index) => (
+      <Box key={household.householdId}>
         <Box
           sx={{
             position: "relative",
@@ -437,10 +476,10 @@ class Household extends Component {
           <IconButton
             aria-label="more"
             id="long-button"
-            aria-controls={open ? "long-menu" : undefined}
-            aria-expanded={open ? "true" : undefined}
+            aria-controls={openMenus[household.householdId] ? "long-menu" : undefined}
+            aria-expanded={openMenus[household.householdId] ? "true" : undefined}
             aria-haspopup="true"
-            onClick={this.handleAnchorClick}
+            onClick={(event) => this.handleAnchorClick(household.householdId, event)}
             style={{
               position: "absolute",
               top: "10px",
@@ -453,21 +492,15 @@ class Household extends Component {
           </IconButton>
 
           <Menu
-            id="long-menu"
             MenuListProps={{
               "aria-labelledby": "long-button",
             }}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={this.handleAnchorClose}
+            anchorEl={anchorEls[household.householdId]}
+            open={openMenus[household.householdId]}
+            onClose={() => this.handleAnchorClose(household.householdId)}
           >
             <MenuItem
-              onClick={() =>
-                this.handleAnchorEdit({
-                  householdId: currentName,
-                  householdName: currentName,
-                })
-              }
+              onClick={() => this.handleAnchorEdit(household, index)}
               className="menu-item"
               disableRipple
             >
@@ -477,7 +510,7 @@ class Household extends Component {
               Edit
             </MenuItem>
             <MenuItem
-              onClick={this.handleAnchorClose}
+              onClick={() => this.handleAnchorClose(household.householdId)}
               className="menu-item"
               disableRipple
             >
@@ -498,7 +531,7 @@ class Household extends Component {
               Delete
             </MenuItem>
             <MenuItem
-              onClick={this.handleAnchorClose}
+              onClick={() => this.handleAnchorClose(household.householdId)}
               className="menu-item"
               disableRipple
             >
@@ -523,7 +556,7 @@ class Household extends Component {
                 height: "125px",
               }}
             >
-              {currentName}
+              {household.householdName}
             </Typography>
           </Link>
         </Box>
