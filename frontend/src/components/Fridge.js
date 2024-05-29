@@ -101,8 +101,8 @@ class Fridge extends Component {
       popupType,
     } = this.state;
 
-    const groceryBoxes = groceries.map((grocerie, index) => (
-      <Grocerie currentName={grocerie.name} index={index} key={index} />
+    const groceryBoxes = groceries.map((grocery, index) => (
+      <Grocery currentName={grocery.name} index={index} key={index} />
     ));
 
     const recipeBoxes = recipes.map((currentName, index) => (
@@ -189,7 +189,7 @@ class Fridge extends Component {
                       // border: "5px solid violet",
                     }}
                   >
-                    <Link onClick={() => this.openPopup("grocerie")}>
+                    <Link onClick={() => this.openPopup("grocery")}>
                       <Tooltip
                         title="Neues Lebensmittel hinzufügen"
                         placement="bottom"
@@ -234,8 +234,8 @@ class Fridge extends Component {
                     </Link>
                     {groceryBoxes}
                   </TabPanel>
-                  {popupOpen && popupType === "grocerie" && (
-                    <PopupGrocerie
+                  {popupOpen && popupType === "grocery" && (
+                    <PopupGrocery
                       showAlert={showAlert}
                       handleCloseAlert={this.handleCloseAlert}
                       measurements={measurements}
