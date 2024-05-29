@@ -26,6 +26,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import PopupSignin from "./PopupSignin";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -562,7 +563,7 @@ class Household extends Component {
         </Box>
       </>
     );
-    const householdBoxes = households.map((household, index) => (
+    const householdBoxes = households.map((household) => (
       <Box key={household.householdId}>
         <Box
           sx={{
@@ -615,7 +616,7 @@ class Household extends Component {
             onClose={() => this.handleAnchorClose(household.householdId)}
           >
             <MenuItem
-              onClick={() => this.handleAnchorEdit(household, index)}
+              onClick={() => this.handleAnchorEdit(household)}
               className="menu-item"
               disableRipple
             >
@@ -736,6 +737,7 @@ class Household extends Component {
             </Box>
             {createpopup}
             {editpopup}
+            <PopupSignin />
           </Box>
         </Box>
       </>
