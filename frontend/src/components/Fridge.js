@@ -17,6 +17,7 @@ import Recipe from "./Recipe";
 import PopupRecipe from "./PopupRecipe";
 import Grocerie from "./Grocerie";
 import PopupGrocerie from "./PopupGrocerie";
+import FridgeSearchBar from "./FridgeSearchBar";
 
 class Fridge extends Component {
   constructor(props) {
@@ -140,7 +141,7 @@ class Fridge extends Component {
               // border: "5px solid red",
             }}
           >
-            <Typography
+            {/* <Typography
               variant="h5"
               fontSize={"27px"}
               fontWeight={700}
@@ -154,7 +155,7 @@ class Fridge extends Component {
               }}
             >
               gespeicherter Haushaltsname!
-            </Typography>
+            </Typography> */}
 
             <Paper
               sx={{
@@ -163,6 +164,7 @@ class Fridge extends Component {
                 backgroundColor: "background.default",
               }}
             >
+              <FridgeSearchBar></FridgeSearchBar>
               <TabContext
                 value={value}
                 sx={{
