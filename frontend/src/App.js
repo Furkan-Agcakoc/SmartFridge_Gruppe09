@@ -13,7 +13,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
 } from "firebase/auth";
-import firebaseConfig from "./firebaseconfig";
+import firebaseConfig from "./firebaseConfig";
 import { signOut } from "firebase/auth";
 import LoginPage from "./components/pages/LoginPage";
 import HouseholdPage from "./components/pages/HouseholdPage";
