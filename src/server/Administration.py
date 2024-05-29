@@ -1,13 +1,13 @@
 from server.bo.Fridge import Fridge
-from server.bo.Groceries import Groceries
-from server.bo.GroceriesStatement import GroceriesStatement
+from server.bo.Grocery import Grocery
+from server.bo.GroceryStatement import GroceryStatement
 from server.bo.Household import Household
 from server.bo.Recipe import Recipe
 from server.bo.User import User
 
 from server.db.FridgeMapper import FridgeMapper
-from server.db.GroceriesMapper import GroceriesMapper
-from server.db.GroceriesStatementMapper import GroceriesStatementMapper
+from server.db.GroceryMapper import GroceryMapper
+from server.db.GroceryStatementMapper import GroceryStatementMapper
 from server.db.HouseholdMapper import HouseholdMapper
 from server.db.RecipeMapper import RecipeMapper
 from server.db.UserMapper import UserMapper
@@ -22,20 +22,20 @@ class Administration():
     Fridge Spezifische Methoden
     """
 
-    def create_fridge_of_household(self, fridge_name, household_id,groceriesstatement_id): #hier darauf achten
 
+    def create_fridge(self, fridge_name, household_id):
         fridge = Fridge()
         fridge.set_fridge_name(fridge_name)
         fridge.set_household_id(household_id)
-        fridge.set_groceriesstatement_id(groceriesstatement_id)
         fridge.set_id(1)
 
         with FridgeMapper() as mapper:
             return mapper.insert(fridge)
 
-    def get_fridge_by_name(self, fridge_name):
+    def get_frdige_by_household_id(self, household_id):
+        """  Wiedergabe des Kühlschranks eines Haushalts """
         with FridgeMapper() as mapper:
-            return mapper.find_by_fride_name(fridge_name)
+            return mapper.find_by_household_id(household_id)
 
     def get_fridge_by_id(self, number):
         with FridgeMapper() as mapper:
@@ -61,11 +61,9 @@ class Administration():
     Haushalt Spezifische Methoden
     """
 
-    def create_household(self, household_name,user_id,fridge_id):
+    def create_household(self, household_name):
         household = Household()
         household.set_household_name(household_name)
-        household.set_user_id(user_id)
-        household.set_fridge_id(fridge_id)
         household.set_id(1)
 
         with HouseholdMapper() as mapper:
@@ -87,10 +85,33 @@ class Administration():
         with HouseholdMapper() as mapper:
             mapper.update(household)
 
-    def delete_household(self, household): #prüfen
+    def delete_household(self, household):
         with HouseholdMapper() as mapper:
 
-            return mapper.delete(household) #hier fehlt dann die funktion das der fridge sich auch löschen soll
+            fridge = self.get_frdige_by_household_id(household.get_id())
+            users = self.get_users_by_household_id(household.get_id())
+
+            try:
+                for i in fridge:
+                    self.delete_fridge(i)
+
+                if len(users) > 0:
+                    for i in users:
+                        self.delete_inhabitant(i.get_id(), household.get_id(), outercall=True)
+
+                if i in fridge:
+                    self.delete_fridge(i)
+
+            except Exception as e:
+                print("Error in delete_household in Administration: " + str(e))
+                house = "Error in delete_household in Administration: " + str(e)
+
+            try:
+                house = mapper.delete(household)
+            except Exception as e:
+                house = str(e) + " error in del household"
+
+            return house
 
     """
     def delete_household(self, household):  # prüfen
@@ -111,10 +132,14 @@ class Administration():
     Recipe Spezifische Methoden
     """
 
-    def create_recipe_from_user(self, recipe_name,user): #drüber schauen
+    def create_recipe(self, recipe_name, duration, portion, instruction, user_id, household_id):
         recipe = Recipe()
         recipe.set_recipe_name(recipe_name)
-        recipe.set_user_id(user.get_user_id(user)) #neu
+        recipe.set_portion(portion)
+        recipe.set_instruction(instruction)
+        recipe.set_duration(duration)
+        recipe.set_user_id(user_id)
+        recipe.set_household_id(household_id)
         recipe.set_id(1)
 
         with RecipeMapper() as mapper:
@@ -128,7 +153,20 @@ class Administration():
         with RecipeMapper() as mapper:
             return mapper.find_by_key(number)
 
-    def get_all_recipes(self):
+
+    def get_recipe_by_user_id(self, user_id):
+        """  Wiedergabe deines Rezepts mit der User_Id """
+        with RecipeMapper() as mapper:
+            return mapper.find_by_user_id(user_id)
+
+    def get_recipe_by_household_id(self, household_id):
+        """  Wiedergabe deines Rezepts mit der Household_Id """
+        with RecipeMapper() as mapper:
+            return mapper.find_by_household_id(household_id)
+
+
+
+    def get_all_recipe(self):
         with RecipeMapper() as mapper:
             return mapper.find_all()
 
@@ -140,81 +178,96 @@ class Administration():
         with RecipeMapper() as mapper:
             mapper.delete(recipe)
 
-    def get_recipe_by_user(self, user_id):
-        with RecipeMapper() as mapper:
-            return mapper.find_by_user_id(user_id)
+   # def get_recipe_by_user(self, user_id):
+   #    with RecipeMapper() as mapper:
+      #      return mapper.find_by_user_id(user_id)
 
 
 #recipe of user?
 
     """
-    Groceries Spezifische Methoden
+    Grocery Spezifische Methoden
     """
 
-    def create_groceries(self, groceries_name):
-        groceries = Groceries()
-        groceries.set_groceries_name(groceries_name)
-        groceries.set_id(1)
+    def create_grocery(self, grocery_name):
+        grocery = Grocery()
+        grocery.set_grocery_name(grocery_name)
+        grocery.set_id(1)
 
-        with GroceriesMapper() as mapper:
-            return mapper.insert(groceries)
+        with GroceryMapper() as mapper:
+            return mapper.insert(grocery)
 
-    def get_groceries_by_name(self, groceries_name):
-        with GroceriesMapper() as mapper:
-            return mapper.find_by_groceries_name(groceries_name)
+    def get_grocery_by_name(self, grocery_name):
+        with GroceryMapper() as mapper:
+            return mapper.find_by_grocery_name(grocery_name)
 
-    def get_groceries_by_id(self, number):
-        with GroceriesMapper() as mapper:
+    def get_grocery_by_id(self, number):
+        with GroceryMapper() as mapper:
             return mapper.find_by_key(number)
 
-    def get_all_groceries(self):
-        with GroceriesMapper() as mapper:
+    def get_all_grocery(self):
+        with GroceryMapper() as mapper:
             return mapper.find_all()
 
-    def update_groceries(self, groceries):
-        with GroceriesMapper() as mapper:
-            mapper.update(groceries)
+    def update_grocery(self, grocery):
+        with GroceryMapper() as mapper:
+            mapper.update(grocery)
 
-    def delete_groceries(self, groceries):
-        with GroceriesMapper() as mapper:
-            mapper.delete(groceries)
+    def delete_grocery(self, grocery):
+        with GroceryMapper() as mapper:
+            mapper.delete(grocery)
 
     """
-    Groceriesstatement Spezifische Methoden
+    Grocerystatement Spezifische Methoden
     """
 
-    def create_groceriesstatement(self, groceriesname, description, quantity):
-        groceriesstatement = GroceriesStatement()
-        groceriesstatement.set_groceries_name(groceriesname)
-        groceriesstatement.set_description(description)
-        groceriesstatement.set_quantity(quantity)
+    def create_grocerystatement(self, grocery_name, unit, quantity):
+        grocerystatement = GroceryStatement()  # anschauen
+        grocerystatement.set_grocery_name(grocery_name)
+        grocerystatement.set_unit(unit)
+        grocerystatement.set_quantity(quantity)
 
-        with HouseholdMapper() as mapper:
-            return mapper.insert(groceriesstatement)
+        with GroceryStatementMapper() as mapper:
+            return mapper.insert(grocerystatement)
 
-    def get_groceriesstatement_by_name(self, groceriesname):
-        with GroceriesStatementMapper() as mapper:
-            return mapper.find_by_groceries_name(groceriesname)
+    def get_grocerystatement_by_name(self, grocery_name):
+        with GroceryStatementMapper() as mapper:
+            return mapper.find_by_grocery_name(grocery_name)
 
-    def get_groceriesstatement_by_id(self, number):
-        with GroceriesStatementMapper() as mapper:
+    def get_grocerystatement_by_id(self, number):
+        with GroceryStatementMapper() as mapper:
             return mapper.find_by_key(number)
 
-    def get_all_groceriesstatements(self):
-        with GroceriesStatementMapper() as mapper:
-            mapper.find_all()
+    def get_all_grocerystatements(self):
+        with GroceryStatementMapper() as mapper:
+            return mapper.find_all()
 
-    def get_groceriesstatement_by_fridge(self,fridge):
-        with GroceriesStatementMapper() as mapper:
+    def get_grocerystatement_by_fridge(self,fridge):
+        with GroceryStatementMapper() as mapper:
             return mapper.find_by_fridge_id(fridge) #prüfen
 
-    def update_groceriesstatement(self, groceriesstatement):
-        with GroceriesStatementMapper() as mapper:
-            mapper.update(GroceriesStatementMapper)
+    def update_grocerystatement(self, grocerystatement):
+        with GroceryStatementMapper() as mapper:
+            mapper.update(grocerystatement)
 
-    def delete_groceriesstatement(self, groceriesstatement):
-        with GroceriesStatementMapper() as mapper:
-            mapper.delete(groceriesstatement)
+    def delete_grocerystatement(self, grocerystatement):
+        with GroceryStatementMapper() as mapper:
+            mapper.delete(grocerystatement)
+
+
+    def convert_unit(self, value, unit_from, unit_to):
+        if unit_from == "g" and unit_to == "kg":
+            return value / 1000
+        elif unit_from == "kg" and unit_to == "g":
+            return value * 1000
+        elif unit_from == "ml" and unit_to == "l":
+            return value / 1000
+        elif unit_from == "l" and unit_to == "ml":
+            return value * 1000
+        else:
+            return "Ihre Einheit ist ungültig oder die Umrechnung ist nicht möglich."
+
+
 
     """
        User Spezifische Methoden
@@ -269,17 +322,60 @@ class Administration():
 
     def delete_user(self, user):
         with UserMapper() as mapper:
-            return mapper.delet(user)
+
+            recipe = self.get_recipe_by_user_id(user.get_id())
+            inhabitants = self.get_inhabitant_by_user_id(user.get_id())
+
+            try:
+                for r in recipe:
+                    self.delete_recipe(r)
+
+            except Exception as e:
+                print("Error in delete_user in Administration: " + str(e))
+                u = "Error in delete_user in Administration: " + str(e)
+
+            try:
+                for i in inhabitants:
+                    self.delete_inhabitant(i)
+
+            except Exception as e:
+                print("Error in delete_inhabitant in Administration: " + str(e))
+                u = "Error in delete_inhabitant in Administration: " + str(e)
+
+            try:
+                u = mapper.delete(user)
+            except Exception as e:
+                u = str(e) + " error in del user"
+
+            return u
 
 
 
     '''
-#inhabitent
+#inhabitent '''
 
-    def createinhabitent(self,user_id,household_id):
+    def create_inhabitant(self, user_id, household_id):
+
         with HouseholdMapper() as mapper:
-            return mapper.createinhabitent(user_id,household_id)
+            return mapper.createInhabitant(user_id, household_id)
 
 
-#delete inhabitent 
-    '''
+    def delete_inhabitant(self, user_id, household_id):
+        with HouseholdMapper() as mapper:
+            return mapper.deleteInhabitant(user_id, household_id)
+
+    def get_users_by_household_id(self, household_id):
+
+        with HouseholdMapper() as mapper:
+            user_ids = mapper.get_users_by_household_id(household_id)
+            result = []
+
+            # creating user objects from ids
+            for i in user_ids:
+                r = self.get_user_by_id(i)
+                result.append(r)
+            return result
+
+    def get_inhabitant_by_user_id(self, user_id):
+        with UserMapper() as mapper:
+            return mapper.find_by_user_id(user_id)

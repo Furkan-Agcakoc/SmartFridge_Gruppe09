@@ -128,29 +128,23 @@ class UserMapper (Mapper):
         return result
 
     def find_by_google_user_id(self, google_user_id):
-
         result = None
-        cursor = self._cnx.cursor()
-        command = "SELECT * from users WHERE google_user_id={}".format(google_user_id)
-        cursor.execute(command)
-        tuples = cursor.fetchall()
 
-        try:
-            (id, firstname, lastname, nickname, email, google_user_id) = tuples[0]
-            user = User()
-            user.set_id(id)
-            user.set_firstname(firstname)
-            user.set_lastname(lastname)
-            user.set_nickname(nickname)
-            user.set_email(email)
-            user.set_google_user_id(google_user_id)
-            result = user
+        with self._cnx.cursor() as cursor:
+            command = "SELECT * FROM users WHERE google_user_id = %s"
+            cursor.execute(command, (google_user_id,))
+            tuples = cursor.fetchall()
 
-        except IndexError:
-            result = None
-
-        self._cnx.commit()
-        cursor.cose()
+            if tuples:
+                (id, firstname, lastname, nickname, email, google_user_id) = tuples[0]
+                user = User()
+                user.set_id(id)
+                user.set_firstname(firstname)
+                user.set_lastname(lastname)
+                user.set_nickname(nickname)
+                user.set_email(email)
+                user.set_google_user_id(google_user_id)
+                result = user
 
         return result
 
@@ -177,26 +171,41 @@ class UserMapper (Mapper):
             result = None
 
         self._cnx.commit()
-        cursor.cose()
+        cursor.close()
 
         return result
+
+    def find_by_user_id(self,user_id):
+        result = []
+        cursor = self._cnx.cursor()
+        command = "SELECT user_id FROM inhabitant WHERE user_id={}".format(user_id)
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+
+        for (user_id) in tuples:
+            inhabitant = User()
+            inhabitant.set_id(user_id)
+
+
+            self._cnx.commit()
+            cursor.close()
+
+            return result
 
     def insert(self, user):
 
         cursor = self._cnx.cursor()
-        cursor.execute("SELECT MAX(id) AS maxid FROM users ")
+        cursor.execute("SELECT MAX(id) AS maxid FROM users")
         tuples = cursor.fetchall()
 
         for (maxid) in tuples:
             if maxid[0] is not None:
-
                 user.set_id(maxid[0] + 1)
             else:
-
                 user.set_id(1)
 
-        command = "INSERT INTO users (id, firstname, lastname, email, nickname,google_user_id) VALUES (%s,%s,%s,%s,%s,%s)"
-        data = (user.get_id(), user.get_firstname(), user.get_lastname(),user.get_email(), user.get_google_user_id(), user.get_nickname())
+        command = "INSERT INTO users (id, firstname, lastname, nickname,email,google_user_id) VALUES (%s,%s,%s,%s,%s,%s)"
+        data = (user.get_id(), user.get_firstname(), user.get_lastname(), user.get_nickname(), user.get_email(), user.get_google_user_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
@@ -205,22 +214,20 @@ class UserMapper (Mapper):
         return user
 
     def update(self, user):
-
         cursor = self._cnx.cursor()
-
-        command = "UPDATE users" + "SET firstname=%s, lastname=%s, nickname=%s, email=%s WHERE google_user_id=%s"
-        data = (user.get_firstname(), user.get_lastname(), user.get_nickname(), user.get_email(), user.get_google_user_id())
+        command = "UPDATE users SET firstname=%s, lastname=%s, nickname=%s, email=%s, google_user_id=%s WHERE id=%s"
+        data = (user.get_firstname(),user.get_lastname(), user.get_nickname(), user.get_email(), user.get_google_user_id(), user.get_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
         cursor.close()
 
     def delete(self, user):
-
+        if user is None:
+            return
         cursor = self._cnx.cursor()
-        command = "DELETE FROM users WHERE id={}".format(user.get_google_user_id())
+        command = "DELETE FROM users WHERE id={}".format(user.get_id())
         cursor.execute(command)
-
         self._cnx.commit()
         cursor.close()
 

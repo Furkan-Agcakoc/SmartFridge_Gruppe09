@@ -37,5 +37,3 @@ class Shoppinglist (bo.BusinessObject):
         obj.set_is_checked(dictionary["is_checked"])
         return obj
         """
-
-

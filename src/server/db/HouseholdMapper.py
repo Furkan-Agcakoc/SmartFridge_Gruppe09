@@ -12,12 +12,10 @@ class HouseholdMapper(Mapper):
         cursor.execute("SELECT * FROM household")
         tuples = cursor.fetchall()
 
-        for (id, household_name, user_id, fridge_id) in tuples:
+        for (id, household_name, user_id) in tuples:
             household = Household()
             household.set_id(id)
             household.set_household_name(household_name)
-            household.set_user_id(user_id)
-            household.set_fridge_id(fridge_id)
             result.append(household)
 
         self._cnx.commit()
@@ -32,12 +30,10 @@ class HouseholdMapper(Mapper):
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, household_name, user_id, fridge_id) in tuples:
+        for (id, household_name) in tuples:
             household = Household()
             household.set_id(id)
             household.set_household_name(household_name)
-            household.set_user_id(user_id)
-            household.set_fridge_id(fridge_id)
             result.append(household)
 
         self._cnx.commit()
@@ -53,12 +49,10 @@ class HouseholdMapper(Mapper):
         tuples = cursor.fetchall()
 
         if tuples:
-            (id, household_name, user_id, fridge_id) = tuples[0]
+            (id, household_name) = tuples[0]
             household = Household()
             household.set_id(id)
             household.set_household_name(household_name)
-            household.set_user_id(user_id)
-            household.set_fridge_id(fridge_id)
             result = household
 
         self._cnx.commit()
@@ -77,8 +71,8 @@ class HouseholdMapper(Mapper):
             else:
                 household.set_id(1)
 
-        command = "INSERT INTO household (id, household_name, user_id, fridge_id) VALUES (%s, %s, %s, %s)"
-        data = (household.get_id(), household.get_household_name(), household.get_user_id(), household.get_fridge_id())
+        command = "INSERT INTO household (id, household_name) VALUES (%s, %s)"
+        data = (household.get_id(), household.get_household_name())
         cursor.execute(command, data)
 
         self._cnx.commit()
@@ -89,8 +83,8 @@ class HouseholdMapper(Mapper):
     def update(self, household):
         cursor = self._cnx.cursor()
 
-        command = "UPDATE household SET household_name=%s, user_id=%s, fridge_id=%s WHERE id=%s"
-        data = (household.get_household_name(), household.get_user_id(), household.get_fridge_id(), household.get_id())
+        command = "UPDATE household SET household_name=%s WHERE id=%s"
+        data = (household.get_household_name(), household.get_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
@@ -105,6 +99,78 @@ class HouseholdMapper(Mapper):
         self._cnx.commit()
         cursor.close()
 
+    def checkInhabitant(self, user_id, household_id):
+        try:
+            cursor = self._cnx.cursor()
+            command = "SELECT `user_id`,`household_id` FROM inhabitant WHERE `user_id`={0} AND `household_id`={1}".format(
+                user_id, household_id)
+            cursor.execute(command)
+            tuples = cursor.fetchall()
+
+            if len(tuples) < 1:
+                return False
+            else:
+                return True
+
+
+        except Exception as e:
+            print("exception in checkInhabitant", e)
+            return None
+
+    def createInhabitant(self, user_id, household_id):
+
+        if self.checkInhabitant(user_id, household_id) == False:
+            try:
+                cursor = self._cnx.cursor()
+                command = "INSERT INTO inhabitant (user_id, household_id) VALUES ('{0}', '{1}')".format(user_id, household_id)
+                cursor.execute(command)
+                self._cnx.commit()
+                cursor.close()
+                return "added userid. {0} to household_id. {1}".format(user_id, household_id)
+
+            except Exception as e:
+                return str(e)
+        else:
+            print("user already in this household")
+            return "user already in this household"
+
+    def deleteInhabitant(self, user_id, household_id):
+
+        try:
+            cursor = self._cnx.cursor()
+            command = "DELETE FROM inhabitant WHERE user_id = {0} AND household_id =  {1}".format(
+                user_id, household_id)
+            cursor.execute(command)
+            self._cnx.commit()
+            cursor.close()
+            return "deleted user_id. {0} to household_id. {1}".format(user_id, household_id)
+
+        except Exception as e:
+            return str(e)
+
+    def get_users_by_household_id(self, household_id):
+
+        try:
+            cursor = self._cnx.cursor()
+            command = "SELECT user_id from inhabitant WHERE household_id = {0}".format(household_id)
+            cursor.execute(command)
+            tuples = cursor.fetchall()
+            re = []
+            result =[]
+            for i in tuples:
+                re.append(i[0])
+
+            self._cnx.commit()
+            cursor.close()
+            user_ids = re
+
+
+            return re
+
+        except Exception as e:
+            print(e)
+
+            return None
 
 if (__name__ == "__main__"):
     with HouseholdMapper() as mapper:
