@@ -27,7 +27,7 @@ class Header extends Component {
         >
           <Box //spacer Box for Header
             sx={{
-              width: "130px",
+              width: "200px",
               height: "40px",
             }}
           ></Box>
@@ -54,7 +54,10 @@ class Header extends Component {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "center",
+              width: "200px",
+              height: "40px",
+              border: "3px black solid",
             }}
           >
             {user ? (
