@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  Paper,
-  Typography,
-  Tooltip,
-  Tab,
-  Box,
-  Link,
-  Container,
-} from "@mui/material";
+import { Paper, Tooltip, Tab, Box, Link, Container } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
@@ -141,22 +133,6 @@ class Fridge extends Component {
               // border: "5px solid red",
             }}
           >
-            {/* <Typography
-              variant="h5"
-              fontSize={"27px"}
-              fontWeight={700}
-              padding={2}
-              fontStyle={"italic"}
-              sx={{
-                display: "flex",
-                justifyContent: "flex-start",
-                width: "1000px",
-                color: "text.primary",
-              }}
-            >
-              gespeicherter Haushaltsname!
-            </Typography> */}
-
             <Paper
               sx={{
                 width: "1000px",
