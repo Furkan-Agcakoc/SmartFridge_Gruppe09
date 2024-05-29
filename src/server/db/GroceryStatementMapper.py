@@ -13,11 +13,11 @@ class GroceryStatementMapper (Mapper):
         cursor.execute("SELECT * FROM grocerystatement")
         tuples = cursor.fetchall()
 
-        for (id, grocery_name, description, quantity) in tuples:
+        for (id, grocery_name, unit, quantity) in tuples:
             grocerystatement = GroceryStatement()
             grocerystatement.set_id(id)
             grocerystatement.set_grocery_name(grocery_name)
-            grocerystatement.set_description(description)
+            grocerystatement.set_unit(unit)
             grocerystatement.set_quantity(quantity)
             result.append(grocerystatement)
 
@@ -29,15 +29,15 @@ class GroceryStatementMapper (Mapper):
     def find_by_grocery_name(self, grocery_name):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id, grocery_name,description,quantity FROM grocerystatement WHERE grocery_name={} ORDER BY id".format(grocery_name)
+        command = "SELECT id, grocery_name,unit,quantity FROM grocerystatement WHERE grocery_name={} ORDER BY id".format(grocery_name)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id,grocery_name,description,quantity) in tuples:
+        for (id,grocery_name,unit,quantity) in tuples:
             grocerystatement = GroceryStatement()
             grocerystatement.set_id(id)
             grocerystatement.set_grocery_name(grocery_name)
-            grocerystatement.set_description(description)
+            grocerystatement.set_unit(unit)
             grocerystatement.set_quantity(quantity)
             result.append(grocerystatement)
 
@@ -51,16 +51,16 @@ class GroceryStatementMapper (Mapper):
     def find_by_key(self, key):
         result = None
         cursor = self._cnx.cursor()
-        command = "SELECT id, grocery_name, description, quantity FROM grocerystatement WHERE id=%s"
+        command = "SELECT id, grocery_name, unit, quantity FROM grocerystatement WHERE id=%s"
         cursor.execute(command, (key,))
         tuples = cursor.fetchall()
 
         if tuples:
-            (id, grocery_name, description, quantity) = tuples[0]
+            (id, grocery_name, unit, quantity) = tuples[0]
             grocerystatement = GroceryStatement()
             grocerystatement.set_id(id)
             grocerystatement.set_grocery_name(grocery_name)
-            grocerystatement.set_description(description)
+            grocerystatement.set_unit(unit)
             grocerystatement.set_quantity(quantity)
             result = grocerystatement
 
@@ -81,8 +81,8 @@ class GroceryStatementMapper (Mapper):
             else:
                 grocerysatement.set_id(1)
 
-        command = "INSERT INTO grocerystatement (id, grocery_name, quantity, description) VALUES (%s,%s,%s,%s)"
-        data = (grocerysatement.get_id(), grocerysatement.get_grocery_name(),grocerysatement.get_quantity(),grocerysatement.get_description())
+        command = "INSERT INTO grocerystatement (id, grocery_name, quantity, unit) VALUES (%s,%s,%s,%s)"
+        data = (grocerysatement.get_id(), grocerysatement.get_grocery_name(),grocerysatement.get_quantity(),grocerysatement.get_unit())
         cursor.execute(command, data)
 
         self._cnx.commit()
@@ -93,8 +93,8 @@ class GroceryStatementMapper (Mapper):
     def update(self, grocerystatement):
         cursor = self._cnx.cursor()
 
-        command = "UPDATE grocerystatement SET grocery_name=%s, description=%s, quantity=%s WHERE id=%s"
-        data = (grocerystatement.get_grocery_name(), grocerystatement.get_description(),
+        command = "UPDATE grocerystatement SET grocery_name=%s, unit=%s, quantity=%s WHERE id=%s"
+        data = (grocerystatement.get_grocery_name(), grocerystatement.get_unit(),
                 grocerystatement.get_quantity(), grocerystatement.get_id())
         cursor.execute(command, data)
 

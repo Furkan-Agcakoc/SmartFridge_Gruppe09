@@ -221,10 +221,10 @@ class Administration():
     Grocerystatement Spezifische Methoden
     """
 
-    def create_grocerystatement(self, grocery_name, description, quantity):
+    def create_grocerystatement(self, grocery_name, unit, quantity):
         grocerystatement = GroceryStatement()  # anschauen
         grocerystatement.set_grocery_name(grocery_name)
-        grocerystatement.set_description(description)
+        grocerystatement.set_unit(unit)
         grocerystatement.set_quantity(quantity)
 
         with GroceryStatementMapper() as mapper:
