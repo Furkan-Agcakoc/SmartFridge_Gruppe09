@@ -254,3 +254,5 @@ if (__name__ == "__main__"):     #testen
         result = mapper.find_all()
         for t in result:
             print(t)
+
+            #

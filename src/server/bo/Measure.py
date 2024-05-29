@@ -18,3 +18,5 @@ class Measure (bo.BusinessObject):
         obj.set_id(dictionary["id"])
         obj.set_description(dictionary["description"])
         return obj
+
+    #

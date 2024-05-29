@@ -38,3 +38,5 @@ class GroceryStatement(BusinessObject):
         obj.set_description(dictionary["description"])
         obj.set_quantity(dictionary["quantity"])
         return obj
+
+    #

@@ -172,9 +172,10 @@ class HouseholdMapper(Mapper):
 
             return None
 
-
 if (__name__ == "__main__"):
     with HouseholdMapper() as mapper:
         result = mapper.find_all()
         for p in result:
             print(p)
+
+#

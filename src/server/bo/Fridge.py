@@ -27,3 +27,5 @@ class Fridge (bo.BusinessObject):
         obj.set_fridge_name(dictionary["fridge_name"])
         obj.set_household_id(dictionary["household_id"])
         return obj
+
+#
