@@ -36,8 +36,6 @@ class Household extends Component {
     ];
   }
 
-  
-
   openPopup = () => {
     this.setState({
       popupOpen: true,
