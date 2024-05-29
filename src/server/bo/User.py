@@ -49,5 +49,3 @@ class User (bo.BusinessObject):
         obj.set_email(dictionary["email"])
         obj.set_google_user_id(dictionary["google_user_id"])
         return obj
-
-    #

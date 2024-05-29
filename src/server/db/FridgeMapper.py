@@ -20,7 +20,7 @@ class FridgeMapper (Mapper):
             fridge.set_household_id(household_id)
             result.append(fridge)
 
-        self._cnx.commit() #alle änderungen wurden dauerhaft gemacht
+        self._cnx.commit() #alle Ã¤nderungen wurden dauerhaft gemacht
         cursor.close()
 
         return result
@@ -134,5 +134,3 @@ if (__name__ == "__main__"):
         result = mapper.find_all()
         for p in result:
             print(p)
-
-#

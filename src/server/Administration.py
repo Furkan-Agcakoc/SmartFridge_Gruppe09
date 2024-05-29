@@ -221,10 +221,10 @@ class Administration():
     Grocerystatement Spezifische Methoden
     """
 
-    def create_grocerystatement(self, grocery_name, unit, quantity):
+    def create_grocerystatement(self, grocery_name, description, quantity):
         grocerystatement = GroceryStatement()  # anschauen
         grocerystatement.set_grocery_name(grocery_name)
-        grocerystatement.set_unit(unit)
+        grocerystatement.set_description(description)
         grocerystatement.set_quantity(quantity)
 
         with GroceryStatementMapper() as mapper:
@@ -379,8 +379,3 @@ class Administration():
     def get_inhabitant_by_user_id(self, user_id):
         with UserMapper() as mapper:
             return mapper.find_by_user_id(user_id)
-
-
-
-
-

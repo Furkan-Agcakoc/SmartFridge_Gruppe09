@@ -4,7 +4,7 @@ class GroceryStatement(BusinessObject):
     def __init__(self):
         super().__init__()
         self.grocery_name = ""
-        self.unit = ""
+        self.description = ""
         self.quantity = 0
 
 
@@ -23,11 +23,11 @@ class GroceryStatement(BusinessObject):
     def set_quantity(self, new_quantity):
         self._quantity = new_quantity
 
-    def get_unit(self):
-        return self._unit
+    def get_description(self):
+        return self._description
 
-    def set_unit(self, new_unit):
-        self._unit = new_unit
+    def set_description(self, new_description):
+        self._description = new_description
 
 
     @staticmethod
@@ -35,8 +35,6 @@ class GroceryStatement(BusinessObject):
         obj = GroceryStatement()
         obj.set_id(dictionary["id"])
         obj.set_grocery_name(dictionary["grocery_name"])
-        obj.set_unit(dictionary["unit"])
+        obj.set_description(dictionary["description"])
         obj.set_quantity(dictionary["quantity"])
         return obj
-
-    #
