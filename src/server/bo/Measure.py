@@ -4,19 +4,17 @@ class Measure (bo.BusinessObject):
 
     def __init__(self):
         super().__init__()
-        self._description = ""
+        self._unit = ""
 
-    def get_description(self):
-        return self._description
+    def get_unit(self):
+        return self._unit
 
-    def set_description(self, new_description):
-        self._description = new_description
+    def set_unit(self, new_unit):
+        self._unit = new_unit
 
     @staticmethod
     def from_dict(dictionary=dict()):
         obj = Measure()
         obj.set_id(dictionary["id"])
-        obj.set_description(dictionary["description"])
+        obj.set_unit(dictionary["unit"])
         return obj
-
-    #

@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  Paper,
-  Typography,
-  Tooltip,
-  Tab,
-  Box,
-  Link,
-  Container,
-} from "@mui/material";
+import { Paper, Tooltip, Tab, Box, Link, Container } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
@@ -15,8 +7,9 @@ import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 import Recipe from "./Recipe";
 import PopupRecipe from "./PopupRecipe";
-import Grocerie from "./Grocerie";
-import PopupGrocerie from "./PopupGrocerie";
+import Grocery from "./Grocery";
+import PopupGrocery from "./PopupGrocery";
+import FridgeSearchBar from "./FridgeSearchBar";
 
 class Fridge extends Component {
   constructor(props) {
@@ -108,8 +101,8 @@ class Fridge extends Component {
       popupType,
     } = this.state;
 
-    const groceryBoxes = groceries.map((grocerie, index) => (
-      <Grocerie currentName={grocerie.name} index={index} key={index} />
+    const groceryBoxes = groceries.map((grocery, index) => (
+      <Grocery currentName={grocery.name} index={index} key={index} />
     ));
 
     const recipeBoxes = recipes.map((currentName, index) => (
@@ -140,22 +133,6 @@ class Fridge extends Component {
               // border: "5px solid red",
             }}
           >
-            <Typography
-              variant="h5"
-              fontSize={"27px"}
-              fontWeight={700}
-              padding={2}
-              fontStyle={"italic"}
-              sx={{
-                display: "flex",
-                justifyContent: "flex-start",
-                width: "1000px",
-                color: "text.primary",
-              }}
-            >
-              gespeicherter Haushaltsname!
-            </Typography>
-
             <Paper
               sx={{
                 width: "1000px",
@@ -163,6 +140,7 @@ class Fridge extends Component {
                 backgroundColor: "background.default",
               }}
             >
+              <FridgeSearchBar></FridgeSearchBar>
               <TabContext
                 value={value}
                 sx={{
@@ -211,7 +189,7 @@ class Fridge extends Component {
                       // border: "5px solid violet",
                     }}
                   >
-                    <Link onClick={() => this.openPopup("grocerie")}>
+                    <Link onClick={() => this.openPopup("grocery")}>
                       <Tooltip
                         title="Neues Lebensmittel hinzufügen"
                         placement="bottom"
@@ -256,8 +234,8 @@ class Fridge extends Component {
                     </Link>
                     {groceryBoxes}
                   </TabPanel>
-                  {popupOpen && popupType === "grocerie" && (
-                    <PopupGrocerie
+                  {popupOpen && popupType === "grocery" && (
+                    <PopupGrocery
                       showAlert={showAlert}
                       handleCloseAlert={this.handleCloseAlert}
                       measurements={measurements}

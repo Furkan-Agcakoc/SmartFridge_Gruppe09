@@ -4,7 +4,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 
-const Grocerie = ({ currentName, index }) => (
+const Grocery = ({ currentName, index }) => (
   <Box key={index}>
     <Link to={`/home/${index}`} style={{ textDecoration: "none" }}>
       <Paper
@@ -56,4 +56,4 @@ const Grocerie = ({ currentName, index }) => (
   </Box>
 );
 
-export default Grocerie;
+export default Grocery;

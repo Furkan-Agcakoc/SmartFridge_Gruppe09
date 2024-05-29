@@ -5,7 +5,7 @@ class Fridge (bo.BusinessObject):
     def __init__(self):
         super().__init__()
         self._fridge_name = ""
-        self._household_id = 0 #fremdschlüsselbeziehung
+        self._household_id = 0 #fremdschlÃ¼sselbeziehung
 
     def get_fridge_name(self):
         return self._fridge_name

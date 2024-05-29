@@ -18,7 +18,3 @@ class Quantity (bo.BusinessObject):
         obj.set_id(dictionary["id"])
         obj.set_quantity(dictionary["quantity"])
         return obj
-
-
-
-#

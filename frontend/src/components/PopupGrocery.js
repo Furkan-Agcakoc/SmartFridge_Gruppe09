@@ -11,7 +11,7 @@ import {
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 
-const PopupGrocerie = ({
+const PopupGrocery = ({
   showAlert,
   handleCloseAlert,
   measurements,
@@ -205,4 +205,4 @@ const PopupGrocerie = ({
   );
 };
 
-export default PopupGrocerie;
+export default PopupGrocery;

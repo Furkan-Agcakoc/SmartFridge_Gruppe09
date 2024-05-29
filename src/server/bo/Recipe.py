@@ -65,5 +65,3 @@ class Recipe (bo.BusinessObject):
 
 
         return obj
-
-#
