@@ -43,7 +43,7 @@ fridge = api.inherit('Fridge', bo, {
 
 recipe = api.inherit('Recipe', bo, {
     'recipe_name': fields.String(attribute='_recipe_name', description='Name eines Rezepts'),
-    'portions': fields.Integer(attribute='_portions', description='Portionen eines Rezepts'),
+    'portion': fields.Integer(attribute='_portion', description='Portion eines Rezepts'),
     'instruction': fields.String(attribute='_instruction', description='Anleitung eines Rezepts'),
     'duration': fields.String(attribute='_duration', description='Dauer eines Rezepts'),
     'user_id': fields.Integer(attribute='_user_id', description='Die Id eines Users'),
@@ -382,7 +382,7 @@ class RecipeOperations(Resource):
 
         if proposal is not None:
             rec = adm.create_recipe(
-                proposal.get_recipe_name(), proposal.get_duration(), proposal.get_portions(), proposal.get_instruction(), proposal.get_household_id(), proposal.get_user_id())
+                proposal.get_recipe_name(), proposal.get_duration(), proposal.get_portion(), proposal.get_instruction(), proposal.get_household_id(), proposal.get_user_id())
             return rec, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.

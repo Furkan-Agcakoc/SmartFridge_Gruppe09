@@ -105,7 +105,7 @@ CREATE TABLE `recipe` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `recipe_name` varchar(100) NOT NULL DEFAULT '',
   `duration` varchar(100) NOT NULL DEFAULT '',
-  `portions` int NOT NULL DEFAULT '0',
+  `portion` int NOT NULL DEFAULT '0',
   `instruction` varchar(1024) NOT NULL DEFAULT '',
   `user_id` int NOT NULL DEFAULT '0',
   `household_id` int NOT NULL DEFAULT '0',
@@ -167,7 +167,7 @@ CREATE TABLE `inhabitant` (
   KEY `household_id` (`household_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `inhabitant_fk1` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`),
-  CONSTRAINT `inhabitant_fk2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `inhabitant_fk2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

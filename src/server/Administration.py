@@ -132,10 +132,10 @@ class Administration():
     Recipe Spezifische Methoden
     """
 
-    def create_recipe(self, recipe_name, duration, portions, instruction, user_id, household_id):
+    def create_recipe(self, recipe_name, duration, portion, instruction, user_id, household_id):
         recipe = Recipe()
         recipe.set_recipe_name(recipe_name)
-        recipe.set_portions(portions)
+        recipe.set_portion(portion)
         recipe.set_instruction(instruction)
         recipe.set_duration(duration)
         recipe.set_user_id(user_id)
@@ -324,14 +324,23 @@ class Administration():
         with UserMapper() as mapper:
 
             recipe = self.get_recipe_by_user_id(user.get_id())
+            inhabitants = self.get_inhabitant_by_user_id(user.get_id())
 
             try:
-                for i in recipe:
-                    self.delete_recipe(i)
+                for r in recipe:
+                    self.delete_recipe(r)
 
             except Exception as e:
                 print("Error in delete_user in Administration: " + str(e))
                 u = "Error in delete_user in Administration: " + str(e)
+
+            try:
+                for i in inhabitants:
+                    self.delete_inhabitant(i)
+
+            except Exception as e:
+                print("Error in delete_inhabitant in Administration: " + str(e))
+                u = "Error in delete_inhabitant in Administration: " + str(e)
 
             try:
                 u = mapper.delete(user)
@@ -366,6 +375,11 @@ class Administration():
                 r = self.get_user_by_id(i)
                 result.append(r)
             return result
+
+    def get_inhabitant_by_user_id(self, user_id):
+        with UserMapper() as mapper:
+            return mapper.find_by_user_id(user_id)
+
 
 
 

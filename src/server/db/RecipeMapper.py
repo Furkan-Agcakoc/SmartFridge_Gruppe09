@@ -14,12 +14,12 @@ class RecipeMapper (Mapper):
         cursor.execute("SELECT * from recipe")
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction, user_id, household_id) in tuples:
+        for (id, recipe_name, duration, portion, instruction, user_id, household_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
-            recipe.set_portions(portions)
+            recipe.set_portion(portion)
             recipe.set_instruction(instruction)
             recipe.set_user_id(user_id)
             recipe.set_household_id(household_id)
@@ -40,12 +40,12 @@ class RecipeMapper (Mapper):
             tuples = cursor.fetchall()
 
             if tuples:
-                (id, recipe_name, duration, portions, instruction, user_id, household_id) = tuples[0]
+                (id, recipe_name, duration, portion, instruction, user_id, household_id) = tuples[0]
                 recipe = Recipe()
                 recipe.set_id(id)
                 recipe.set_recipe_name(recipe_name)
                 recipe.set_duration(duration)
-                recipe.set_portions(portions)
+                recipe.set_portion(portion)
                 recipe.set_instruction(instruction)
                 recipe.set_user_id(user_id)
                 recipe.set_household_id(household_id)
@@ -58,17 +58,17 @@ class RecipeMapper (Mapper):
         result = []
 
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, household_id FROM " \
+        command = "SELECT id, recipe_name, duration, portion, instruction, user_id, household_id FROM " \
                   "recipe WHERE duration={}".format(duration)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction, user_id, household_id) in tuples:
+        for (id, recipe_name, duration, portion, instruction, user_id, household_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
-            recipe.set_portions(portions)
+            recipe.set_portion(portion)
             recipe.set_instruction(instruction)
             recipe.set_user_id(user_id)
             recipe.set_household_id(household_id)
@@ -79,22 +79,22 @@ class RecipeMapper (Mapper):
 
         return result
 
-    def find_by_portions(self, portions):
+    def find_by_portion(self, portion):
 
         result = []
 
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, household_id FROM " \
-                  "recipe WHERE portions={}".format(portions)
+        command = "SELECT id, recipe_name, duration, portion, instruction, user_id, household_id FROM " \
+                  "recipe WHERE portion={}".format(portion)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction, user_id, household_id) in tuples:
+        for (id, recipe_name, duration, portion, instruction, user_id, household_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
-            recipe.set_portions(portions)
+            recipe.set_portion(portion)
             recipe.set_instruction(instruction)
             recipe.set_user_id(user_id)
             recipe.set_household_id(household_id)
@@ -110,17 +110,17 @@ class RecipeMapper (Mapper):
         result = []
 
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, household_id FROM " \
+        command = "SELECT id, recipe_name, duration, portion, instruction, user_id, household_id FROM " \
                   "recipe WHERE instruction LIKE '{}' ORDER BY instruction".format(instruction)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction, user_id, household_id) in tuples:
+        for (id, recipe_name, duration, portion, instruction, user_id, household_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
-            recipe.set_portions(portions)
+            recipe.set_portion(portion)
             recipe.set_instruction(instruction)
             recipe.set_user_id(user_id)
             recipe.set_household_id(household_id)
@@ -142,12 +142,12 @@ class RecipeMapper (Mapper):
         tuples = cursor.fetchall()
 
         try:
-            (id, recipe_name, duration, portions, instruction, user_id, household_id) = tuples[0]
+            (id, recipe_name, duration, portion, instruction, user_id, household_id) = tuples[0]
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
-            recipe.set_portions(portions)
+            recipe.set_portion(portion)
             recipe.set_instruction(instruction)
             recipe.set_user_id(user_id)
             recipe.set_household_id(household_id)
@@ -165,16 +165,16 @@ class RecipeMapper (Mapper):
     def find_by_user_id(self,user_id):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, household_id FROM recipe WHERE user_id={}".format(user_id)
+        command = "SELECT id, recipe_name, duration, portion, instruction, user_id, household_id FROM recipe WHERE user_id={}".format(user_id)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction, user_id, household_id) in tuples:
+        for (id, recipe_name, duration, portion, instruction, user_id, household_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
-            recipe.set_portions(portions)
+            recipe.set_portion(portion)
             recipe.set_instruction(instruction)
             recipe.set_user_id(user_id)
             recipe.set_household_id(household_id)
@@ -189,16 +189,16 @@ class RecipeMapper (Mapper):
     def find_by_household_id(self,household_id):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portions, instruction, user_id, household_id FROM recipe WHERE user_id={}".format(household_id)
+        command = "SELECT id, recipe_name, duration, portion, instruction, user_id, household_id FROM recipe WHERE user_id={}".format(household_id)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, recipe_name, duration, portions, instruction, user_id, household_id) in tuples:
+        for (id, recipe_name, duration, portion, instruction, user_id, household_id) in tuples:
             recipe = Recipe()
             recipe.set_id(id)
             recipe.set_recipe_name(recipe_name)
             recipe.set_duration(duration)
-            recipe.set_portions(portions)
+            recipe.set_portion(portion)
             recipe.set_instruction(instruction)
             recipe.set_user_id(user_id)
             recipe.set_household_id(household_id)
@@ -221,8 +221,8 @@ class RecipeMapper (Mapper):
             else:
                 recipe.set_id(1)
 
-        command = "INSERT INTO recipe (id, recipe_name, duration, portions, instruction, user_id, household_id) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        data = (recipe.get_id(), recipe.get_recipe_name(), recipe.get_duration(), recipe.get_portions(),
+        command = "INSERT INTO recipe (id, recipe_name, duration, portion, instruction, user_id, household_id) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        data = (recipe.get_id(), recipe.get_recipe_name(), recipe.get_duration(), recipe.get_portion(),
                 recipe.get_instruction(),recipe.get_household_id(), recipe.get_user_id())
         cursor.execute(command, data)
 
@@ -233,8 +233,8 @@ class RecipeMapper (Mapper):
 
     def update(self, recipe):
         cursor = self._cnx.cursor()
-        command = "UPDATE recipe SET recipe_name=%s, duration=%s, portions=%s, instruction=%s, user_id=%s, household_id=%s WHERE id=%s"
-        data = (recipe.get_recipe_name(), recipe.get_duration(), recipe.get_portions(), recipe.get_instruction(),
+        command = "UPDATE recipe SET recipe_name=%s, duration=%s, portion=%s, instruction=%s, user_id=%s, household_id=%s WHERE id=%s"
+        data = (recipe.get_recipe_name(), recipe.get_duration(), recipe.get_portion(), recipe.get_instruction(),
                 recipe.get_user_id(),recipe.get_household_id(), recipe.get_id())
         cursor.execute(command, data)
 

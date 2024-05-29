@@ -5,7 +5,7 @@ class Recipe (bo.BusinessObject):
     def __init__(self):
         super().__init__()
         self._recipe_name = ""
-        self._portions = 0
+        self._portion = 0
         self._instruction = ""
         self._duration = ""
         self._user_id = 0
@@ -18,11 +18,11 @@ class Recipe (bo.BusinessObject):
     def set_recipe_name(self, new_recipe_name):
         self._recipe_name = new_recipe_name
 
-    def get_portions(self):
-        return self._portions
+    def get_portion(self):
+        return self._portion
 
-    def set_portions(self, new_portions):
-        self._portions = new_portions
+    def set_portion(self, new_portion):
+        self._portion = new_portion
 
     def get_instruction(self):
         return self._instruction
@@ -56,7 +56,7 @@ class Recipe (bo.BusinessObject):
         obj = Recipe()
         obj.set_id(dictionary["id"])  # eigentlich Teil von BusinessObject !
         obj.set_recipe_name(dictionary["recipe_name"])
-        obj.set_portions(dictionary["portions"])
+        obj.set_portion(dictionary["portion"])
         obj.set_instruction(dictionary["instruction"])
         obj.set_duration(dictionary["duration"])
         obj.set_user_id(dictionary["user_id"])

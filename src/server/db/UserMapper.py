@@ -175,6 +175,23 @@ class UserMapper (Mapper):
 
         return result
 
+    def find_by_user_id(self,user_id):
+        result = []
+        cursor = self._cnx.cursor()
+        command = "SELECT user_id FROM inhabitant WHERE user_id={}".format(user_id)
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+
+        for (user_id) in tuples:
+            inhabitant = User()
+            inhabitant.set_id(user_id)
+
+
+            self._cnx.commit()
+            cursor.close()
+
+            return result
+
     def insert(self, user):
 
         cursor = self._cnx.cursor()
