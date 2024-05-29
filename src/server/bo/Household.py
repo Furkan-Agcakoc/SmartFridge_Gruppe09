@@ -22,3 +22,5 @@ class Household (bo.BusinessObject):
         obj.set_id(dictionary["id"])
         obj.set_household_name(dictionary["household_name"])
         return obj
+
+    #

@@ -65,3 +65,5 @@ class Mapper (AbstractContextManager, ABC):
     def delete(self, object):
         """Den Datensatz, der das gegebene Objekt in der DB repräsentiert löschen."""
         pass
+
+#

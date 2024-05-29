@@ -38,3 +38,5 @@ class GroceryStatement(BusinessObject):
         obj.set_unit(dictionary["unit"])
         obj.set_quantity(dictionary["quantity"])
         return obj
+
+    #
