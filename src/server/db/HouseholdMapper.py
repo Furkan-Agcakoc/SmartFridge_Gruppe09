@@ -126,7 +126,7 @@ class HouseholdMapper(Mapper):
                 cursor.execute(command)
                 self._cnx.commit()
                 cursor.close()
-                return "added userid. {0} to householdid. {1}".format(user_id, household_id)
+                return "added userid. {0} to household_id. {1}".format(user_id, household_id)
 
             except Exception as e:
                 return str(e)
@@ -134,16 +134,16 @@ class HouseholdMapper(Mapper):
             print("user already in this household")
             return "user already in this household"
 
-    def deleteMembership(self, user_id, household_id):
+    def deleteInhabitant(self, user_id, household_id):
 
         try:
             cursor = self._cnx.cursor()
-            command = "DELETE FROM inhabitant WHERE user_id = {0} AND groupe_id =  {1}".format(
+            command = "DELETE FROM inhabitant WHERE user_id = {0} AND household_id =  {1}".format(
                 user_id, household_id)
             cursor.execute(command)
             self._cnx.commit()
             cursor.close()
-            return "deleted userid. {0} to househldid. {1}".format(user_id, household_id)
+            return "deleted user_id. {0} to household_id. {1}".format(user_id, household_id)
 
         except Exception as e:
             return str(e)
@@ -164,9 +164,7 @@ class HouseholdMapper(Mapper):
             cursor.close()
             user_ids = re
 
-            """
-            in shopping admin: create user objects from ids
-            """
+
             return re
 
         except Exception as e:

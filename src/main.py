@@ -60,7 +60,7 @@ household = api.inherit('Household', bo, {
 
 grocerystatement = api.inherit('GroceryStatement', bo, {
     'grocery_name': fields.String(attribute='_grocery_name', description='Name eines Lebensmittels'),
-    'description': fields.String(attribut='_description', description='Die Maßeinheit eines Lebensmittel'),
+    'description': fields.String(attribute='_description', description='Die Maßeinheit eines Lebensmittel'),
     'quantity': fields.Float(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel'),
 })
 
@@ -83,19 +83,16 @@ class InhabitantOperations(Resource):
         return adm.create_inhabitant(user_id, household_id)
 
 
-@smartfridge.route('/inhabitant/del')
+@smartfridge.route('/inhabitant/<int:user_id>/<int:household_id>')
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
-class InhabitantOperations(Resource):
+class InhabitantDeleteOperations(Resource):
+    def delete(self, user_id, household_id):
+        'Löschen eines Inhabitants aus dem Household'
 
- #   @secured
-    def post(self):
+        adm = Administration()
+        adm.delete_inhabitant(user_id, household_id)
+        return "", 200
 
-        try:
-            adm = Administration()
-            adm.delete_inhabitant(api.payload["user_id"], api.payload["household_id"])
-            return "deleted " + str(api.payload), 200
-        except Exception as e:
-            return str(e)
 
 
 @smartfridge.route('/inhabitant/<int:household_id>')
@@ -109,7 +106,7 @@ class InhabitantOperations(Resource):
         'Wiedergabe von Users durch Household ID'
 
         adm = Administration()
-        return adm.get_users_by_householdid(household_id)
+        return adm.get_users_by_household_id(household_id)
 
 
 '''
@@ -618,6 +615,7 @@ class FridgeOperations(Resource):
     @smartfridge.marshal_list_with(grocerystatement)
    # @secured
     def get(self,id):
+        "Wiedergabe eines Groceriesstatement Objekts durch ID"
 
         adm = Administration()
         gst = adm.get_grocerystatement_by_id(id)
@@ -625,6 +623,7 @@ class FridgeOperations(Resource):
 
    # @secured
     def delete(self,id):
+        "Löschen eines Groceriesstatement Objekts"
 
         adm = Administration()
         gst = adm.get_grocerystatement_by_id(id)

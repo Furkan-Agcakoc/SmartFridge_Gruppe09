@@ -7,25 +7,9 @@ class GroceryStatement(BusinessObject):
         self.description = ""
         self.quantity = 0
 
-    ''' Muss in die Admin Klasse verschoben werden
-    def conversion(self, value, unit_from, unit_to):
 
-            if unit_from == "g" and unit_to == "kg":
-                return value / 1000
 
-            elif unit_from == "kg" and unit_to == "g":
-                return value * 1000
 
-            elif unit_from == "ml" and unit_to == "l":
-                return value / 1000
-
-            elif unit_from == "l" and unit_to == "ml":
-                return value * 1000
-
-            else:
-                return "Ihre EInheit ist Ungültig oder die Umrechnung ist nicht Möglich."
-                
-    '''
 
     def get_grocery_name(self):
         return self._grocery_name

@@ -89,7 +89,7 @@ class Administration():
         with HouseholdMapper() as mapper:
 
             fridge = self.get_frdige_by_household_id(household.get_id())
-            users = self.get_users_by_householdid(household.get_id())
+            users = self.get_users_by_household_id(household.get_id())
 
             try:
                 for i in fridge:
@@ -254,6 +254,21 @@ class Administration():
         with GroceryStatementMapper() as mapper:
             mapper.delete(grocerystatement)
 
+
+    def convert_unit(self, value, unit_from, unit_to):
+        if unit_from == "g" and unit_to == "kg":
+            return value / 1000
+        elif unit_from == "kg" and unit_to == "g":
+            return value * 1000
+        elif unit_from == "ml" and unit_to == "l":
+            return value / 1000
+        elif unit_from == "l" and unit_to == "ml":
+            return value * 1000
+        else:
+            return "Ihre Einheit ist ungültig oder die Umrechnung ist nicht möglich."
+
+
+
     """
        User Spezifische Methoden
     """
@@ -333,20 +348,14 @@ class Administration():
     def create_inhabitant(self, user_id, household_id):
 
         with HouseholdMapper() as mapper:
-            return mapper.createMembership(user_id, household_id)
+            return mapper.createInhabitant(user_id, household_id)
 
-    def delete_inhabitant(self, user_id, household_id, outercall=False):
 
+    def delete_inhabitant(self, user_id, household_id):
         with HouseholdMapper() as mapper:
-            a = mapper.deleteMembership(user_id, household_id)
-            if outercall == False:
-                if len(self.get_users_by_householdid(household_id)) < 1:
-                    house = self.get_household_by_id(household_id)
-                    self.delete_household(house)
-                    print("deleted household {0} ".format(str(house)))
-            return a
+            return mapper.deleteInhabitant(user_id, household_id)
 
-    def get_users_by_householdid(self, household_id):
+    def get_users_by_household_id(self, household_id):
 
         with HouseholdMapper() as mapper:
             user_ids = mapper.get_users_by_household_id(household_id)
