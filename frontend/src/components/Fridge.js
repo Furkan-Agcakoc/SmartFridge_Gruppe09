@@ -7,7 +7,7 @@ import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 import Recipe from "./Recipe";
 import PopupRecipe from "./PopupRecipe";
-import Grocerie from "./Grocerie";
+import Grocery from "./Grocery";
 import PopupGrocerie from "./PopupGrocerie";
 import FridgeSearchBar from "./FridgeSearchBar";
 
