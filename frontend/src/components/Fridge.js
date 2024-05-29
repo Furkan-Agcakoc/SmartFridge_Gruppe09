@@ -8,7 +8,7 @@ import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 import Recipe from "./Recipe";
 import PopupRecipe from "./PopupRecipe";
 import Grocery from "./Grocery";
-import PopupGrocerie from "./PopupGrocerie";
+import PopupGrocery from "./PopupGrocery";
 import FridgeSearchBar from "./FridgeSearchBar";
 
 class Fridge extends Component {
