@@ -71,7 +71,7 @@ DROP TABLE IF EXISTS `grocerystatement`;
 CREATE TABLE `grocerystatement` (
   `id` int NOT NULL AUTO_INCREMENT,
   `grocery_name` varchar(100) NOT NULL DEFAULT '',
-  `description` varchar(1024) NOT NULL DEFAULT '',
+  `unit` varchar(1024) NOT NULL DEFAULT '',
   `quantity` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
