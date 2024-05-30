@@ -4,6 +4,7 @@ from server.bo.GroceryStatement import GroceryStatement
 from server.bo.Household import Household
 from server.bo.Recipe import Recipe
 from server.bo.User import User
+from server.bo.Measure import Measure
 
 from server.db.FridgeMapper import FridgeMapper
 from server.db.GroceryMapper import GroceryMapper
@@ -11,6 +12,7 @@ from server.db.GroceryStatementMapper import GroceryStatementMapper
 from server.db.HouseholdMapper import HouseholdMapper
 from server.db.RecipeMapper import RecipeMapper
 from server.db.UserMapper import UserMapper
+from server.db.MeasureMapper import MeasureMapper
 
 
 class Administration():
@@ -355,7 +357,8 @@ class Administration():
 
 
     '''
-#inhabitent '''
+    #inhabitent 
+    '''
 
     def create_inhabitant(self, user_id, household_id):
 
@@ -399,3 +402,34 @@ class Administration():
     def get_inhabitant_by_user_id(self, user_id):
         with UserMapper() as mapper:
             return mapper.find_by_user_id(user_id)
+
+
+
+
+    """
+    Measure Spezifische Methoden
+    """
+
+    def create_measure(self, unit):
+        measure = Measure()
+        measure.set_unit(unit)
+        measure.set_id(1)
+
+        with MeasureMapper() as mapper:
+            return mapper.insert(measure)
+
+    def get_measure_by_id(self, number):
+        with MeasureMapper() as mapper:
+            return mapper.find_by_key(number)
+
+    def get_all_measures(self):
+        with MeasureMapper() as mapper:
+            return mapper.find_all()
+
+    def update_measure(self, measure):
+        with MeasureMapper() as mapper:
+            mapper.update(measure)
+
+    def delete_measure(self, measure):
+        with MeasureMapper() as mapper:
+            mapper.delete(measure)

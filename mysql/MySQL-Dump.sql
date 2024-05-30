@@ -47,34 +47,30 @@ CREATE TABLE `grocery` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
--- Table structure for table `household`
+--Table structure for table `measure`
 --
-
-DROP TABLE IF EXISTS `household`;
+DROP TABLE IF EXISTS `measure`;
 /*!40101 SET @saved_cs_client     = @character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `household` (
-  `id` int NOT NULL DEFAULT '0',
-  `household_name` varchar(100) NOT NULL DEFAULT '',
+CREATE TABLE `measure` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `unit` varchar(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 -- Table structure for table `grocerystatement`
---
-
-DROP TABLE IF EXISTS `grocerystatement`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-
-
-CREATE TABLE `grocerystatement` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `grocery_name` varchar(100) NOT NULL DEFAULT '',
-  `unit` varchar(1024) NOT NULL DEFAULT '',
-  `quantity` float NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+CREATE TABLE IF NOT EXISTS `grocerystatement` (
+  `id` INT NOT NULL ,
+  `grocery_name` INT NOT NULL DEFAULT '0',
+  `unit` INT NOT NULL DEFAULT '0',
+  `quantity` FLOAT NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `grocery_name` (`grocery_name`),
+  KEY `unit` (`unit`),
+  CONSTRAINT `grocerystatement_fk1` FOREIGN KEY (`grocery_name`) REFERENCES `grocery` (`id`),
+  CONSTRAINT `grocerystatement_fk2` FOREIGN KEY (`unit`) REFERENCES `measure` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `users`
@@ -112,7 +108,7 @@ CREATE TABLE `recipe` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `household_id` (`household_id`),
-  CONSTRAINT `recipe_fk1` FOREIGN KEY (`user_id`) REFERENCES `inhabitant` (`user_id`),
+  CONSTRAINT `recipe_fk1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `recipe_fk2` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

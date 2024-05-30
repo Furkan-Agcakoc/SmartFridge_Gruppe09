@@ -3,9 +3,9 @@ from server.bo.BusinessObject import BusinessObject
 class GroceryStatement(BusinessObject):
     def __init__(self):
         super().__init__()
-        self.grocery_name = ""
-        self.description = ""
-        self.quantity = 0
+        self._grocery_name = 0
+        self._unit = 0
+        self._quantity = 0
 
 
 
