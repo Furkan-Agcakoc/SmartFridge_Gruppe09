@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Logo from "../../images/sopra-logo-rahmen.png";
 import { Box } from "@mui/material";
 import { Button } from "@mui/material";
+import AccountMenu from "../dialogs/AccountMenu";
 
 class Header extends Component {
   render() {
@@ -26,15 +27,14 @@ class Header extends Component {
         >
           <Box //spacer Box for Header
             sx={{
-              width: "130px",
+              width: "200px",
               height: "40px",
             }}
           ></Box>
-          <Box
+          <Box //Logo Box
             sx={{
               height: "180px",
               width: "1000px",
-              /* border: '3px red solid', */
               alignItems: "center",
               display: "flex",
               justifyContent: "center",
@@ -51,7 +51,15 @@ class Header extends Component {
               ></Box>
             </Link>
           </Box>
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              width: "200px",
+              height: "40px",
+              border: "3px black solid",
+            }}
+          >
             {user ? (
               <Button
                 onClick={onSignOut}
@@ -91,6 +99,7 @@ class Header extends Component {
                 Login
               </Button>
             )}
+            <AccountMenu></AccountMenu>
           </Box>
         </Box>
       </>
