@@ -112,7 +112,7 @@ CREATE TABLE `recipe` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `household_id` (`household_id`),
-  CONSTRAINT `recipe_fk1` FOREIGN KEY (`user_id`) REFERENCES `inhabitant` (`user_id`) ON DELETE CASCADE,
+  CONSTRAINT `recipe_fk1` FOREIGN KEY (`user_id`) REFERENCES `inhabitant` (`user_id`),
   CONSTRAINT `recipe_fk2` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

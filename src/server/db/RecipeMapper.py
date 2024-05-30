@@ -210,6 +210,33 @@ class RecipeMapper (Mapper):
 
             return result
 
+    def find_recipe_by_user_id_and_household_id(self, user_id, household_id):
+        result = []
+        cursor = self._cnx.cursor()
+        command = """
+        SELECT id, recipe_name, duration, portion, instruction, user_id, household_id
+        FROM recipe
+        WHERE user_id = {} AND household_id = {}
+        """.format(user_id, household_id)
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+
+        for (id, recipe_name, duration, portion, instruction, user_id, household_id) in tuples:
+            recipe = Recipe()
+            recipe.set_id(id)
+            recipe.set_recipe_name(recipe_name)
+            recipe.set_duration(duration)
+            recipe.set_portion(portion)
+            recipe.set_instruction(instruction)
+            recipe.set_user_id(user_id)
+            recipe.set_household_id(household_id)
+            result.append(recipe)
+
+        cursor.close()
+        self._cnx.commit()
+
+        return result
+
     def insert(self, recipe):
         cursor = self._cnx.cursor()
         cursor.execute("SELECT MAX(id) AS maxid FROM recipe")

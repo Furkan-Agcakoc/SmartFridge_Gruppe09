@@ -163,6 +163,9 @@ class Administration():
         """  Wiedergabe deines Rezepts mit der Household_Id """
         with RecipeMapper() as mapper:
             return mapper.find_by_household_id(household_id)
+    def get_recipe_by_user_id_and_household_id(self, user_id, household_id):
+        with RecipeMapper() as mapper:
+            return mapper.find_recipe_by_user_id_and_household_id(user_id, household_id)
 
 
 
@@ -362,7 +365,24 @@ class Administration():
 
     def delete_inhabitant(self, user_id, household_id):
         with HouseholdMapper() as mapper:
-            return mapper.deleteInhabitant(user_id, household_id)
+
+            recipe = self.get_recipe_by_user_id_and_household_id(user_id, household_id)
+
+            try:
+                for r in recipe:
+                    self.delete_recipe(r)
+            except Exception as e:
+                print("Error in delete_inhabitant in Administration: " + str(e))
+                return "Error in delete_inhabitant in Administration: " + str(e)
+
+            try:
+                i = mapper.deleteInhabitant(user_id, household_id)
+            except Exception as e:
+                i = str(e) + " error in del user"
+
+            return i
+
+
 
     def get_users_by_household_id(self, household_id):
 
