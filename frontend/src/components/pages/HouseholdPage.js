@@ -9,6 +9,7 @@ import PopupHousehold from "../PopupHousehold";
 import EditHouseholdPopup from "../EditHouseholdPopup";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import HouseholdAnchor from "../HouseholdAnchor";
+import Alert from "@mui/material/Alert";
 
 class Household extends Component {
   constructor(props) {
@@ -18,16 +19,13 @@ class Household extends Component {
       householdCount: 0,
       households: [],
       currentName: "",
-      firstName: "",
-      lastName: "",
-      nickname: "",
       showAlert: false,
       anchorEls: {},
       openMenus: {},
       currentlyEditing: null,
       dialogopen: false,
       householdIdToDelete: null, // New state to store householdId
-      showSigninPopup: true
+      showSigninPopup: true,
     };
 
     this.emails = [
@@ -81,14 +79,6 @@ class Household extends Component {
     this.handleCloseDialog();
   };
 
-  // handleSubmitNames = () => {
-  //   const { firstName, lastName, nickname} = this.state;
-
-  //   if (firstName.trim() === "" || lastName.trim() === "" || nickname.trim() === "") {
-  //     this.setState({ showAlert: true });
-  //     return;
-  //   }
-  // }
 
   handleCreateHousehold = () => {
     const { currentName, currentlyEditing, households } = this.state;
@@ -202,19 +192,16 @@ class Household extends Component {
     this.setState({ showSigninPopup: false });
   };
 
-  
-
-
   handleCloseSigninPopup = () => {
-    this.setState({
-      showSigninPopup: false
-
-    }, () => {
-      document.body.style.backgroundColor = "";
-    });
+    this.setState(
+      {
+        showSigninPopup: false,
+      },
+      () => {
+        document.body.style.backgroundColor = "";
+      }
+    );
   };
-
-
 
   render() {
     const {
@@ -226,12 +213,24 @@ class Household extends Component {
       openMenus,
       dialogopen,
       showSigninPopup,
+      handleChange,
+      closeSigninPopup,
     } = this.state;
+
+    const showAlertComponent = showAlert && (
+      <Alert severity="error" sx={{ marginBottom: "20px" }}>
+        Bitte geben Sie einen Haushaltsnamen ein!
+      </Alert>
+    );
 
     return (
       <>
         {showSigninPopup ? (
-          <PopupSignin showAlert={showAlert} onChange={this.handleChange} closeSignin={this.handleCloseSigninPopup}/>
+          <PopupSignin
+            handleChange={handleChange}
+            showAlertComponent={showAlertComponent}
+            closeSigninPopup={closeSigninPopup}
+          />
         ) : (
           <>
             <TitleHH />
@@ -319,7 +318,7 @@ class Household extends Component {
                     handleChange={this.handleChange}
                     handleCreateHousehold={this.handleCreateHousehold}
                     closePopup={this.closePopup}
-                    showAlert={showAlert}
+                    showAlertComponent={showAlertComponent}
                     emails={this.emails}
                   />
                 )}

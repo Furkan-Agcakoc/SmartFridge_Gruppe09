@@ -9,31 +9,30 @@ import Typography from "@mui/material/Typography";
 // import Container from "@mui/material/Container";
 import { Paper } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
+import Alert from "@mui/material/Alert";
 
 class PopupSignin extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      opensigninpopup: true,
       firstName: "",
       lastName: "",
       nickname: "",
-      showAlert: props.showAlert,
+      opensigninpopup: false,
+      showAlertSignin: false,
     };
   }
 
-  handleSubmitNames = () => {
-    const { firstName, lastName, nickname } = this.state;
+  handleChange = (event) => {
+    const { name, value } = event.target;
+    this.setState({
+      [name]: value,
+      showAlertSignin: false,
+    });
+  };
 
-    if (
-      firstName.trim() === "" ||
-      lastName.trim() === "" ||
-      nickname.trim() === ""
-    ) {
-      this.setState({ showAlert: true });
-      console.log("erfolg");
-      return;
-    }
+  handleCloseAlert = () => {
+    this.setState({ showAlertSignin: false });
   };
 
   handleSetBackground = () => {
@@ -44,21 +43,6 @@ class PopupSignin extends Component {
     }
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-    const { firstName, lastName, nickname } = this.state;
-    console.log({
-      firstName,
-      lastName,
-      nickname,
-    });
-    this.handleCloseSigninPopup();
-  };
-
-  handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-
   componentDidMount() {
     this.handleSetBackground();
   }
@@ -67,9 +51,34 @@ class PopupSignin extends Component {
     this.handleSetBackground();
   }
 
-  render() {
-    const { opensigninpopup } = this.state;
+  // handleClosePopup = () => { 
+  //   this.setState({ opensigninpopup: false });
+  // };
 
+  handleSubmitNames = () => {
+    const { firstName, lastName, nickname } = this.state;
+
+    if (
+      firstName.trim() === "" ||
+      lastName.trim() === "" ||
+      nickname.trim() === ""
+    ) {
+      this.setState({ showAlertSignin: true });
+    } else {
+      this.setState({ opensigninpopup: false });
+      // Weitere Logik zur Verarbeitung des Formulars hinzufügen
+    }
+  };
+
+  render() {
+    const { firstName, lastName, nickname, opensigninpopup, showAlertSignin } =
+      this.state;
+
+    const showAlertSigninComp = showAlertSignin && (
+      <Alert severity="error" sx={{ marginBottom: "20px" }}>
+        Bitte füllen Sie alle Feld aus !
+      </Alert>
+    );
     return (
       <>
         {opensigninpopup && (
@@ -113,10 +122,17 @@ class PopupSignin extends Component {
                   Profildaten
                 </Typography>
                 <Avatar sx={{ margin: "5px", bgcolor: "background.white" }}>
-                  <CreateRoundedIcon sx={{color: "secondary.dark", width: "30px", height: "auto" }}/>
+                  <CreateRoundedIcon
+                    sx={{
+                      color: "secondary.dark",
+                      width: "30px",
+                      height: "auto",
+                    }}
+                  />
                 </Avatar>
               </Box>
-              <Box component="form" noValidate sx={{ mt: 1 }}>
+              {showAlertSigninComp}
+              <Box sx={{ mt: 1 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextField
@@ -127,9 +143,8 @@ class PopupSignin extends Component {
                       id="firstName"
                       label="Vorname"
                       placeholder="Ihr Vorname..."
-
                       autoFocus
-                      value={this.state.firstName}
+                      value={firstName}
                       onChange={this.handleChange}
                     />
                   </Grid>
@@ -142,7 +157,7 @@ class PopupSignin extends Component {
                       name="lastName"
                       autoComplete="family-name"
                       placeholder="Ihr Nachname..."
-                      value={this.state.lastName}
+                      value={lastName}
                       onChange={this.handleChange}
                     />
                   </Grid>
@@ -155,7 +170,7 @@ class PopupSignin extends Component {
                       name="nickname"
                       autoComplete="nickname"
                       placeholder="Ihr Nickname..."
-                      value={this.state.nickname}
+                      value={nickname}
                       onChange={this.handleChange}
                     />
                   </Grid>
@@ -165,7 +180,7 @@ class PopupSignin extends Component {
                     sx={{ display: "flex", flexDirection: "column" }}
                   >
                     <Button
-                      type="submit"
+                      // type="submit"
                       variant="contained"
                       endIcon={<CheckCircleOutlineRoundedIcon />}
                       onClick={this.handleSubmitNames}
@@ -193,7 +208,10 @@ class PopupSignin extends Component {
                       justifyContent: "center",
                     }}
                   >
-                    <Typography variant="h7" sx={{ fontSize: "9pt", color: "grey" }}>
+                    <Typography
+                      variant="h7"
+                      sx={{ fontSize: "9pt", color: "grey" }}
+                    >
                       Zur weiteren Nutzung bitte Formular ausfüllen.
                     </Typography>
                   </Grid>
