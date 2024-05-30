@@ -118,7 +118,7 @@ class UserListOperations(Resource):
     @smartfridge.marshal_list_with(user)
    # @secured
     def get(self):
-        "Wiedergabe der Household Objekts"
+        "Wiedergabe der User Objekts"
         adm = Administration()
         user_list = adm.get_all_users()
         if len(user_list) == 0:
