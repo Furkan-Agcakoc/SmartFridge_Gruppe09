@@ -67,6 +67,67 @@ class GroceryStatementMapper (Mapper):
         cursor.close()
         return result
 
+    def find_by_fridge_id(self, fridge_id):
+
+        try:
+            cursor = self._cnx.cursor()
+            command = "SELECT grocerystatement_id from grocery_in_fridge WHERE fridge_id = {0}".format(fridge_id)
+            cursor.execute(command)
+            tuples = cursor.fetchall()
+            grocerys = []
+            for i in tuples:
+                grocerys.append(i[0])
+
+            self._cnx.commit()
+            cursor.close()
+
+            return grocerys
+
+        except Exception as e:
+            print(e)
+
+            return None
+
+    def checkGroceryInFridge(self, grocerysatement_id, fridge_id):  #anschauen
+        try:
+            cursor = self._cnx.cursor()
+            command = "SELECT `grocerystatement_id`,`fridge_id` FROM grocery_in_fridge WHERE `grocerystatement_id`={0} AND `fridge_id`={1}".format(
+                grocerysatement_id, fridge_id)
+            cursor.execute(command)
+            tuples = cursor.fetchall()
+
+            if len(tuples) < 1:
+                return False
+            else:
+                return True
+
+        except Exception as e:
+            print("exception in checkGroceryInFridge", e)
+            return None
+
+    def createGroceryInFridge(self, grocerystatement_id, fridge_id):
+
+            cursor = self._cnx.cursor()
+            command = "INSERT INTO grocery_in_fridge (grocerystatement_id, fridge_id) VALUES ('{0}', '{1}')".format(grocerystatement_id, fridge_id)
+            cursor.execute(command)
+            self._cnx.commit()
+            cursor.close()
+            return "added grocerysatement. {0} to fridge. {1}".format(grocerystatement_id, fridge_id)
+    def deleteGroceryInFridge(self, grocerystatement_id, fridge_id):
+
+        try:
+            cursor = self._cnx.cursor()
+            command = "DELETE FROM grocery_in_fridge WHERE grocerystatement_id = {0} AND fridge_id =  {1}".format(
+                grocerystatement_id, fridge_id)
+            cursor.execute(command)
+            self._cnx.commit()
+            cursor.close()
+            return "deleted grocerysatement. {0} from fridge. {1}".format(grocerystatement_id, fridge_id)
+
+        except Exception as e:
+            return str(e)
+
+
 
 
     def insert(self, grocerysatement):

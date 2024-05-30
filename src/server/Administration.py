@@ -249,7 +249,7 @@ class Administration():
 
     def get_grocerystatement_by_fridge(self,fridge):
         with GroceryStatementMapper() as mapper:
-            return mapper.find_by_fridge_id(fridge) #prüfen
+            return mapper.find_by_fridge_id(fridge)
 
     def update_grocerystatement(self, grocerystatement):
         with GroceryStatementMapper() as mapper:
@@ -361,7 +361,6 @@ class Administration():
     '''
 
     def create_inhabitant(self, user_id, household_id):
-
         with HouseholdMapper() as mapper:
             return mapper.createInhabitant(user_id, household_id)
 
@@ -402,6 +401,23 @@ class Administration():
     def get_inhabitant_by_user_id(self, user_id):
         with UserMapper() as mapper:
             return mapper.find_by_user_id(user_id)
+
+    """
+    Grocery_In_Fridge Spezifische Methoden
+    """
+    def create_grocery_in_frige(self, grocerystatement_id, fridge_id):
+        with GroceryStatementMapper() as mapper:
+            return mapper.createGroceryInFridge(grocerystatement_id, fridge_id)
+
+
+    def delete_grocery_in_frige(self, grocerystatement_id, fridge_id):
+        with GroceryStatementMapper() as mapper:
+            return mapper.deleteGroceryInFridge(grocerystatement_id, fridge_id)
+
+    def get_grocery_in_fridge(self, fridge_id):
+        with GroceryStatementMapper() as mapper:
+            return mapper.find_by_fridge_id(fridge_id)
+
 
 
 

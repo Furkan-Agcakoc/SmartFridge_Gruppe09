@@ -113,6 +113,46 @@ class InhabitantOperations(Resource):
         return adm.get_users_by_household_id(household_id)
 
 
+# Grocery_in_Fridge
+
+@smartfridge.route('/grocery_in_fridge')
+@smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
+class GroceryInFridgeOperations(Resource):
+
+ #   @secured
+    def post(self):
+
+        'Erstellen eines Inhabitant Objekts.'
+
+        grocerystatement_id = api.payload["grocerystatement_id"]
+        frdige_id = api.payload["fridge_id"]
+
+        adm = Administration()
+        return adm.create_grocery_in_frige(grocerystatement_id, frdige_id)
+
+@smartfridge.route('/grocery_in_fridge/<int:grocerystatement_id>/<int:fridge_id>')
+@smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
+class GroceryInFridgeOperations(Resource):
+    def delete(self, grocerystatement_id, fridge_id):
+        'Löschen eines Inhabitants aus dem Household'
+
+        adm = Administration()
+        adm.delete_grocery_in_frige(grocerystatement_id, fridge_id)
+        return "", 200
+
+@smartfridge.route('/grocery_in_fridge/<int:fridge_id>')
+@smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
+@smartfridge.param('fridge_id', 'fridge_id')
+class GroceryInFridgeOperations(Resource):
+    @smartfridge.marshal_list_with(grocerystatement)
+    #@secured
+    def get(self, fridge_id):
+
+        'Wiedergabe von Grocerystatement durch Fridge ID'
+
+        adm = Administration()
+        return adm.get_grocerystatement_by_fridge(fridge_id)
+
 '''
 User
 '''

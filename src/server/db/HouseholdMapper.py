@@ -155,14 +155,14 @@ class HouseholdMapper(Mapper):
             command = "SELECT user_id from inhabitant WHERE household_id = {0}".format(household_id)
             cursor.execute(command)
             tuples = cursor.fetchall()
-            user_ids = []
+            users = []
             for i in tuples:
-                user_ids.append(i[0])
+                users.append(i[0])
 
             self._cnx.commit()
             cursor.close()
 
-            return user_ids
+            return users
 
         except Exception as e:
             print(e)

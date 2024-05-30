@@ -34,6 +34,20 @@ CREATE TABLE `fridge` (
 
 
 --
+-- Table structure for table `household`
+--
+
+DROP TABLE IF EXISTS `household`;
+/*!40101 SET @saved_cs_client     = @character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `household` (
+  `id` int NOT NULL DEFAULT '0',
+  `household_name` varchar(100) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+--
 -- Table structure for table `grocery`
 --
 
@@ -47,7 +61,7 @@ CREATE TABLE `grocery` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
---Table structure for table `measure`
+-- Table structure for table `measure`
 --
 DROP TABLE IF EXISTS `measure`;
 /*!40101 SET @saved_cs_client     = @character_set_client */;
@@ -57,6 +71,15 @@ CREATE TABLE `measure` (
   `unit` varchar(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+INSERT INTO measure (unit) VALUES
+('g'),
+('kg'),
+('ml'),
+('l'),
+('Teelöffel'),
+('Esslöffel'),
+('Prise');
 
 
 -- Table structure for table `grocerystatement`
