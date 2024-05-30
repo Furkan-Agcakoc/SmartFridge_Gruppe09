@@ -12,6 +12,7 @@ from server.bo.GroceryStatement import GroceryStatement
 from server.bo.Household import Household
 from server.bo.Recipe import Recipe
 from server.bo.User import User
+from server.bo.Measure import Measure
 
 from SecurityDecorater import secured
 
@@ -59,11 +60,14 @@ household = api.inherit('Household', bo, {
 })
 
 grocerystatement = api.inherit('GroceryStatement', bo, {
-    'grocery_name': fields.String(attribute='_grocery_name', description='Name eines Lebensmittels'),
-    'unit': fields.String(attribute='_unit', description='Die Maßeinheit eines Lebensmittel'),
+    'grocery_name': fields.Integer(attribute='_grocery_name', description='Name eines Lebensmittels'),
+    'unit': fields.Integer(attribute='_unit', description='Die Maßeinheit eines Lebensmittel'),
     'quantity': fields.Float(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel'),
 })
 
+measure = api.inherit('Measure', bo, {
+    'unit': fields.String(attribute='_unit', description='Einheit eines Lebensmittels')
+})
 
 # Inhabitant
 
@@ -644,7 +648,78 @@ class FridgeOperations(Resource):
         else:
             return '', 500
 
+'''
+measure
+'''
 
+@smartfridge.route('/measure')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
+class MeasureListOperations(Resource):
+    @smartfridge.marshal_list_with(measure)
+    #@secured
+    def get(self):
+        """Wiedergebe eines Measure Objekts"""
+        adm = Administration()
+        measure_list = adm.get_all_measures()
+        return measure_list
+
+    @smartfridge.marshal_with(measure, code=200)
+
+    @smartfridge.expect(measure)
+    #@secured
+    def post(self):
+        """Erstellen eines Measure Objekts"""
+
+        adm = Administration()
+
+        proposal = Measure.from_dict(api.payload)
+
+        if proposal is not None:
+            m = adm.create_measure(
+                proposal.get_unit())
+            return m, 200
+        else:
+            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
+            return '', 500
+
+
+
+
+
+
+@smartfridge.route('/measure/<int:id>')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
+@smartfridge.param('id', 'Die ID des Grocery-Objekts')
+class MeasureOperations(Resource):
+    @smartfridge.marshal_with(measure)
+    #@secured
+    def get(self, id):
+        """Wiedergabe eines Grocery Objekts durch ID"""
+        adm = Administration()
+        measure = adm.get_measure_by_id(id)
+        return measure
+
+    #@secured
+    def delete(self, id):
+        """Löschen eines Measure Objekts"""
+        adm = Administration()
+        measure = adm.get_measure_by_id(id)
+        adm.delete_measure(measure)
+        return '', 200
+
+    @smartfridge.marshal_with(measure)
+    @smartfridge.expect(measure, validate=True)
+    #@secured
+    def put(self, id):
+        """Updaten eines Measure Objekts"""
+        adm = Administration()
+        m = Measure.from_dict(api.payload)
+        if m is not None:
+            m.set_id(id)
+            adm.update_measure(m)
+            return '', 200
+        else:
+            return '', 500
 
 
 if __name__ == '__main__':
