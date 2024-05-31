@@ -77,7 +77,7 @@ class PopupSignin extends Component {
 
     const showAlertSigninComp = showAlertSignin && (
       <Alert severity="error" sx={{ marginBottom: "20px" }}>
-        Bitte füllen Sie alle Feld aus !
+        Bitte füllen Sie alle Felder aus !
       </Alert>
     );
     return (
@@ -99,7 +99,7 @@ class PopupSignin extends Component {
               padding: "20px",
               boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
               width: "600px",
-              height: "300px",
+              height: "auto",
             }}
           >
             <Box
