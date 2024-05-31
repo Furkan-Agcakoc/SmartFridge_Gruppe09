@@ -18,7 +18,7 @@ class PopupSignin extends Component {
       firstName: "",
       lastName: "",
       nickname: "",
-      opensigninpopup: false,
+      showSigninPopup: props.showSigninPopup,
       showAlertSignin: false,
     };
   }
@@ -36,10 +36,11 @@ class PopupSignin extends Component {
   };
 
   handleSetBackground = () => {
-    if (this.state.opensigninpopup) {
+    const { handleCloseSigninPopup } = this.props;
+    if (this.state.showSigninPopup) {
       document.body.style.backgroundColor = "white";
     } else {
-      document.body.style.backgroundColor = "";
+      handleCloseSigninPopup();
     }
   };
 
@@ -51,7 +52,7 @@ class PopupSignin extends Component {
     this.handleSetBackground();
   }
 
-  // handleClosePopup = () => { 
+  // handleClosePopup = () => {
   //   this.setState({ opensigninpopup: false });
   // };
 
@@ -65,13 +66,13 @@ class PopupSignin extends Component {
     ) {
       this.setState({ showAlertSignin: true });
     } else {
-      this.setState({ opensigninpopup: false });
+      this.setState({ showSigninPopup: false });
       // Weitere Logik zur Verarbeitung des Formulars hinzufügen
     }
   };
 
   render() {
-    const { firstName, lastName, nickname, opensigninpopup, showAlertSignin } =
+    const { firstName, lastName, nickname, showSigninPopup, showAlertSignin } =
       this.state;
 
     const showAlertSigninComp = showAlertSignin && (
@@ -81,7 +82,7 @@ class PopupSignin extends Component {
     );
     return (
       <>
-        {opensigninpopup && (
+        {showSigninPopup && (
           <Paper
             component="main"
             maxWidth="xs"

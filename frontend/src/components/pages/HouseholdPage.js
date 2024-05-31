@@ -79,7 +79,6 @@ class Household extends Component {
     this.handleCloseDialog();
   };
 
-
   handleCreateHousehold = () => {
     const { currentName, currentlyEditing, households } = this.state;
 
@@ -213,8 +212,6 @@ class Household extends Component {
       openMenus,
       dialogopen,
       showSigninPopup,
-      handleChange,
-      closeSigninPopup,
     } = this.state;
 
     const showAlertComponent = showAlert && (
@@ -226,11 +223,7 @@ class Household extends Component {
     return (
       <>
         {showSigninPopup ? (
-          <PopupSignin
-            handleChange={handleChange}
-            showAlertComponent={showAlertComponent}
-            closeSigninPopup={closeSigninPopup}
-          />
+          <PopupSignin showSigninPopup={showSigninPopup} handleCloseSigninPopup={this.handleCloseSigninPopup}/>
         ) : (
           <>
             <TitleHH />
