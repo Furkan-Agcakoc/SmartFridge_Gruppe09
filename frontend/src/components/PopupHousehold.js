@@ -9,21 +9,14 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
-import Alert from "@mui/material/Alert";
 
 const PopupHousehold = ({
   handleChange,
   handleCreateHousehold,
   closePopup,
-  showAlert,
+  showAlertComponent,
   emails,
 }) => {
-  const showAlertComponent = showAlert && (
-    <Alert severity="error" sx={{ marginBottom: "20px" }}>
-      Bitte geben Sie einen Haushaltsnamen ein!
-    </Alert>
-  );
-
   return (
     <>
       <Box
