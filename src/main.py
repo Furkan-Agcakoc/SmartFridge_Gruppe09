@@ -575,7 +575,7 @@ class FridgeOperations(Resource):
 
    # @secured
     def delete(self,id):
-        "Löschen eines Fridge Objekts"
+        "Löschen des Inhalts eines Fridge Objekts"
 
         adm = Administration()
         fri = adm.get_fridge_by_id(id)

@@ -122,7 +122,7 @@ class FridgeMapper (Mapper):
 
     def delete(self, fridge):
         cursor = self._cnx.cursor()
-        command = "DELETE FROM fridge WHERE id=%s"
+        command = "DELETE FROM grocery_in_fridge WHERE fridge_id=%s"
         cursor.execute(command, (fridge.get_id(),))
 
         self._cnx.commit()

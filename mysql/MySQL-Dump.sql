@@ -189,6 +189,19 @@ CREATE TABLE `inhabitant` (
   CONSTRAINT `inhabitant_fk2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DELIMITER $$
+
+CREATE TRIGGER AddFridgeAfterHousehold
+AFTER INSERT ON household
+FOR EACH ROW
+BEGIN
+    INSERT INTO fridge (id, fridge_name, household_id)
+    VALUES (NEW.id, CONCAT('Fridge of ', NEW.household_name), NEW.id);
+END$$
+
+DELIMITER ;
+
+
 
 --
 -- Reset session to initial settings
