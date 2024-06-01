@@ -419,7 +419,21 @@ class Administration():
             return mapper.find_by_fridge_id(fridge_id)
 
 
+    """
+    Grocery_in_Recipe Spezifische Methoden
+    """
 
+    def create_grocery_in_recipe(self, grocerystatement_id, recipe_id):
+        with GroceryStatementMapper() as mapper:
+            return mapper.createGroceryInRecipe(grocerystatement_id, recipe_id)
+
+    def delete_grocery_in_recipe(self, grocerystatement_id, recipe_id):
+        with GroceryStatementMapper() as mapper:
+            return mapper.deleteGroceryInRecipe(grocerystatement_id, recipe_id)
+
+    def get_grocery_in_recipe(self, recipe_id):
+        with GroceryStatementMapper() as mapper:
+            return mapper.find_by_recipe_id(recipe_id)
 
 
     """

@@ -122,7 +122,7 @@ class GroceryInFridgeOperations(Resource):
  #   @secured
     def post(self):
 
-        'Erstellen eines Inhabitant Objekts.'
+        'Erstellen eines GroceryInFridge Objekts.'
 
         grocerystatement_id = api.payload["grocerystatement_id"]
         frdige_id = api.payload["fridge_id"]
@@ -134,7 +134,7 @@ class GroceryInFridgeOperations(Resource):
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class GroceryInFridgeOperations(Resource):
     def delete(self, grocerystatement_id, fridge_id):
-        'Löschen eines Inhabitants aus dem Household'
+
 
         adm = Administration()
         adm.delete_grocery_in_frige(grocerystatement_id, fridge_id)
@@ -152,6 +152,50 @@ class GroceryInFridgeOperations(Resource):
 
         adm = Administration()
         return adm.get_grocerystatement_by_fridge(fridge_id)
+
+
+"""
+Grocery in Recipe
+"""
+@smartfridge.route('/grocery_in_recipe')
+@smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
+class GroceryInRecipeOperations(Resource):
+
+ #   @secured
+    def post(self):
+
+        'Erstellen eines GroceryInRecipe Objekts.'
+
+        grocerystatement_id = api.payload["grocerystatement_id"]
+        recipe_id = api.payload["recipe_id"]
+
+        adm = Administration()
+        return adm.create_grocery_in_recipe(grocerystatement_id, recipe_id)
+
+@smartfridge.route('/grocery_in_recipe/<int:grocerystatement_id>/<int:recipe_id>')
+@smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
+class GroceryInFridgeOperations(Resource):
+    def delete(self, grocerystatement_id, recipe_id):
+        'Löschen eines Inhabitants aus dem Household'
+
+        adm = Administration()
+        adm.delete_grocery_in_recipe(grocerystatement_id, recipe_id)
+        return "", 200
+
+@smartfridge.route('/grocery_in_recipe/<int:recipe_id>')
+@smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
+@smartfridge.param('recipe_id', 'recipe_id')
+class GroceryInFridgeOperations(Resource):
+    @smartfridge.marshal_list_with(grocerystatement)
+    #@secured
+    def get(self, recipe_id):
+
+        'Wiedergabe von Grocerystatement durch Recipe ID'
+
+        adm = Administration()
+        gsr = adm.get_grocery_in_recipe(recipe_id)
+        return gsr
+
 
 '''
 User

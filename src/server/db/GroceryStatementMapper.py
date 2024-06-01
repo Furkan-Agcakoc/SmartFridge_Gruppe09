@@ -88,6 +88,28 @@ class GroceryStatementMapper (Mapper):
 
             return None
 
+    def find_by_recipe_id(self, recipe_id):
+
+        try:
+            cursor = self._cnx.cursor()
+            command = "SELECT grocerystatement_id from grocery_in_recipe WHERE recipe_id = {0}".format(recipe_id)
+            cursor.execute(command)
+            tuples = cursor.fetchall()
+            grocerys = []
+            for i in tuples:
+                grocerys.append(i[0])
+
+            self._cnx.commit()
+            cursor.close()
+
+            return grocerys
+
+        except Exception as e:
+            print(e)
+
+            return None
+
+
     def checkGroceryInFridge(self, grocerysatement_id, fridge_id):  #anschauen
         try:
             cursor = self._cnx.cursor()
@@ -123,6 +145,49 @@ class GroceryStatementMapper (Mapper):
             self._cnx.commit()
             cursor.close()
             return "deleted grocerysatement. {0} from fridge. {1}".format(grocerystatement_id, fridge_id)
+
+        except Exception as e:
+            return str(e)
+
+
+    def checkGroceryInRecipe(self, grocerysatement_id, recipe_id):  #anschauen
+        try:
+            cursor = self._cnx.cursor()
+            command = "SELECT `grocerystatement_id`,`recipe_id` FROM grocery_in_recipe WHERE `grocerystatement_id`={0} AND `recipe_id`={1}".format(
+                grocerysatement_id, recipe_id)
+            cursor.execute(command)
+            tuples = cursor.fetchall()
+
+            if len(tuples) < 1:
+                return False
+            else:
+                return True
+
+        except Exception as e:
+            print("exception in checkGroceryInRecipe", e)
+            return None
+
+    def createGroceryInRecipe(self, grocerystatement_id, recipe_id):
+
+            cursor = self._cnx.cursor()
+            command = "INSERT INTO grocery_in_recipe (grocerystatement_id, recipe_id) VALUES ('{0}', '{1}')".format(grocerystatement_id, recipe_id)
+            cursor.execute(command)
+            self._cnx.commit()
+            cursor.close()
+            return "added grocerysatement. {0} to recipe. {1}".format(grocerystatement_id, recipe_id)
+
+
+
+    def deleteGroceryInRecipe(self, grocerystatement_id, recipe_id):
+
+        try:
+            cursor = self._cnx.cursor()
+            command = "DELETE FROM grocery_in_recipe WHERE grocerystatement_id = {0} AND recipe_id =  {1}".format(
+                grocerystatement_id, recipe_id)
+            cursor.execute(command)
+            self._cnx.commit()
+            cursor.close()
+            return "deleted grocerysatement. {0} from fridge. {1}".format(grocerystatement_id, recipe_id)
 
         except Exception as e:
             return str(e)
