@@ -1,14 +1,13 @@
 import React, { Component } from "react";
-import TitleHH from "../TitleHousehold";
+import TitleHH from "../household/TitleHousehold";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import AddHomeWorkRoundedIcon from "@mui/icons-material/AddHomeWorkRounded";
 import Tooltip from "@mui/material/Tooltip";
-
-import PopupHousehold from "../PopupHousehold";
-import EditHouseholdPopup from "../EditHouseholdPopup";
+import PopupHousehold from "../household/PopupHousehold";
+import EditHouseholdPopup from "../household/EditHouseholdPopup";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
-import HouseholdAnchor from "../HouseholdAnchor";
+import HouseholdAnchor from "../household/HouseholdAnchor";
 import Alert from "@mui/material/Alert";
 
 class Household extends Component {
@@ -102,6 +101,7 @@ class Household extends Component {
     } else {
       // Create new household
       const id = households.length + 1;
+      console.log("new household");
 
       this.setState((prevState) => {
         const newHouseholds = [

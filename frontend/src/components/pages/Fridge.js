@@ -1,15 +1,23 @@
 import React, { Component } from "react";
-import { Paper, Tooltip, Tab, Box, Link, Container } from "@mui/material";
+import {
+  Paper,
+  Tooltip,
+  Tab,
+  Box,
+  Link,
+  Container,
+  Alert,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
 import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
-import Recipe from "./Recipe";
-import PopupRecipe from "./PopupRecipe";
-import Grocery from "./Grocery";
-import PopupGrocery from "./PopupGrocery";
-import FridgeSearchBar from "./FridgeSearchBar";
+import Recipe from "../recipe/Recipe";
+import Grocery from "../grocery/Grocery";
+import PopupGrocery from "../grocery/PopupGrocery";
+import FridgeSearchBar from "../FridgeSearchBar";
+import PopupRecipe from "../recipe/PopupRecipe";
 
 class Fridge extends Component {
   constructor(props) {
@@ -17,14 +25,28 @@ class Fridge extends Component {
     this.state = {
       value: "1",
       popupOpen: false,
-      popupType: "",
-      groceriesCount: 0,
+      groceryCount: 0,
       groceries: [],
+      anchorEls: {},
+      openMenus: {},
+      currentNameGrocery: "",
+      currentNameGrQuantity: "",
+      currentNameGrUnit: "",
+      currentlyEditing: null,
+      dialogopen: false,
+      groceryIdToDelete: null,
+      groceryUnit: ["g", "kg", "ml", "l", "Stück"],
+      groceryQuantity: null,
+
+      recipeIdToDelete: null,
       recipesCount: 0,
       recipes: [],
-      currentName: "",
+      currentNameRecipe: "",
+      currentNameReQuantity: "",
+      currentNameReUnit: "",
+      currentNameReDescription: "",
+
       showAlert: false,
-      measurements: ["g", "kg", "ml", "l", "Stück"],
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -36,59 +58,116 @@ class Fridge extends Component {
     });
   }
 
-  openPopup = (type) => {
+  openPopup = () => {
     this.setState({
       popupOpen: true,
-      popupType: type,
+      currentlyEditing: null,
     });
   };
 
   closePopup = () => {
-    this.setState({ popupOpen: false, showAlert: false });
+    this.setState({ popupOpen: false, currentlyEditing: null });
   };
 
-  handleCreateGroceries = (customMeasurement) => {
-    if (this.state.currentName.trim() === "") {
-      this.setState({ showAlert: true });
-    } else {
-      const newGrocerie = {
-        name: this.state.currentName,
-        measurement: customMeasurement,
-      };
-      this.setState((prevState) => ({
-        groceriesCount: prevState.groceriesCount + 1,
-        popupOpen: false,
-        groceries: [...prevState.groceries, newGrocerie],
-        currentName: "",
-        showAlert: false,
-      }));
-    }
-  };
-
-  handleCreateRecipes = (title) => {
-    if (title.trim() === "") {
-      this.setState({ showAlert: true });
-    } else {
-      this.setState((prevState) => ({
-        recipesCount: prevState.recipesCount + 1,
-        popupOpen: false,
-        recipes: [...prevState.recipes, title],
-        currentName: "",
-        showAlert: false,
-      }));
-    }
-  };
-
-  handleChange = (event) => {
-    this.setState({
-      currentName: event.target.value,
-      showAlert: false,
-    });
-  };
+  // handleChange = (event) => {
+  //   this.setState({
+  //     currentNameGrocery: event.target.value,
+  //     currentNameGrUnit: event.target.value,
+  //     currentNameGrQuantity: event.target.value,
+  //     showAlert: false,
+  //   });
+  // };
 
   handleCloseAlert = () => {
     this.setState({ showAlert: false });
   };
+
+  handleCreateGroceries = () => {
+    const {
+      currentNameGrocery,
+      currentNameGrQuantity,
+      currentNameGrUnit,
+      currentlyEditing,
+      groceries,
+    } = this.state;
+
+    if (
+      currentNameGrocery.trim() === "" ||
+      currentNameGrQuantity.trim() === "" ||
+      currentNameGrUnit.trim() === ""
+    ) {
+      this.setState({ showAlert: true });
+      console.log("Alarm");
+      return;
+    }
+
+    if (currentlyEditing !== null) {
+      // Edit existing household
+      this.setState({
+        groceries: this.updateGrocery({
+          groceryId: currentlyEditing,
+          groceryName: currentNameGrocery,
+          groceryUnit: currentNameGrUnit,
+          groceryQuantity: currentNameGrQuantity,
+        }),
+        popupOpen: false,
+        currentNameGrocery: "",
+        showAlert: false,
+        currentlyEditing: null,
+      });
+    } else {
+      // Create new household
+      console.log("new grocery");
+      const id = groceries.length + 1;
+      console.log(id);
+      this.setState((prevState) => {
+        const newGrocery = [
+          ...prevState.groceries,
+          {
+            groceryId: id,
+            groceryName: currentNameGrocery,
+            groceryUnit: currentNameGrUnit,
+            groceryQuantity: currentNameGrQuantity,
+          },
+        ];
+        console.log(newGrocery);
+        const newOpenMenus = { ...prevState.openMenus, [id]: false };
+
+        return {
+          groceryCount: prevState.groceryCount + 1,
+          popupOpen: false,
+          groceries: newGrocery,
+          currentNameGrocery: "",
+          showAlert: false,
+          openMenus: newOpenMenus,
+        };
+      });
+    }
+  };
+
+  updateGrocery(grocery) {
+    const updatedGroceries = this.state.groceries.map((e) => {
+      if (grocery.groceryId === e.groceryId) {
+        return grocery;
+      }
+      return e;
+    });
+    return updatedGroceries;
+  }
+
+  // handleCreateRecipes = (title) => {
+  //   if (title.trim() === "") {
+  //     this.setState({ showAlert: true });
+  //   } else {
+  //     this.setState((prevState) => ({
+  //       recipesCount: prevState.recipesCount + 1,
+  //       popupOpen: false,
+  //       recipes: [...prevState.recipes, title],
+  //       currentName: "",
+  //       showAlert: false,
+  //     }));
+  //   }
+  // };
 
   render() {
     const {
@@ -97,17 +176,26 @@ class Fridge extends Component {
       recipes,
       popupOpen,
       showAlert,
-      measurements,
-      popupType,
+      groceryUnit,
+      groceryName,
+      groceryQuantity,
+      currentNameGrQuantity,
+      currentNameGrUnit,
+      currentNameGrocery,
     } = this.state;
 
-    const groceryBoxes = groceries.map((grocery, index) => (
-      <Grocery currentName={grocery.name} index={index} key={index} />
-    ));
+    // const groceryBoxes = groceries.map((grocery, index) => (
+    //   <Grocery currentNameGrocery={grocery.name} index={index} key={index} />
+    // ));
 
-    const recipeBoxes = recipes.map((currentName, index) => (
-      <Recipe currentName={currentName} index={index} key={index} />
-    ));
+    // const recipeBoxes = recipes.map((currentNameRecipe, index) => (
+    //   <Recipe currentNameRecipe={currentNameRecipe} index={index} key={index} />
+    // ));
+    const showAlertComponent = showAlert && (
+      <Alert severity="error" sx={{ marginBottom: "20px" }}>
+        Bitte füllen Sie alle Felder aus!
+      </Alert>
+    );
 
     return (
       <>
@@ -189,7 +277,7 @@ class Fridge extends Component {
                       // border: "5px solid violet",
                     }}
                   >
-                    <Link onClick={() => this.openPopup("grocery")}>
+                    <Link onClick={this.openPopup}>
                       <Tooltip
                         title="Neues Lebensmittel hinzufügen"
                         placement="bottom"
@@ -232,16 +320,21 @@ class Fridge extends Component {
                         </Paper>
                       </Tooltip>
                     </Link>
-                    {groceryBoxes}
+                    {/* {groceryBoxes} */}
                   </TabPanel>
-                  {popupOpen && popupType === "grocery" && (
+                  {popupOpen && (
                     <PopupGrocery
                       showAlert={showAlert}
                       handleCloseAlert={this.handleCloseAlert}
-                      measurements={measurements}
+                      groceryUnit={groceryUnit}
+                      groceryName={groceryName}
                       handleChange={this.handleChange}
                       handleCreateGroceries={this.handleCreateGroceries}
                       closePopup={this.closePopup}
+                      showAlertComponent={showAlertComponent}
+                      currentNameGrocery={currentNameGrocery}
+                      currentNameGrQuantity={currentNameGrQuantity}
+                      currentNameGrUnit={currentNameGrUnit}
                     />
                   )}
                 </Container>
@@ -324,18 +417,18 @@ class Fridge extends Component {
                         </Paper>
                       </Tooltip>
                     </Link>
-                    {recipeBoxes}
+                    {/* {recipeBoxes} */}
                   </TabPanel>
-                  {popupOpen && popupType === "recipe" && (
+                  {/* {popupOpen && (
                     <PopupRecipe
                       showAlert={showAlert}
                       handleCloseAlert={this.handleCloseAlert}
-                      measurements={measurements}
+                      groceryUnit={groceryUnit}
                       handleChange={this.handleChange}
-                      handleCreateRecipes={this.handleCreateRecipes}
+                      // handleCreateRecipes={this.handleCreateRecipes}
                       closePopup={this.closePopup}
                     />
-                  )}
+                  )} */}
                 </Container>
               </TabContext>
             </Paper>

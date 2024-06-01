@@ -14,33 +14,45 @@ import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 const PopupGrocery = ({
   showAlert,
   handleCloseAlert,
-  measurements,
-  handleChange,
+  groceryUnit,
   handleCreateGroceries,
+  handleChange,
   closePopup,
+  showAlertComponent,
+  currentNameGrocery,
+  currentNameGrQuantity,
+  currentNameGrUnit,
 }) => {
-  const [customMeasurement, setCustomMeasurement] = useState("");
+  const [customGroceryUnit, setCustomGroceryUnit] = useState("");
 
-  const handleCustomMeasurementChange = (event, newValue) => {
-    setCustomMeasurement(newValue);
-  };
+  // const handleCustomGroceryUnitChange = (event, newValue) => {
+  //   setCustomGroceryUnit(newValue);
+  // };
 
-  const handleSubmit = () => {
-    handleCreateGroceries(customMeasurement);
-  };
+  // const handleSubmit = () => {
+  //   handleCreateGroceries();
+  // };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (event.target.classList.contains('popup-background')) {
+      if (event.target.classList.contains("popup-background")) {
         closePopup();
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [closePopup]);
+
+  handleChange = (event) => {
+    const { name, value } = event.target;
+    this.setState({
+      [name]: value,
+      showAlert: false,
+    });
+  };
 
   return (
     <>
@@ -90,15 +102,7 @@ const PopupGrocery = ({
           >
             Neues Lebensmittel hinzufügen
           </Typography>
-          {showAlert && (
-            <Alert
-              severity="error"
-              onClose={handleCloseAlert}
-              sx={{ marginBottom: "20px" }}
-            >
-              Bitte einen Namen des Lebensmittels eingeben!
-            </Alert>
-          )}
+          {showAlertComponent}
           <Box
             sx={{
               display: "flex",
@@ -111,9 +115,11 @@ const PopupGrocery = ({
               required
               id="outlined-required"
               label="Lebensmittelname angeben"
+              value={currentNameGrocery}
+              name="Lebensmittel"
               placeholder="Lebensmittelname"
               InputLabelProps={{ style: { fontSize: "15px" } }}
-              onChange={handleChange}
+              onChange={this.handleChange}
             />
             <Box
               sx={{
@@ -125,20 +131,25 @@ const PopupGrocery = ({
               <TextField
                 required
                 id="outlined-required"
+                value={currentNameGrQuantity}
+                name="Menge"
                 label="Menge angeben"
                 placeholder="Menge"
                 InputLabelProps={{ style: { fontSize: "15px" } }}
                 sx={{ width: "775px" }}
+                onChange={this.handleChange}
               />
               <Autocomplete
                 id="measurements-box"
-                options={measurements}
+                options={groceryUnit}
                 freeSolo
-                onInputChange={handleCustomMeasurementChange}
+                // onInputChange={handleCustomGroceryUnitChange}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     required
+                    value={currentNameGrUnit}
+                    onChange={this.handleChange}
                     label="Mengeneinheit angeben"
                     placeholder="Mengeneinheit"
                     sx={{ width: "250px" }}
@@ -168,7 +179,7 @@ const PopupGrocery = ({
               <Button
                 variant="contained"
                 endIcon={<CheckCircleOutlineRoundedIcon />}
-                onClick={handleSubmit}
+                onClick={handleCreateGroceries}
                 sx={{
                   color: "success.dark",
                   bgcolor: "rgba(29, 151, 35, 0.2)",

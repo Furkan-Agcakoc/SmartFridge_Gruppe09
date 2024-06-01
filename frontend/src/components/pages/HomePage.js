@@ -1,10 +1,8 @@
-import React from 'react'
-import Fridge from '../Fridge'
+import React from "react";
+import FridgePage from "./FridgePage";
 
 const HomePage = () => {
-  return (
-    <Fridge />
-  )
-}
+  return <FridgePage />;
+};
 
-export default HomePage
+export default HomePage;
