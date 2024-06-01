@@ -1,34 +1,59 @@
 import React, { Component } from "react";
-import { Paper, Tooltip, Tab, Box, Link, Container } from "@mui/material";
+import {
+  Paper,
+  Tooltip,
+  Tab,
+  Box,
+  Link,
+  Container,
+  Alert,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
 import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
-import Recipe from "./Recipe";
-import PopupRecipe from "./PopupRecipe";
-import Grocery from "./Grocery";
-import PopupGrocery from "./PopupGrocery";
-import FridgeSearchBar from "./FridgeSearchBar";
+// import Recipe from "../recipe/Recipe";
+// import Grocery from "../grocery/Grocery";
+// import PopupGrocery from "../grocery/PopupGrocery";
+import FridgeSearchBar from "../FridgeSearchBar";
+import AddGroceryPopup from "../grocery/AddGroceryPopup";
 
-class Fridge extends Component {
+class FridgePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: "1",
       popupOpen: false,
-      popupType: "",
-      groceriesCount: 0,
-      groceries: [],
-      recipesCount: 0,
-      recipes: [],
-      currentName: "",
       showAlert: false,
-      measurements: ["g", "kg", "ml", "l", "Stück"],
+
+      // Grocery Props
+      groceryCount: 0,
+      groceries: [],
+      currentGrocery: "",
+      currentGroceryQuantity: "",
+      currentGroceryUnit: "",
+      groceryUnit: ["g", "kg", "ml", "l", "Stück"],
+      groceryIdToDelete: null,
+      // Recipe Props
+
+      // Edit Props
+      anchorEls: {},
+      openMenus: {},
+      currentlyEditing: null,
+      dialogopen: false,
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
   }
+
+  //   handleChange = (event) => {
+  //     const { name, value } = event.target;
+  //     this.setState({
+  //       [name]: value,
+  //       showAlert: false,
+  //     });
+  //   };
 
   handleTabChange(event, newValue) {
     this.setState({
@@ -36,79 +61,84 @@ class Fridge extends Component {
     });
   }
 
-  openPopup = (type) => {
+  handlePopupOpen = () => {
     this.setState({
       popupOpen: true,
-      popupType: type,
+      currentlyEditing: null,
     });
   };
 
-  closePopup = () => {
-    this.setState({ popupOpen: false, showAlert: false });
-  };
-
-  handleCreateGroceries = (customMeasurement) => {
-    if (this.state.currentName.trim() === "") {
-      this.setState({ showAlert: true });
-    } else {
-      const newGrocerie = {
-        name: this.state.currentName,
-        measurement: customMeasurement,
-      };
-      this.setState((prevState) => ({
-        groceriesCount: prevState.groceriesCount + 1,
-        popupOpen: false,
-        groceries: [...prevState.groceries, newGrocerie],
-        currentName: "",
-        showAlert: false,
-      }));
-    }
-  };
-
-  handleCreateRecipes = (title) => {
-    if (title.trim() === "") {
-      this.setState({ showAlert: true });
-    } else {
-      this.setState((prevState) => ({
-        recipesCount: prevState.recipesCount + 1,
-        popupOpen: false,
-        recipes: [...prevState.recipes, title],
-        currentName: "",
-        showAlert: false,
-      }));
-    }
+  handlePopupClose = () => {
+    this.setState({
+      popupOpen: false,
+      currentlyEditing: null,
+    });
   };
 
   handleChange = (event) => {
+    const { name, value } = event.target;
     this.setState({
-      currentName: event.target.value,
+      [name]: value,
       showAlert: false,
     });
   };
 
-  handleCloseAlert = () => {
-    this.setState({ showAlert: false });
+  handleCreateGroceries = () => {
+    const { currentGrocery, currentGroceryQuantity, currentGroceryUnit } =
+      this.state;
+
+    console.log(currentGrocery, currentGroceryQuantity, currentGroceryUnit);
+
+    if (
+      currentGrocery.trim() === "" ||
+      currentGroceryQuantity.trim() === "" ||
+      currentGroceryUnit.trim() === ""
+    ) {
+      this.setState({
+        showAlert: true,
+      });
+      console.log("Grocery not created");
+    } else {
+      console.log("Grocery created");
+      // Hier können Sie den Code zum Erstellen des neuen Grocery einfügen
+      this.setState({
+        popupOpen: false, // Popup schließen
+        currentGrocery: "", // Eingabefelder zurücksetzen
+        currentGroceryQuantity: "",
+        currentGroceryUnit: "",
+      });
+    }
   };
 
   render() {
     const {
       value,
-      groceries,
-      recipes,
       popupOpen,
       showAlert,
-      measurements,
-      popupType,
+      groceryUnit,
+      currentGrocery,
+      currentGroceryQuantity,
+      currentGroceryUnit,
     } = this.state;
 
-    const groceryBoxes = groceries.map((grocery, index) => (
-      <Grocery currentName={grocery.name} index={index} key={index} />
-    ));
+    const showAlertComponent = showAlert && (
+      <Alert severity="error" sx={{ marginBottom: "20px" }}>
+        Bitte füllen Sie alle Felder aus!
+      </Alert>
+    );
 
-    const recipeBoxes = recipes.map((currentName, index) => (
-      <Recipe currentName={currentName} index={index} key={index} />
-    ));
-
+    const showPopupComponent = popupOpen && (
+      <AddGroceryPopup
+        handlePopupClose={this.handlePopupClose}
+        showAlertComponent={showAlertComponent}
+        groceryUnit={groceryUnit}
+        handleCreateGroceries={this.handleCreateGroceries}
+        currentGrocery={currentGrocery}
+        currentGroceryQuantity={currentGroceryQuantity}
+        currentGroceryUnit={currentGroceryUnit}
+        handleChange={this.handleChange}
+      />
+    );
     return (
       <>
         <Box
@@ -189,7 +219,7 @@ class Fridge extends Component {
                       // border: "5px solid violet",
                     }}
                   >
-                    <Link onClick={() => this.openPopup("grocery")}>
+                    <Link onClick={this.handlePopupOpen}>
                       <Tooltip
                         title="Neues Lebensmittel hinzufügen"
                         placement="bottom"
@@ -232,18 +262,9 @@ class Fridge extends Component {
                         </Paper>
                       </Tooltip>
                     </Link>
-                    {groceryBoxes}
+                    {/* {groceryBoxes} */}
                   </TabPanel>
-                  {popupOpen && popupType === "grocery" && (
-                    <PopupGrocery
-                      showAlert={showAlert}
-                      handleCloseAlert={this.handleCloseAlert}
-                      measurements={measurements}
-                      handleChange={this.handleChange}
-                      handleCreateGroceries={this.handleCreateGroceries}
-                      closePopup={this.closePopup}
-                    />
-                  )}
+                  {showPopupComponent}
                 </Container>
                 <Container
                   sx={{
@@ -272,7 +293,7 @@ class Fridge extends Component {
                       // border: "5px solid violet",
                     }}
                   >
-                    <Link onClick={() => this.openPopup("recipe")}>
+                    <Link onClick={this.handlePopupOpen}>
                       <Tooltip
                         title="Neues Rezept hinzufügen"
                         placement="bottom"
@@ -324,18 +345,8 @@ class Fridge extends Component {
                         </Paper>
                       </Tooltip>
                     </Link>
-                    {recipeBoxes}
+                    {/* {recipeBoxes} */}
                   </TabPanel>
-                  {popupOpen && popupType === "recipe" && (
-                    <PopupRecipe
-                      showAlert={showAlert}
-                      handleCloseAlert={this.handleCloseAlert}
-                      measurements={measurements}
-                      handleChange={this.handleChange}
-                      handleCreateRecipes={this.handleCreateRecipes}
-                      closePopup={this.closePopup}
-                    />
-                  )}
                 </Container>
               </TabContext>
             </Paper>
@@ -346,4 +357,4 @@ class Fridge extends Component {
   }
 }
 
-export default Fridge;
+export default FridgePage;

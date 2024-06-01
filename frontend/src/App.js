@@ -22,8 +22,10 @@ import HomePage from "./components/pages/HomePage";
 import { ThemeProvider } from "@emotion/react";
 import Theme from "./Theme";
 import Footer from "./components/layout/Footer";
+import EditProfilePage from "./components/pages/EditProfilePage";
 // import Grocerie from "./components/Grocerie";
 // import Recipe from "./components/Recipe";
+
 
 class App extends Component {
   constructor(props) {
@@ -122,6 +124,7 @@ class App extends Component {
 
   render() {
     const { currentUser } = this.state;
+
     return (
       <>
         <ThemeProvider theme={Theme}>
@@ -136,7 +139,7 @@ class App extends Component {
                 path="/"
                 element={
                   currentUser ? (
-                    <Navigate replace to={"/household"} />
+                    <Navigate replace to={"/profile"} />
                   ) : (
                     <LoginPage onSignIn={this.handleSignIn} />
                   )
@@ -150,6 +153,15 @@ class App extends Component {
                   </Secured>
                 }
               />
+              <Route
+                path="/profile"
+                element={
+                  <Secured user={currentUser}>
+                    <EditProfilePage/>
+                  </Secured>
+                }
+              ></Route>
+
               <Route
                 path="/household"
                 element={
@@ -166,6 +178,7 @@ class App extends Component {
                   </Secured>
                 }
               />
+
               {/* <Route
                 path="/groceries"
                 element={
