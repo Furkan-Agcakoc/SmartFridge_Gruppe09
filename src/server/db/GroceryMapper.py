@@ -20,18 +20,19 @@ class GroceryMapper(Mapper):
         cursor.close()
         return result
 
-    def find_by_grocery_name_id(self, grocery_name_id):
-        result = []
+    def find_by_grocery_name(self, grocery_name):
+        result = None
         cursor = self._cnx.cursor()
-        command = "SELECT id, grocery_name FROM grocery WHERE grocery_name=%s ORDER BY id"
-        cursor.execute(command, (grocery_name_id,))
+        command = "SELECT id, grocery_name FROM grocery WHERE grocery_name=%s"
+        cursor.execute(command, (grocery_name,))
         tuples = cursor.fetchall()
 
-        for (id, grocery_name) in tuples:
+        if tuples:
+            (id, grocery_name) = tuples[0]
             grocery = Grocery()
             grocery.set_id(id)
             grocery.set_grocery_name(grocery_name)
-            result.append(grocery)
+            result = grocery
 
         cursor.close()
         return result
@@ -52,6 +53,23 @@ class GroceryMapper(Mapper):
 
         cursor.close()
         return result
+
+    def checkGroceryInFridge(self, grocerystatement_id, fridge_id):
+        try:
+            cursor = self._cnx.cursor()
+            command = "SELECT `grocerystatement_id`,`fridge_id` FROM grocery_in_fridge WHERE `grocerystatement_id`={0} AND `fridge_id`={1}".format(
+                grocerystatement_id, fridge_id)
+            cursor.execute(command)
+            tuples = cursor.fetchall()
+
+            if len(tuples) < 1:
+                return False
+            else:
+                return True
+
+        except Exception as e:
+            print("exception in checkInhabitant", e)
+            return None
 
     def insert(self, grocery):
 

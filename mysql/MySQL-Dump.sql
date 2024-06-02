@@ -83,6 +83,7 @@ INSERT INTO measure (unit) VALUES
 
 
 -- Table structure for table `grocerystatement`
+DROP TABLE IF EXISTS `grocerystatement`;
 CREATE TABLE IF NOT EXISTS `grocerystatement` (
   `id` INT NOT NULL ,
   `grocery_name` INT NOT NULL DEFAULT '0',

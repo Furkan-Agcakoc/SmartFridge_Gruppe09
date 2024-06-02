@@ -222,6 +222,10 @@ class Administration():
         with GroceryMapper() as mapper:
             mapper.delete(grocery)
 
+    def check_grocery(self, grocerystatement_id, fridge_id):
+        with GroceryMapper() as mapper:
+            return mapper.checkGroceryInFridge(grocerystatement_id, fridge_id)
+
     """
     Grocerystatement Spezifische Methoden
     """
