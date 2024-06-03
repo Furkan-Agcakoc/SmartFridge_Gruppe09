@@ -69,45 +69,57 @@ class GroceryStatementMapper (Mapper):
 
     def find_by_fridge_id(self, fridge_id):
 
-        try:
-            cursor = self._cnx.cursor()
-            command = "SELECT grocerystatement_id from grocery_in_fridge WHERE fridge_id = {0}".format(fridge_id)
-            cursor.execute(command)
-            tuples = cursor.fetchall()
-            grocerys = []
-            for i in tuples:
-                grocerys.append(i[0])
+        result = []
+        cursor = self._cnx.cursor()
+        command = """
+            SELECT grocerystatement.id, grocerystatement.grocery_name, grocerystatement.unit, grocerystatement.quantity 
+            FROM grocerystatement
+            JOIN grocery_in_fridge ON grocerystatement.id = grocery_in_fridge.grocerystatement_id
+            WHERE grocery_in_fridge.fridge_id = {}
+            ORDER BY grocerystatement.id
+            """.format(fridge_id)
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+
+        for (id, grocery_name, unit, quantity) in tuples:
+            grocerystatement = GroceryStatement()
+            grocerystatement.set_id(id)
+            grocerystatement.set_grocery_name(grocery_name)
+            grocerystatement.set_unit(unit)
+            grocerystatement.set_quantity(quantity)
+            result.append(grocerystatement)
 
             self._cnx.commit()
             cursor.close()
 
-            return grocerys
-
-        except Exception as e:
-            print(e)
-
-            return None
+            return result
 
     def find_by_recipe_id(self, recipe_id):
 
-        try:
-            cursor = self._cnx.cursor()
-            command = "SELECT grocerystatement_id from grocery_in_recipe WHERE recipe_id = {0}".format(recipe_id)
-            cursor.execute(command)
-            tuples = cursor.fetchall()
-            grocerys = []
-            for i in tuples:
-                grocerys.append(i[0])
+        result = []
+        cursor = self._cnx.cursor()
+        command = """
+            SELECT grocerystatement.id, grocerystatement.grocery_name, grocerystatement.unit, grocerystatement.quantity 
+            FROM grocerystatement
+            JOIN grocery_in_recipe ON grocerystatement.id = grocery_in_recipe.grocerystatement_id
+            WHERE grocery_in_recipe.recipe_id = {}
+            ORDER BY grocerystatement.id
+            """.format(recipe_id)
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+
+        for (id, grocery_name, unit, quantity) in tuples:
+            grocerystatement = GroceryStatement()
+            grocerystatement.set_id(id)
+            grocerystatement.set_grocery_name(grocery_name)
+            grocerystatement.set_unit(unit)
+            grocerystatement.set_quantity(quantity)
+            result.append(grocerystatement)
 
             self._cnx.commit()
             cursor.close()
 
-            return grocerys
-
-        except Exception as e:
-            print(e)
-
-            return None
+            return result
 
 
     def checkGroceryInFridge(self, grocerysatement_id, fridge_id):  #anschauen
