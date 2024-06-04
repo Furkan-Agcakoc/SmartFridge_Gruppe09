@@ -23,7 +23,6 @@ DROP TABLE IF EXISTS `fridge`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fridge` (
   `id` int NOT NULL DEFAULT '0',
-  `fridge_name` varchar(100) NOT NULL DEFAULT '',
   `household_id` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `household_id` (`household_id`),
@@ -190,17 +189,6 @@ CREATE TABLE `inhabitant` (
   CONSTRAINT `inhabitant_fk2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DELIMITER $$
-
-CREATE TRIGGER AddFridgeAfterHousehold
-AFTER INSERT ON household
-FOR EACH ROW
-BEGIN
-    INSERT INTO fridge (id, fridge_name, household_id)
-    VALUES (NEW.id, CONCAT('Fridge of ', NEW.household_name), NEW.id);
-END$$
-
-DELIMITER ;
 
 
 
