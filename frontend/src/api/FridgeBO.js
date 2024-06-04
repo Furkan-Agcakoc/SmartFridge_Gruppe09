@@ -5,41 +5,44 @@ import BusinessObject from './BusinessObject';
  */
 export default class FridgeBO extends BusinessObject {
 
-/**
-    constructor(aOwner) {
+    constructor(aFridge_name, aHousehold_id) {
         super();
-        this.owner = aOwner;
+        this.fridge_name = aFridge_name;
+        this.household_id = aHousehold_id;
+    }
+
+    setFridgeName(aFridge_name) {
+        this.fridge_name = aFridge_name;
+    }
+
+    getFridgeName() {
+        return this.fridge_name;
+    }
+
+    getHouseholdId() {
+        return this.household_id;
+    }
+
+    setHouseholdId(aHousehold_id) {
+        this.household_id = aHousehold_id;
     }
 
 
-    setFridge(aOwner) {
-        this.owner = aOwner;
-    }
-
-
-    getOwner() {
-        return this.owner;
-    }
-
-
-    static fromJSON(accounts) {
+    static fromJSON(fridge) {
         let result = [];
 
-        if (Array.isArray(accounts)) {
-            accounts.forEach((a) => {
-                Object.setPrototypeOf(a, AccountBO.prototype);
+        if (Array.isArray(fridge)) {
+            fridge.forEach((a) => {
+                Object.setPrototypeOf(a, FridgeBO.prototype);
                 result.push(a);
             })
         } else {
-            // Es handelt sich offenbar um ein singuläres Objekt
-            let a = accounts;
-            Object.setPrototypeOf(a, AccountBO.prototype);
+            let a = fridge;
+            Object.setPrototypeOf(a, FridgeBO.prototype);
             result.push(a);
         }
 
         return result;
     }
-
-**/
 
 }

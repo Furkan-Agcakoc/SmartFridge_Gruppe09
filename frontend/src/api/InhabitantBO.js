@@ -5,4 +5,5 @@ import BusinessObject from './BusinessObject';
  */
 export default class InhabitantBO extends BusinessObject {
 
+
 }

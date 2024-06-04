@@ -13,18 +13,7 @@ export default class SmartFridgeAPI {
 
 
     // Local Python backend
-    #SmartFridgeBaseURL = '/bank';
-
-    // Local http-fake-backend
-    //#bankServerBaseURL = '/api/bank';
-
-    #currencyFormatter = new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR'
-    });
-
-    #currency = '€';
-
+    #SmartFridgeBaseURL = '/SmartFridgeAPI';
 
 
     // fridge related
@@ -44,14 +33,14 @@ export default class SmartFridgeAPI {
     #updateGroceryURL = (id) => `${this.#SmartFridgeBaseURL}/grocery/${id}`;
 
     // groceryStatement related
-    #getGroceryStatementURL = (grocery_name) => `${this.#SmartFridgeBaseURL}/groceryStatement/}`;
+    #getGroceryStatementURL = () => `${this.#SmartFridgeBaseURL}/groceryStatement/}`;
     #getGroceryStatementByIdURL = (id) => `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
     #addGroceryStatementURL = () => `${this.#SmartFridgeBaseURL}/groceryStatement`;
     #deleteGroceryStatementURL = (id) => `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
     #updateGroceryStatementURL = (id) => `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
 
     // household related
-    #getHouseholdURL = (grocery_name) => `${this.#SmartFridgeBaseURL}/Household/}`;
+    #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/Household/}`;
     #getHouseholdByIdURL = (id) => `${this.#SmartFridgeBaseURL}/Household/${id}`;
     #addHouseholdURL = () => `${this.#SmartFridgeBaseURL}/Household`;
     #deleteHouseholdURL = (id) => `${this.#SmartFridgeBaseURL}/Household/${id}`;
@@ -77,7 +66,6 @@ export default class SmartFridgeAPI {
     #addUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
     #deleteUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
     #updateUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
-
 
 
     /**
@@ -177,9 +165,9 @@ export default class SmartFridgeAPI {
 
     getGrocery() {
         return this.#fetchAdvanced(this.#getGroceryURL()).then((responseJSON) => {
-            let GroceryBOs = GroceryBO.fromJSON(responseJSON);
+            let groceryBOs = GroceryBO.fromJSON(responseJSON);
             return new Promise(function (resolve) {
-                resolve(GroceryBOs);
+                resolve(groceryBOs);
             })
         })
     }
@@ -206,9 +194,7 @@ export default class SmartFridgeAPI {
         return this.#fetchAdvanced(this.#deleteGroceryURL(groceryID), {
             method: 'DELETE'
         }).then((responseJSON) => {
-            // We always get an array of CustomerBOs.fromJSON
             let responseGroceryBOs = GroceryBO.fromJSON(responseJSON)[0];
-            // console.info(accountBOs);
             return new Promise(function (resolve) {
                 resolve(responseGroceryBOs);
             })
@@ -251,9 +237,9 @@ export default class SmartFridgeAPI {
 
     getGroceryStatement() {
         return this.#fetchAdvanced(this.#getGroceryStatementURL()).then((responseJSON) => {
-            let GroceryStatementBOs = GroceryStatementBO.fromJSON(responseJSON);
+            let groceryStatementBOs = GroceryStatementBO.fromJSON(responseJSON);
             return new Promise(function (resolve) {
-                resolve(GroceryStatementBOs);
+                resolve(groceryStatementBOs);
             })
         })
     }
@@ -271,9 +257,7 @@ export default class SmartFridgeAPI {
         return this.#fetchAdvanced(this.#deleteGroceryStatementURL(groceryStatementID), {
             method: 'DELETE'
         }).then((responseJSON) => {
-            // We always get an array of CustomerBOs.fromJSON
             let responseGroceryStatementBO = GroceryStatementBO.fromJSON(responseJSON)[0];
-            // console.info(accountBOs);
             return new Promise(function (resolve) {
                 resolve(responseGroceryStatementBO);
             })
@@ -316,9 +300,9 @@ export default class SmartFridgeAPI {
 
     getHousehold() {
         return this.#fetchAdvanced(this.#getHouseholdURL()).then((responseJSON) => {
-            let HouseholdBOs = HouseholdBO.fromJSON(responseJSON);
+            let householdBOs = HouseholdBO.fromJSON(responseJSON);
             return new Promise(function (resolve) {
-                resolve(HouseholdBOs);
+                resolve(householdBOs);
             })
         })
     }
@@ -336,9 +320,7 @@ export default class SmartFridgeAPI {
         return this.#fetchAdvanced(this.#deleteHouseholdURL(householdID), {
             method: 'DELETE'
         }).then((responseJSON) => {
-            // We always get an array of CustomerBOs.fromJSON
             let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON)[0];
-            // console.info(accountBOs);
             return new Promise(function (resolve) {
                 resolve(responseHouseholdBO);
             })
@@ -418,4 +400,148 @@ export default class SmartFridgeAPI {
         })
     }
 
+
+    /**  recipe related **/
+
+    getRecipe() {
+        return this.#fetchAdvanced(this.#getRecipeURL()).then((responseJSON) => {
+            let recipeBOs = GroceryBO.fromJSON(responseJSON);
+            return new Promise(function (resolve) {
+                resolve(recipeBOs);
+            })
+        })
+    }
+
+    getRecipeById(recipeID) {
+        return this.#fetchAdvanced(this.#getRecipeByIdURL(recipeID)).then((responseJSON) => {
+            let responseRecipeBO = RecipeBO.fromJSON(responseJSON);
+            return new Promise(function (resolve) {
+                resolve(responseRecipeBO);
+            })
+        })
+    }
+
+    getRecipeByName(recipeName) {
+        return this.#fetchAdvanced(this.#getRecipeByNameURL(recipeName)).then((responseJSON) => {
+            let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
+            return new Promise(function (resolve) {
+                resolve(responseRecipeBO);
+            })
+        })
+    }
+
+    deleteRecipe(recipeID) {
+        return this.#fetchAdvanced(this.#deleteRecipeURL(recipeID), {
+            method: 'DELETE'
+        }).then((responseJSON) => {
+            let responseRecipeBOs = RecipeBO.fromJSON(responseJSON)[0];
+            return new Promise(function (resolve) {
+                resolve(responseRecipeBOs);
+            })
+        })
+    }
+
+    addRecipe(recipeBO) {
+        return this.#fetchAdvanced(this.#addRecipeURL(), {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify(recipeBO)
+        }).then((responseJSON) => {
+            let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
+            return new Promise(function (resolve) {
+                resolve(responseRecipeBO);
+            })
+        })
+    }
+
+    updateRecipe(recipeBO) {
+        return this.#fetchAdvanced(this.#updateRecipeURL(recipeBO.getID()), {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify(recipeBO)
+        }).then((responseJSON) => {
+            let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
+            return new Promise(function (resolve) {
+                resolve(responseRecipeBO);
+            })
+        })
+    }
+
+    /**  user related  **/
+
+    getUser() {
+        return this.#fetchAdvanced(this.#getUserURL()).then((responseJSON) => {
+            let userBOs = UserBO.fromJSON(responseJSON);
+            return new Promise(function (resolve) {
+                resolve(userBOs);
+            })
+        })
+    }
+
+    getUserById(userID) {
+        return this.#fetchAdvanced(this.#getUserByIdURL(userID)).then((responseJSON) => {
+            let responseUserBO = UserBO.fromJSON(responseJSON);
+            return new Promise(function (resolve) {
+                resolve(responseUserBO);
+            })
+        })
+    }
+
+    getUserByGoogleId(google_user_id) {
+        return this.#fetchAdvanced(this.#getUserByGoogleIdURL(google_user_id)).then((responseJSON) => {
+            let responseUserBO = UserBO.fromJSON(responseJSON)[0];
+            return new Promise(function (resolve) {
+                resolve(responseUserBO);
+            })
+        })
+    }
+
+    deleteUser(userID) {
+        return this.#fetchAdvanced(this.#deleteUserURL(userID), {
+            method: 'DELETE'
+        }).then((responseJSON) => {
+            let responseUserBOs = UserBO.fromJSON(responseJSON)[0];
+            return new Promise(function (resolve) {
+                resolve(responseUserBOs);
+            })
+        })
+    }
+
+    adduser(userBO) {
+        return this.#fetchAdvanced(this.#addUserURL(), {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify(userBO)
+        }).then((responseJSON) => {
+            let responseUserBO = UserBO.fromJSON(responseJSON)[0];
+            return new Promise(function (resolve) {
+                resolve(responseUserBO);
+            })
+        })
+    }
+
+    updateUser(userBO) {
+        return this.#fetchAdvanced(this.#updateUserURL(userBO.getID()), {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify(userBO)
+        }).then((responseJSON) => {
+            let responseUserBO = UserBO.fromJSON(responseJSON)[0];
+            return new Promise(function (resolve) {
+                resolve(responseUserBO);
+            })
+        })
+    }
 }
