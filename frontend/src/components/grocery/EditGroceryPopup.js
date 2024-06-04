@@ -9,26 +9,27 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import Alert from "@mui/material/Alert";
 
-class AddGroceryPopup extends Component {
+class EditGroceryPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // currentGrocery: props.currentGrocery,
-      // currentGroceryQuantity: props.currentGroceryQuantity,
-      // currentGroceryUnit: props.currentGroceryUnit,
-      showAlert: false,
+      currentGrocery: this.props.currentGrocery,
+      currentGroceryQuantity: this.props.currentGroceryQuantity,
+      currentGroceryUnit: this.props.currentGroceryUnit,
+      groceryUnit: this.props.groceryUnit,
     };
   }
 
-  handleChange = (event) => {
-    const { name, value } = event.target;
-    this.setState({
-      [name]: value,
-      showAlert: false,
-    });
-    this.props.handleChange(event); // Propagation der Änderung an die übergeordnete Komponente
-  };
+  // handleChange = (event) => {
+  //   const { name, value } = event.target;
+  //   this.setState({
+  //     [name]: value,
+  //     showAlert: false,
+  //   });
+  //   this.props.handleChange(event); // Propagation der Änderung an die übergeordnete Komponente
+  // };
 
   // Funktion zur Behandlung von Änderungen im Autocomplete-Feld
   handleAutoCompleteChange = (event, value) => {
@@ -42,18 +43,27 @@ class AddGroceryPopup extends Component {
   };
 
   render() {
-    const {
-      handlePopupClose,
-      handleCreateGroceries,
-      showAlertComponent,
-      groceryUnit,
-      //   currentGrocery,
-      //   currentGroceryUnit,
-      //   currentGroceryQuantity,
-    } = this.props;
+    const { handleCreateGroceries, handlePopupClose, showAlert, handleChange } =
+      this.props;
 
-    // const { currentGrocery, currentGroceryQuantity, currentGroceryUnit } =
-    //   this.state; // Nutzung des State
+    const {
+      currentGrocery,
+      currentGroceryQuantity,
+      currentGroceryUnit,
+      groceryUnit,
+    } = this.state;
+
+    // // Sicherstellen, dass groceryUnit ein Array ist
+    // if (!Array.isArray(groceryUnit)) {
+    //   console.error("groceryUnit is not an array:", groceryUnit);
+    //   return null; // oder eine Fehlermeldung anzeigen
+    // }
+
+    const showAlertComponent = showAlert && (
+      <Alert severity="error" sx={{ marginBottom: "20px" }}>
+        Bitte geben Sie einen Haushaltsnamen ein!
+      </Alert>
+    );
 
     return (
       <>
@@ -83,7 +93,6 @@ class AddGroceryPopup extends Component {
           }}
         >
           <Paper
-            action="Lebensmittel"
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -101,7 +110,7 @@ class AddGroceryPopup extends Component {
                 color: "text.primary",
               }}
             >
-              Neues Lebensmittel hinzufügen
+              Lebensmittel bearbeiten
             </Typography>
             {showAlertComponent}
             <Box
@@ -116,11 +125,11 @@ class AddGroceryPopup extends Component {
                 required
                 id="outlined-required"
                 label="Lebensmittelname angeben"
-                // value={currentGrocery}
+                value={currentGrocery}
                 name="currentGrocery"
                 placeholder="Lebensmittelname"
                 InputLabelProps={{ style: { fontSize: "15px" } }}
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
               <Box
                 sx={{
@@ -132,26 +141,27 @@ class AddGroceryPopup extends Component {
                 <TextField
                   required
                   id="outlined-required"
-                  // value={currentGroceryQuantity}
+                  value={currentGroceryQuantity}
                   name="currentGroceryQuantity"
                   label="Menge angeben"
                   placeholder="Menge"
                   InputLabelProps={{ style: { fontSize: "15px" } }}
                   sx={{ width: "775px" }}
-                  onChange={this.handleChange}
+                  onChange={handleChange}
                 />
                 <Autocomplete
                   id="measurements-box"
                   options={groceryUnit}
                   freeSolo
+                  value={currentGroceryUnit}
                   onChange={this.handleAutoCompleteChange}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       required
-                      // value={currentGroceryUnit}
+                      value={currentGroceryUnit}
                       name="currentGroceryUnit"
-                      onChange={this.handleChange}
+                      onChange={handleChange}
                       label="Mengeneinheit angeben"
                       placeholder="Mengeneinheit"
                       sx={{ width: "250px" }}
@@ -219,4 +229,4 @@ class AddGroceryPopup extends Component {
   }
 }
 
-export default AddGroceryPopup;
+export default EditGroceryPopup;

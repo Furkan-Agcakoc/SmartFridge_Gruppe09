@@ -14,10 +14,12 @@ import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
 import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 // import Recipe from "../recipe/Recipe";
-// import Grocery from "../grocery/Grocery";
+import Grocery from "../grocery/Grocery";
 // import PopupGrocery from "../grocery/PopupGrocery";
 import FridgeSearchBar from "../FridgeSearchBar";
 import AddGroceryPopup from "../grocery/AddGroceryPopup";
+import EditGroceryPopup from "../grocery/EditGroceryPopup";
+import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 
 class FridgePage extends Component {
   constructor(props) {
@@ -36,7 +38,10 @@ class FridgePage extends Component {
       groceryUnit: ["g", "kg", "ml", "l", "Stück"],
       groceryIdToDelete: null,
       // Recipe Props
-
+      recipeCount: 0,
+      recipes: [],
+      currentRecipe: "",
+      
       // Edit Props
       anchorEls: {},
       openMenus: {},
@@ -56,12 +61,14 @@ class FridgePage extends Component {
   //   };
 
   handleTabChange(event, newValue) {
+    console.log("Tab changed:", newValue);
     this.setState({
       value: newValue,
     });
   }
 
   handlePopupOpen = () => {
+    console.log("Popup opened");
     this.setState({
       popupOpen: true,
       currentlyEditing: null,
@@ -69,6 +76,7 @@ class FridgePage extends Component {
   };
 
   handlePopupClose = () => {
+    console.log("Popup closed");
     this.setState({
       popupOpen: false,
       currentlyEditing: null,
@@ -77,17 +85,51 @@ class FridgePage extends Component {
 
   handleChange = (event) => {
     const { name, value } = event.target;
+    // console.log("Input changed:", name, value);
     this.setState({
       [name]: value,
       showAlert: false,
     });
   };
 
-  handleCreateGroceries = () => {
-    const { currentGrocery, currentGroceryQuantity, currentGroceryUnit } =
-      this.state;
+  handleClickOpenDialog = (groceryId) => {
+    console.log("Dialog opened for grocery ID:", groceryId);
+    this.setState({
+      dialogopen: true,
+      groceryIdToDelete: groceryId,
+    });
+    this.handleAnchorClose(groceryId);
+  };
 
-    console.log(currentGrocery, currentGroceryQuantity, currentGroceryUnit);
+  handleCloseDialog = () => {
+    console.log("Dialog closed");
+    this.setState({ dialogopen: false });
+  };
+
+  handleConfirmDelete = () => {
+    const { groceryIdToDelete } = this.state;
+    console.log("Confirm delete for grocery ID:", groceryIdToDelete);
+    if (groceryIdToDelete !== null) {
+      this.handleAnchorDelete(groceryIdToDelete);
+    }
+    this.handleCloseDialog();
+  };
+
+  handleCreateGroceries = () => {
+    const {
+      currentGrocery,
+      currentGroceryQuantity,
+      currentGroceryUnit,
+      groceries,
+      currentlyEditing,
+    } = this.state;
+
+    console.log(
+      "Creating grocery:",
+      currentGrocery,
+      currentGroceryQuantity,
+      currentGroceryUnit
+    );
 
     if (
       currentGrocery.trim() === "" ||
@@ -98,16 +140,125 @@ class FridgePage extends Component {
         showAlert: true,
       });
       console.log("Grocery not created");
-    } else {
-      console.log("Grocery created");
-      // Hier können Sie den Code zum Erstellen des neuen Grocery einfügen
+      return;
+    }
+
+    if (currentlyEditing !== null) {
+      console.log("Editing grocery ID:", currentlyEditing);
+      // Edit existing grocery
       this.setState({
-        popupOpen: false, // Popup schließen
-        currentGrocery: "", // Eingabefelder zurücksetzen
+        groceries: this.updateGrocery({
+          groceryId: currentlyEditing,
+          groceryName: currentGrocery,
+          groceryQuantity: currentGroceryQuantity,
+          groceryUnit: currentGroceryUnit,
+        }),
+        popupOpen: false,
+        currentGrocery: "",
         currentGroceryQuantity: "",
         currentGroceryUnit: "",
+        showAlert: false,
+        currentlyEditing: null,
+      });
+    } else {
+      const id = groceries.length + 1;
+      console.log("Grocery created");
+      // Hier können Sie den Code zum Erstellen des neuen Grocery einfügen
+      this.setState((prevState) => {
+        const newGroceries = [
+          ...prevState.groceries,
+          {
+            groceryId: id,
+            groceryName: currentGrocery,
+            groceryQuantity: currentGroceryQuantity,
+            groceryUnit: currentGroceryUnit,
+          },
+        ];
+        const newOpenMenus = { ...prevState.openMenus, [id]: false };
+        console.log(newGroceries);
+        console.log(newOpenMenus);
+
+        return {
+          groceryCount: prevState.groceryCount + 1,
+          popupOpen: false,
+          groceries: newGroceries,
+          currentGrocery: "",
+          currentGroceryQuantity: "",
+          currentGroceryUnit: "",
+          showAlert: false,
+          openMenus: newOpenMenus,
+        };
       });
     }
+  };
+
+  updateGrocery(grocery) {
+    const updatedGroceries = this.state.groceries.map((e) => {
+      if (grocery.groceryId === e.groceryId) {
+        return grocery;
+      }
+      return e;
+    });
+    console.log("Grocery updated:", updatedGroceries);
+    return updatedGroceries;
+  }
+
+  handleAnchorClick = (groceryId, event) => {
+    console.log("Anchor clicked for grocery ID:", groceryId);
+    this.setState((prevState) => {
+      const newOpenMenus = { ...prevState.openMenus, [groceryId]: true };
+      const newAnchorEls = {
+        ...prevState.anchorEls,
+        [groceryId]: event.target,
+      };
+      console.log("newOpenMenus:", newOpenMenus);
+      return {
+        anchorEls: newAnchorEls,
+        openMenus: newOpenMenus,
+      };
+    });
+  };
+
+  handleAnchorClose = (groceryId) => {
+    console.log("Anchor closed for grocery ID:", groceryId);
+    this.setState((prevState) => {
+      const newOpenMenus = { ...prevState.openMenus, [groceryId]: false };
+      return {
+        openMenus: newOpenMenus,
+      };
+    });
+  };
+
+  handleAnchorEdit = (grocery) => {
+    console.log("Editing grocery:", grocery);
+    this.setState((prevState) => {
+      const newOpenMenus = {
+        ...prevState.openMenus,
+        [grocery.groceryId]: false,
+      };
+      console.log(newOpenMenus);
+      return {
+        currentlyEditing: grocery.groceryId,
+        currentGrocery: grocery.groceryName,
+        currentGroceryQuantity: grocery.groceryQuantity,
+        currentGroceryUnit: grocery.groceryUnit,
+        openMenus: newOpenMenus,
+      };
+    });
+  };
+
+  handleAnchorDelete = (groceryId) => {
+    console.log("Deleting grocery ID:", groceryId);
+    this.setState((prevState) => {
+      const newOpenMenus = { ...prevState.openMenus, [groceryId]: false };
+      const newGroceries = prevState.groceries.filter(
+        (g) => g.groceryId !== groceryId
+      );
+      return {
+        groceries: newGroceries,
+        openMenus: newOpenMenus,
+      };
+    });
   };
 
   render() {
@@ -119,6 +270,11 @@ class FridgePage extends Component {
       currentGrocery,
       currentGroceryQuantity,
       currentGroceryUnit,
+      groceries,
+      anchorEls,
+      openMenus,
+      currentlyEditing,
+      dialogopen,
     } = this.state;
 
     const showAlertComponent = showAlert && (
@@ -127,18 +283,6 @@ class FridgePage extends Component {
       </Alert>
     );
 
-    const showPopupComponent = popupOpen && (
-      <AddGroceryPopup
-        handlePopupClose={this.handlePopupClose}
-        showAlertComponent={showAlertComponent}
-        groceryUnit={groceryUnit}
-        handleCreateGroceries={this.handleCreateGroceries}
-        currentGrocery={currentGrocery}
-        currentGroceryQuantity={currentGroceryQuantity}
-        currentGroceryUnit={currentGroceryUnit}
-        handleChange={this.handleChange}
-      />
-    );
     return (
       <>
         <Box
@@ -262,9 +406,46 @@ class FridgePage extends Component {
                         </Paper>
                       </Tooltip>
                     </Link>
-                    {/* {groceryBoxes} */}
+                    <Grocery
+                      groceries={groceries}
+                      handleAnchorClick={this.handleAnchorClick}
+                      handleAnchorClose={this.handleAnchorClose}
+                      handleAnchorEdit={this.handleAnchorEdit}
+                      handleClickOpenDialog={this.handleClickOpenDialog}
+                      anchorEls={anchorEls}
+                      openMenus={openMenus}
+                    ></Grocery>
                   </TabPanel>
-                  {showPopupComponent}
+                  {popupOpen && (
+                    <AddGroceryPopup
+                      handlePopupClose={this.handlePopupClose}
+                      showAlertComponent={showAlertComponent}
+                      groceryUnit={this.state.groceryUnit}
+                      handleCreateGroceries={this.handleCreateGroceries}
+                      // currentGrocery={currentGrocery}
+                      // currentGroceryQuantity={currentGroceryQuantity}
+                      // currentGroceryUnit={currentGroceryUnit}
+                      handleChange={this.handleChange}
+                    />
+                  )}
+                  {currentlyEditing !== null && (
+                    <EditGroceryPopup
+                      handleChange={this.handleChange}
+                      handleCreateGroceries={this.handleCreateGroceries}
+                      handlePopupClose={this.handlePopupClose}
+                      showAlert={showAlert}
+                      groceryUnit={groceryUnit}
+                      currentGrocery={currentGrocery}
+                      currentGroceryQuantity={currentGroceryQuantity}
+                      currentGroceryUnit={currentGroceryUnit}
+                    />
+                  )}
+                  {dialogopen && (
+                    <DeleteConfirmationDialog
+                      handleCloseDialog={this.handleCloseDialog}
+                      handleConfirmDelete={this.handleConfirmDelete}
+                    />
+                  )}
                 </Container>
                 <Container
                   sx={{
@@ -345,7 +526,7 @@ class FridgePage extends Component {
                         </Paper>
                       </Tooltip>
                     </Link>
-                    {/* {recipeBoxes} */}
+                    {/* <Recipe></Recipe> */}
                   </TabPanel>
                 </Container>
               </TabContext>

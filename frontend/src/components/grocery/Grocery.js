@@ -42,7 +42,9 @@ const Grcoery = ({
       <IconButton
         aria-label="more"
         id="long-button"
-        aria-controls={openMenus[grocery.groceryId] ? "long-menu" : undefined}
+        aria-controls={
+          openMenus[grocery.groceryId] ? "long-menu" : undefined
+        }
         aria-expanded={openMenus[grocery.groceryId] ? "true" : undefined}
         aria-haspopup="true"
         onClick={(event) => handleAnchorClick(grocery.groceryId, event)}

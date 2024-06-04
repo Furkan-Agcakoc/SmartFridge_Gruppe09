@@ -113,6 +113,7 @@ class Household extends Component {
           },
         ];
         const newOpenMenus = { ...prevState.openMenus, [id]: false };
+        console.log(newHouseholds);
 
         return {
           householdCount: prevState.householdCount + 1,
@@ -195,6 +196,7 @@ class Household extends Component {
       anchorEls,
       openMenus,
       dialogopen,
+      currentName,
     } = this.state;
 
     const showAlertComponent = showAlert && (
@@ -301,7 +303,7 @@ class Household extends Component {
                 closePopup={this.closePopup}
                 showAlert={showAlert}
                 emails={this.emails}
-                currentName={this.state.currentName}
+                currentName={currentName}
               />
             )}
             {dialogopen && (
