@@ -8,13 +8,14 @@ class GroceryMapper(Mapper):
     def find_all(self):
         result = []
         cursor = self._cnx.cursor()
-        cursor.execute("SELECT id, grocery_name FROM grocery")
+        cursor.execute("SELECT id, grocery_name, household_id FROM grocery")
         tuples = cursor.fetchall()
 
-        for (id, grocery_name) in tuples:
+        for (id, grocery_name, household_id) in tuples:
             grocery = Grocery()
             grocery.set_id(id)
             grocery.set_grocery_name(grocery_name)
+            grocery.set_household_id(household_id)
             result.append(grocery)
 
         cursor.close()
@@ -23,15 +24,16 @@ class GroceryMapper(Mapper):
     def find_by_grocery_name(self, grocery_name):
         result = None
         cursor = self._cnx.cursor()
-        command = "SELECT id, grocery_name FROM grocery WHERE grocery_name=%s"
+        command = "SELECT id, grocery_name, household_id FROM grocery WHERE grocery_name=%s"
         cursor.execute(command, (grocery_name,))
         tuples = cursor.fetchall()
 
         if tuples:
-            (id, grocery_name) = tuples[0]
+            (id, grocery_name, household_id) = tuples[0]
             grocery = Grocery()
             grocery.set_id(id)
             grocery.set_grocery_name(grocery_name)
+            grocery.set_household_id(household_id)
             result = grocery
 
         cursor.close()
@@ -45,14 +47,30 @@ class GroceryMapper(Mapper):
         tuples = cursor.fetchall()
 
         if tuples:
-            (id, grocery_name) = tuples[0]
+            (id, grocery_name, household_id) = tuples[0]
             grocery = Grocery()
             grocery.set_id(id)
             grocery.set_grocery_name(grocery_name)
+            grocery.set_household_id(household_id)
             result = grocery
 
         cursor.close()
         return result
+
+    def find_by_household_id(self, household_id):
+        result = None
+        cursor = self._cnx.cursor()
+        command = "SELECT id, grocery_name, household_id FROM grocery WHERE household_id=%s"
+        cursor.execute(command, (household_id,))
+        tuples = cursor.fetchall()
+
+        if tuples:
+            (id, grocery_name, household_id) = tuples[0]
+            grocery = Grocery()
+            grocery.set_id(id)
+            grocery.set_grocery_name(grocery_name)
+            grocery.set_household_id(household_id)
+            result = grocery
 
     def checkGroceryInFridge(self, grocerystatement_id, fridge_id):
         try:
@@ -83,8 +101,8 @@ class GroceryMapper(Mapper):
             else:
                 grocery.set_id(1)
 
-        command = "INSERT INTO grocery (id, grocery_name) VALUES (%s,%s)"
-        data = (grocery.get_id(), grocery.get_grocery_name())
+        command = "INSERT INTO grocery (id, grocery_name, household_id) VALUES (%s,%s,%s)"
+        data = (grocery.get_id(), grocery.get_grocery_name(), grocery.get_household_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
@@ -94,8 +112,8 @@ class GroceryMapper(Mapper):
 
     def update(self, grocery):
         cursor = self._cnx.cursor()
-        command = "UPDATE grocery SET grocery_name=%s WHERE id=%s"
-        data = (grocery.get_grocery_name(), grocery.get_id())
+        command = "UPDATE grocery SET grocery_name=%s, household_id=%s WHERE id=%s"
+        data = (grocery.get_grocery_name(), grocery.get_id(), grocery.get_household_id())
         cursor.execute(command, data)
 
         self._cnx.commit()

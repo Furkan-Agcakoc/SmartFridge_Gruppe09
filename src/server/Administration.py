@@ -200,9 +200,10 @@ class Administration():
     Grocery Spezifische Methoden
     """
 
-    def create_grocery(self, grocery_name):
+    def create_grocery(self, grocery_name, household_id):
         grocery = Grocery()
         grocery.set_grocery_name(grocery_name)
+        grocery.set_household_id(household_id)
         grocery.set_id(1)
 
         with GroceryMapper() as mapper:

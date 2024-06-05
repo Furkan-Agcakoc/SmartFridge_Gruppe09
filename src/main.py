@@ -51,7 +51,8 @@ recipe = api.inherit('Recipe', bo, {
 })
 
 grocery = api.inherit('Grocery', bo, {
-    'grocery_name': fields.String(attribute='_grocery_name', description='Name eines Lebensmittels')
+    'grocery_name': fields.String(attribute='_grocery_name', description='Name eines Lebensmittels'),
+    'household_id': fields.Integer(attribute='_household_id', description='Die Id eines Haushalts')
 })
 
 household = api.inherit('Household', bo, {
@@ -374,7 +375,7 @@ class GroceryListOperations(Resource):
 
         if proposal is not None:
             g = adm.create_grocery(
-                proposal.get_grocery_name())
+                proposal.get_grocery_name(), proposal.get_household_id())
             return g, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
