@@ -25,9 +25,8 @@ class Administration():
     """
 
 
-    def create_fridge(self, fridge_name, household_id):
+    def create_fridge(self, household_id):
         fridge = Fridge()
-        fridge.set_fridge_name(fridge_name)
         fridge.set_household_id(household_id)
         fridge.set_id(1)
 
@@ -114,6 +113,13 @@ class Administration():
                 house = str(e) + " error in del household"
 
             return house
+
+    def create_household_and_fridge(self, household_name):
+        household = self.create_household(household_name)
+
+        fridge = self.create_fridge(household.get_id())
+
+        return household, fridge
 
     """
     def delete_household(self, household):  # prüfen

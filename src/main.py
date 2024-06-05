@@ -38,7 +38,6 @@ user = api.inherit('User', bo, {
 })
 
 fridge = api.inherit('Fridge', bo, {
-    'fridge_name': fields.String(attribute='_fridge_name', description='Name eines Kühlschranks'),
     'household_id': fields.Integer(attribute='_household_id', description='Haushalt Id in welchem der Kühlschrank ist.'),
 })
 
@@ -296,24 +295,18 @@ class HouseholdListOperations(Resource):
             return {'message': 'Liste ist leer'}
         return household_list
 
-    @smartfridge.marshal_with(household, code=200)
-
     @smartfridge.expect(household)
-    # @secured
+    @smartfridge.marshal_with(fridge, code=200)
     def post(self):
-        """Erstellen eines Household Objekts"""
+        """Erstellen eines Household und eines Fridge Objekts"""
 
         adm = Administration()
 
-        proposal = Household.from_dict(api.payload)
+        # Erstellen des Household-Objekts
+        household_name = api.payload["household_name"]
+        household, fridge = adm.create_household_and_fridge(household_name)
 
-        if proposal is not None:
-            hh = adm.create_household(proposal.get_household_name())
-            return hh, 200
-        else:
-            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
-            return '', 500
-
+        return fridge, 200
 @smartfridge.route('/household/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Haushalts.')
@@ -551,7 +544,7 @@ class FridgeOperations(Resource):
 
         if proposal is not None:
             fri = adm.create_fridge(
-                proposal.get_fridge_name(), proposal.get_household_id())
+                proposal.get_household_id())
             return fri, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
