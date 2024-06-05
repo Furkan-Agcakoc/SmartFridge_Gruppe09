@@ -60,7 +60,7 @@ household = api.inherit('Household', bo, {
 })
 
 grocerystatement = api.inherit('GroceryStatement', bo, {
-    'grocery_name': fields.String(attribute='_grocery_name', description='Name eines Lebensmittels'),
+    'grocery_name': fields.Integer(attribute='_grocery_name', description='Name eines Lebensmittels'),
     'unit': fields.Integer(attribute='_unit', description='Die Maßeinheit eines Lebensmittel'),
     'quantity': fields.Float(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel'),
 })
@@ -677,28 +677,14 @@ class GrocerystatementListOperations(Resource):
         "Erstellen eines Grocerystatement Objekts"
         adm = Administration()
 
-        # Erstellen des Grocery-Objekts
-        grocery_name = api.payload["grocery_name"]
-        grocery = adm.get_grocery_by_name(grocery_name)
-
-        # Überprüfen, ob das Lebensmittel bereits existiert
-        if grocery is not None:
-            return {"message": "Lebensmittel ist schon eingetragen, bitte bearbeiten"}, 400
-
-        # Erstellen des Grocerystatement-Objekts
-        grocery = adm.create_grocery(grocery_name)
         proposal = GroceryStatement.from_dict(api.payload)
         if proposal is not None:
-            # Setzen der grocery_name auf die ID des erstellten Grocery-Objekts
-            proposal.set_grocery_name(grocery.get_id())
             gs = adm.create_grocerystatement(
-                proposal.get_grocery_name(), proposal.get_unit(), proposal.get_quantity()
-            )
+                proposal.get_grocery_name(), proposal.get_unit(),proposal.get_quantity())
             return gs, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
-
 
 @smartfridge.route('/grocerystatement/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')

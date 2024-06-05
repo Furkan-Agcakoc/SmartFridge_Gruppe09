@@ -51,7 +51,13 @@ class GroceryStatementMapper (Mapper):
     def find_by_key(self, key):
         result = None
         cursor = self._cnx.cursor()
-        command = "SELECT id, grocery_name, unit, quantity FROM grocerystatement WHERE id=%s"
+        command = """
+            SELECT grocerystatement.id, grocerystatement.grocery_name, grocerystatement.unit, grocerystatement.quantity 
+            FROM grocerystatement
+            JOIN grocery ON grocerystatement.grocery_name = grocery.grocery_name
+            WHERE grocery.grocery_name = {}
+            ORDER BY grocerystatement.id
+            """.format(key)
         cursor.execute(command, (key,))
         tuples = cursor.fetchall()
 
