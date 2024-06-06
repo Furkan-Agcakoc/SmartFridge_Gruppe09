@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Box,
+  Paper,
   Typography,
   IconButton,
   Menu,
@@ -12,7 +12,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const Grcoery = ({
+const Grocery = ({
   groceries,
   handleAnchorClick,
   handleAnchorClose,
@@ -22,7 +22,7 @@ const Grcoery = ({
   openMenus,
 }) => {
   return groceries.map((grocery) => (
-    <Box
+    <Paper
       key={grocery.groceryId}
       sx={{
         position: "relative",
@@ -35,8 +35,8 @@ const Grcoery = ({
         maxWidth: "200px",
         height: "125px",
         borderRadius: "10px",
-        boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-        "&:hover": { border: "0.1px solid #13a88a" },
+        // boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+        "&:hover": {boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)"},
       }}
     >
       <IconButton
@@ -101,8 +101,8 @@ const Grcoery = ({
       >
         {grocery.groceryName}
       </Typography>
-    </Box>
+    </Paper>
   ));
 };
 
-export default Grcoery;
+export default Grocery;

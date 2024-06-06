@@ -15,55 +15,63 @@ class EditGroceryPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentGrocery: this.props.currentGrocery,
-      currentGroceryQuantity: this.props.currentGroceryQuantity,
-      currentGroceryUnit: this.props.currentGroceryUnit,
-      groceryUnit: this.props.groceryUnit,
+      currentGrocery: {
+        name: props.currentGrocery.name,
+        quantity: props.currentGrocery.quantity,
+        unit: props.currentGrocery.unit,
+      },
+      groceryUnit: ["g", "kg", "ml", "l", "Stück"],
+      showAlert: false,
     };
   }
 
-  // handleChange = (event) => {
-  //   const { name, value } = event.target;
-  //   this.setState({
-  //     [name]: value,
-  //     showAlert: false,
-  //   });
-  //   this.props.handleChange(event); // Propagation der Änderung an die übergeordnete Komponente
-  // };
+  handleInvalid = (e) => {
+    e.preventDefault();
+    this.setState({ showAlert: true });
+  };
 
-  // Funktion zur Behandlung von Änderungen im Autocomplete-Feld
-  handleAutoCompleteChange = (event, value) => {
-    this.setState({
-      currentGroceryUnit: value,
-    });
-    // Manuelle Propagation der Änderung
-    this.props.handleChange({
-      target: { name: "currentGroceryUnit", value: value },
-    });
+  handleInput = () => {
+    this.setState({ showAlert: false });
+  };
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    this.setState((prevState) => ({
+      currentGrocery: {
+        ...prevState.currentGrocery,
+        [name]: value,
+      },
+    }));
+  };
+
+  handleAutocompleteChange = (event, value) => {
+    this.setState((prevState) => ({
+      currentGrocery: {
+        ...prevState.currentGrocery,
+        unit: value,
+      },
+    }));
+  };
+
+  handleClick = (e) => {
+    const form = e.target.closest("form");
+    if (form.checkValidity() === false) {
+      this.setState({ showAlert: true });
+    } else {
+      this.setState({ showAlert: false });
+      const { currentGrocery, groceryUnit } = this.state;
+      this.props.handleCreateGroceries(currentGrocery, groceryUnit); // Pass the current state values
+      // this.props.handlePopupClose(); // Close the popup
+    }
   };
 
   render() {
-    const { handleCreateGroceries, handlePopupClose, showAlert, handleChange } =
-      this.props;
-
+    const { handlePopupGroceryClose } = this.props;
     const {
-      currentGrocery,
-      currentGroceryQuantity,
-      currentGroceryUnit,
+      currentGrocery: { name, quantity, unit },
       groceryUnit,
-    } = this.state;
-
-    // // Sicherstellen, dass groceryUnit ein Array ist
-    // if (!Array.isArray(groceryUnit)) {
-    //   console.error("groceryUnit is not an array:", groceryUnit);
-    //   return null; // oder eine Fehlermeldung anzeigen
-    // }
-
-    const showAlertComponent = showAlert && (
-      <Alert severity="error" sx={{ marginBottom: "20px" }}>
-        Bitte geben Sie einen Haushaltsnamen ein!
-      </Alert>
-    );
+      showAlert,
+    } = this.state; // Nutzung des State
 
     return (
       <>
@@ -84,6 +92,9 @@ class EditGroceryPopup extends Component {
           }}
         />
         <Box
+          component="form"
+          noValidate
+          onInvalid={this.handleInvalid}
           sx={{
             width: "1100px",
             height: "auto",
@@ -112,7 +123,11 @@ class EditGroceryPopup extends Component {
             >
               Lebensmittel bearbeiten
             </Typography>
-            {showAlertComponent}
+            {showAlert && (
+              <Alert severity="error" sx={{ marginBottom: "20px" }}>
+                Bitte füllen Sie alle Felder aus!
+              </Alert>
+            )}
             <Box
               sx={{
                 display: "flex",
@@ -123,13 +138,14 @@ class EditGroceryPopup extends Component {
             >
               <TextField
                 required
+                value={name}
+                onChange={this.handleChange}
+                onInput={this.handleInput}
                 id="outlined-required"
+                name="name"
                 label="Lebensmittelname angeben"
-                value={currentGrocery}
-                name="currentGrocery"
                 placeholder="Lebensmittelname"
                 InputLabelProps={{ style: { fontSize: "15px" } }}
-                onChange={handleChange}
               />
               <Box
                 sx={{
@@ -140,28 +156,30 @@ class EditGroceryPopup extends Component {
               >
                 <TextField
                   required
+                  value={quantity}
+                  onChange={this.handleChange}
+                  onInput={this.handleInput}
                   id="outlined-required"
-                  value={currentGroceryQuantity}
-                  name="currentGroceryQuantity"
+                  name="quantity"
                   label="Menge angeben"
                   placeholder="Menge"
                   InputLabelProps={{ style: { fontSize: "15px" } }}
                   sx={{ width: "775px" }}
-                  onChange={handleChange}
                 />
                 <Autocomplete
                   id="measurements-box"
                   options={groceryUnit}
+                  value={unit}
                   freeSolo
-                  value={currentGroceryUnit}
-                  onChange={this.handleAutoCompleteChange}
+                  onChange={this.handleAutocompleteChange}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       required
-                      value={currentGroceryUnit}
-                      name="currentGroceryUnit"
-                      onChange={handleChange}
+                      value={unit}
+                      onChange={this.handleChange}
+                      onInput={this.handleInput}
+                      name="unit"
                       label="Mengeneinheit angeben"
                       placeholder="Mengeneinheit"
                       sx={{ width: "250px" }}
@@ -189,9 +207,10 @@ class EditGroceryPopup extends Component {
                 }}
               >
                 <Button
+                  type="button"
                   variant="contained"
                   endIcon={<CheckCircleOutlineRoundedIcon />}
-                  onClick={handleCreateGroceries}
+                  onClick={this.handleClick}
                   sx={{
                     color: "success.dark",
                     bgcolor: "rgba(29, 151, 35, 0.2)",
@@ -207,7 +226,7 @@ class EditGroceryPopup extends Component {
                 <Button
                   variant="contained"
                   endIcon={<HighlightOffRoundedIcon />}
-                  onClick={handlePopupClose}
+                  onClick={handlePopupGroceryClose}
                   sx={{
                     bgcolor: "rgba(197, 0, 0, 0.1)",
                     color: "error.main",

@@ -13,35 +13,35 @@ import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
 import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
-// import Recipe from "../recipe/Recipe";
+import Recipe from "../recipe/Recipe";
 import Grocery from "../grocery/Grocery";
 // import PopupGrocery from "../grocery/PopupGrocery";
 import FridgeSearchBar from "../FridgeSearchBar";
 import AddGroceryPopup from "../grocery/AddGroceryPopup";
 import EditGroceryPopup from "../grocery/EditGroceryPopup";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
+import AddRecipePopup from "../recipe/AddRecipePopup";
+import EditRecipePopup from "../recipe/EditRecipePopup";
 
 class FridgePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: "1",
-      popupOpen: false,
       showAlert: false,
 
       // Grocery Props
       groceryCount: 0,
       groceries: [],
-      currentGrocery: "",
-      currentGroceryQuantity: "",
-      currentGroceryUnit: "",
-      groceryUnit: ["g", "kg", "ml", "l", "Stück"],
       groceryIdToDelete: null,
+      popupGroceryOpen: false,
       // Recipe Props
       recipeCount: 0,
       recipes: [],
-      currentRecipe: "",
-      
+      recipeIdToDelete: null,
+      popupRecipeOpen: false,
+      currentlyEditingRecipe: null,
+
       // Edit Props
       anchorEls: {},
       openMenus: {},
@@ -67,18 +67,32 @@ class FridgePage extends Component {
     });
   }
 
-  handlePopupOpen = () => {
-    console.log("Popup opened");
+  handlePopupGroceryOpen = () => {
+    console.log("Grocery-Popup opened");
     this.setState({
-      popupOpen: true,
+      popupGroceryOpen: true,
+    });
+  };
+
+  handlePopupGroceryClose = () => {
+    console.log("Grocery-Popup closed von edit");
+    this.setState({
+      popupGroceryOpen: false,
       currentlyEditing: null,
     });
   };
 
-  handlePopupClose = () => {
-    console.log("Popup closed");
+  handlePopupRecipeOpen = () => {
+    console.log("Recipe-Popup opened");
     this.setState({
-      popupOpen: false,
+      popupRecipeOpen: true,
+    });
+  };
+
+  handlePopupRecipeClose = () => {
+    console.log("Recipe-Popup closed recipe recipe");
+    this.setState({
+      popupRecipeOpen: false,
       currentlyEditing: null,
     });
   };
@@ -115,33 +129,8 @@ class FridgePage extends Component {
     this.handleCloseDialog();
   };
 
-  handleCreateGroceries = () => {
-    const {
-      currentGrocery,
-      currentGroceryQuantity,
-      currentGroceryUnit,
-      groceries,
-      currentlyEditing,
-    } = this.state;
-
-    console.log(
-      "Creating grocery:",
-      currentGrocery,
-      currentGroceryQuantity,
-      currentGroceryUnit
-    );
-
-    if (
-      currentGrocery.trim() === "" ||
-      currentGroceryQuantity.trim() === "" ||
-      currentGroceryUnit.trim() === ""
-    ) {
-      this.setState({
-        showAlert: true,
-      });
-      console.log("Grocery not created");
-      return;
-    }
+  handleCreateGroceries = (currentGrocery) => {
+    const { groceries, currentlyEditing } = this.state;
 
     if (currentlyEditing !== null) {
       console.log("Editing grocery ID:", currentlyEditing);
@@ -149,29 +138,31 @@ class FridgePage extends Component {
       this.setState({
         groceries: this.updateGrocery({
           groceryId: currentlyEditing,
-          groceryName: currentGrocery,
-          groceryQuantity: currentGroceryQuantity,
-          groceryUnit: currentGroceryUnit,
+          groceryName: currentGrocery.name,
+          groceryQuantity: currentGrocery.quantity,
+          groceryUnit: currentGrocery.unit,
         }),
-        popupOpen: false,
-        currentGrocery: "",
-        currentGroceryQuantity: "",
-        currentGroceryUnit: "",
+        popupGroceryOpen: false,
+        currentGrocery: {
+          name: "",
+          quantity: "",
+          unit: "",
+        },
         showAlert: false,
         currentlyEditing: null,
       });
     } else {
       const id = groceries.length + 1;
-      console.log("Grocery created");
-      // Hier können Sie den Code zum Erstellen des neuen Grocery einfügen
+      console.log("Creating grocery:", groceries);
+      // Code to create a new grocery
       this.setState((prevState) => {
         const newGroceries = [
           ...prevState.groceries,
           {
             groceryId: id,
-            groceryName: currentGrocery,
-            groceryQuantity: currentGroceryQuantity,
-            groceryUnit: currentGroceryUnit,
+            groceryName: currentGrocery.name,
+            groceryQuantity: currentGrocery.quantity,
+            groceryUnit: currentGrocery.unit,
           },
         ];
         const newOpenMenus = { ...prevState.openMenus, [id]: false };
@@ -180,11 +171,13 @@ class FridgePage extends Component {
 
         return {
           groceryCount: prevState.groceryCount + 1,
-          popupOpen: false,
+          popupGroceryOpen: false,
           groceries: newGroceries,
-          currentGrocery: "",
-          currentGroceryQuantity: "",
-          currentGroceryUnit: "",
+          currentGrocery: {
+            name: "",
+            quantity: "",
+            unit: "",
+          },
           showAlert: false,
           openMenus: newOpenMenus,
         };
@@ -239,9 +232,168 @@ class FridgePage extends Component {
       console.log(newOpenMenus);
       return {
         currentlyEditing: grocery.groceryId,
-        currentGrocery: grocery.groceryName,
-        currentGroceryQuantity: grocery.groceryQuantity,
-        currentGroceryUnit: grocery.groceryUnit,
+        currentGrocery: {
+          name: grocery.groceryName,
+          quantity: grocery.groceryQuantity,
+          unit: grocery.groceryUnit,
+        },
+        openMenus: newOpenMenus,
+      };
+    });
+  };
+
+  handleCreateRecipes = (recipeData, currentIngredient) => {
+    const { recipes, currentlyEditingRecipe } = this.state;
+
+    if (currentlyEditingRecipe !== null) {
+      console.log("Editing recipe ID:", currentlyEditingRecipe);
+      // Edit existing recipe
+      this.setState({
+        recipes: this.updateRecipe({
+          recipeId: currentlyEditingRecipe,
+          recipeTitle: recipeData.title,
+          recipeDuration: recipeData.duration,
+          recipeServings: recipeData.servings,
+          recipeInstructions: recipeData.instructions,
+          recipeIngredients: recipeData.ingredients,
+        }),
+        popupRecipeOpen: false,
+        currentIngredient: {
+          amount: "",
+          unit: "",
+          name: "",
+        },
+        recipeData: {
+          title: "",
+          duration: "",
+          servings: "",
+          instructions: "",
+        },
+        showAlert: false,
+        currentlyEditingRecipe: null,
+      });
+    } else {
+      const id = recipes.length + 1;
+      console.log("Creating recipe:", recipes);
+      // Code to create a new recipe
+      this.setState((prevState) => {
+        const newRecipes = [
+          ...prevState.recipes,
+          {
+            recipeId: id,
+            recipeTitle: recipeData.title,
+            recipeDuration: recipeData.duration,
+            recipeServings: recipeData.servings,
+            recipeInstructions: recipeData.instructions,
+            recipeIngredients: recipeData.ingredients,
+          },
+        ];
+        const newOpenMenus = { ...prevState.openMenus, [id]: false };
+        console.log(newRecipes);
+        console.log(newOpenMenus);
+
+        return {
+          recipeCount: prevState.recipeCount + 1,
+          popupRecipeOpen: false,
+          recipes: newRecipes,
+          currentIngredient: {
+            amount: "",
+            unit: "",
+            name: "",
+          },
+          recipeData: {
+            title: "",
+            duration: "",
+            servings: "",
+            instructions: "",
+          },
+          showAlert: false,
+          openMenus: newOpenMenus,
+        };
+      });
+    }
+  };
+
+  updateRecipe(recipe) {
+    const updatedRecipes = this.state.recipes.map((e) => {
+      if (recipe.recipeId === e.recipeId) {
+        return recipe;
+      }
+      return e;
+    });
+    console.log("Recipe updated:", updatedRecipes);
+    return updatedRecipes;
+  }
+
+  handleAnchorClickRecipe = (recepyId, event) => {
+    console.log("Anchor clicked for grocery ID:", recepyId);
+    this.setState((prevState) => {
+      const newOpenMenus = { ...prevState.openMenus, [recepyId]: true };
+      const newAnchorEls = {
+        ...prevState.anchorEls,
+        [recepyId]: event.target,
+      };
+      console.log("newOpenMenus:", newOpenMenus);
+      return {
+        anchorEls: newAnchorEls,
+        openMenus: newOpenMenus,
+      };
+    });
+  };
+
+  handleAnchorCloseRecipe = (recepyId) => {
+    console.log("Anchor closed for grocery ID:", recepyId);
+    this.setState((prevState) => {
+      const newOpenMenus = { ...prevState.openMenus, [recepyId]: false };
+      return {
+        openMenus: newOpenMenus,
+      };
+    });
+  };
+
+  handleAnchorEditRecipe = (recipe) => {
+    console.log("Editing recipe:", recipe);
+    console.log(this.state.recipeData);
+    this.setState((prevState) => {
+      const newOpenMenus = {
+        ...prevState.openMenus,
+        [recipe.recipeId]: false,
+      };
+      // Log the previous state
+      console.log("Previous state:", prevState);
+      // Log the new openMenus object
+      console.log("New openMenus:", newOpenMenus);
+      // Log the values being set for currentlyEditingRecipe and other states
+      console.log("Currently editing recipe ID:", recipe.recipeId);
+      console.log("Current ingredient:", {
+        amount: recipe.recipeIngredientsAmount,
+        unit: recipe.recipeIngredientsUnit,
+        name: recipe.recipeIngredientsName,
+      });
+      console.log("Rezeptenliste: ", recipe);
+      console.log("Recipe data:", {
+        title: recipe.recipeTitle,
+        duration: recipe.recipeDuration,
+        servings: recipe.recipeServings,
+        instructions: recipe.recipeInstructions,
+        ingredients: recipe.recipeIngredients,
+      });
+
+      return {
+        popupEditRecipeOpen: true,
+        currentlyEditingRecipe: recipe.recipeId,
+        currentIngredient: {
+          amount: recipe.recipeIngredientsAmount,
+          unit: recipe.recipeIngredientsUnit,
+          name: recipe.recipeIngredientsName,
+        },
+        recipeData: {
+          title: recipe.recipeTitle,
+          duration: recipe.recipeDuration,
+          servings: recipe.recipeServings,
+          instructions: recipe.recipeInstructions,
+          ingredients: recipe.recipeIngredients,
+        },
         openMenus: newOpenMenus,
       };
     });
@@ -264,17 +416,20 @@ class FridgePage extends Component {
   render() {
     const {
       value,
-      popupOpen,
+      popupGroceryOpen,
+      popupRecipeOpen,
       showAlert,
       groceryUnit,
       currentGrocery,
-      currentGroceryQuantity,
-      currentGroceryUnit,
       groceries,
       anchorEls,
       openMenus,
       currentlyEditing,
+      currentlyEditingRecipe,
       dialogopen,
+      recipes,
+      currentIngredient,
+      recipeData,
     } = this.state;
 
     const showAlertComponent = showAlert && (
@@ -363,7 +518,7 @@ class FridgePage extends Component {
                       // border: "5px solid violet",
                     }}
                   >
-                    <Link onClick={this.handlePopupOpen}>
+                    <Link onClick={this.handlePopupGroceryOpen}>
                       <Tooltip
                         title="Neues Lebensmittel hinzufügen"
                         placement="bottom"
@@ -416,11 +571,11 @@ class FridgePage extends Component {
                       openMenus={openMenus}
                     ></Grocery>
                   </TabPanel>
-                  {popupOpen && (
+                  {popupGroceryOpen && (
                     <AddGroceryPopup
-                      handlePopupClose={this.handlePopupClose}
+                      handlePopupGroceryClose={this.handlePopupGroceryClose}
                       showAlertComponent={showAlertComponent}
-                      groceryUnit={this.state.groceryUnit}
+                      groceryUnit={groceryUnit}
                       handleCreateGroceries={this.handleCreateGroceries}
                       // currentGrocery={currentGrocery}
                       // currentGroceryQuantity={currentGroceryQuantity}
@@ -432,12 +587,10 @@ class FridgePage extends Component {
                     <EditGroceryPopup
                       handleChange={this.handleChange}
                       handleCreateGroceries={this.handleCreateGroceries}
-                      handlePopupClose={this.handlePopupClose}
+                      handlePopupGroceryClose={this.handlePopupGroceryClose}
                       showAlert={showAlert}
                       groceryUnit={groceryUnit}
                       currentGrocery={currentGrocery}
-                      currentGroceryQuantity={currentGroceryQuantity}
-                      currentGroceryUnit={currentGroceryUnit}
                     />
                   )}
                   {dialogopen && (
@@ -474,7 +627,7 @@ class FridgePage extends Component {
                       // border: "5px solid violet",
                     }}
                   >
-                    <Link onClick={this.handlePopupOpen}>
+                    <Link onClick={this.handlePopupRecipeOpen}>
                       <Tooltip
                         title="Neues Rezept hinzufügen"
                         placement="bottom"
@@ -526,8 +679,34 @@ class FridgePage extends Component {
                         </Paper>
                       </Tooltip>
                     </Link>
-                    {/* <Recipe></Recipe> */}
+                    <Recipe
+                      recipes={recipes}
+                      handleAnchorClickRecipe={this.handleAnchorClickRecipe}
+                      handleAnchorEditRecipe={this.handleAnchorEditRecipe}
+                      handleAnchorCloseRecipe={this.handleAnchorCloseRecipe}
+                      anchorEls={anchorEls}
+                      openMenus={openMenus}
+                    ></Recipe>
                   </TabPanel>
+                  {popupRecipeOpen && (
+                    <AddRecipePopup
+                      handlePopupRecipeClose={this.handlePopupRecipeClose}
+                      groceryUnit={groceryUnit}
+                      showAlertComponent={showAlertComponent}
+                      handleCreateRecipes={this.handleCreateRecipes}
+                      handleChange={this.handleChange}
+                      currentIngredient={currentIngredient}
+                      recipeData={recipeData}
+                    />
+                  )}
+                  {currentlyEditingRecipe !== null && (
+                    <EditRecipePopup
+                      handlePopupRecipeClose={this.handlePopupRecipeClose}
+                      handleCreateRecipes={this.handleCreateRecipes}
+                      currentIngredient={currentIngredient}
+                      recipeData={recipeData}
+                    />
+                  )}
                 </Container>
               </TabContext>
             </Paper>

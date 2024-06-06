@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Box,
+  Paper,
   Typography,
   IconButton,
   Menu,
@@ -12,18 +12,18 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const Grcoery = ({
-  groceries,
-  handleAnchorClick,
-  handleAnchorClose,
-  handleAnchorEdit,
+const Recipe = ({
+  recipes,
+  handleAnchorClickRecipe,
+  handleAnchorCloseRecipe,
+  handleAnchorEditRecipe,
   handleClickOpenDialog,
   anchorEls,
   openMenus,
 }) => {
-  return groceries.map((grocery) => (
-    <Box
-      key={grocery.groceryId}
+  return recipes.map((recipe) => (
+    <Paper
+      key={recipe.recipeId}
       sx={{
         position: "relative",
         display: "flex",
@@ -35,19 +35,19 @@ const Grcoery = ({
         maxWidth: "200px",
         height: "125px",
         borderRadius: "10px",
-        boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-        "&:hover": { border: "0.1px solid #13a88a" },
+        // boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+        "&:hover": { boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)" },
       }}
     >
       <IconButton
         aria-label="more"
         id="long-button"
         aria-controls={
-          openMenus[grocery.groceryId] ? "long-menu" : undefined
+          openMenus[recipe.recipeId] ? "long-menu" : undefined
         }
-        aria-expanded={openMenus[grocery.groceryId] ? "true" : undefined}
+        aria-expanded={openMenus[recipe.recipeId] ? "true" : undefined}
         aria-haspopup="true"
-        onClick={(event) => handleAnchorClick(grocery.groceryId, event)}
+        onClick={(event) => handleAnchorClickRecipe(recipe.recipeId, event)}
         style={{
           position: "absolute",
           top: "2px",
@@ -61,12 +61,12 @@ const Grcoery = ({
 
       <Menu
         MenuListProps={{ "aria-labelledby": "long-button" }}
-        anchorEl={anchorEls[grocery.groceryId]}
-        open={openMenus[grocery.groceryId]}
-        onClose={() => handleAnchorClose(grocery.groceryId)}
+        anchorEl={anchorEls[recipe.recipeId]}
+        open={openMenus[recipe.recipeId]}
+        onClose={() => handleAnchorCloseRecipe(recipe.recipeId)}
       >
         <MenuItem
-          onClick={() => handleAnchorEdit(grocery)}
+          onClick={() => handleAnchorEditRecipe(recipe)}
           className="menu-item"
           disableRipple
         >
@@ -77,7 +77,7 @@ const Grcoery = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleClickOpenDialog(grocery.groceryId)}
+          onClick={() => handleClickOpenDialog(recipe.recipeId)}
           className="menu-item"
           disableRipple
         >
@@ -99,10 +99,10 @@ const Grcoery = ({
           height: "125px",
         }}
       >
-        {grocery.groceryName}
+        {recipe.recipeTitle}
       </Typography>
-    </Box>
+    </Paper>
   ));
 };
 
-export default Grcoery;
+export default Recipe;
