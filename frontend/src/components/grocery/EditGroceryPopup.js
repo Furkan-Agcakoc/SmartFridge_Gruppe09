@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {
   Box,
   Paper,
-  Alert,
   Typography,
   TextField,
   Autocomplete,
@@ -10,15 +9,16 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import Alert from "@mui/material/Alert";
 
-class AddGroceryPopup extends Component {
+class EditGroceryPopup extends Component {
   constructor(props) {
     super(props);
     this.state = {
       currentGrocery: {
-        name: "",
-        quantity: "",
-        unit: "",
+        name: props.currentGrocery.name,
+        quantity: props.currentGrocery.quantity,
+        unit: props.currentGrocery.unit,
       },
       groceryUnit: ["g", "kg", "ml", "l", "Stück"],
       showAlert: false,
@@ -61,13 +61,12 @@ class AddGroceryPopup extends Component {
       this.setState({ showAlert: false });
       const { currentGrocery, groceryUnit } = this.state;
       this.props.handleCreateGroceries(currentGrocery, groceryUnit); // Pass the current state values
-      this.props.handlePopupGroceryClose(); // Close the popup
+      // this.props.handlePopupClose(); // Close the popup
     }
   };
 
   render() {
     const { handlePopupGroceryClose } = this.props;
-
     const {
       currentGrocery: { name, quantity, unit },
       groceryUnit,
@@ -105,7 +104,6 @@ class AddGroceryPopup extends Component {
           }}
         >
           <Paper
-            action="Lebensmittel"
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -123,7 +121,7 @@ class AddGroceryPopup extends Component {
                 color: "text.primary",
               }}
             >
-              Neues Lebensmittel hinzufügen
+              Lebensmittel bearbeiten
             </Typography>
             {showAlert && (
               <Alert severity="error" sx={{ marginBottom: "20px" }}>
@@ -171,6 +169,7 @@ class AddGroceryPopup extends Component {
                 <Autocomplete
                   id="measurements-box"
                   options={groceryUnit}
+                  value={unit}
                   freeSolo
                   onChange={this.handleAutocompleteChange}
                   renderInput={(params) => (
@@ -249,4 +248,4 @@ class AddGroceryPopup extends Component {
   }
 }
 
-export default AddGroceryPopup;
+export default EditGroceryPopup;

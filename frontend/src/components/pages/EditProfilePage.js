@@ -68,8 +68,8 @@ class EditProfilePage extends Component {
       <>
         <Paper
           component="main"
-          maxWidth="xs"
           sx={{
+            maxWidth: "xs",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
