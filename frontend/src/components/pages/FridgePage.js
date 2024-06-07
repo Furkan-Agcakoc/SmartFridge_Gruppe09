@@ -71,6 +71,7 @@ class FridgePage extends Component {
     console.log("Grocery-Popup opened");
     this.setState({
       popupGroceryOpen: true,
+      currentlyEditing: null,
     });
   };
 
@@ -86,6 +87,7 @@ class FridgePage extends Component {
     console.log("Recipe-Popup opened");
     this.setState({
       popupRecipeOpen: true,
+      currentlyEditingRecipe: null,
     });
   };
 
@@ -93,7 +95,7 @@ class FridgePage extends Component {
     console.log("Recipe-Popup closed recipe recipe");
     this.setState({
       popupRecipeOpen: false,
-      currentlyEditing: null,
+      currentlyEditingRecipe: null,
     });
   };
 
@@ -106,14 +108,14 @@ class FridgePage extends Component {
     });
   };
 
-  handleClickOpenDialog = (groceryId) => {
-    console.log("Dialog opened for grocery ID:", groceryId);
-    this.setState({
-      dialogopen: true,
-      groceryIdToDelete: groceryId,
-    });
-    this.handleAnchorClose(groceryId);
-  };
+  // handleClickOpenDialog = (Id, type) => {
+  //   console.log("Dialog opened for grocery ID:", Id);
+  //   this.setState({
+  //     dialogopen: true,
+  //     groceryIdToDelete: Id,
+  //   });
+  //   this.handleAnchorClose(Id);
+  // };
 
   handleCloseDialog = () => {
     console.log("Dialog closed");
@@ -242,7 +244,7 @@ class FridgePage extends Component {
     });
   };
 
-  handleCreateRecipes = (recipeData, currentIngredient) => {
+  handleCreateRecipes = (recipeData) => {
     const { recipes, currentlyEditingRecipe } = this.state;
 
     if (currentlyEditingRecipe !== null) {
@@ -272,9 +274,10 @@ class FridgePage extends Component {
         showAlert: false,
         currentlyEditingRecipe: null,
       });
+      console.log("Rezeptenliste von Edit: ", recipes);
     } else {
       const id = recipes.length + 1;
-      console.log("Creating recipe:", recipes);
+      console.log("Unsere bisherigen Rezepte:", recipes);
       // Code to create a new recipe
       this.setState((prevState) => {
         const newRecipes = [
@@ -289,7 +292,7 @@ class FridgePage extends Component {
           },
         ];
         const newOpenMenus = { ...prevState.openMenus, [id]: false };
-        console.log(newRecipes);
+        console.log("Hier sind alle Rezepte ",newRecipes);
         console.log(newOpenMenus);
 
         return {
@@ -380,7 +383,6 @@ class FridgePage extends Component {
       });
 
       return {
-        popupEditRecipeOpen: true,
         currentlyEditingRecipe: recipe.recipeId,
         currentIngredient: {
           amount: recipe.recipeIngredientsAmount,
@@ -684,6 +686,7 @@ class FridgePage extends Component {
                       handleAnchorClickRecipe={this.handleAnchorClickRecipe}
                       handleAnchorEditRecipe={this.handleAnchorEditRecipe}
                       handleAnchorCloseRecipe={this.handleAnchorCloseRecipe}
+                      handleClickOpenDialog={this.handleClickOpenDialog}
                       anchorEls={anchorEls}
                       openMenus={openMenus}
                     ></Recipe>

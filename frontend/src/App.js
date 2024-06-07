@@ -23,9 +23,9 @@ import { ThemeProvider } from "@emotion/react";
 import Theme from "./Theme";
 import Footer from "./components/layout/Footer";
 import EditProfilePage from "./components/pages/EditProfilePage";
+import dialogConfirmText from "./components/dialogs/DeleteTextDialog";
 // import Grocerie from "./components/Grocerie";
 // import Recipe from "./components/Recipe";
-
 
 class App extends Component {
   constructor(props) {
@@ -122,6 +122,29 @@ class App extends Component {
     });
   }
 
+  handleClickOpenDialog = (id, type) => {
+    console.log(`Dialog opened for ${type} ID:`, id);
+    const dialogText = dialogConfirmText[type];
+    if (!dialogText) return;
+
+    const dialogTitle = dialogText.title;
+    const dialogDescription = dialogText.description;
+    const dialogConfirmButtonText = dialogText.confirmButtonText;
+
+    if (type === "grocery") {
+      this.setState({ groceryIdToDelete: id });
+    } else if (type === "recipe") {
+      this.setState({ recipeIdToDelete: id });
+    }
+
+    this.setState({
+      dialogopen: true,
+      dialogTitle,
+      dialogDescription,
+      dialogConfirmButtonText,
+    });
+  };
+
   render() {
     const { currentUser } = this.state;
 
@@ -157,7 +180,7 @@ class App extends Component {
                 path="/profile"
                 element={
                   <Secured user={currentUser}>
-                    <EditProfilePage/>
+                    <EditProfilePage p />
                   </Secured>
                 }
               ></Route>
@@ -166,7 +189,7 @@ class App extends Component {
                 path="/household"
                 element={
                   <Secured user={currentUser}>
-                    <HouseholdPage />
+                    <HouseholdPage handleClickOpenDialog = {this.handleClickOpenDialog}/>
                   </Secured>
                 }
               />
@@ -174,7 +197,7 @@ class App extends Component {
                 path="/home"
                 element={
                   <Secured user={currentUser}>
-                    <HomePage />
+                    <HomePage handleClickOpenDialog = {this.handleClickOpenDialog}/>
                   </Secured>
                 }
               />

@@ -10,6 +10,9 @@ import {
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import Alert from "@mui/material/Alert";
+import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
+
+
 
 class EditGroceryPopup extends Component {
   constructor(props) {
@@ -121,7 +124,13 @@ class EditGroceryPopup extends Component {
                 color: "text.primary",
               }}
             >
-              Lebensmittel bearbeiten
+              Lebensmittel bearbeiten <CreateRoundedIcon
+                sx={{
+                  color: "secondary.dark",
+                  width: "30px",
+                  height: "auto",
+                }}
+              />
             </Typography>
             {showAlert && (
               <Alert severity="error" sx={{ marginBottom: "20px" }}>
@@ -163,6 +172,7 @@ class EditGroceryPopup extends Component {
                   name="quantity"
                   label="Menge angeben"
                   placeholder="Menge"
+                  type="number"
                   InputLabelProps={{ style: { fontSize: "15px" } }}
                   sx={{ width: "775px" }}
                 />

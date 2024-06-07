@@ -57,13 +57,13 @@ class Household extends Component {
     this.setState({ showAlert: false });
   };
 
-  handleClickOpenDialog = (householdId) => {
-    this.setState({
-      dialogopen: true,
-      householdIdToDelete: householdId,
-    });
-    this.handleAnchorClose(householdId);
-  };
+  // handleClickOpenDialog = (householdId) => {
+  //   this.setState({
+  //     dialogopen: true,
+  //     householdIdToDelete: householdId,
+  //   });
+  //   this.handleAnchorClose(householdId);
+  // };
 
   handleCloseDialog = () => {
     this.setState({ dialogopen: false });

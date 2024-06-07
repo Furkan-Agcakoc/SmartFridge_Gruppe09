@@ -165,6 +165,7 @@ class AddGroceryPopup extends Component {
                   name="quantity"
                   label="Menge angeben"
                   placeholder="Menge"
+                  type="number"
                   InputLabelProps={{ style: { fontSize: "15px" } }}
                   sx={{ width: "775px" }}
                 />

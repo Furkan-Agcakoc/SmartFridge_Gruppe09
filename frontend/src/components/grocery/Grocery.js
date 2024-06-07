@@ -77,7 +77,7 @@ const Grocery = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleClickOpenDialog(grocery.groceryId)}
+          onClick={() => handleClickOpenDialog(grocery.groceryId, "grocery")}
           className="menu-item"
           disableRipple
         >
