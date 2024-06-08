@@ -13,30 +13,20 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const DeleteConfirmationDialog = ({
-  handleCloseDialog,
-  handleConfirmDelete,
-}) => {
+const DeleteConfirmationDialog = ({ open, title, description, confirmButtonText, onClose, onConfirm }) => {
   return (
-    <Dialog
-      open={true}
-      TransitionComponent={Transition}
-      keepMounted
-      onClose={handleCloseDialog}
-      aria-describedby="alert-dialog-slide-description"
-    >
-      <DialogTitle>{"Haushalt löschen bestätigen"}</DialogTitle>
+    <Dialog open={open} onClose={onClose} TransitionComponent={Transition}>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-slide-description">
-          Sind Sie sicher, dass Sie dieses Haushalt löschen möchten? Alle
-          Mitglieder, der Kühlschrankinhalt und alle gespeicherten Rezepte
-          werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht
-          werden.
-        </DialogContentText>
+        <DialogContentText>{description}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseDialog}>Abbrechen</Button>
-        <Button onClick={handleConfirmDelete}>Löschen</Button>
+        <Button onClick={onClose} color="primary">
+          Abbrechen
+        </Button>
+        <Button onClick={onConfirm} color="primary">
+          {confirmButtonText}
+        </Button>
       </DialogActions>
     </Dialog>
   );

@@ -568,7 +568,7 @@ class FridgePage extends Component {
                       handleAnchorClick={this.handleAnchorClick}
                       handleAnchorClose={this.handleAnchorClose}
                       handleAnchorEdit={this.handleAnchorEdit}
-                      handleClickOpenDialog={this.handleClickOpenDialog}
+                      handleClickOpenDialog={this.props.handleClickOpenDialog}
                       anchorEls={anchorEls}
                       openMenus={openMenus}
                     ></Grocery>
@@ -686,7 +686,7 @@ class FridgePage extends Component {
                       handleAnchorClickRecipe={this.handleAnchorClickRecipe}
                       handleAnchorEditRecipe={this.handleAnchorEditRecipe}
                       handleAnchorCloseRecipe={this.handleAnchorCloseRecipe}
-                      handleClickOpenDialog={this.handleClickOpenDialog}
+                      handleClickOpenDialog={this.props.handleClickOpenDialog}
                       anchorEls={anchorEls}
                       openMenus={openMenus}
                     ></Recipe>

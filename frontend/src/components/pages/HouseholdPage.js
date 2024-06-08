@@ -282,7 +282,7 @@ class Household extends Component {
                 handleAnchorClick={this.handleAnchorClick}
                 handleAnchorClose={this.handleAnchorClose}
                 handleAnchorEdit={this.handleAnchorEdit}
-                handleClickOpenDialog={this.handleClickOpenDialog}
+                handleClickOpenDialog={this.props.handleClickOpenDialog}
                 anchorEls={anchorEls}
                 openMenus={openMenus}
               />

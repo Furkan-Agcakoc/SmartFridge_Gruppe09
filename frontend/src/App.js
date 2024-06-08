@@ -24,6 +24,7 @@ import Theme from "./Theme";
 import Footer from "./components/layout/Footer";
 import EditProfilePage from "./components/pages/EditProfilePage";
 import dialogConfirmText from "./components/dialogs/DeleteTextDialog";
+import DeleteConfirmationDialog from "./components/dialogs/DeleteConfirmationDialog";
 // import Grocerie from "./components/Grocerie";
 // import Recipe from "./components/Recipe";
 
@@ -36,6 +37,7 @@ class App extends Component {
       appError: null,
       authError: null,
       authLoading: true,
+      dialogopen: false,
     };
   }
 
@@ -135,6 +137,8 @@ class App extends Component {
       this.setState({ groceryIdToDelete: id });
     } else if (type === "recipe") {
       this.setState({ recipeIdToDelete: id });
+    } else if (type === "household") {
+      this.setState({ householdIdToDelete: id });
     }
 
     this.setState({
@@ -145,8 +149,45 @@ class App extends Component {
     });
   };
 
+  handleCloseDialog = () => {
+    this.setState({
+      dialogopen: false,
+      dialogTitle: "",
+      dialogDescription: "",
+      dialogConfirmButtonText: "",
+      groceryIdToDelete: null,
+      recipeIdToDelete: null,
+      householdIdToDelete: null,
+      
+    });
+  };
+
+  handleConfirmDelete = () => {
+    const { groceryIdToDelete, recipeIdToDelete, householdIdToDelete } =
+      this.state;
+
+    if (groceryIdToDelete) {
+      console.log("Deleting grocery with ID:", groceryIdToDelete);
+      // Hier können Sie Ihre Löschlogik für das Lebensmittel einfügen
+    } else if (recipeIdToDelete) {
+      console.log("Deleting recipe with ID:", recipeIdToDelete);
+      // Hier können Sie Ihre Löschlogik für das Rezept einfügen
+    } else if (householdIdToDelete) {
+      console.log("Deleting household with ID:", householdIdToDelete);
+      // Hier können Sie Ihre Löschlogik für das Haushalt einfügen
+    }
+
+    this.handleCloseDialog();
+  };
+
   render() {
-    const { currentUser } = this.state;
+    const {
+      currentUser,
+      dialogopen,
+      dialogTitle,
+      dialogDescription,
+      dialogConfirmButtonText,
+    } = this.state;
 
     return (
       <>
@@ -189,7 +230,9 @@ class App extends Component {
                 path="/household"
                 element={
                   <Secured user={currentUser}>
-                    <HouseholdPage handleClickOpenDialog = {this.handleClickOpenDialog}/>
+                    <HouseholdPage
+                      handleClickOpenDialog={this.handleClickOpenDialog}
+                    />
                   </Secured>
                 }
               />
@@ -197,7 +240,9 @@ class App extends Component {
                 path="/home"
                 element={
                   <Secured user={currentUser}>
-                    <HomePage handleClickOpenDialog = {this.handleClickOpenDialog}/>
+                    <HomePage
+                      handleClickOpenDialog={this.handleClickOpenDialog}
+                    />
                   </Secured>
                 }
               />
@@ -222,6 +267,14 @@ class App extends Component {
             <Footer />
           </Router>
         </ThemeProvider>
+        <DeleteConfirmationDialog
+          open={dialogopen}
+          title={dialogTitle}
+          description={dialogDescription}
+          confirmButtonText={dialogConfirmButtonText}
+          onClose={this.handleCloseDialog}
+          onConfirm={this.handleConfirmDelete}
+        />
       </>
     );
   }

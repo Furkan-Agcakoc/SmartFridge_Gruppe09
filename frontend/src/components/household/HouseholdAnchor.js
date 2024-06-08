@@ -77,7 +77,7 @@ const HouseholdList = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleClickOpenDialog(household.householdId)}
+          onClick={() => handleClickOpenDialog(household.householdId, "household")}
           className="menu-item"
           disableRipple
         >
