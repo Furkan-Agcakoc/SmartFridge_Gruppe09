@@ -262,6 +262,10 @@ class Administration():
         with GroceryStatementMapper() as mapper:
             return mapper.find_by_fridge_id(fridge)
 
+    def get_grocerystatement_by_recipe(self,recipe):
+        with GroceryStatementMapper() as mapper:
+            return mapper.find_by_recipe_id(recipe)
+
     def update_grocerystatement(self, grocerystatement):
         with GroceryStatementMapper() as mapper:
             mapper.update(grocerystatement)
@@ -474,3 +478,37 @@ class Administration():
     def delete_measure(self, measure):
         with MeasureMapper() as mapper:
             mapper.delete(measure)
+
+    """
+    Abgleichen Kühlschrank Rezept
+    """
+    def update_gs(self,gs):
+        with GroceryStatementMapper() as mapper:
+            mapper.update_grocerystatement_quantity(gs)
+    def calculate_recipe_fridge(self, recipe_id, fridge_id):
+        # Rezept und Kühlschrankinhalt abrufen
+        recipe_content = self.get_grocerystatement_by_recipe(recipe_id)
+        fridge_content = self.get_grocerystatement_by_fridge(fridge_id)
+
+        if recipe_content is None:
+            return "Rezeptinhalt nicht gefunden"
+        if fridge_content is None:
+            return "Kühlschrankinhalt nicht gefunden"
+
+        for recipe_grocery in recipe_content:
+            for fridge_grocery in fridge_content:
+                if fridge_grocery.get_grocery_name() == recipe_grocery.get_grocery_name():
+                    # Menge abziehen
+                    new_value = fridge_grocery.get_quantity() - recipe_grocery.get_quantity()
+                    # Sicherstellen, dass die Menge nicht negativ wird
+                    if new_value < 0:
+                        new_value = 0
+                    fridge_grocery.set_quantity(new_value)  #setzt die quantität von fridge auf den neuen wert
+                    # Lebensmittel in der grocerystatement-Tabelle aktualisieren
+                    self.update_gs(fridge_grocery)
+                    break  # Lebensmittel wurde gefunden, abbrechen
+
+        return True  # Erfolgreich aktualisiert
+
+
+
