@@ -10,37 +10,52 @@ import {
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 
-class PopupHousehold extends Component {
+class HouseholdDialog extends Component {
   constructor(props) {
     super(props);
     this.state = {
       householdData: {
-        householdName: "",
+        householdName: props.isEditMode ? props.householdName : "",
+        // emails: props.isEditMode ? props.householdEmails : [],
         emails: [],
       },
       showAlert: props.showAlert,
+      // households: props.households,
     };
-    // this.formRef = React.createRef();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.householdName !== this.props.householdName
+      // prevProps.householdEmails !== this.props.householdEmails
+    ) {
+      this.setState({
+        householdData: {
+          householdName: this.props.householdName,
+          emails: this.props.householdEmails,
+        },
+      });
+    }
   }
 
   handleClick = (e) => {
-    // const form = this.formRef.current;
-    const { householdData: {householdName} } = this.state;
+    const { householdData } = this.state;
     const form = e.target.closest("form");
     if (form.checkValidity()) {
-      this.props.handleCreateObject(householdName);
+      this.props.handleCreateObject(householdData);
       console.log("Form is valid");
     } else {
       this.setState({ showAlert: true });
     }
   };
+
   render() {
     const {
-      // handleChange,
       closePopup,
       handleInvalid,
       handleInput,
       showAlertComponent,
+      isEditMode,
     } = this.props;
 
     const {
@@ -81,7 +96,7 @@ class PopupHousehold extends Component {
               variant="h4"
               sx={{ marginBottom: "20px", marginTop: "20px", fontWeight: 600 }}
             >
-              Neuen Haushalt hinzufügen
+              {isEditMode ? "Haushalt bearbeiten" : "Neuen Haushalt hinzufügen"}
             </Typography>
             {showAlertComponent}
             <Box
@@ -117,7 +132,6 @@ class PopupHousehold extends Component {
                   <TextField
                     {...params}
                     name="emails"
-                    value={emails}
                     label="Bewohner hinzufügen"
                     placeholder="Bewohner hinzufügen"
                     InputLabelProps={{ style: { fontSize: "15px" } }}
@@ -150,7 +164,7 @@ class PopupHousehold extends Component {
                     },
                   }}
                 >
-                  Hinzufügen
+                  {isEditMode ? "Speichern" : "Hinzufügen"}
                 </Button>
                 <Button
                   variant="contained"
@@ -177,4 +191,4 @@ class PopupHousehold extends Component {
   }
 }
 
-export default PopupHousehold;
+export default HouseholdDialog;

@@ -66,7 +66,7 @@ const HouseholdList = ({
         onClose={() => handleAnchorClose(household.householdId)}
       >
         <MenuItem
-          onClick={() => handleAnchorEdit(household)}
+          onClick={() => handleAnchorEdit(household.householdId)}
           className="menu-item"
           disableRipple
         >
