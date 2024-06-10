@@ -4,67 +4,147 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import AddHomeWorkRoundedIcon from "@mui/icons-material/AddHomeWorkRounded";
 import Tooltip from "@mui/material/Tooltip";
-// import PopupHousehold from "../household/PopupHousehold";
-// import EditHouseholdPopup from "../household/EditHouseholdPopup";
 import HouseholdDialog from "../household/HouseholdDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import HouseholdAnchor from "../household/HouseholdAnchor";
-// import Alert from "@mui/material/Alert";
 
-class Household extends Component {
+class HouseholdPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // popupOpen: false,
-      // householdCount: 0,
-      // households: [],
-      // householdName: "",
-      // showAlert: false,
-      // anchorEls: {},
-      // openMenus: {},
-      // currentlyEditing: null,
-      // dialogopen: false,
-      // householdIdToDelete: null, // New state to store householdId
+      popupOpen: false,
+      isEditMode: false,
+      households: [],
+      householdCount: 0,
+      currentlyEditing: null,
+      anchorEls: {},
+      openMenus: {},
+      householdIdToDelete: null,
+      alertMessageHousehold: "",
     };
-
-    this.emails = [
-      "furkana.gs2002@gmail.com",
-      "meayavuz@gmail.com",
-      "baran2323a@gmail.com",
-      "derzockerlp63@gmail.com",
-      "sead.shat@gmail.com",
-    ];
   }
 
-  // openPopup = () => {
-  //   this.setState({
-  //     popupOpen: true,
-  //     currentlyEditing: null,
-  //   });
-  // };
+  openPopup = (isEditMode = false, household = null) => {
+    this.setState({
+      popupOpen: true,
+      isEditMode,
+      currentlyEditing: household,
+    });
+    console.log("HouseholdPage => Popup opened");
+  };
 
-  // closePopup = () => {
-  //   this.setState({ popupOpen: false, currentlyEditing: null });
-  // };
+  closePopup = () => {
+    console.log("HouseholdPage => Popup closed");
+    this.setState({
+      popupOpen: false,
+      currentlyEditing: null,
+    });
+  };
 
-  // handleChange = (event) => {
-  //   this.setState({
-  //     currentName: event.target.value,
-  //     showAlert: false,
-  //   });
-  // };
+  handleCreateObject = (householdData) => {
+    const { currentlyEditing, households } = this.state;
 
-  // handleCloseAlert = () => {
-  //   this.setState({ showAlert: false });
-  // };
+    if (currentlyEditing !== null) {
+      const updatedHouseholds = this.updateHousehold({
+        householdId: currentlyEditing,
+        householdName: householdData.householdName,
+        emails: householdData.emails,
+      });
 
-  // handleClickOpenDialog = (householdId) => {
-  //   this.setState({
-  //     dialogopen: true,
-  //     householdIdToDelete: householdId,
-  //   });
-  //   this.handleAnchorClose(householdId);
-  // };
+      this.setState({
+        households: updatedHouseholds,
+        popupOpen: false,
+        currentlyEditing: null,
+      });
+    } else {
+      const id = households.length + 1;
+
+      this.setState((prevState) => {
+        const newHouseholds = [
+          ...prevState.households,
+          {
+            householdId: id,
+            householdName: householdData.householdName,
+            emails: [],
+          },
+        ];
+        const newOpenMenus = { ...prevState.openMenus, [id]: false };
+
+        return {
+          householdCount: prevState.householdCount + 1,
+          popupOpen: false,
+          households: newHouseholds,
+          openMenus: newOpenMenus,
+        };
+      });
+    }
+  };
+
+  updateHousehold(household) {
+    const updatedHouseholds = this.state.households.map((e) => {
+      if (household.householdId === e.householdId) {
+        return { ...e, ...household };
+      }
+      return e;
+    });
+
+    return updatedHouseholds;
+  }
+
+  handleAnchorClick = (householdId, event) => {
+    this.setState((prevState) => {
+      const newOpenMenus = { ...prevState.openMenus, [householdId]: true };
+      const newAnchorEls = {
+        ...prevState.anchorEls,
+        [householdId]: event.target,
+      };
+      return {
+        anchorEls: newAnchorEls,
+        openMenus: newOpenMenus,
+      };
+    });
+  };
+
+  handleAnchorClose = (householdId) => {
+    this.setState((prevState) => {
+      const newOpenMenus = { ...prevState.openMenus, [householdId]: false };
+      return {
+        openMenus: newOpenMenus,
+      };
+    });
+  };
+
+  handleAnchorEdit = (householdId) => {
+    this.setState(
+      (prevState) => {
+        const newOpenMenus = {
+          ...prevState.openMenus,
+          [householdId]: false,
+        };
+        return {
+          currentlyEditing: householdId,
+          openMenus: newOpenMenus,
+          popupOpen: true,
+        };
+      },
+      () => {
+        this.openPopup(true, householdId);
+      }
+    );
+  };
+
+  handleAnchorDelete = (householdId) => {
+    this.setState((prevState) => {
+      const newOpenMenus = { ...prevState.openMenus, [householdId]: false };
+      const newHouseholds = prevState.households.filter(
+        (h) => h.householdId !== householdId
+      );
+      return {
+        households: newHouseholds,
+        openMenus: newOpenMenus,
+      };
+    });
+  };
 
   handleCloseDialog = () => {
     this.setState({ dialogopen: false });
@@ -78,147 +158,32 @@ class Household extends Component {
     this.handleCloseDialog();
   };
 
-  // handleCreateHousehold = () => {
-  //   const { currentName, currentlyEditing, households } = this.state;
-
-  //   if (currentName.trim() === "") {
-  //     this.setState({ showAlert: true });
-  //     return;
-  //   }
-
-  //   if (currentlyEditing !== null) {
-  //     // Edit existing household
-  //     this.setState({
-  //       households: this.updateHousehold({
-  //         householdId: currentlyEditing,
-  //         householdName: currentName,
-  //         emails: [],
-  //       }),
-  //       popupOpen: false,
-  //       currentName: "",
-  //       showAlert: false,
-  //       currentlyEditing: null,
-  //     });
-  //   } else {
-  //     // Create new household
-  //     const id = households.length + 1;
-  //     console.log("new household");
-
-  //     this.setState((prevState) => {
-  //       const newHouseholds = [
-  //         ...prevState.households,
-  //         {
-  //           householdId: id,
-  //           householdName: currentName,
-  //           emails: [],
-  //         },
-  //       ];
-  //       const newOpenMenus = { ...prevState.openMenus, [id]: false };
-  //       console.log(newHouseholds);
-
-  //       return {
-  //         householdCount: prevState.householdCount + 1,
-  //         popupOpen: false,
-  //         households: newHouseholds,
-  //         currentName: "",
-  //         showAlert: false,
-  //         openMenus: newOpenMenus,
-  //       };
-  //     });
-  //   }
-  // };
-
-  // updateHousehold(household) {
-  //   const updatedHouseholds = this.state.households.map((e) => {
-  //     if (household.householdId === e.householdId) {
-  //       return household;
-  //     }
-  //     return e;
-  //   });
-  //   return updatedHouseholds;
-  // }
-
-  // handleAnchorClick = (householdId, event) => {
-  //   this.setState((prevState) => {
-  //     const newOpenMenus = { ...prevState.openMenus, [householdId]: true };
-  //     const newAnchorEls = {
-  //       ...prevState.anchorEls,
-  //       [householdId]: event.target,
-  //     };
-  //     return {
-  //       anchorEls: newAnchorEls,
-  //       openMenus: newOpenMenus,
-  //     };
-  //   });
-  // };
-
-  // handleAnchorClose = (householdId) => {
-  //   this.setState((prevState) => {
-  //     const newOpenMenus = { ...prevState.openMenus, [householdId]: false };
-  //     return {
-  //       openMenus: newOpenMenus,
-  //     };
-  //   });
-  // };
-
-  // handleAnchorEdit = (household) => {
-  //   this.setState((prevState) => {
-  //     const newOpenMenus = {
-  //       ...prevState.openMenus,
-  //       [household.householdId]: false,
-  //     };
-  //     return {
-  //       currentlyEditing: household.householdId,
-  //       currentName: household.householdName,
-  //       openMenus: newOpenMenus,
-  //     };
-  //   });
-  // };
-
-  // handleAnchorDelete = (householdId) => {
-  //   this.setState((prevState) => {
-  //     const newOpenMenus = { ...prevState.openMenus, [householdId]: false };
-  //     const newHouseholds = prevState.households.filter(
-  //       (h) => h.householdId !== householdId
-  //     );
-  //     return {
-  //       households: newHouseholds,
-  //       openMenus: newOpenMenus,
-  //     };
-  //   });
-  // };
-
   render() {
-    // const {
-    // households,
-    // showAlert,
-    // currentlyEditing,
-    // anchorEls,
-    // openMenus,
-    // dialogopen,
-    // currentName,
-    // } = this.state;
-
     const {
       households,
       anchorEls,
       openMenus,
       popupOpen,
-      openPopup,
-      showAlertComponent,
-      dialogopen,
       isEditMode,
-      householdName,
       currentlyEditing,
+      dialogopen,
+      alertMessageHousehold,
+    } = this.state;
+
+    const {
+      handleChange,
+      handleInvalid,
+      handleInput,
+      triggerAlert,
     } = this.props;
 
     const editingHousehold = currentlyEditing
       ? households.find((h) => h.householdId === currentlyEditing)
       : null;
 
-    // const showAlertComponent = showAlert && (
+    // const showAlertHousehold = showAlert && (
     //   <Alert severity="error" sx={{ marginBottom: "20px" }}>
-    //     Bitte geben Sie einen Haushaltsnamen ein!
+    //     {alertMessageHousehold}
     //   </Alert>
     // );
 
@@ -287,7 +252,7 @@ class Household extends Component {
                       border: "3px solid #06871D",
                     },
                   }}
-                  onClick={() => openPopup(false)}
+                  onClick={() => this.openPopup(false)}
                 >
                   <AddHomeWorkRoundedIcon
                     sx={{ width: "75px", height: "auto" }}
@@ -296,13 +261,12 @@ class Household extends Component {
               </Tooltip>
               <HouseholdAnchor
                 households={households}
-                handleAnchorClick={this.props.handleAnchorClick}
-                handleAnchorClose={this.props.handleAnchorClose}
-                handleAnchorEdit={this.props.handleAnchorEdit}
-                handleClickOpenDialog={this.props.handleClickOpenDialog}
+                handleAnchorClick={this.handleAnchorClick}
+                handleAnchorClose={this.handleAnchorClose}
+                handleAnchorEdit={this.handleAnchorEdit}
+                handleClickOpenDialog={this.handleClickOpenDialog}
                 anchorEls={anchorEls}
                 openMenus={openMenus}
-                openPopup={this.props.openPopup}
               />
             </Box>
             {popupOpen && (
@@ -311,38 +275,17 @@ class Household extends Component {
                 householdName={
                   editingHousehold ? editingHousehold.householdName : ""
                 }
-                // householdEmails={householdEmails}
-                closePopup={this.props.closePopup}
-                handleCreateObject={this.props.handleCreateObject}
-                handleInvalid={this.props.handleInvalid}
-                handleInput={this.props.handleInput}
-                showAlertComponent={showAlertComponent}
+                closePopup={this.closePopup}
+                handleCreateObject={this.handleCreateObject}
+                handleInvalid={handleInvalid}
+                handleInput={handleInput}
+                handleChange={handleChange}
+                alertMessageHousehold={alertMessageHousehold}
                 households={households}
-                openPopup={this.props.openPopup}
+                openPopup={this.openPopup}
+                triggerAlert={triggerAlert}
               />
             )}
-            {/* {popupOpen && (
-              <PopupHousehold
-                // handleChange={this.handleChange}
-                handleInvalid={this.props.handleInvalid}
-                handleInput={this.props.handleInput}
-                handleCreateObject={this.props.handleCreateObject}
-                // closePopup={this.closePopup}
-                closePopup={this.props.closePopup}
-                showAlertComponent={showAlertComponent}
-              />
-            )} */}
-            {/* {currentlyEditing !== null && (
-              <EditHouseholdPopup
-                // handleChange={this.handleChange}
-                handleChange={this.props.handleChange}
-                handleCreateHousehold={this.handleCreateHousehold}
-                closePopup={this.closePopup}
-                emails={this.emails}
-                currentName={currentName}
-                // showAlert={this.state.props.showAlert}
-              />
-            )} */}
             {dialogopen && (
               <DeleteConfirmationDialog
                 handleCloseDialog={this.handleCloseDialog}
@@ -356,4 +299,4 @@ class Household extends Component {
   }
 }
 
-export default Household;
+export default HouseholdPage;

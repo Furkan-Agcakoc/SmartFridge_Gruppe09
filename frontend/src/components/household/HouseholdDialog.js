@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import AlertComponent from "../dialogs/AlertComponent";
 
 class HouseholdDialog extends Component {
   constructor(props) {
@@ -17,7 +18,13 @@ class HouseholdDialog extends Component {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
         // emails: props.isEditMode ? props.householdEmails : [],
-        emails: [],
+        emails: [
+          "furkana.gs2002@gmail.com",
+          "meayavuz@gmail.com",
+          "baran2323a@gmail.com",
+          "derzockerlp63@gmail.com",
+          "sead.shat@gmail.com",
+        ],
       },
       showAlert: props.showAlert,
       // households: props.households,
@@ -33,7 +40,6 @@ class HouseholdDialog extends Component {
         householdData: {
           householdName: this.props.householdName,
           emails: this.props.householdEmails || [],
-
         },
       });
     }
@@ -51,16 +57,11 @@ class HouseholdDialog extends Component {
   };
 
   render() {
-    const {
-      closePopup,
-      handleInvalid,
-      handleInput,
-      showAlertComponent,
-      isEditMode,
-    } = this.props;
+    const { closePopup, handleInvalid, handleInput, isEditMode } = this.props;
 
     const {
       householdData: { householdName, emails },
+      showAlert,
     } = this.state;
 
     return (
@@ -99,7 +100,7 @@ class HouseholdDialog extends Component {
             >
               {isEditMode ? "Haushalt bearbeiten" : "Neuen Haushalt hinzufügen"}
             </Typography>
-            {showAlertComponent}
+            <AlertComponent showAlert={showAlert} alertType="household" />
             <Box
               sx={{
                 display: "flex",
