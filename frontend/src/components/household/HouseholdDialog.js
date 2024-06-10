@@ -26,13 +26,14 @@ class HouseholdDialog extends Component {
 
   componentDidUpdate(prevProps) {
     if (
+      prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.householdName !== this.props.householdName
-      // prevProps.householdEmails !== this.props.householdEmails
     ) {
       this.setState({
         householdData: {
           householdName: this.props.householdName,
-          emails: this.props.householdEmails,
+          emails: this.props.householdEmails || [],
+
         },
       });
     }

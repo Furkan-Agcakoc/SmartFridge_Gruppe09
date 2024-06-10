@@ -430,9 +430,7 @@ class App extends Component {
                       anchorEls={this.state.anchorEls}
                       openMenus={this.state.openMenus}
                       isEditMode={isEditMode}
-                      householdName={
-                        editingHousehold ? editingHousehold.householdName : ""
-                      }
+                      currentlyEditing={currentlyEditing}
                       // householdEmails={
                       //   editingHousehold ? editingHousehold.emails : []
                       // }

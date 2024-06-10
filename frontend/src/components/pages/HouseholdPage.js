@@ -209,10 +209,12 @@ class Household extends Component {
       dialogopen,
       isEditMode,
       householdName,
-      // householdEmails,
+      currentlyEditing,
     } = this.props;
 
-
+    const editingHousehold = currentlyEditing
+      ? households.find((h) => h.householdId === currentlyEditing)
+      : null;
 
     // const showAlertComponent = showAlert && (
     //   <Alert severity="error" sx={{ marginBottom: "20px" }}>
@@ -306,7 +308,9 @@ class Household extends Component {
             {popupOpen && (
               <HouseholdDialog
                 isEditMode={isEditMode}
-                householdName={householdName}
+                householdName={
+                  editingHousehold ? editingHousehold.householdName : ""
+                }
                 // householdEmails={householdEmails}
                 closePopup={this.props.closePopup}
                 handleCreateObject={this.props.handleCreateObject}
