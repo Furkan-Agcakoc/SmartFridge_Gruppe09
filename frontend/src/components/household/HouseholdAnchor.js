@@ -12,6 +12,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+
 const HouseholdList = ({
   households,
   handleAnchorClick,
@@ -66,7 +67,7 @@ const HouseholdList = ({
         onClose={() => handleAnchorClose(household.householdId)}
       >
         <MenuItem
-          onClick={() => handleAnchorEdit(household)}
+          onClick={() => handleAnchorEdit(household.householdId)}
           className="menu-item"
           disableRipple
         >
@@ -77,7 +78,7 @@ const HouseholdList = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleClickOpenDialog(household.householdId)}
+          onClick={() => handleClickOpenDialog(household.householdId, "household")}
           className="menu-item"
           disableRipple
         >

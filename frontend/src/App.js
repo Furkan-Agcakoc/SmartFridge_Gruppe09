@@ -23,9 +23,6 @@ import { ThemeProvider } from "@emotion/react";
 import Theme from "./Theme";
 import Footer from "./components/layout/Footer";
 import EditProfilePage from "./components/pages/EditProfilePage";
-// import Grocerie from "./components/Grocerie";
-// import Recipe from "./components/Recipe";
-
 
 class App extends Component {
   constructor(props) {
@@ -36,6 +33,8 @@ class App extends Component {
       appError: null,
       authError: null,
       authLoading: true,
+      showAlert: false,
+      alertMessageHousehold: "Please enter a valid household name.",
     };
   }
 
@@ -49,7 +48,6 @@ class App extends Component {
     });
 
     const app = initializeApp(firebaseConfig);
-    //const auth = getAuth(app);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
@@ -64,11 +62,9 @@ class App extends Component {
     if (auth.currentUser) {
       signOut(auth)
         .then(() => {
-          // Sign-out successful.
           console.log("User signed out successfully.");
         })
         .catch((error) => {
-          // An error happened.
           console.error("Error signing out:", error);
         });
     }
@@ -84,19 +80,11 @@ class App extends Component {
         this.setState({
           authLoading: true,
         });
-        // The user is signed in
         user
           .getIdToken()
           .then((token) => {
-            // Add the token to the browser's cookies. The server will then be
-            // able to verify the token against the API.
-            // SECURITY NOTE: As cookies can easily be modified, only put the
-            // token (which is verified server-side) in a cookie; do not add other
-            // user information.
             document.cookie = `token=${token};path=/`;
-            // console.log("Token is: " + document.cookie);
 
-            // Set the user not before the token arrived
             this.setState({
               currentUser: user,
               authError: null,
@@ -110,10 +98,8 @@ class App extends Component {
             });
           });
       } else {
-        // User has logged out, so clear the id token
         document.cookie = "token=;path=/";
 
-        // Set the logged out user to null
         this.setState({
           currentUser: null,
         });
@@ -121,6 +107,25 @@ class App extends Component {
       this.setState({ authLoading: false });
     });
   }
+
+  handleChange = (event) => {
+    const { name, value } = event.target;
+    this.setState({
+      [name]: value,
+      showAlert: false,
+    });
+  };
+
+  handleInvalid = (e) => {
+    e.preventDefault();
+    this.setState({ showAlert: true });
+    console.log("App.js => Invalid alert confirmed");
+  };
+
+  handleInput = () => {
+    this.setState({ showAlert: false });
+    console.log("App.js => Input closes alert");
+  };
 
   render() {
     const { currentUser } = this.state;
@@ -139,7 +144,7 @@ class App extends Component {
                 path="/"
                 element={
                   currentUser ? (
-                    <Navigate replace to={"/profile"} />
+                    <Navigate replace to={"/household"} />
                   ) : (
                     <LoginPage onSignIn={this.handleSignIn} />
                   )
@@ -157,16 +162,19 @@ class App extends Component {
                 path="/profile"
                 element={
                   <Secured user={currentUser}>
-                    <EditProfilePage/>
+                    <EditProfilePage />
                   </Secured>
                 }
-              ></Route>
-
+              />
               <Route
                 path="/household"
                 element={
                   <Secured user={currentUser}>
-                    <HouseholdPage />
+                    <HouseholdPage
+                      handleChange={this.handleChange}
+                      handleInvalid={this.handleInvalid}
+                      handleInput={this.handleInput}
+                    />
                   </Secured>
                 }
               />
@@ -178,23 +186,6 @@ class App extends Component {
                   </Secured>
                 }
               />
-
-              {/* <Route
-                path="/groceries"
-                element={
-                  <Secured user={currentUser}>
-                    <Grocerie />
-                  </Secured>
-                }
-              />
-              <Route
-                path="/recipes"
-                element={
-                  <Secured user={currentUser}>
-                    <Grocerie />
-                  </Secured>
-                }
-              /> */}
             </Routes>
             <Footer />
           </Router>
@@ -210,10 +201,6 @@ function Secured(props) {
   let location = useLocation();
 
   if (!props.user) {
-    // Redirect them to the /login page, but save the current location they were
-    // trying to go to when they were redirected. This allows us to send them
-    // along to that page after they login, which is a nicer user experience
-    // than dropping them off on the home page.
     return (
       <Navigate
         to={process.env.PUBLIC_URL + "/"}

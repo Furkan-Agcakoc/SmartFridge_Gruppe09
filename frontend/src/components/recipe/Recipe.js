@@ -42,9 +42,7 @@ const Recipe = ({
       <IconButton
         aria-label="more"
         id="long-button"
-        aria-controls={
-          openMenus[recipe.recipeId] ? "long-menu" : undefined
-        }
+        aria-controls={openMenus[recipe.recipeId] ? "long-menu" : undefined}
         aria-expanded={openMenus[recipe.recipeId] ? "true" : undefined}
         aria-haspopup="true"
         onClick={(event) => handleAnchorClickRecipe(recipe.recipeId, event)}
@@ -77,7 +75,7 @@ const Recipe = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleClickOpenDialog(recipe.recipeId)}
+          onClick={() => handleClickOpenDialog(recipe.recipeId, "recipe")}
           className="menu-item"
           disableRipple
         >
