@@ -108,18 +108,16 @@ class AddRecipePopup extends Component {
     }));
   };
 
-  handleClick = () => {
-    const { recipeData, currentIngredient } = this.state;
-    if (
-      recipeData.title.trim() === "" ||
-      recipeData.instructions.trim() === ""
-    ) {
-      this.setState({ showAlert: true });
+  handleClick = (e) => {
+    const { recipeData } = this.state;
+    const form = e.target.closest("form");
+    if (form.checkValidity() && recipeData.ingredients.length > 0) {
+      console.log("Form submitted: ", recipeData);
+      this.props.handleCreateRecipes(recipeData);
     } else {
-      this.setState({ showAlert: false });
-      this.props.handleCreateRecipes(recipeData, currentIngredient);
-      this.props.handlePopupRecipeClose();
+      this.setState({ showAlert: true });
     }
+    console.log("Hier sieht man recipeData",recipeData.ingredients);
   };
 
   render() {
@@ -260,7 +258,7 @@ class AddRecipePopup extends Component {
                 }}
               >
                 <TextField
-                  required
+                  // required
                   label="Menge"
                   placeholder="Menge"
                   name="amount"
@@ -281,7 +279,7 @@ class AddRecipePopup extends Component {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      required
+                      // required
                       value={unit}
                       onChange={this.handleIngredientChange}
                       onInput={this.handleInput}
@@ -293,7 +291,7 @@ class AddRecipePopup extends Component {
                   )}
                 />
                 <TextField
-                  required
+                  // required
                   label="Zutat"
                   placeholder="Zutat"
                   name="name"

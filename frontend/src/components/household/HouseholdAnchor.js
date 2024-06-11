@@ -17,10 +17,15 @@ const HouseholdList = ({
   handleAnchorClick,
   handleAnchorClose,
   handleAnchorEdit,
-  handleClickOpenDialog,
   anchorEls,
   openMenus,
+  handleOpenDialog,
 }) => {
+  const handleEditClick = (householdId) => {
+    handleOpenDialog("household", householdId);
+    handleAnchorClose(householdId);
+  };
+
   return households.map((household) => (
     <Box
       key={household.householdId}
@@ -66,7 +71,7 @@ const HouseholdList = ({
         onClose={() => handleAnchorClose(household.householdId)}
       >
         <MenuItem
-          onClick={() => handleAnchorEdit(household)}
+          onClick={() => handleAnchorEdit(household.householdId)}
           className="menu-item"
           disableRipple
         >
@@ -77,7 +82,7 @@ const HouseholdList = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleClickOpenDialog(household.householdId)}
+          onClick={() => handleEditClick(household.householdId)}
           className="menu-item"
           disableRipple
         >
