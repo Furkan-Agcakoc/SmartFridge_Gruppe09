@@ -20,7 +20,6 @@ class HouseholdPage extends Component {
       anchorEls: {},
       openMenus: {},
       householdIdToDelete: null,
-      alertMessageHousehold: "",
     };
   }
 
@@ -134,7 +133,10 @@ class HouseholdPage extends Component {
   };
 
   handleAnchorDelete = (householdId) => {
+    const { households } = this.state;
     this.setState((prevState) => {
+      console.log("HouseholdPage => Household deleted");
+
       const newOpenMenus = { ...prevState.openMenus, [householdId]: false };
       const newHouseholds = prevState.households.filter(
         (h) => h.householdId !== householdId
@@ -144,18 +146,16 @@ class HouseholdPage extends Component {
         openMenus: newOpenMenus,
       };
     });
-  };
-
-  handleCloseDialog = () => {
-    this.setState({ dialogopen: false });
+    console.log(households);
   };
 
   handleConfirmDelete = () => {
     const { householdIdToDelete } = this.state;
+    console.log(householdIdToDelete);
     if (householdIdToDelete !== null) {
       this.handleAnchorDelete(householdIdToDelete);
     }
-    this.handleCloseDialog();
+    this.props.handleCloseDialog();
   };
 
   render() {
@@ -166,26 +166,23 @@ class HouseholdPage extends Component {
       popupOpen,
       isEditMode,
       currentlyEditing,
-      dialogopen,
-      alertMessageHousehold,
+      // dialogopen,
+      // dialogType,
     } = this.state;
 
     const {
       handleChange,
       handleInvalid,
       handleInput,
-      triggerAlert,
+      dialogOpen,
+      dialogType,
+      handleOpenDialog,
+      handleCloseDialog,
     } = this.props;
 
     const editingHousehold = currentlyEditing
       ? households.find((h) => h.householdId === currentlyEditing)
       : null;
-
-    // const showAlertHousehold = showAlert && (
-    //   <Alert severity="error" sx={{ marginBottom: "20px" }}>
-    //     {alertMessageHousehold}
-    //   </Alert>
-    // );
 
     return (
       <>
@@ -264,9 +261,10 @@ class HouseholdPage extends Component {
                 handleAnchorClick={this.handleAnchorClick}
                 handleAnchorClose={this.handleAnchorClose}
                 handleAnchorEdit={this.handleAnchorEdit}
-                handleClickOpenDialog={this.handleClickOpenDialog}
                 anchorEls={anchorEls}
                 openMenus={openMenus}
+                handleOpenDialog={handleOpenDialog}
+                // handleOpenDialog={(type) => this.deleteDialog.handleOpenDialog(type)}
               />
             </Box>
             {popupOpen && (
@@ -280,18 +278,27 @@ class HouseholdPage extends Component {
                 handleInvalid={handleInvalid}
                 handleInput={handleInput}
                 handleChange={handleChange}
-                alertMessageHousehold={alertMessageHousehold}
                 households={households}
                 openPopup={this.openPopup}
-                triggerAlert={triggerAlert}
               />
             )}
-            {dialogopen && (
+            <DeleteConfirmationDialog
+              dialogOpen={dialogOpen}
+              dialogType={dialogType}
+              handleCloseDialog={handleCloseDialog}
+              handleConfirmDelete={this.handleConfirmDelete}
+              // ref={(instance) => {
+              //   this.deleteDialog = instance;
+              // }}
+            />
+            {/* {dialogopen && (
               <DeleteConfirmationDialog
-                handleCloseDialog={this.handleCloseDialog}
-                handleConfirmDelete={this.handleConfirmDelete}
+                dialogType={dialogType}
+                dialogopen={dialogopen}
+                handleConfirmDelete={handleConfirmDelete}
+                handleCloseDialog={handleCloseDialog}
               />
-            )}
+            )} */}
           </Box>
         </Box>
       </>
