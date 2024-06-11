@@ -275,18 +275,6 @@ class Administration():
             mapper.delete(grocerystatement)
 
 
-    def convert_unit(self, value, unit_from, unit_to):
-        if unit_from == "g" and unit_to == "kg":
-            return value / 1000
-        elif unit_from == "kg" and unit_to == "g":
-            return value * 1000
-        elif unit_from == "ml" and unit_to == "l":
-            return value / 1000
-        elif unit_from == "l" and unit_to == "ml":
-            return value * 1000
-        else:
-            return "Ihre Einheit ist ungültig oder die Umrechnung ist nicht möglich."
-
 
 
     """
@@ -485,30 +473,84 @@ class Administration():
     def update_gs(self,gs):
         with GroceryStatementMapper() as mapper:
             mapper.update_grocerystatement_quantity(gs)
+
+    def convert_unit(self, value, unit_from_id, unit_to_id):
+        unit_from = self.get_measure_by_id(unit_from_id).get_unit()
+        unit_to = self.get_measure_by_id(unit_to_id).get_unit()
+
+        if (unit_from == "g" and unit_to == "kg"):
+            return value / 1000
+        elif (unit_from == "kg" and unit_to == "g"):
+            return value * 1000
+        elif (unit_from == "ml" and unit_to == "l"):
+            return value / 1000
+        elif (unit_from == "l" and unit_to == "ml"):
+            return value * 1000
+        else:
+            return value
+
+    def are_units_compatible(self, unit_from_id, unit_to_id):
+        # Einheiten-Namen abrufen
+        unit_from = self.get_measure_by_id(unit_from_id).get_unit()
+        unit_to = self.get_measure_by_id(unit_to_id).get_unit()
+
+        # Definition von kompatiblen Einheiten
+        compatible_units = {
+            'g': ['g', 'kg'],
+            'kg': ['g', 'kg'],
+            'ml': ['ml', 'l'],
+            'l': ['ml', 'l']
+        }
+
+        # Prüfen auf direkte Übereinstimmung
+        if unit_from == unit_to:
+            return True
+
+        # Prüfen auf kompatible Übereinstimmung
+        return unit_to in compatible_units.get(unit_from, [])
+
     def calculate_recipe_fridge(self, recipe_id, fridge_id):
-        # Rezept und Kühlschrankinhalt abrufen
         recipe_content = self.get_grocerystatement_by_recipe(recipe_id)
         fridge_content = self.get_grocerystatement_by_fridge(fridge_id)
 
-        if recipe_content is None:
-            return "Rezeptinhalt nicht gefunden"
-        if fridge_content is None:
-            return "Kühlschrankinhalt nicht gefunden"
+        if not recipe_content or not fridge_content:
+            return "Rezept- oder Kühlschrankinhalt nicht gefunden"
+
+        response_messages = []
 
         for recipe_grocery in recipe_content:
+            recipe_qty, recipe_unit_id = recipe_grocery.get_quantity(), recipe_grocery.get_unit()
+            item_matched = False  # Flag um zu prüfen, ob eine passende Einheit gefunden wurde
+
             for fridge_grocery in fridge_content:
                 if fridge_grocery.get_grocery_name() == recipe_grocery.get_grocery_name():
-                    # Menge abziehen
-                    new_value = fridge_grocery.get_quantity() - recipe_grocery.get_quantity()
-                    # Sicherstellen, dass die Menge nicht negativ wird
-                    if new_value < 0:
-                        new_value = 0
-                    fridge_grocery.set_quantity(new_value)  #setzt die quantität von fridge auf den neuen wert
-                    # Lebensmittel in der grocerystatement-Tabelle aktualisieren
-                    self.update_gs(fridge_grocery)
+                    fridge_unit_id = fridge_grocery.get_unit()
+                    if self.are_units_compatible(recipe_unit_id, fridge_unit_id):
+                        # Einheitenkonvertierung nur durchführen, wenn nötig
+                        if self.get_measure_by_id(recipe_unit_id).get_unit() in ['g', 'kg', 'ml', 'l']:
+                            fridge_qty = self.convert_unit(fridge_grocery.get_quantity(), fridge_unit_id, 1)
+                            recipe_qty_converted = self.convert_unit(recipe_qty, recipe_unit_id, 1)
+                        else:
+                            fridge_qty = fridge_grocery.get_quantity()
+                            recipe_qty_converted = recipe_qty
 
+                        new_value = fridge_qty - recipe_qty_converted
+                        if new_value < 0:
+                            continue  # Nächste Einheit prüfen, falls vorhanden
+                        else:
+                            item_matched = True
 
-        return "Kühlschrankinhalt aktualisiert"  # Erfolgreich aktualisiert
+                        new_value = self.convert_unit(new_value, 1, fridge_unit_id) if fridge_unit_id in [1, 2, 3,
+                                                                                                          4] else new_value
+                        fridge_grocery.set_quantity(new_value)
+                        self.update_gs(fridge_grocery)
+                        break  # Kompatible Einheit gefunden und bearbeitet
 
+            if not item_matched:
+                response_messages.append(
+                    f"Keine kompatible Maßeinheit gefunden für '{recipe_grocery.get_grocery_name()}'.")
 
+        if response_messages:
+            return " ".join(response_messages)
+        return "Kühlschrankinhalt erfolgreich aktualisiert"
 

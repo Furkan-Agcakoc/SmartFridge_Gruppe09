@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `grocerystatement` (
   `id` INT NOT NULL ,
   `grocery_name` INT NOT NULL DEFAULT '0',
   `unit` INT NOT NULL DEFAULT '0',
-  `quantity` FLOAT NOT NULL DEFAULT '0',
+  `quantity` FLOAT NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`id`),
   KEY `grocery_name` (`grocery_name`),
   KEY `unit` (`unit`),
