@@ -506,9 +506,9 @@ class Administration():
                     fridge_grocery.set_quantity(new_value)  #setzt die quantität von fridge auf den neuen wert
                     # Lebensmittel in der grocerystatement-Tabelle aktualisieren
                     self.update_gs(fridge_grocery)
-                    break  # Lebensmittel wurde gefunden, abbrechen
 
-        return True  # Erfolgreich aktualisiert
+
+        return "Kühlschrankinhalt aktualisiert"  # Erfolgreich aktualisiert
 
 
 

@@ -91,10 +91,10 @@ class GroceryStatementMapper (Mapper):
             grocerystatement.set_quantity(quantity)
             result.append(grocerystatement)
 
-            self._cnx.commit()
-            cursor.close()
+        self._cnx.commit()
+        cursor.close()
 
-            return result
+        return result
 
     def find_by_recipe_id(self, recipe_id):
 
@@ -118,10 +118,10 @@ class GroceryStatementMapper (Mapper):
             grocerystatement.set_quantity(quantity)
             result.append(grocerystatement)
 
-            self._cnx.commit()
-            cursor.close()
+        self._cnx.commit()
+        cursor.close()
 
-            return result
+        return result
 
 
     def checkGroceryInFridge(self, grocerysatement_id, fridge_id):  #anschauen
