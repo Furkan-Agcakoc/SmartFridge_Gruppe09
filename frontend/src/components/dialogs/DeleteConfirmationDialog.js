@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -6,37 +6,50 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  Slide,
-} from "@mui/material";
+  Slide
+} from '@mui/material';
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+// Texts for different dialog types
+const dialogTexts = {
+  household: {
+    title: 'Haushalt löschen',
+    description: 'Sind Sie sicher, dass Sie diesen Haushalt löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+  },
+  grocery: {
+    title: 'Einkaufsliste löschen',
+    description: 'Sind Sie sicher, dass Sie diese Einkaufsliste löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+  }
+};
 
 const DeleteConfirmationDialog = ({
+  dialogOpen,
+  dialogType,
   handleCloseDialog,
-  handleConfirmDelete,
+  handleConfirmDelete
 }) => {
+  const dialogText = dialogTexts[dialogType] || {};
+
+  const handleDelete = () => {
+    handleConfirmDelete();
+  };
+
   return (
     <Dialog
-      open={true}
-      TransitionComponent={Transition}
+      open={dialogOpen}
+      TransitionComponent={Slide}
       keepMounted
       onClose={handleCloseDialog}
       aria-describedby="alert-dialog-slide-description"
     >
-      <DialogTitle>{"Haushalt löschen bestätigen"}</DialogTitle>
+      <DialogTitle>{dialogText.title}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-slide-description">
-          Sind Sie sicher, dass Sie dieses Haushalt löschen möchten? Alle
-          Mitglieder, der Kühlschrankinhalt und alle gespeicherten Rezepte
-          werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht
-          werden.
+          {dialogText.description}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialog}>Abbrechen</Button>
-        <Button onClick={handleConfirmDelete}>Löschen</Button>
+        <Button onClick={handleDelete}>Löschen</Button>
       </DialogActions>
     </Dialog>
   );

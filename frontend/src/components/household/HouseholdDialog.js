@@ -9,42 +9,59 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import AlertComponent from "../dialogs/AlertComponent";
 
-class PopupHousehold extends Component {
+class HouseholdDialog extends Component {
   constructor(props) {
     super(props);
     this.state = {
       householdData: {
-        householdName: "",
-        emails: [],
+        householdName: props.isEditMode ? props.householdName : "",
+        // emails: props.isEditMode ? props.householdEmails : [],
+        emails: [
+          "furkana.gs2002@gmail.com",
+          "meayavuz@gmail.com",
+          "baran2323a@gmail.com",
+          "derzockerlp63@gmail.com",
+          "sead.shat@gmail.com",
+        ],
       },
       showAlert: props.showAlert,
+      // households: props.households,
     };
-    // this.formRef = React.createRef();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.isEditMode !== this.props.isEditMode ||
+      prevProps.householdName !== this.props.householdName
+    ) {
+      this.setState({
+        householdData: {
+          householdName: this.props.householdName,
+          emails: this.props.householdEmails || [],
+        },
+      });
+    }
   }
 
   handleClick = (e) => {
-    // const form = this.formRef.current;
-    const { householdData: {householdName} } = this.state;
+    const { householdData } = this.state;
     const form = e.target.closest("form");
     if (form.checkValidity()) {
-      this.props.handleCreateObject(householdName);
+      this.props.handleCreateObject(householdData);
       console.log("Form is valid");
     } else {
       this.setState({ showAlert: true });
     }
   };
+
   render() {
-    const {
-      // handleChange,
-      closePopup,
-      handleInvalid,
-      handleInput,
-      showAlertComponent,
-    } = this.props;
+    const { closePopup, handleInvalid, handleInput, isEditMode } = this.props;
 
     const {
       householdData: { householdName, emails },
+      showAlert,
     } = this.state;
 
     return (
@@ -81,9 +98,9 @@ class PopupHousehold extends Component {
               variant="h4"
               sx={{ marginBottom: "20px", marginTop: "20px", fontWeight: 600 }}
             >
-              Neuen Haushalt hinzufügen
+              {isEditMode ? "Haushalt bearbeiten" : "Neuen Haushalt hinzufügen"}
             </Typography>
-            {showAlertComponent}
+            <AlertComponent showAlert={showAlert} alertType="household" />
             <Box
               sx={{
                 display: "flex",
@@ -117,7 +134,6 @@ class PopupHousehold extends Component {
                   <TextField
                     {...params}
                     name="emails"
-                    value={emails}
                     label="Bewohner hinzufügen"
                     placeholder="Bewohner hinzufügen"
                     InputLabelProps={{ style: { fontSize: "15px" } }}
@@ -150,7 +166,7 @@ class PopupHousehold extends Component {
                     },
                   }}
                 >
-                  Hinzufügen
+                  {isEditMode ? "Speichern" : "Hinzufügen"}
                 </Button>
                 <Button
                   variant="contained"
@@ -177,4 +193,4 @@ class PopupHousehold extends Component {
   }
 }
 
-export default PopupHousehold;
+export default HouseholdDialog;
