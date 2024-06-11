@@ -34,7 +34,8 @@ class App extends Component {
       authError: null,
       authLoading: true,
       showAlert: false,
-      alertMessageHousehold: "Please enter a valid household name.",
+      dialogOpen: false,
+      dialogType: "",
     };
   }
 
@@ -127,8 +128,30 @@ class App extends Component {
     console.log("App.js => Input closes alert");
   };
 
+  handleOpenDialog = (type) => {
+    this.setState({
+      dialogType: type,
+      dialogOpen: true,
+    });
+
+
+  };
+
+  handleCloseDialog = () => {
+    this.setState({ dialogOpen: false });
+  };
+
+  // handleConfirmDelete = () => {
+  //   const { householdIdToDelete } = this.state;
+  //   if (householdIdToDelete !== null) {
+  //     this.handleAnchorDelete(householdIdToDelete);
+  //   }
+  //   this.handleCloseDialog();
+  // };
+
   render() {
     const { currentUser } = this.state;
+    const { dialogOpen, dialogType } = this.state;
 
     return (
       <>
@@ -174,6 +197,10 @@ class App extends Component {
                       handleChange={this.handleChange}
                       handleInvalid={this.handleInvalid}
                       handleInput={this.handleInput}
+                      dialogOpen={dialogOpen}
+                      dialogType={dialogType}
+                      handleOpenDialog={this.handleOpenDialog}
+                      handleCloseDialog={this.handleCloseDialog}
                     />
                   </Secured>
                 }

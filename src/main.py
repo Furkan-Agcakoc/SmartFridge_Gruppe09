@@ -789,6 +789,44 @@ class MeasureOperations(Resource):
         else:
             return '', 500
 
+"""
+@smartfridge.route('/convert')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
+class UnitConversion(Resource):
+    @smartfridge.expect(api.model('Conversion', {
+        'value': fields.Float(required=True, description='Der Wert, der konvertiert werden soll'),
+        'unit_from': fields.String(required=True, description='Die Ausgangseinheit'),
+        'unit_to': fields.String(required=True, description='Die Zieleinheit')
+    }))
+    def post(self):
+        "Konvertiert Einheiten"
+        data = request.json
+        value = data['value']
+        unit_from = data['unit_from']
+        unit_to = data['unit_to']
+
+        adm = Administration()
+        result = adm.convert_unit(value, unit_from, unit_to)
+
+        if isinstance(result, str):
+            return {'message': result}, 400
+        return {'Konvertierter Wert': result}, 200
+"""
+
+
+@smartfridge.route('/calculate_recipe_fridge/<int:recipe_id>/<int:fridge_id>')
+@smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
+class CalculateRecipeFridge(Resource):
+    def post(self, recipe_id, fridge_id):
+        # Instanz der Administrationsklasse erstellen
+        adm = Administration()
+
+        # Methode calculate_recipe_fridge aufrufen
+        result = adm.calculate_recipe_fridge(recipe_id, fridge_id)
+
+        # Rückgabe des Ergebnisses
+        return result, 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -52,11 +52,7 @@ class GroceryStatementMapper (Mapper):
         result = None
         cursor = self._cnx.cursor()
         command = """
-            SELECT grocerystatement.id, grocerystatement.grocery_name, grocerystatement.unit, grocerystatement.quantity 
-            FROM grocerystatement
-            JOIN grocery ON grocerystatement.grocery_name = grocery.grocery_name
-            WHERE grocery.grocery_name = {}
-            ORDER BY grocerystatement.id
+            SELECT id, grocery_name, unit, quantity FROM grocerystatement WHERE id=%s
             """.format(key)
         cursor.execute(command, (key,))
         tuples = cursor.fetchall()
@@ -95,10 +91,10 @@ class GroceryStatementMapper (Mapper):
             grocerystatement.set_quantity(quantity)
             result.append(grocerystatement)
 
-            self._cnx.commit()
-            cursor.close()
+        self._cnx.commit()
+        cursor.close()
 
-            return result
+        return result
 
     def find_by_recipe_id(self, recipe_id):
 
@@ -122,10 +118,10 @@ class GroceryStatementMapper (Mapper):
             grocerystatement.set_quantity(quantity)
             result.append(grocerystatement)
 
-            self._cnx.commit()
-            cursor.close()
+        self._cnx.commit()
+        cursor.close()
 
-            return result
+        return result
 
 
     def checkGroceryInFridge(self, grocerysatement_id, fridge_id):  #anschauen
@@ -251,6 +247,20 @@ class GroceryStatementMapper (Mapper):
 
         command = "DELETE FROM grocerystatement WHERE id={}".format(grocerystatement.get_id())
         cursor.execute(command)
+
+        self._cnx.commit()
+        cursor.close()
+
+    def update_grocerystatement_quantity(self, grocerystatement):
+        cursor = self._cnx.cursor()
+
+        command = """
+            UPDATE grocerystatement
+            SET quantity = %s
+            WHERE id = %s
+        """
+        data = (grocerystatement.get_quantity(), grocerystatement.get_id())
+        cursor.execute(command, data)
 
         self._cnx.commit()
         cursor.close()
