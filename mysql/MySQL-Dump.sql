@@ -81,7 +81,9 @@ INSERT INTO measure (unit) VALUES
 ('l'),
 ('Teelöffel'),
 ('Esslöffel'),
-('Prise');
+('Prise'),
+('Stück');
+
 
 
 -- Table structure for table `grocerystatement`

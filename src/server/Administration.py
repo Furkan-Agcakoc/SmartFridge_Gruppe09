@@ -554,3 +554,50 @@ class Administration():
             return " ".join(response_messages)
         return "Kühlschrankinhalt erfolgreich aktualisiert"
 
+    def find_recipes_by_fridge_contents(self, household_id):
+        # Retrieve all recipes for the given household
+        recipes = self.get_recipe_by_household_id(household_id)
+
+        # Retrieve fridge contents for the household
+        fridge = self.get_fridge_of_household(household_id)
+        if not fridge:
+            return "Kein Fridge in diesem Haushalt."
+
+        fridge_contents = self.get_grocerystatement_by_fridge(fridge[0].get_id())
+        # Use a dictionary to map grocery names to their quantities and units
+        fridge_dict = {item.get_grocery_name(): (item.get_quantity(), item.get_unit()) for item in fridge_contents}
+
+        feasible_recipes = []
+        for recipe in recipes:
+            recipe_ingredients = self.get_grocerystatement_by_recipe(recipe.get_id())
+            can_make = True
+            missing_ingredients = []
+
+            # Check each ingredient in the recipe against the fridge contents
+            for ingredient in recipe_ingredients:
+                required_amount = ingredient.get_quantity()
+                required_unit_id = ingredient.get_unit()
+                # Fetch the unit name for the required unit ID
+                required_unit = self.get_measure_by_id(required_unit_id).get_unit()
+
+                # Get available amount and unit from fridge dict; defaults to (0, None) if not found
+                available_amount, available_unit_id = fridge_dict.get(ingredient.get_grocery_name(), (0, None))
+                if available_unit_id:
+                    available_unit = self.get_measure_by_id(available_unit_id).get_unit()
+                else:
+                    available_unit = None  # No available unit found, perhaps missing from the fridge entirely
+
+                # Check if there's enough and correct unit; otherwise, record what's missing
+                if required_amount > available_amount or required_unit != available_unit:
+                    can_make = False
+                    missing_qty = required_amount - available_amount if available_amount else required_amount
+                    missing_ingredients.append((ingredient.get_grocery_name(), f"{missing_qty} {required_unit} benötigt"))
+
+            # Append feasible recipes and their missing ingredients
+            if can_make:
+                feasible_recipes.append((recipe.get_recipe_name(), "Alle Zutaten verfügbar, Rezept kann zubereitet werden."))
+            else:
+                feasible_recipes.append((recipe.get_recipe_name(), "Fehlende Zutat/en: " + ", ".join(
+                    [f"{name} {qty}" for name, qty in missing_ingredients])))
+
+        return feasible_recipes

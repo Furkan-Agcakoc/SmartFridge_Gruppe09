@@ -99,6 +99,7 @@ class InhabitantDeleteOperations(Resource):
 
 
 
+
 @smartfridge.route('/inhabitant/<int:household_id>')
 @smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
 @smartfridge.param('household_id', 'household_id')
@@ -826,6 +827,25 @@ class CalculateRecipeFridge(Resource):
 
         # Rückgabe des Ergebnisses
         return result, 200
+
+@smartfridge.route('/household/<int:household_id>/recipes')
+@smartfridge.response(500, 'Server Error')
+@smartfridge.param('household_id', 'The ID of the household')
+class RecipesByFridgeContents(Resource):
+    def get(self, household_id):
+        """
+        Retrieve recipes that can be made with the contents of the fridge within the specified household.
+        It also lists ingredients that are missing to complete each recipe.
+        """
+        adm = Administration()
+        try:
+            results = adm.find_recipes_by_fridge_contents(household_id)
+            if not results:
+                return {'message': 'No recipes could be fully or partially made with the current fridge contents.'}, 404
+            return results, 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+
 
 
 if __name__ == '__main__':
