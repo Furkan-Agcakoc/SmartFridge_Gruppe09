@@ -66,7 +66,8 @@ grocerystatement = api.inherit('GroceryStatement', bo, {
 })
 
 measure = api.inherit('Measure', bo, {
-    'unit': fields.String(attribute='_unit', description='Einheit eines Lebensmittels')
+    'unit': fields.String(attribute='_unit', description='Einheit eines Lebensmittels'),
+    'household_id': fields.Integer(attribute='_household_id', description='Die Id eines Haushalts')
 })
 
 # Inhabitant
@@ -745,7 +746,7 @@ class MeasureListOperations(Resource):
 
         if proposal is not None:
             m = adm.create_measure(
-                proposal.get_unit())
+                proposal.get_unit(), proposal.get_household_id())
             return m, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
