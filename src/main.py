@@ -298,18 +298,23 @@ class HouseholdListOperations(Resource):
             return {'message': 'Liste ist leer'}
         return household_list
 
+    @smartfridge.marshal_with(household, code=200)
     @smartfridge.expect(household)
-    @smartfridge.marshal_with(fridge, code=200)
+    # @secured
     def post(self):
-        """Erstellen eines Household und eines Fridge Objekts"""
+        """Erstellen eines Household Objekts"""
 
         adm = Administration()
 
-        # Erstellen des Household-Objekts
-        household_name = api.payload["household_name"]
-        household, fridge = adm.create_household_and_fridge(household_name)
+        proposal = Household.from_dict(api.payload)
 
-        return fridge, 200
+        if proposal is not None:
+            hh = adm.create_household_and_fridge(
+                proposal.get_household_name())
+            return hh, 200
+        else:
+            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
+            return '', 500
 @smartfridge.route('/household/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 @smartfridge.param('id', 'Die ID des Haushalts.')
@@ -665,7 +670,15 @@ grocerystatement
 @smartfridge.route('/grocerystatement')
 @smartfridge.response(500,'Falls es zu einem Server Fehler kommt.')
 class GrocerystatementListOperations(Resource):
-    # ...
+    @smartfridge.marshal_list_with(grocerystatement)
+    # @secured
+    def get(self):
+        "Wiedergabe der Grocerystatement Objekte"
+        adm = Administration()
+        grocerystatement_list = adm.get_all_grocerystatements()
+        if len(grocerystatement_list) == 0:
+            return {'message': 'Liste ist leer'}
+        return grocerystatement_list
     @smartfridge.marshal_with(grocerystatement, code=200)
     @smartfridge.expect(grocerystatement)
     # @secured
@@ -852,4 +865,3 @@ class RecipesByFridgeContents(Resource):
 if __name__ == '__main__':
     app.run(debug=True)
 
-#

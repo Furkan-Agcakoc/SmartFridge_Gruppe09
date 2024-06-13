@@ -12,7 +12,7 @@ class HouseholdMapper(Mapper):
         cursor.execute("SELECT * FROM household")
         tuples = cursor.fetchall()
 
-        for (id, household_name, user_id) in tuples:
+        for (id, household_name) in tuples:
             household = Household()
             household.set_id(id)
             household.set_household_name(household_name)
