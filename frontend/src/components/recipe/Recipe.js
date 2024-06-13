@@ -14,13 +14,20 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const Recipe = ({
   recipes,
-  handleAnchorClickRecipe,
-  handleAnchorCloseRecipe,
-  handleAnchorEditRecipe,
-  handleClickOpenDialog,
+  handleAnchorClick,
+  handleAnchorClose,
+  handleAnchorEdit,
   anchorEls,
   openMenus,
+  handleOpenDialog,
+  setIdToDelete,
 }) => {
+  const handleDeleteClick = (recipeId) => {
+    setIdToDelete(recipeId);
+    handleOpenDialog(recipeId, "recipe");
+    handleAnchorClose(recipeId);
+  };
+
   return recipes.map((recipe) => (
     <Paper
       key={recipe.recipeId}
@@ -45,7 +52,7 @@ const Recipe = ({
         aria-controls={openMenus[recipe.recipeId] ? "long-menu" : undefined}
         aria-expanded={openMenus[recipe.recipeId] ? "true" : undefined}
         aria-haspopup="true"
-        onClick={(event) => handleAnchorClickRecipe(recipe.recipeId, event)}
+        onClick={(event) => handleAnchorClick(recipe.recipeId, event)}
         style={{
           position: "absolute",
           top: "2px",
@@ -61,10 +68,10 @@ const Recipe = ({
         MenuListProps={{ "aria-labelledby": "long-button" }}
         anchorEl={anchorEls[recipe.recipeId]}
         open={openMenus[recipe.recipeId]}
-        onClose={() => handleAnchorCloseRecipe(recipe.recipeId)}
+        onClose={() => handleAnchorClose(recipe.recipeId)}
       >
         <MenuItem
-          onClick={() => handleAnchorEditRecipe(recipe)}
+          onClick={() => handleAnchorEdit(recipe.recipeId)}
           className="menu-item"
           disableRipple
         >
@@ -75,7 +82,7 @@ const Recipe = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleClickOpenDialog(recipe.recipeId, "recipe")}
+          onClick={() => handleDeleteClick(recipe.recipeId)}
           className="menu-item"
           disableRipple
         >

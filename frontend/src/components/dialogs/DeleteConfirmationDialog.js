@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -6,31 +6,51 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  Slide
-} from '@mui/material';
+  Slide,
+} from "@mui/material";
 
 // Texts for different dialog types
 const dialogTexts = {
   household: {
-    title: 'Haushalt löschen',
-    description: 'Sind Sie sicher, dass Sie diesen Haushalt löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+    title: "Haushalt löschen",
+    description:
+      "Sind Sie sicher, dass Sie diesen Haushalt löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
   },
   grocery: {
-    title: 'Einkaufsliste löschen',
-    description: 'Sind Sie sicher, dass Sie diese Einkaufsliste löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
-  }
+    title: "Einkaufsliste löschen",
+    description:
+      "Sind Sie sicher, dass Sie diese Einkaufsliste löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+  },
+  recipe: {
+    title: "Rezept löschen",
+    description:
+      "Sind Sie sicher, dass Sie dieses Rezept löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+  },
 };
 
 const DeleteConfirmationDialog = ({
   dialogOpen,
   dialogType,
   handleCloseDialog,
-  handleConfirmDelete
+  handleConfirmDelete,
+  // handleConfirmDeleteHousehold,
+  // handleConfirmDeleteGrocery,
 }) => {
   const dialogText = dialogTexts[dialogType] || {};
 
-  const handleDelete = () => {
+  // const handleClickDelete = (id) => {
+  //   if (dialogType === 'grocery') {
+  //     handleConfirmDeleteGrocery(id);
+  //   } else if (dialogType === 'household') {
+  //     handleConfirmDeleteHousehold(id);
+  //   } else {
+  //     console.error('handleConfirmDelete function is not defined');
+  //   }
+  // };
+
+  const handleClickDelete = () => {
     handleConfirmDelete();
+    handleCloseDialog();
   };
 
   return (
@@ -49,7 +69,7 @@ const DeleteConfirmationDialog = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialog}>Abbrechen</Button>
-        <Button onClick={handleDelete}>Löschen</Button>
+        <Button onClick={handleClickDelete}>Löschen</Button>
       </DialogActions>
     </Dialog>
   );
