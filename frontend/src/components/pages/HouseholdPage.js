@@ -7,6 +7,7 @@ import Tooltip from "@mui/material/Tooltip";
 import HouseholdDialog from "../household/HouseholdDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import HouseholdAnchor from "../household/HouseholdAnchor";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 class HouseholdPage extends Component {
   constructor(props) {
@@ -60,8 +61,12 @@ class HouseholdPage extends Component {
         currentlyEditing: null,
       });
     } else {
+      const api = SmartFridgeAPI.getAPI();
       const id = households.length + 1;
-
+      api.addHouseHold({
+        id: 0,
+        household_name: householdData["householdName"],
+      });
       this.setState((prevState) => {
         const newHouseholds = [
           ...prevState.households,
