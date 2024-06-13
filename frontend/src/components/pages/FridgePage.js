@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  Paper,
-  Tooltip,
-  Tab,
-  Box,
-  Link,
-  Container,
-  Alert,
-} from "@mui/material";
+import { Paper, Tooltip, Tab, Box, Link, Container } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
@@ -15,50 +7,44 @@ import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 import Recipe from "../recipe/Recipe";
 import Grocery from "../grocery/Grocery";
-// import PopupGrocery from "../grocery/PopupGrocery";
 import FridgeSearchBar from "../FridgeSearchBar";
-import AddGroceryPopup from "../grocery/AddGroceryPopup";
-import EditGroceryPopup from "../grocery/EditGroceryPopup";
+import GroceryDialog from "../grocery/GroceryDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
-import AddRecipePopup from "../recipe/AddRecipePopup";
-import EditRecipePopup from "../recipe/EditRecipePopup";
+import RecipeDialog from "../recipe/RecipeDialog";
 
 class FridgePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: "1",
-      showAlert: false,
-
-      // Grocery Props
+      // Grocery
+      popupGroceryOpen: false,
       groceryCount: 0,
       groceries: [],
       groceryIdToDelete: null,
-      popupGroceryOpen: false,
-      // Recipe Props
+
+      // Edit Props
+      isEditMode: false,
+      currentlyEditing: null,
+      anchorEls: {},
+      openMenus: {},
+
+      // Recipe
+      popupRecipeOpen: false,
       recipeCount: 0,
       recipes: [],
       recipeIdToDelete: null,
-      popupRecipeOpen: false,
-      currentlyEditingRecipe: null,
 
-      // Edit Props
-      anchorEls: {},
-      openMenus: {},
-      currentlyEditing: null,
+      // Dialog Props
+
       dialogopen: false,
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
+    this.setIdToDelete = this.setIdToDelete.bind(this);
+    this.handleConfirmDelete = this.handleConfirmDelete.bind(this);
+    this.handleAnchorDelete = this.handleAnchorDelete.bind(this);
   }
-
-  //   handleChange = (event) => {
-  //     const { name, value } = event.target;
-  //     this.setState({
-  //       [name]: value,
-  //       showAlert: false,
-  //     });
-  //   };
 
   handleTabChange(event, newValue) {
     console.log("Tab changed:", newValue);
@@ -67,120 +53,60 @@ class FridgePage extends Component {
     });
   }
 
-  handlePopupGroceryOpen = () => {
+  // -----------------------------------------Grocery--------------------------------------
+
+  handlePopupGroceryOpen = (isEditMode = false, grocery = null) => {
     console.log("Grocery-Popup opened");
     this.setState({
       popupGroceryOpen: true,
-      currentlyEditing: null,
+      isEditMode,
+      currentlyEditing: grocery,
     });
   };
 
   handlePopupGroceryClose = () => {
-    console.log("Grocery-Popup closed von edit");
+    console.log("Grocery-Popup closed");
     this.setState({
       popupGroceryOpen: false,
       currentlyEditing: null,
     });
   };
 
-  handlePopupRecipeOpen = () => {
-    console.log("Recipe-Popup opened");
-    this.setState({
-      popupRecipeOpen: true,
-      currentlyEditingRecipe: null,
-    });
-  };
-
-  handlePopupRecipeClose = () => {
-    console.log("Recipe-Popup closed recipe recipe");
-    this.setState({
-      popupRecipeOpen: false,
-      currentlyEditingRecipe: null,
-    });
-  };
-
-  handleChange = (event) => {
-    const { name, value } = event.target;
-    // console.log("Input changed:", name, value);
-    this.setState({
-      [name]: value,
-      showAlert: false,
-    });
-  };
-
-  // handleClickOpenDialog = (Id, type) => {
-  //   console.log("Dialog opened for grocery ID:", Id);
-  //   this.setState({
-  //     dialogopen: true,
-  //     groceryIdToDelete: Id,
-  //   });
-  //   this.handleAnchorClose(Id);
-  // };
-
-  handleCloseDialog = () => {
-    console.log("Dialog closed");
-    this.setState({ dialogopen: false });
-  };
-
-  handleConfirmDelete = () => {
-    const { groceryIdToDelete } = this.state;
-    console.log("Confirm delete for grocery ID:", groceryIdToDelete);
-    if (groceryIdToDelete !== null) {
-      this.handleAnchorDelete(groceryIdToDelete);
-    }
-    this.handleCloseDialog();
-  };
-
-  handleCreateGroceries = (currentGrocery) => {
-    const { groceries, currentlyEditing } = this.state;
+  handleCreateGroceries = (groceryData) => {
+    const { currentlyEditing, groceries } = this.state;
 
     if (currentlyEditing !== null) {
-      console.log("Editing grocery ID:", currentlyEditing);
-      // Edit existing grocery
+      const updatedGroceries = this.updateGrocery({
+        groceryId: currentlyEditing,
+        groceryName: groceryData.name,
+        groceryQuantity: groceryData.quantity,
+        groceryUnit: groceryData.unit,
+      });
+
       this.setState({
-        groceries: this.updateGrocery({
-          groceryId: currentlyEditing,
-          groceryName: currentGrocery.name,
-          groceryQuantity: currentGrocery.quantity,
-          groceryUnit: currentGrocery.unit,
-        }),
+        groceries: updatedGroceries,
         popupGroceryOpen: false,
-        currentGrocery: {
-          name: "",
-          quantity: "",
-          unit: "",
-        },
-        showAlert: false,
         currentlyEditing: null,
       });
     } else {
       const id = groceries.length + 1;
-      console.log("Creating grocery:", groceries);
-      // Code to create a new grocery
+
       this.setState((prevState) => {
         const newGroceries = [
           ...prevState.groceries,
           {
             groceryId: id,
-            groceryName: currentGrocery.name,
-            groceryQuantity: currentGrocery.quantity,
-            groceryUnit: currentGrocery.unit,
+            groceryName: groceryData.name,
+            groceryQuantity: groceryData.quantity,
+            groceryUnit: groceryData.unit,
           },
         ];
         const newOpenMenus = { ...prevState.openMenus, [id]: false };
-        console.log(newGroceries);
-        console.log(newOpenMenus);
 
         return {
           groceryCount: prevState.groceryCount + 1,
           popupGroceryOpen: false,
           groceries: newGroceries,
-          currentGrocery: {
-            name: "",
-            quantity: "",
-            unit: "",
-          },
-          showAlert: false,
           openMenus: newOpenMenus,
         };
       });
@@ -198,13 +124,15 @@ class FridgePage extends Component {
     return updatedGroceries;
   }
 
-  handleAnchorClick = (groceryId, event) => {
-    console.log("Anchor clicked for grocery ID:", groceryId);
+  // -------------------------------Methoden für Grocery & Recipe--------------------------------------
+
+  handleAnchorClick = (Id, event) => {
+    console.log("Anchor clicked for grocery ID:", Id);
     this.setState((prevState) => {
-      const newOpenMenus = { ...prevState.openMenus, [groceryId]: true };
+      const newOpenMenus = { ...prevState.openMenus, [Id]: true };
       const newAnchorEls = {
         ...prevState.anchorEls,
-        [groceryId]: event.target,
+        [Id]: event.target,
       };
       console.log("newOpenMenus:", newOpenMenus);
       return {
@@ -214,71 +142,125 @@ class FridgePage extends Component {
     });
   };
 
-  handleAnchorClose = (groceryId) => {
-    console.log("Anchor closed for grocery ID:", groceryId);
+  handleAnchorClose = (Id) => {
+    console.log("Anchor closed:", Id);
     this.setState((prevState) => {
-      const newOpenMenus = { ...prevState.openMenus, [groceryId]: false };
+      const newOpenMenus = { ...prevState.openMenus, [Id]: false };
       return {
         openMenus: newOpenMenus,
       };
     });
   };
 
-  handleAnchorEdit = (grocery) => {
-    console.log("Editing grocery:", grocery);
+  handleAnchorEdit = (Id) => {
+    console.log("Editing:", Id);
+    this.setState(
+      (prevState) => {
+        const newOpenMenus = {
+          ...prevState.openMenus,
+          [Id]: false,
+        };
+        console.log(newOpenMenus);
+        return {
+          currentlyEditing: Id,
+          openMenus: newOpenMenus,
+          popupGroceryOpen: prevState.value === "1",
+          popupRecipeOpen: prevState.value === "2",
+        };
+      },
+      () => {
+        if (this.state.value === "1") {
+          this.handlePopupGroceryOpen(true, Id);
+        } else if (this.state.value === "2") {
+          this.handlePopupRecipeOpen(true, Id);
+        }
+      }
+    );
+  };
+
+  handleAnchorDelete(Id) {
+    console.log("Deleting ID:", Id);
     this.setState((prevState) => {
-      const newOpenMenus = {
-        ...prevState.openMenus,
-        [grocery.groceryId]: false,
-      };
-      console.log(newOpenMenus);
-      return {
-        currentlyEditing: grocery.groceryId,
-        currentGrocery: {
-          name: grocery.groceryName,
-          quantity: grocery.groceryQuantity,
-          unit: grocery.groceryUnit,
-        },
-        openMenus: newOpenMenus,
-      };
+      const newOpenMenus = { ...prevState.openMenus, [Id]: false };
+
+      if (prevState.value === "1") {
+        const newGroceries = prevState.groceries.filter(
+          (g) => g.groceryId !== Id
+        );
+        return {
+          groceries: newGroceries,
+          openMenus: newOpenMenus,
+        };
+      } else if (prevState.value === "2") {
+        const newRecipes = prevState.recipes.filter((r) => r.recipeId !== Id);
+        return {
+          recipes: newRecipes,
+          openMenus: newOpenMenus,
+        };
+      }
+
+      return { openMenus: newOpenMenus };
+    });
+  }
+
+  handleConfirmDelete() {
+    const { groceryIdToDelete, recipeIdToDelete, value } = this.state;
+    console.log("App => Confirm delete");
+    if (value === "1" && groceryIdToDelete !== null) {
+      this.handleAnchorDelete(groceryIdToDelete);
+    } else if (value === "2" && recipeIdToDelete !== null) {
+      this.handleAnchorDelete(recipeIdToDelete);
+    }
+  }
+
+  setIdToDelete(Id) {
+    this.setState((prevState) => ({
+      groceryIdToDelete: prevState.value === "1" ? Id : null,
+      recipeIdToDelete: prevState.value === "2" ? Id : null,
+    }));
+  }
+
+  // -----------------------------------------Recipe--------------------------------------
+
+  handlePopupRecipeOpen = (isEditMode = false, recipe = null) => {
+    console.log("Recipe-Popup openedd");
+    this.setState({
+      popupRecipeOpen: true,
+      isEditMode,
+      currentlyEditing: recipe,
+    });
+  };
+
+  handlePopupRecipeClose = () => {
+    console.log("Recipe-Popup closed recipe recipe");
+    this.setState({
+      popupRecipeOpen: false,
+      currentlyEditing: null,
     });
   };
 
   handleCreateRecipes = (recipeData) => {
-    const { recipes, currentlyEditingRecipe } = this.state;
+    console.log("Recipe-Popup closed recipe recipe");
+    const { currentlyEditing, recipes } = this.state;
 
-    if (currentlyEditingRecipe !== null) {
-      console.log("Editing recipe ID:", currentlyEditingRecipe);
-      // Edit existing recipe
-      this.setState({
-        recipes: this.updateRecipe({
-          recipeId: currentlyEditingRecipe,
-          recipeTitle: recipeData.title,
-          recipeDuration: recipeData.duration,
-          recipeServings: recipeData.servings,
-          recipeInstructions: recipeData.instructions,
-          recipeIngredients: recipeData.ingredients,
-        }),
-        popupRecipeOpen: false,
-        currentIngredient: {
-          amount: "",
-          unit: "",
-          name: "",
-        },
-        recipeData: {
-          title: "",
-          duration: "",
-          servings: "",
-          instructions: "",
-        },
-        showAlert: false,
-        currentlyEditingRecipe: null,
+    if (currentlyEditing !== null) {
+      const updatedRecipes = this.updateRecipe({
+        recipeId: currentlyEditing,
+        recipeTitle: recipeData.title,
+        recipeDuration: recipeData.duration,
+        recipeServings: recipeData.servings,
+        recipeInstructions: recipeData.instructions,
+        recipeIngredients: recipeData.ingredients,
       });
-      console.log("Rezeptenliste von Edit: ", recipes);
+
+      this.setState({
+        recipes: updatedRecipes,
+        popupRecipeOpen: false,
+        currentlyEditing: null,
+      });
     } else {
       const id = recipes.length + 1;
-      console.log("Unsere bisherigen Rezepte:", recipes);
-      // Code to create a new recipe
+
       this.setState((prevState) => {
         const newRecipes = [
           ...prevState.recipes,
@@ -292,28 +274,15 @@ class FridgePage extends Component {
           },
         ];
         const newOpenMenus = { ...prevState.openMenus, [id]: false };
-        console.log("Hier sind alle Rezepte ",newRecipes);
-        console.log(newOpenMenus);
 
         return {
           recipeCount: prevState.recipeCount + 1,
           popupRecipeOpen: false,
           recipes: newRecipes,
-          currentIngredient: {
-            amount: "",
-            unit: "",
-            name: "",
-          },
-          recipeData: {
-            title: "",
-            duration: "",
-            servings: "",
-            instructions: "",
-          },
-          showAlert: false,
           openMenus: newOpenMenus,
         };
       });
+      console.log("Hier sind alle Rezepte ", recipes);
     }
   };
 
@@ -328,117 +297,28 @@ class FridgePage extends Component {
     return updatedRecipes;
   }
 
-  handleAnchorClickRecipe = (recepyId, event) => {
-    console.log("Anchor clicked for grocery ID:", recepyId);
-    this.setState((prevState) => {
-      const newOpenMenus = { ...prevState.openMenus, [recepyId]: true };
-      const newAnchorEls = {
-        ...prevState.anchorEls,
-        [recepyId]: event.target,
-      };
-      console.log("newOpenMenus:", newOpenMenus);
-      return {
-        anchorEls: newAnchorEls,
-        openMenus: newOpenMenus,
-      };
-    });
-  };
-
-  handleAnchorCloseRecipe = (recepyId) => {
-    console.log("Anchor closed for grocery ID:", recepyId);
-    this.setState((prevState) => {
-      const newOpenMenus = { ...prevState.openMenus, [recepyId]: false };
-      return {
-        openMenus: newOpenMenus,
-      };
-    });
-  };
-
-  handleAnchorEditRecipe = (recipe) => {
-    console.log("Editing recipe:", recipe);
-    console.log(this.state.recipeData);
-    this.setState((prevState) => {
-      const newOpenMenus = {
-        ...prevState.openMenus,
-        [recipe.recipeId]: false,
-      };
-      // Log the previous state
-      console.log("Previous state:", prevState);
-      // Log the new openMenus object
-      console.log("New openMenus:", newOpenMenus);
-      // Log the values being set for currentlyEditingRecipe and other states
-      console.log("Currently editing recipe ID:", recipe.recipeId);
-      console.log("Current ingredient:", {
-        amount: recipe.recipeIngredientsAmount,
-        unit: recipe.recipeIngredientsUnit,
-        name: recipe.recipeIngredientsName,
-      });
-      console.log("Rezeptenliste: ", recipe);
-      console.log("Recipe data:", {
-        title: recipe.recipeTitle,
-        duration: recipe.recipeDuration,
-        servings: recipe.recipeServings,
-        instructions: recipe.recipeInstructions,
-        ingredients: recipe.recipeIngredients,
-      });
-
-      return {
-        currentlyEditingRecipe: recipe.recipeId,
-        currentIngredient: {
-          amount: recipe.recipeIngredientsAmount,
-          unit: recipe.recipeIngredientsUnit,
-          name: recipe.recipeIngredientsName,
-        },
-        recipeData: {
-          title: recipe.recipeTitle,
-          duration: recipe.recipeDuration,
-          servings: recipe.recipeServings,
-          instructions: recipe.recipeInstructions,
-          ingredients: recipe.recipeIngredients,
-        },
-        openMenus: newOpenMenus,
-      };
-    });
-  };
-
-  handleAnchorDelete = (groceryId) => {
-    console.log("Deleting grocery ID:", groceryId);
-    this.setState((prevState) => {
-      const newOpenMenus = { ...prevState.openMenus, [groceryId]: false };
-      const newGroceries = prevState.groceries.filter(
-        (g) => g.groceryId !== groceryId
-      );
-      return {
-        groceries: newGroceries,
-        openMenus: newOpenMenus,
-      };
-    });
-  };
-
   render() {
     const {
       value,
       popupGroceryOpen,
       popupRecipeOpen,
-      showAlert,
-      groceryUnit,
-      currentGrocery,
       groceries,
       anchorEls,
       openMenus,
       currentlyEditing,
-      currentlyEditingRecipe,
-      dialogopen,
       recipes,
-      currentIngredient,
-      recipeData,
+      isEditMode,
     } = this.state;
 
-    const showAlertComponent = showAlert && (
-      <Alert severity="error" sx={{ marginBottom: "20px" }}>
-        Bitte füllen Sie alle Felder aus!
-      </Alert>
-    );
+    const { dialogOpen, dialogType } = this.props;
+
+    const editingGrocery = currentlyEditing
+      ? groceries.find((g) => g.groceryId === currentlyEditing)
+      : null;
+
+    const editingRecipe = currentlyEditing
+      ? recipes.find((r) => r.recipeId === currentlyEditing)
+      : null;
 
     return (
       <>
@@ -520,7 +400,7 @@ class FridgePage extends Component {
                       // border: "5px solid violet",
                     }}
                   >
-                    <Link onClick={this.handlePopupGroceryOpen}>
+                    <Link onClick={() => this.handlePopupGroceryOpen(false)}>
                       <Tooltip
                         title="Neues Lebensmittel hinzufügen"
                         placement="bottom"
@@ -568,39 +448,34 @@ class FridgePage extends Component {
                       handleAnchorClick={this.handleAnchorClick}
                       handleAnchorClose={this.handleAnchorClose}
                       handleAnchorEdit={this.handleAnchorEdit}
-                      handleClickOpenDialog={this.props.handleClickOpenDialog}
                       anchorEls={anchorEls}
                       openMenus={openMenus}
+                      setIdToDelete={this.setIdToDelete}
+                      handleOpenDialog={this.props.handleOpenDialog}
                     ></Grocery>
                   </TabPanel>
                   {popupGroceryOpen && (
-                    <AddGroceryPopup
+                    <GroceryDialog
+                      isEditMode={isEditMode}
+                      groceryName={
+                        editingGrocery ? editingGrocery.groceryName : ""
+                      }
+                      groceryQuantity={
+                        editingGrocery ? editingGrocery.groceryQuantity : ""
+                      }
+                      groceryUnit={
+                        editingGrocery ? editingGrocery.groceryUnit : ""
+                      }
                       handlePopupGroceryClose={this.handlePopupGroceryClose}
-                      showAlertComponent={showAlertComponent}
-                      groceryUnit={groceryUnit}
                       handleCreateGroceries={this.handleCreateGroceries}
-                      // currentGrocery={currentGrocery}
-                      // currentGroceryQuantity={currentGroceryQuantity}
-                      // currentGroceryUnit={currentGroceryUnit}
-                      handleChange={this.handleChange}
-                    />
+                    ></GroceryDialog>
                   )}
-                  {currentlyEditing !== null && (
-                    <EditGroceryPopup
-                      handleChange={this.handleChange}
-                      handleCreateGroceries={this.handleCreateGroceries}
-                      handlePopupGroceryClose={this.handlePopupGroceryClose}
-                      showAlert={showAlert}
-                      groceryUnit={groceryUnit}
-                      currentGrocery={currentGrocery}
-                    />
-                  )}
-                  {dialogopen && (
-                    <DeleteConfirmationDialog
-                      handleCloseDialog={this.handleCloseDialog}
-                      handleConfirmDelete={this.handleConfirmDelete}
-                    />
-                  )}
+                  <DeleteConfirmationDialog
+                    dialogOpen={dialogOpen}
+                    dialogType={dialogType}
+                    handleCloseDialog={this.props.handleCloseDialog}
+                    handleConfirmDelete={this.handleConfirmDelete}
+                  />
                 </Container>
                 <Container
                   sx={{
@@ -629,7 +504,7 @@ class FridgePage extends Component {
                       // border: "5px solid violet",
                     }}
                   >
-                    <Link onClick={this.handlePopupRecipeOpen}>
+                    <Link onClick={() => this.handlePopupRecipeOpen(false)}>
                       <Tooltip
                         title="Neues Rezept hinzufügen"
                         placement="bottom"
@@ -683,33 +558,43 @@ class FridgePage extends Component {
                     </Link>
                     <Recipe
                       recipes={recipes}
-                      handleAnchorClickRecipe={this.handleAnchorClickRecipe}
-                      handleAnchorEditRecipe={this.handleAnchorEditRecipe}
-                      handleAnchorCloseRecipe={this.handleAnchorCloseRecipe}
-                      handleClickOpenDialog={this.props.handleClickOpenDialog}
+                      handleAnchorClick={this.handleAnchorClick}
+                      handleAnchorEdit={this.handleAnchorEdit}
+                      handleAnchorClose={this.handleAnchorClose}
+                      handleOpenDialog={this.props.handleOpenDialog}
+                      setIdToDelete={this.setIdToDelete}
                       anchorEls={anchorEls}
                       openMenus={openMenus}
                     ></Recipe>
                   </TabPanel>
                   {popupRecipeOpen && (
-                    <AddRecipePopup
+                    <RecipeDialog
+                      isEditMode={isEditMode}
+                      recipeTitle={
+                        editingRecipe ? editingRecipe.recipeTitle : ""
+                      }
+                      recipeDuration={
+                        editingRecipe ? editingRecipe.recipeDuration : ""
+                      }
+                      recipeServings={
+                        editingRecipe ? editingRecipe.recipeServings : ""
+                      }
+                      recipeInstructions={
+                        editingRecipe ? editingRecipe.recipeInstructions : ""
+                      }
+                      recipeIngredients={
+                        editingRecipe ? editingRecipe.recipeIngredients : ""
+                      }
                       handlePopupRecipeClose={this.handlePopupRecipeClose}
-                      groceryUnit={groceryUnit}
-                      showAlertComponent={showAlertComponent}
                       handleCreateRecipes={this.handleCreateRecipes}
-                      handleChange={this.handleChange}
-                      currentIngredient={currentIngredient}
-                      recipeData={recipeData}
                     />
                   )}
-                  {currentlyEditingRecipe !== null && (
-                    <EditRecipePopup
-                      handlePopupRecipeClose={this.handlePopupRecipeClose}
-                      handleCreateRecipes={this.handleCreateRecipes}
-                      currentIngredient={currentIngredient}
-                      recipeData={recipeData}
-                    />
-                  )}
+                  <DeleteConfirmationDialog
+                    dialogOpen={dialogOpen}
+                    dialogType={dialogType}
+                    handleCloseDialog={this.props.handleCloseDialog}
+                    handleConfirmDelete={this.handleConfirmDelete}
+                  />
                 </Container>
               </TabContext>
             </Paper>

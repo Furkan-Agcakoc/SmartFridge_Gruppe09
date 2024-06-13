@@ -17,10 +17,17 @@ const Grocery = ({
   handleAnchorClick,
   handleAnchorClose,
   handleAnchorEdit,
-  handleClickOpenDialog,
   anchorEls,
   openMenus,
+  handleOpenDialog,
+  setIdToDelete,
 }) => {
+  const handleDeleteClick = (groceryId) => {
+    setIdToDelete(groceryId);
+    handleOpenDialog(groceryId, "grocery");
+    handleAnchorClose(groceryId);
+  };
+
   return groceries.map((grocery) => (
     <Paper
       key={grocery.groceryId}
@@ -36,15 +43,13 @@ const Grocery = ({
         height: "125px",
         borderRadius: "10px",
         // boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-        "&:hover": {boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)"},
+        "&:hover": { boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)" },
       }}
     >
       <IconButton
         aria-label="more"
         id="long-button"
-        aria-controls={
-          openMenus[grocery.groceryId] ? "long-menu" : undefined
-        }
+        aria-controls={openMenus[grocery.groceryId] ? "long-menu" : undefined}
         aria-expanded={openMenus[grocery.groceryId] ? "true" : undefined}
         aria-haspopup="true"
         onClick={(event) => handleAnchorClick(grocery.groceryId, event)}
@@ -66,7 +71,7 @@ const Grocery = ({
         onClose={() => handleAnchorClose(grocery.groceryId)}
       >
         <MenuItem
-          onClick={() => handleAnchorEdit(grocery)}
+          onClick={() => handleAnchorEdit(grocery.groceryId)}
           className="menu-item"
           disableRipple
         >
@@ -77,7 +82,7 @@ const Grocery = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleClickOpenDialog(grocery.groceryId, "grocery")}
+          onClick={() => handleDeleteClick(grocery.groceryId)}
           className="menu-item"
           disableRipple
         >

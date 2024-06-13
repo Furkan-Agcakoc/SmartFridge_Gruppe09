@@ -12,24 +12,26 @@ import {
   signInWithRedirect,
   GoogleAuthProvider,
   onAuthStateChanged,
+  signOut,
 } from "firebase/auth";
 import firebaseConfig from "./firebaseConfig";
-import { signOut } from "firebase/auth";
 import LoginPage from "./components/pages/LoginPage";
 import HouseholdPage from "./components/pages/HouseholdPage";
 import Header from "./components/layout/Header";
-import HomePage from "./components/pages/HomePage";
 import { ThemeProvider } from "@emotion/react";
 import Theme from "./Theme";
 import Footer from "./components/layout/Footer";
 import EditProfilePage from "./components/pages/EditProfilePage";
+import SmartFridgeAPI from "./api/SmartFridgeAPI"; // Import the API class
+import FridgePage from "./components/pages/FridgePage";
+// import { Config } from "./config";
 
 class App extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       currentUser: null,
+      user: null,
       appError: null,
       authError: null,
       authLoading: true,
@@ -39,35 +41,45 @@ class App extends Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
-    return { appError: error };
-  }
+  getUserByGid = (currentUser) => {
+    SmartFridgeAPI.getAPI()
+      .getUserByGoogleId(currentUser.uid)
+      .then((user) =>
+        this.setState({
+          user: user,
+          loadingInProgress: false,
+          loadingError: null,
+        })
+      )
+      .catch((e) =>
+        this.setState({
+          // Reset state with error from catch
+          user: null,
+          loadingInProgress: false,
+          loadingError: e,
+        })
+      );
+    // set loading to true
+    this.setState({
+      loadingInProgress: true,
+      loadingError: null,
+    });
+  };
 
   handleSignIn = () => {
-    this.setState({
-      authLoading: true,
-    });
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    this.setState({ authLoading: true });
+    const auth = getAuth(initializeApp(firebaseConfig));
     const provider = new GoogleAuthProvider();
-
     auth.languageCode = "en";
     signInWithRedirect(auth, provider);
   };
 
   handleSignOut = () => {
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
+    const auth = getAuth(initializeApp(firebaseConfig));
     if (auth.currentUser) {
       signOut(auth)
-        .then(() => {
-          console.log("User signed out successfully.");
-        })
-        .catch((error) => {
-          console.error("Error signing out:", error);
-        });
+        .then(() => console.log("User signed out successfully."))
+        .catch((error) => console.error("Error signing out:", error));
     }
   };
 
@@ -85,12 +97,13 @@ class App extends Component {
           .getIdToken()
           .then((token) => {
             document.cookie = `token=${token};path=/`;
-
             this.setState({
               currentUser: user,
               authError: null,
               authLoading: false,
             });
+            // this.getUserByGid(user);
+            // this.addUser(user); // Call addUser here
           })
           .catch((e) => {
             this.setState({
@@ -100,12 +113,11 @@ class App extends Component {
           });
       } else {
         document.cookie = "token=;path=/";
-
         this.setState({
           currentUser: null,
+          authLoading: false,
         });
       }
-      this.setState({ authLoading: false });
     });
   }
 
@@ -117,42 +129,43 @@ class App extends Component {
     });
   };
 
-  handleInvalid = (e) => {
-    e.preventDefault();
-    this.setState({ showAlert: true });
-    console.log("App.js => Invalid alert confirmed");
-  };
-
-  handleInput = () => {
-    this.setState({ showAlert: false });
-    console.log("App.js => Input closes alert");
-  };
-
-  handleOpenDialog = (type) => {
+  handleOpenDialog = (Id, type) => {
+    // console.log(Id, type)
+    console.log("App.js => Dialog opened");
+    // console.log(deleteId);
     this.setState({
       dialogType: type,
       dialogOpen: true,
     });
-
-
+    console.log(Id, type);
   };
 
   handleCloseDialog = () => {
-    this.setState({ dialogOpen: false });
+    console.log("App.js => Dialog closed");
+    this.setState({ dialogOpen: false, dialogType: "" });
   };
 
-  // handleConfirmDelete = () => {
-  //   const { householdIdToDelete } = this.state;
-  //   if (householdIdToDelete !== null) {
-  //     this.handleAnchorDelete(householdIdToDelete);
+  // handleConfirmDelete = (id) => {
+  //   console.log("App => Confirm delete");
+  //   console.log(id);
+  //   if (id !== null) {
+  //     this.handleAnchorDelete(id);
   //   }
   //   this.handleCloseDialog();
   // };
 
-  render() {
-    const { currentUser } = this.state;
-    const { dialogOpen, dialogType } = this.state;
+  // handleConfirmDelete = () => {
+  //   console.log("HouseholdPage => Confirm delete");
+  //   const { householdIdToDelete } = this.state;
+  //   console.log(householdIdToDelete);
+  //   if (householdIdToDelete !== null) {
+  //     this.handleAnchorDelete(householdIdToDelete);
+  //   }
+  //   this.props.handleCloseDialog();
+  // };
 
+  render() {
+    const { currentUser, dialogOpen, dialogType } = this.state;
     return (
       <>
         <ThemeProvider theme={Theme}>
@@ -194,13 +207,11 @@ class App extends Component {
                 element={
                   <Secured user={currentUser}>
                     <HouseholdPage
-                      handleChange={this.handleChange}
-                      handleInvalid={this.handleInvalid}
-                      handleInput={this.handleInput}
                       dialogOpen={dialogOpen}
                       dialogType={dialogType}
                       handleOpenDialog={this.handleOpenDialog}
                       handleCloseDialog={this.handleCloseDialog}
+                      handleConfirmDelete={this.handleConfirmDelete}
                     />
                   </Secured>
                 }
@@ -209,7 +220,13 @@ class App extends Component {
                 path="/home"
                 element={
                   <Secured user={currentUser}>
-                    <HomePage />
+                    <FridgePage
+                      dialogOpen={dialogOpen}
+                      dialogType={dialogType}
+                      handleOpenDialog={this.handleOpenDialog}
+                      handleCloseDialog={this.handleCloseDialog}
+                      handleConfirmDelete={this.handleConfirmDelete}
+                    />
                   </Secured>
                 }
               />

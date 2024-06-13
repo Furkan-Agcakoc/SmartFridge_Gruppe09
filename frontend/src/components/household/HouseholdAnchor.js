@@ -20,9 +20,11 @@ const HouseholdList = ({
   anchorEls,
   openMenus,
   handleOpenDialog,
+  setHouseholdIdToDelete,
 }) => {
-  const handleEditClick = (householdId) => {
-    handleOpenDialog("household", householdId);
+  const handleDeleteClick = (householdId) => {
+    setHouseholdIdToDelete(householdId);
+    handleOpenDialog(householdId, "household");
     handleAnchorClose(householdId);
   };
 
@@ -82,7 +84,7 @@ const HouseholdList = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleEditClick(household.householdId)}
+          onClick={() => handleDeleteClick(household.householdId)}
           className="menu-item"
           disableRipple
         >
