@@ -179,8 +179,6 @@ class HouseholdPage extends Component {
       popupOpen,
       isEditMode,
       currentlyEditing,
-      // dialogopen,
-      // dialogType,
     } = this.state;
 
     const { dialogOpen, dialogType, handleOpenDialog, handleCloseDialog } =
@@ -272,7 +270,6 @@ class HouseholdPage extends Component {
                 handleOpenDialog={handleOpenDialog}
                 householdIdToDelete={this.state.householdIdToDelete}
                 setHouseholdIdToDelete={this.setHouseholdIdToDelete}
-                // handleOpenDialog={(type) => this.deleteDialog.handleOpenDialog(type)}
               />
             </Box>
             {popupOpen && (
@@ -292,19 +289,7 @@ class HouseholdPage extends Component {
               dialogType={dialogType}
               handleCloseDialog={handleCloseDialog}
               handleConfirmDelete={this.handleConfirmDelete}
-
-              // ref={(instance) => {
-              //   this.deleteDialog = instance;
-              // }}
             />
-            {/* {dialogopen && (
-              <DeleteConfirmationDialog
-                dialogType={dialogType}
-                dialogopen={dialogopen}
-                handleConfirmDelete={handleConfirmDelete}
-                handleCloseDialog={handleCloseDialog}
-              />
-            )} */}
           </Box>
         </Box>
       </>
