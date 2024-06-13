@@ -1,547 +1,578 @@
-import FridgeBO from './FridgeBO';
-import GroceryBO from './GroceryBO';
-import GroceryStatementBO from './GroceryStatementBO';
-import HouseholdBO from './HouseholdBO';
-import InhabitantBO from './InhabitantBO';
-import RecipeBO from './RecipeBO';
-import UserBO from './UserBO';
+import FridgeBO from "./FridgeBO";
+import GroceryBO from "./GroceryBO";
+import GroceryStatementBO from "./GroceryStatementBO";
+import HouseholdBO from "./HouseholdBO";
+import InhabitantBO from "./InhabitantBO";
+import RecipeBO from "./RecipeBO";
+import UserBO from "./UserBO";
 
 export default class SmartFridgeAPI {
+  // Singelton instance
+  static #api = null;
 
-    // Singelton instance
-    static #api = null;
+  // Local Python backend
+  #SmartFridgeBaseURL = "http://localhost:5000/Smartfridge";
 
-
-    // Local Python backend
-    #SmartFridgeBaseURL = '/SmartFridgeAPI';
-
-
-    // fridge related
-    #getFridgeURL = () => `${this.#SmartFridgeBaseURL}/fridge`;
-    #addFridgeURL = () => `${this.#SmartFridgeBaseURL}/fridge`;
-    #getFridgeByIdURL = (id) => `${this.#SmartFridgeBaseURL}/fridge/${id}`;
-    #updateFridgeURL = (id) => `${this.#SmartFridgeBaseURL}/customers/${id}`;
-    #deleteFridgeURL = (id) => `${this.#SmartFridgeBaseURL}/customers/${id}`;
-
-
-    // grocery related
-    #getGroceryURL = () => `${this.#SmartFridgeBaseURL}/grocery`;
-    #getGroceryByIdURL = (id) => `${this.#SmartFridgeBaseURL}/grocery/${id}/accounts`;
-    #getGroceryByNameURL = (grocery_name) => `${this.#SmartFridgeBaseURL}/grocery/${grocery_name}`;
-    #addGroceryURL = () => `${this.#SmartFridgeBaseURL}/grocery`;
-    #deleteGroceryURL = (id) => `${this.#SmartFridgeBaseURL}/grocery/${id}`;
-    #updateGroceryURL = (id) => `${this.#SmartFridgeBaseURL}/grocery/${id}`;
-
-    // groceryStatement related
-    #getGroceryStatementURL = () => `${this.#SmartFridgeBaseURL}/groceryStatement/}`;
-    #getGroceryStatementByIdURL = (id) => `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
-    #addGroceryStatementURL = () => `${this.#SmartFridgeBaseURL}/groceryStatement`;
-    #deleteGroceryStatementURL = (id) => `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
-    #updateGroceryStatementURL = (id) => `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
-
-    // household related
-    #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/Household/}`;
-    #getHouseholdByIdURL = (id) => `${this.#SmartFridgeBaseURL}/Household/${id}`;
-    #addHouseholdURL = () => `${this.#SmartFridgeBaseURL}/Household`;
-    #deleteHouseholdURL = (id) => `${this.#SmartFridgeBaseURL}/Household/${id}`;
-    #updateHouseholdURL = (id) => `${this.#SmartFridgeBaseURL}/Household/${id}`;
-
-    // inhabitant related
-    #addInhabitantURL = () => `${this.#SmartFridgeBaseURL}/inhabitant`;
-    #getInhabitantURL = (household_id) => `${this.#SmartFridgeBaseURL}/inhabitant/${household_id}`;
-    #deleteInhabitantURL = (id) => `${this.#SmartFridgeBaseURL}/inhabitant/${id}`;
-
-    // recipe related
-    #getRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/}`;
-    #getRecipeByNameURL = (recipe_name) => `${this.#SmartFridgeBaseURL}/recipe/${recipe_name}}`;
-    #getRecipeByIdURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
-    #addRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe`;
-    #deleteRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
-    #updateRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
-
-    // user related
-    #getUserURL = () => `${this.#SmartFridgeBaseURL}/user/}`;
-    #getUserByGoogleIdURL = (google_user_id) => `${this.#SmartFridgeBaseURL}/user/google_user_id/${google_user_id}}`;
-    #getUserByIdURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
-    #addUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
-    #deleteUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
-    #updateUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
-
-
-    /**
-     * Get the Singelton instance
-     *
-     * @public
-     */
-    static getAPI() {
-        if (this.#api == null) {
-            this.#api = new SmartFridgeAPI();
-        }
-        return this.#api;
+  /**
+   * Get the Singelton instance
+   *
+   * @public
+   */
+  static getAPI() {
+    if (this.#api == null) {
+      this.#api = new SmartFridgeAPI();
     }
+    return this.#api;
+  }
 
-    /**
-     *  Returns a Promise which resolves to a json object.
-     *  The Promise returned from fetch() won’t reject on HTTP error status even if the response is an HTTP 404 or 500.
-     *  fetchAdvanced throws an Error also an server status errors
-     */
-    #fetchAdvanced = (url, init) => fetch(url, init)
-        .then(res => {
-                // The Promise returned from fetch() won’t reject on HTTP error status even if the response is an HTTP 404 or 500.
-                if (!res.ok) {
-                    throw Error(`${res.status} ${res.statusText}`);
-                }
-                return res.json();
-            }
-        )
+  // fridge related
+  #getFridgeURL = () => `${this.#SmartFridgeBaseURL}/fridge`;
+  #addFridgeURL = () => `${this.#SmartFridgeBaseURL}/fridge`;
+  #getFridgeByIdURL = (id) => `${this.#SmartFridgeBaseURL}/fridge/${id}`;
+  #updateFridgeURL = (id) => `${this.#SmartFridgeBaseURL}/customers/${id}`;
+  #deleteFridgeURL = (id) => `${this.#SmartFridgeBaseURL}/customers/${id}`;
 
+  // grocery related
+  #getGroceryURL = () => `${this.#SmartFridgeBaseURL}/grocery`;
+  #getGroceryByIdURL = (id) =>
+    `${this.#SmartFridgeBaseURL}/grocery/${id}/accounts`;
+  #getGroceryByNameURL = (grocery_name) =>
+    `${this.#SmartFridgeBaseURL}/grocery/${grocery_name}`;
+  #addGroceryURL = () => `${this.#SmartFridgeBaseURL}/grocery`;
+  #deleteGroceryURL = (id) => `${this.#SmartFridgeBaseURL}/grocery/${id}`;
+  #updateGroceryURL = (id) => `${this.#SmartFridgeBaseURL}/grocery/${id}`;
 
-    /**  fridge related  **/
+  // groceryStatement related
+  #getGroceryStatementURL = () =>
+    `${this.#SmartFridgeBaseURL}/groceryStatement/}`;
+  #getGroceryStatementByIdURL = (id) =>
+    `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
+  #addGroceryStatementURL = () =>
+    `${this.#SmartFridgeBaseURL}/groceryStatement`;
+  #deleteGroceryStatementURL = (id) =>
+    `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
+  #updateGroceryStatementURL = (id) =>
+    `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
 
+  // household related
+  #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household/}`;
+  #getHouseholdByIdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
+  #addHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household`;
+  #deleteHouseholdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
+  #updateHouseholdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
 
-    getFridge() {
-        return this.#fetchAdvanced(this.#getFridgeURL()).then((responseJSON) => {
-            let fridgeBO = FridgeBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(fridgeBO);
-            })
-        })
-    }
+  // inhabitant related
+  #addInhabitantURL = () => `${this.#SmartFridgeBaseURL}/inhabitant`;
+  #getInhabitantURL = (household_id) =>
+    `${this.#SmartFridgeBaseURL}/inhabitant/${household_id}`;
+  #deleteInhabitantURL = (id) => `${this.#SmartFridgeBaseURL}/inhabitant/${id}`;
 
-    getFridgeById(fridgeID) {
-        return this.#fetchAdvanced(this.#getFridgeByIdURL(fridgeID)).then((responseJSON) => {
-            let responseFridgeBO = FridgeBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseFridgeBO);
-            })
-        })
-    }
+  // recipe related
+  #getRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/}`;
+  #getRecipeByNameURL = (recipe_name) =>
+    `${this.#SmartFridgeBaseURL}/recipe/${recipe_name}}`;
+  #getRecipeByIdURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
+  #addRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe`;
+  #deleteRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
+  #updateRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
 
-    addFridge(fridgeBO) {
-        return this.#fetchAdvanced(this.#addFridgeURL(), {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(fridgeBO)
-        }).then((responseJSON) => {
-            let responseFridgeBO = FridgeBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseFridgeBO);
-            })
-        })
-    }
+  // user related
+  #getUserURL = () => `${this.#SmartFridgeBaseURL}/user/}`;
+  #getUserByGoogleIdURL = (google_user_id) =>
+    `${this.#SmartFridgeBaseURL}/user/google_user_id/${google_user_id}}`;
+  #getUserByIdURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
+  #addUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
+  #deleteUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
+  #updateUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
 
-    updateFridge(fridgeBO) {
-        return this.#fetchAdvanced(this.#updateFridgeURL(fridgeBO.getID()), {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(FridgeBO)
-        }).then((responseJSON) => {
-            let responseFridgeBO = FridgeBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseFridgeBO);
-            })
-        })
-    }
+  /**
+   *  Returns a Promise which resolves to a json object.
+   *  The Promise returned from fetch() won’t reject on HTTP error status even if the response is an HTTP 404 or 500.
+   *  fetchAdvanced throws an Error also an server status errors
+   */
+  #fetchAdvanced = (url, init) =>
+    fetch(url, init).then((res) => {
+      // The Promise returned from fetch() won’t reject on HTTP error status even if the response is an HTTP 404 or 500.
+      if (!res.ok) {
+        throw Error(`${res.status} ${res.statusText}`);
+      }
+      return res.json();
+    });
 
-    deleteFridge(fridgeID) {
-        return this.#fetchAdvanced(this.#deleteFridgeURL(fridgeID), {
-            method: 'DELETE'
-        }).then((responseJSON) => {
-            let responseFridgeBO = FridgeBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseFridgeBO);
-            })
-        })
-    }
+  /**  fridge related  **/
 
+  getFridge() {
+    return this.#fetchAdvanced(this.#getFridgeURL()).then((responseJSON) => {
+      let fridgeBO = FridgeBO.fromJSON(responseJSON);
+      return new Promise(function (resolve) {
+        resolve(fridgeBO);
+      });
+    });
+  }
 
-    /**  grocery related  **/
+  getFridgeById(fridgeID) {
+    return this.#fetchAdvanced(this.#getFridgeByIdURL(fridgeID)).then(
+      (responseJSON) => {
+        let responseFridgeBO = FridgeBO.fromJSON(responseJSON)[0];
+        return new Promise(function (resolve) {
+          resolve(responseFridgeBO);
+        });
+      }
+    );
+  }
 
-    getGrocery() {
-        return this.#fetchAdvanced(this.#getGroceryURL()).then((responseJSON) => {
-            let groceryBOs = GroceryBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(groceryBOs);
-            })
-        })
-    }
+  addFridge(fridgeBO) {
+    return this.#fetchAdvanced(this.#addFridgeURL(), {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(fridgeBO),
+    }).then((responseJSON) => {
+      let responseFridgeBO = FridgeBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseFridgeBO);
+      });
+    });
+  }
 
-    getGroceryById(groceryID) {
-        return this.#fetchAdvanced(this.#getGroceryByIdURL(groceryID)).then((responseJSON) => {
-            let responseGroceryBO = GroceryBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(responseGroceryBO);
-            })
-        })
-    }
+  updateFridge(fridgeBO) {
+    return this.#fetchAdvanced(this.#updateFridgeURL(fridgeBO.getID()), {
+      method: "PUT",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(FridgeBO),
+    }).then((responseJSON) => {
+      let responseFridgeBO = FridgeBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseFridgeBO);
+      });
+    });
+  }
 
-    getGroceryByName(groceryName) {
-        return this.#fetchAdvanced(this.#getGroceryByNameURL(groceryName)).then((responseJSON) => {
-            let responseGroceryBO = GroceryBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseGroceryBO);
-            })
-        })
-    }
+  deleteFridge(fridgeID) {
+    return this.#fetchAdvanced(this.#deleteFridgeURL(fridgeID), {
+      method: "DELETE",
+    }).then((responseJSON) => {
+      let responseFridgeBO = FridgeBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseFridgeBO);
+      });
+    });
+  }
 
-    deleteGrocery(groceryID) {
-        return this.#fetchAdvanced(this.#deleteGroceryURL(groceryID), {
-            method: 'DELETE'
-        }).then((responseJSON) => {
-            let responseGroceryBOs = GroceryBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseGroceryBOs);
-            })
-        })
-    }
+  /**  grocery related  **/
 
-    addGrocery(groceryBO) {
-        return this.#fetchAdvanced(this.#addGroceryURL(), {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(groceryBO)
-        }).then((responseJSON) => {
-            let responseGroceryBO = GroceryBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseGroceryBO);
-            })
-        })
-    }
+  getGrocery() {
+    return this.#fetchAdvanced(this.#getGroceryURL()).then((responseJSON) => {
+      let groceryBOs = GroceryBO.fromJSON(responseJSON);
+      return new Promise(function (resolve) {
+        resolve(groceryBOs);
+      });
+    });
+  }
 
-    updateGrocery(groceryBO) {
-        return this.#fetchAdvanced(this.#updateGroceryURL(groceryBO.getID()), {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(groceryBO)
-        }).then((responseJSON) => {
-            let responseGroceryBO = GroceryBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseGroceryBO);
-            })
-        })
-    }
+  getGroceryById(groceryID) {
+    return this.#fetchAdvanced(this.#getGroceryByIdURL(groceryID)).then(
+      (responseJSON) => {
+        let responseGroceryBO = GroceryBO.fromJSON(responseJSON);
+        return new Promise(function (resolve) {
+          resolve(responseGroceryBO);
+        });
+      }
+    );
+  }
 
-    /**  GroceryStatement related **/
+  getGroceryByName(groceryName) {
+    return this.#fetchAdvanced(this.#getGroceryByNameURL(groceryName)).then(
+      (responseJSON) => {
+        let responseGroceryBO = GroceryBO.fromJSON(responseJSON)[0];
+        return new Promise(function (resolve) {
+          resolve(responseGroceryBO);
+        });
+      }
+    );
+  }
 
-    getGroceryStatement() {
-        return this.#fetchAdvanced(this.#getGroceryStatementURL()).then((responseJSON) => {
-            let groceryStatementBOs = GroceryStatementBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(groceryStatementBOs);
-            })
-        })
-    }
+  deleteGrocery(groceryID) {
+    return this.#fetchAdvanced(this.#deleteGroceryURL(groceryID), {
+      method: "DELETE",
+    }).then((responseJSON) => {
+      let responseGroceryBOs = GroceryBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseGroceryBOs);
+      });
+    });
+  }
 
-    getGroceryStatementById(groceryStatementID) {
-        return this.#fetchAdvanced(this.#getGroceryStatementByIdURL(groceryStatementID)).then((responseJSON) => {
-            let responseGroceryStatementBO = GroceryStatementBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(responseGroceryStatementBO);
-            })
-        })
-    }
+  addGrocery(groceryBO) {
+    return this.#fetchAdvanced(this.#addGroceryURL(), {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(groceryBO),
+    }).then((responseJSON) => {
+      let responseGroceryBO = GroceryBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseGroceryBO);
+      });
+    });
+  }
 
-    deleteGroceryStatement(groceryStatementID) {
-        return this.#fetchAdvanced(this.#deleteGroceryStatementURL(groceryStatementID), {
-            method: 'DELETE'
-        }).then((responseJSON) => {
-            let responseGroceryStatementBO = GroceryStatementBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseGroceryStatementBO);
-            })
-        })
-    }
+  updateGrocery(groceryBO) {
+    return this.#fetchAdvanced(this.#updateGroceryURL(groceryBO.getID()), {
+      method: "PUT",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(groceryBO),
+    }).then((responseJSON) => {
+      let responseGroceryBO = GroceryBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseGroceryBO);
+      });
+    });
+  }
 
-    addGroceryStatement(groceryStatementBO) {
-        return this.#fetchAdvanced(this.#addGroceryStatementURL(), {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(groceryStatementBO)
-        }).then((responseJSON) => {
-            let responseGroceryStatementBO = GroceryStatementBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseGroceryStatementBO);
-            })
-        })
-    }
+  /**  GroceryStatement related **/
 
-    updateGroceryStatement(groceryStatementBO) {
-        return this.#fetchAdvanced(this.#updateGroceryStatementURL(groceryStatementBO.getID()), {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(groceryStatementBO)
-        }).then((responseJSON) => {
-            let responseGroceryStatementBO = GroceryStatementBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseGroceryStatementBO);
-            })
-        })
-    }
+  getGroceryStatement() {
+    return this.#fetchAdvanced(this.#getGroceryStatementURL()).then(
+      (responseJSON) => {
+        let groceryStatementBOs = GroceryStatementBO.fromJSON(responseJSON);
+        return new Promise(function (resolve) {
+          resolve(groceryStatementBOs);
+        });
+      }
+    );
+  }
 
-    /** Household related  **/
+  getGroceryStatementById(groceryStatementID) {
+    return this.#fetchAdvanced(
+      this.#getGroceryStatementByIdURL(groceryStatementID)
+    ).then((responseJSON) => {
+      let responseGroceryStatementBO =
+        GroceryStatementBO.fromJSON(responseJSON);
+      return new Promise(function (resolve) {
+        resolve(responseGroceryStatementBO);
+      });
+    });
+  }
 
-    getHousehold() {
-        return this.#fetchAdvanced(this.#getHouseholdURL()).then((responseJSON) => {
-            let householdBOs = HouseholdBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(householdBOs);
-            })
-        })
-    }
+  deleteGroceryStatement(groceryStatementID) {
+    return this.#fetchAdvanced(
+      this.#deleteGroceryStatementURL(groceryStatementID),
+      {
+        method: "DELETE",
+      }
+    ).then((responseJSON) => {
+      let responseGroceryStatementBO =
+        GroceryStatementBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseGroceryStatementBO);
+      });
+    });
+  }
 
-    getHouseholdById(householdID) {
-        return this.#fetchAdvanced(this.#getHouseholdByIdURL(householdID)).then((responseJSON) => {
-            let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(responseHouseholdBO);
-            })
-        })
-    }
+  addGroceryStatement(groceryStatementBO) {
+    return this.#fetchAdvanced(this.#addGroceryStatementURL(), {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(groceryStatementBO),
+    }).then((responseJSON) => {
+      let responseGroceryStatementBO =
+        GroceryStatementBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseGroceryStatementBO);
+      });
+    });
+  }
 
-    deleteHousehold(householdID) {
-        return this.#fetchAdvanced(this.#deleteHouseholdURL(householdID), {
-            method: 'DELETE'
-        }).then((responseJSON) => {
-            let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseHouseholdBO);
-            })
-        })
-    }
+  updateGroceryStatement(groceryStatementBO) {
+    return this.#fetchAdvanced(
+      this.#updateGroceryStatementURL(groceryStatementBO.getID()),
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json, text/plain",
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(groceryStatementBO),
+      }
+    ).then((responseJSON) => {
+      let responseGroceryStatementBO =
+        GroceryStatementBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseGroceryStatementBO);
+      });
+    });
+  }
 
-    addHouseHold(householdBO) {
-        return this.#fetchAdvanced(this.#addHouseholdURL(), {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(householdBO)
-        }).then((responseJSON) => {
-            let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseHouseholdBO);
-            })
-        })
-    }
+  /** Household related  **/
 
-    updateHousehold(householdBO) {
-        return this.#fetchAdvanced(this.#updateHouseholdURL(householdBO.getID()), {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(HouseholdBO)
-        }).then((responseJSON) => {
-            let responseGroceryStatementBO = GroceryStatementBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseGroceryStatementBO);
-            })
-        })
-    }
+  getHousehold() {
+    return this.#fetchAdvanced(this.#getHouseholdURL()).then((responseJSON) => {
+      let householdBOs = HouseholdBO.fromJSON(responseJSON);
+      return new Promise(function (resolve) {
+        resolve(householdBOs);
+      });
+    });
+  }
 
-    /** inhabitant related **/
+  getHouseholdById(householdID) {
+    return this.#fetchAdvanced(this.#getHouseholdByIdURL(householdID)).then(
+      (responseJSON) => {
+        let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON);
+        return new Promise(function (resolve) {
+          resolve(responseHouseholdBO);
+        });
+      }
+    );
+  }
 
+  deleteHousehold(householdID) {
+    return this.#fetchAdvanced(this.#deleteHouseholdURL(householdID), {
+      method: "DELETE",
+    }).then((responseJSON) => {
+      let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseHouseholdBO);
+      });
+    });
+  }
 
-    getInhabitant() {
-        return this.#fetchAdvanced(this.#getInhabitantURL()).then((responseJSON) => {
-            let inhabitantBOs = InhabitantBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(inhabitantBOs);
-            })
-        })
-    }
+  addHouseHold(householdBO) {
+    console.log(JSON.stringify(householdBO));
+    return this.#fetchAdvanced(this.#addHouseholdURL(), {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(householdBO),
+    }).then((responseJSON) => {
+      let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseHouseholdBO);
+      });
+    });
+  }
 
+  updateHousehold(householdBO) {
+    return this.#fetchAdvanced(this.#updateHouseholdURL(householdBO.getID()), {
+      method: "PUT",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(HouseholdBO),
+    }).then((responseJSON) => {
+      let responseGroceryStatementBO =
+        GroceryStatementBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseGroceryStatementBO);
+      });
+    });
+  }
 
-    addInhabitant(inhabitantBO) {
-        return this.#fetchAdvanced(this.#addInhabitantURL(), {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(inhabitantBO)
-        }).then((responseJSON) => {
-            let responseInhabitantBO = InhabitantBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseInhabitantBO);
-            })
-        })
-    }
+  /** inhabitant related **/
 
+  getInhabitant() {
+    return this.#fetchAdvanced(this.#getInhabitantURL()).then(
+      (responseJSON) => {
+        let inhabitantBOs = InhabitantBO.fromJSON(responseJSON);
+        return new Promise(function (resolve) {
+          resolve(inhabitantBOs);
+        });
+      }
+    );
+  }
 
-    deleteInhabitant(inhabitantID) {
-        return this.#fetchAdvanced(this.#deleteInhabitantURL(inhabitantID), {
-            method: 'DELETE'
-        }).then((responseJSON) => {
-            let responseInhabitantBO = InhabitantBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseInhabitantBO);
-            })
-        })
-    }
+  addInhabitant(inhabitantBO) {
+    return this.#fetchAdvanced(this.#addInhabitantURL(), {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(inhabitantBO),
+    }).then((responseJSON) => {
+      let responseInhabitantBO = InhabitantBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseInhabitantBO);
+      });
+    });
+  }
 
+  deleteInhabitant(inhabitantID) {
+    return this.#fetchAdvanced(this.#deleteInhabitantURL(inhabitantID), {
+      method: "DELETE",
+    }).then((responseJSON) => {
+      let responseInhabitantBO = InhabitantBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseInhabitantBO);
+      });
+    });
+  }
 
-    /**  recipe related **/
+  /**  recipe related **/
 
-    getRecipe() {
-        return this.#fetchAdvanced(this.#getRecipeURL()).then((responseJSON) => {
-            let recipeBOs = GroceryBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(recipeBOs);
-            })
-        })
-    }
+  getRecipe() {
+    return this.#fetchAdvanced(this.#getRecipeURL()).then((responseJSON) => {
+      let recipeBOs = GroceryBO.fromJSON(responseJSON);
+      return new Promise(function (resolve) {
+        resolve(recipeBOs);
+      });
+    });
+  }
 
-    getRecipeById(recipeID) {
-        return this.#fetchAdvanced(this.#getRecipeByIdURL(recipeID)).then((responseJSON) => {
-            let responseRecipeBO = RecipeBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(responseRecipeBO);
-            })
-        })
-    }
+  getRecipeById(recipeID) {
+    return this.#fetchAdvanced(this.#getRecipeByIdURL(recipeID)).then(
+      (responseJSON) => {
+        let responseRecipeBO = RecipeBO.fromJSON(responseJSON);
+        return new Promise(function (resolve) {
+          resolve(responseRecipeBO);
+        });
+      }
+    );
+  }
 
-    getRecipeByName(recipeName) {
-        return this.#fetchAdvanced(this.#getRecipeByNameURL(recipeName)).then((responseJSON) => {
-            let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseRecipeBO);
-            })
-        })
-    }
+  getRecipeByName(recipeName) {
+    return this.#fetchAdvanced(this.#getRecipeByNameURL(recipeName)).then(
+      (responseJSON) => {
+        let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
+        return new Promise(function (resolve) {
+          resolve(responseRecipeBO);
+        });
+      }
+    );
+  }
 
-    deleteRecipe(recipeID) {
-        return this.#fetchAdvanced(this.#deleteRecipeURL(recipeID), {
-            method: 'DELETE'
-        }).then((responseJSON) => {
-            let responseRecipeBOs = RecipeBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseRecipeBOs);
-            })
-        })
-    }
+  deleteRecipe(recipeID) {
+    return this.#fetchAdvanced(this.#deleteRecipeURL(recipeID), {
+      method: "DELETE",
+    }).then((responseJSON) => {
+      let responseRecipeBOs = RecipeBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseRecipeBOs);
+      });
+    });
+  }
 
-    addRecipe(recipeBO) {
-        return this.#fetchAdvanced(this.#addRecipeURL(), {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(recipeBO)
-        }).then((responseJSON) => {
-            let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseRecipeBO);
-            })
-        })
-    }
+  addRecipe(recipeBO) {
+    return this.#fetchAdvanced(this.#addRecipeURL(), {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(recipeBO),
+    }).then((responseJSON) => {
+      let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseRecipeBO);
+      });
+    });
+  }
 
-    updateRecipe(recipeBO) {
-        return this.#fetchAdvanced(this.#updateRecipeURL(recipeBO.getID()), {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(recipeBO)
-        }).then((responseJSON) => {
-            let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseRecipeBO);
-            })
-        })
-    }
+  updateRecipe(recipeBO) {
+    return this.#fetchAdvanced(this.#updateRecipeURL(recipeBO.getID()), {
+      method: "PUT",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(recipeBO),
+    }).then((responseJSON) => {
+      let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseRecipeBO);
+      });
+    });
+  }
 
-    /**  user related  **/
+  /**  user related  **/
 
-    getUser() {
-        return this.#fetchAdvanced(this.#getUserURL()).then((responseJSON) => {
-            let userBOs = UserBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(userBOs);
-            })
-        })
-    }
+  getUser() {
+    return this.#fetchAdvanced(this.#getUserURL()).then((responseJSON) => {
+      let userBOs = UserBO.fromJSON(responseJSON);
+      return new Promise(function (resolve) {
+        resolve(userBOs);
+      });
+    });
+  }
 
-    getUserById(userID) {
-        return this.#fetchAdvanced(this.#getUserByIdURL(userID)).then((responseJSON) => {
-            let responseUserBO = UserBO.fromJSON(responseJSON);
-            return new Promise(function (resolve) {
-                resolve(responseUserBO);
-            })
-        })
-    }
+  getUserById(userID) {
+    return this.#fetchAdvanced(this.#getUserByIdURL(userID)).then(
+      (responseJSON) => {
+        let responseUserBO = UserBO.fromJSON(responseJSON);
+        return new Promise(function (resolve) {
+          resolve(responseUserBO);
+        });
+      }
+    );
+  }
 
-    getUserByGoogleId(google_user_id) {
-        return this.#fetchAdvanced(this.#getUserByGoogleIdURL(google_user_id)).then((responseJSON) => {
-            let responseUserBO = UserBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseUserBO);
-            })
-        })
-    }
+  getUserByGoogleId(google_user_id) {
+    return this.#fetchAdvanced(this.#getUserByGoogleIdURL(google_user_id)).then(
+      (responseJSON) => {
+        let responseUserBO = UserBO.fromJSON(responseJSON)[0];
+        return new Promise(function (resolve) {
+          resolve(responseUserBO);
+        });
+      }
+    );
+  }
 
-    deleteUser(userID) {
-        return this.#fetchAdvanced(this.#deleteUserURL(userID), {
-            method: 'DELETE'
-        }).then((responseJSON) => {
-            let responseUserBOs = UserBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseUserBOs);
-            })
-        })
-    }
+  deleteUser(userID) {
+    return this.#fetchAdvanced(this.#deleteUserURL(userID), {
+      method: "DELETE",
+    }).then((responseJSON) => {
+      let responseUserBOs = UserBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseUserBOs);
+      });
+    });
+  }
 
-    adduser(userBO) {
-        return this.#fetchAdvanced(this.#addUserURL(), {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(userBO)
-        }).then((responseJSON) => {
-            let responseUserBO = UserBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseUserBO);
-            })
-        })
-    }
+  adduser(userBO) {
+    return this.#fetchAdvanced(this.#addUserURL(), {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(userBO),
+    }).then((responseJSON) => {
+      let responseUserBO = UserBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseUserBO);
+      });
+    });
+  }
 
-    updateUser(userBO) {
-        return this.#fetchAdvanced(this.#updateUserURL(userBO.getID()), {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-type': 'application/json',
-            },
-            body: JSON.stringify(userBO)
-        }).then((responseJSON) => {
-            let responseUserBO = UserBO.fromJSON(responseJSON)[0];
-            return new Promise(function (resolve) {
-                resolve(responseUserBO);
-            })
-        })
-    }
+  updateUser(userBO) {
+    return this.#fetchAdvanced(this.#updateUserURL(userBO.getID()), {
+      method: "PUT",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(userBO),
+    }).then((responseJSON) => {
+      let responseUserBO = UserBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseUserBO);
+      });
+    });
+  }
 }
