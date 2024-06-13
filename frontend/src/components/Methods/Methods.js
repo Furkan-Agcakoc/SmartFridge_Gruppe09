@@ -499,3 +499,137 @@ const dialogConfirmText = {
     // confirmButtonText: "Löschen",
   },
 };
+
+
+// ----FridgePage------------------------------
+
+
+handleCreateGroceries = (groceryData) => {
+  const { currentlyEditing, groceries } = this.state;
+
+  if (currentlyEditing !== null) {
+    console.log("Editing grocery ID:", currentlyEditing);
+    // Edit existing grocery
+    this.setState({
+      groceries: this.updateGrocery({
+        groceryId: currentlyEditing,
+        groceryName: groceryData.name,
+        groceryQuantity: groceryData.quantity,
+        groceryUnit: groceryData.unit,
+      }),
+      popupGroceryOpen: false,
+      recipeData: {
+        name: "",
+        quantity: "",
+        unit: "",
+      },
+      // showAlert: false,
+      currentlyEditing: null,
+    });
+  } else {
+    const id = groceries.length + 1;
+    console.log("Creating grocery:", groceries);
+    console.log(groceryData);
+    // Code to create a new grocery
+    this.setState((prevState) => {
+      const newGroceries = [
+        ...prevState.groceries,
+        {
+          groceryId: id,
+          groceryName: groceryData.name,
+          groceryQuantity: groceryData.quantity,
+          groceryUnit: groceryData.unit,
+        },
+      ];
+      const newOpenMenus = { ...prevState.openMenus, [id]: false };
+      console.log(newGroceries);
+      console.log(newOpenMenus);
+
+      return {
+        groceryCount: prevState.groceryCount + 1,
+        popupGroceryOpen: false,
+        groceries: newGroceries,
+        recipeData: {
+          name: "",
+          quantity: "",
+          unit: "",
+        },
+        openMenus: newOpenMenus,
+      };
+    });
+  }
+};
+
+
+handleAnchorClickRecipe = (recepyId, event) => {
+  console.log("Anchor clicked for grocery ID:", recepyId);
+  this.setState((prevState) => {
+    const newOpenMenus = { ...prevState.openMenus, [recepyId]: true };
+    const newAnchorEls = {
+      ...prevState.anchorEls,
+      [recepyId]: event.target,
+    };
+    console.log("newOpenMenus:", newOpenMenus);
+    return {
+      anchorEls: newAnchorEls,
+      openMenus: newOpenMenus,
+    };
+  });
+};
+
+handleAnchorCloseRecipe = (recepyId) => {
+  console.log("Anchor closed for grocery ID:", recepyId);
+  this.setState((prevState) => {
+    const newOpenMenus = { ...prevState.openMenus, [recepyId]: false };
+    return {
+      openMenus: newOpenMenus,
+    };
+  });
+};
+
+handleAnchorEditRecipe = (recipe) => {
+  console.log("Editing recipe:", recipe);
+  console.log(this.state.recipeData);
+  this.setState((prevState) => {
+    const newOpenMenus = {
+      ...prevState.openMenus,
+      [recipe.recipeId]: false,
+    };
+    // Log the previous state
+    console.log("Previous state:", prevState);
+    // Log the new openMenus object
+    console.log("New openMenus:", newOpenMenus);
+    // Log the values being set for currentlyEditingRecipe and other states
+    console.log("Currently editing recipe ID:", recipe.recipeId);
+    console.log("Current ingredient:", {
+      amount: recipe.recipeIngredientsAmount,
+      unit: recipe.recipeIngredientsUnit,
+      name: recipe.recipeIngredientsName,
+    });
+    console.log("Rezeptenliste: ", recipe);
+    console.log("Recipe data:", {
+      title: recipe.recipeTitle,
+      duration: recipe.recipeDuration,
+      servings: recipe.recipeServings,
+      instructions: recipe.recipeInstructions,
+      ingredients: recipe.recipeIngredients,
+    });
+
+    return {
+      currentlyEditingRecipe: recipe.recipeId,
+      currentIngredient: {
+        amount: recipe.recipeIngredientsAmount,
+        unit: recipe.recipeIngredientsUnit,
+        name: recipe.recipeIngredientsName,
+      },
+      recipeData: {
+        title: recipe.recipeTitle,
+        duration: recipe.recipeDuration,
+        servings: recipe.recipeServings,
+        instructions: recipe.recipeInstructions,
+        ingredients: recipe.recipeIngredients,
+      },
+      openMenus: newOpenMenus,
+    };
+  });
+};

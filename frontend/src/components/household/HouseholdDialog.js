@@ -26,7 +26,7 @@ class HouseholdDialog extends Component {
           "sead.shat@gmail.com",
         ],
       },
-      showAlert: props.showAlert,
+      showAlert: false,
       // households: props.households,
     };
   }
@@ -57,7 +57,7 @@ class HouseholdDialog extends Component {
   };
 
   render() {
-    const { closePopup, handleInvalid, handleInput, isEditMode } = this.props;
+    const { closePopup, isEditMode } = this.props;
 
     const {
       householdData: { householdName, emails },
@@ -82,7 +82,6 @@ class HouseholdDialog extends Component {
           sx={{ width: "1100px", position: "fixed", zIndex: 2 }}
           component="form"
           noValidate
-          onInvalid={handleInvalid}
         >
           <Paper
             action="Haushalt"
@@ -120,7 +119,7 @@ class HouseholdDialog extends Component {
                     },
                   })
                 }
-                onInput={handleInput}
+                onInput={() => this.setState({ showAlert: false })}
                 id="outlined-required"
                 name="householdName"
                 label="Haushaltsname"

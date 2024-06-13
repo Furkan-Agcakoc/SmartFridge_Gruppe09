@@ -66,7 +66,8 @@ grocerystatement = api.inherit('GroceryStatement', bo, {
 })
 
 measure = api.inherit('Measure', bo, {
-    'unit': fields.String(attribute='_unit', description='Einheit eines Lebensmittels')
+    'unit': fields.String(attribute='_unit', description='Einheit eines Lebensmittels'),
+    'household_id': fields.Integer(attribute='_household_id', description='Die Id eines Haushalts')
 })
 
 # Inhabitant
@@ -96,6 +97,7 @@ class InhabitantDeleteOperations(Resource):
         adm = Administration()
         adm.delete_inhabitant(user_id, household_id)
         return "", 200
+
 
 
 
@@ -744,7 +746,7 @@ class MeasureListOperations(Resource):
 
         if proposal is not None:
             m = adm.create_measure(
-                proposal.get_unit())
+                proposal.get_unit(), proposal.get_household_id())
             return m, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
@@ -826,6 +828,25 @@ class CalculateRecipeFridge(Resource):
 
         # Rückgabe des Ergebnisses
         return result, 200
+
+@smartfridge.route('/household/<int:household_id>/recipes')
+@smartfridge.response(500, 'Server Error')
+@smartfridge.param('household_id', 'The ID of the household')
+class RecipesByFridgeContents(Resource):
+    def get(self, household_id):
+        """
+        Retrieve recipes that can be made with the contents of the fridge within the specified household.
+        It also lists ingredients that are missing to complete each recipe.
+        """
+        adm = Administration()
+        try:
+            results = adm.find_recipes_by_fridge_contents(household_id)
+            if not results:
+                return {'message': 'No recipes could be fully or partially made with the current fridge contents.'}, 404
+            return results, 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+
 
 
 if __name__ == '__main__':
