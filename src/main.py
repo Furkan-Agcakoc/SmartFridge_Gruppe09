@@ -18,7 +18,7 @@ from SecurityDecorater import secured
 
 app = Flask(__name__)
 
-CORS(app, resources=r'/Smartfridge/*')
+CORS(app)
 
 api = Api(app, version='1.0', title='Smartfridge API',
           description='Eine rudimentäre Demo-API für einen Smartfridge.')

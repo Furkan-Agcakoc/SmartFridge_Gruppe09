@@ -18,12 +18,15 @@ class HouseholdDialog extends Component {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
         // emails: props.isEditMode ? props.householdEmails : [],
-        emails: [
-          "furkana.gs2002@gmail.com",
-          "meayavuz@gmail.com",
-          "baran2323a@gmail.com",
-          "derzockerlp63@gmail.com",
-          "sead.shat@gmail.com",
+        inhabitant: [
+          {
+            id: 0,
+            firstname: "string",
+            lastname: "string",
+            nickname: "string",
+            email: "string",
+            google_user_id: "string",
+          },
         ],
       },
       showAlert: false,
@@ -39,7 +42,7 @@ class HouseholdDialog extends Component {
       this.setState({
         householdData: {
           householdName: this.props.householdName,
-          emails: this.props.householdEmails || [],
+          inhabitant: this.props.householdInhabitant || [],
         },
       });
     }
@@ -60,7 +63,7 @@ class HouseholdDialog extends Component {
     const { closePopup, isEditMode } = this.props;
 
     const {
-      householdData: { householdName, emails },
+      householdData: { householdName, inhabitant },
       showAlert,
     } = this.state;
 
@@ -127,12 +130,12 @@ class HouseholdDialog extends Component {
                 InputLabelProps={{ style: { fontSize: "15px" } }}
               />
               <Autocomplete
-                options={emails}
+                options={inhabitant}
                 multiple
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    name="emails"
+                    name="inhabitant"
                     label="Bewohner hinzufügen"
                     placeholder="Bewohner hinzufügen"
                     InputLabelProps={{ style: { fontSize: "15px" } }}
