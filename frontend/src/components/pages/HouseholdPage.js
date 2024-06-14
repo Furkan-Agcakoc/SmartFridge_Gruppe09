@@ -61,11 +61,11 @@ class HouseholdPage extends Component {
         currentlyEditing: null,
       });
     } else {
-      const api = SmartFridgeAPI.getAPI();
       const id = households.length + 1;
-      api.addHouseHold({
-        id: 0,
+      SmartFridgeAPI.api.addHouseHold({
+        id: id,
         household_name: householdData["householdName"],
+        emails: householdData["emails"],
       });
       this.setState((prevState) => {
         const newHouseholds = [
