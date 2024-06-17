@@ -18,7 +18,10 @@ from SecurityDecorater import secured
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+
+# CORS(app)
+# CORS(app, resources={r"/Smartfridge/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+CORS(app, resources=r'/Smartfridge/*', supports_credentials=True)
 
 api = Api(app, version='1.0', title='Smartfridge API',
           description='Eine rudimentäre Demo-API für einen Smartfridge.')
