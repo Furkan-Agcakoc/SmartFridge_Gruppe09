@@ -10,6 +10,9 @@ import {
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import AlertComponent from "../dialogs/AlertComponent";
+import { createFilterOptions } from "@mui/material/Autocomplete";
+
+const filter = createFilterOptions();
 
 class GroceryDialog extends Component {
   constructor(props) {
@@ -23,6 +26,7 @@ class GroceryDialog extends Component {
         groceryUnit: ["g", "kg", "ml", "l", "Stück"],
       },
       showAlert: false,
+      foodOptions: props.foodOptions || [], // Assuming foodOptions is passed as a prop
     };
   }
 
@@ -60,7 +64,11 @@ class GroceryDialog extends Component {
     const {
       showAlert,
       groceryData: { name, quantity, unit, groceryUnit },
+      foodOptions,
     } = this.state;
+
+    // Sort food options alphabetically
+    const sortedFoodOptions = foodOptions.sort((a, b) => a.localeCompare(b));
 
     return (
       <>
@@ -112,7 +120,7 @@ class GroceryDialog extends Component {
             >
               {isEditMode
                 ? "Lebensmittel bearbeiten"
-                : "Neues Lebensmittel hinzufügen"}
+                : "Lebensmittel hinzufügen"}
             </Typography>
             <AlertComponent showAlert={showAlert} alertType="grocery" />
             <Box
@@ -123,23 +131,76 @@ class GroceryDialog extends Component {
                 fontSize: "10px",
               }}
             >
-              <TextField
-                required
+              <Autocomplete
                 value={name}
-                onChange={(e) =>
-                  this.setState({
-                    groceryData: {
-                      ...this.state.groceryData,
-                      name: e.target.value,
-                    },
-                  })
-                }
-                onInput={() => this.setState({ showAlert: false })}
-                id="outlined-required"
-                name="groceryName"
-                label="Lebensmittelname angeben"
-                placeholder="Lebensmittelname"
-                InputLabelProps={{ style: { fontSize: "15px" } }}
+                onChange={(event, newValue) => {
+                  if (typeof newValue === "string") {
+                    this.setState({
+                      groceryData: {
+                        ...this.state.groceryData,
+                        name: newValue,
+                      },
+                    });
+                  } else if (newValue && newValue.inputValue) {
+                    this.setState({
+                      groceryData: {
+                        ...this.state.groceryData,
+                        name: newValue.inputValue,
+                      },
+                    });
+                  } else {
+                    this.setState({
+                      groceryData: {
+                        ...this.state.groceryData,
+                        name: newValue.title,
+                      },
+                    });
+                  }
+                }}
+                filterOptions={(options, params) => {
+                  const filtered = filter(options, params);
+                  const { inputValue } = params;
+                  const isExisting = options.some(
+                    (option) => inputValue === option.title
+                  );
+                  if (inputValue !== "" && !isExisting) {
+                    filtered.push({
+                      inputValue,
+                      title: `"${inputValue}" neu hinzufügen`,
+                    });
+                  }
+                  return filtered;
+                }}
+                selectOnFocus
+                clearOnBlur
+                handleHomeEndKeys
+                id="free-solo-with-text-demo"
+                options={sortedFoodOptions.map((option) => ({ title: option }))}
+                freeSolo
+                getOptionLabel={(option) => {
+                  if (typeof option === "string") {
+                    return option;
+                  }
+                  if (option.inputValue) {
+                    return option.inputValue;
+                  }
+                  return option.title;
+                }}
+                renderOption={(props, option) => (
+                  <li {...props}>{option.title}</li>
+                )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    required
+                    onInput={() => this.setState({ showAlert: false })}
+                    id="outlined-required"
+                    name="groceryName"
+                    label="Lebensmittelname angeben"
+                    placeholder="Lebensmittelname"
+                    InputLabelProps={{ style: { fontSize: "15px" } }}
+                  />
+                )}
               />
               <Box
                 sx={{
