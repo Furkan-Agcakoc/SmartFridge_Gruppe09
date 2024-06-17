@@ -7,6 +7,7 @@ import {
   MenuItem,
   Divider,
   ListItemIcon,
+  Container,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
@@ -92,20 +93,39 @@ const Grocery = ({
           Delete
         </MenuItem>
       </Menu>
-      <Typography
-        variant="h5"
+      <Container
         sx={{
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
-          color: "background.default",
-          width: "200px",
-          maxWidth: "200px",
-          height: "125px",
+          flexDirection: "column",
+          // border: "2px solid black",
         }}
       >
-        {grocery.groceryName}
-      </Typography>
+        <Typography
+          variant="h5"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            color: "background.default",
+            // border: "2px solid blue",
+            maxWidth: "200px",
+          }}
+        >
+          {grocery.groceryName}
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            color: "background.default",
+            maxWidth: "200px",
+            // border: "2px solid red",
+          }}
+        >
+           {grocery.groceryQuantity} {grocery.groceryUnit}
+        </Typography>
+      </Container>
     </Paper>
   ));
 };
