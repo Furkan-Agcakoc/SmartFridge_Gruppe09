@@ -149,18 +149,25 @@ class HouseholdPage extends Component {
 
   handleAnchorDelete = (householdId) => {
     const { households } = this.state;
-    this.setState((prevState) => {
-      console.log("HouseholdPage => Household deleted");
+    SmartFridgeAPI.api
+      .deleteHousehold(householdId)
+      .then(() => {
+        this.setState((prevState) => {
+          console.log("HouseholdPage => Household deleted");
 
-      const newOpenMenus = { ...prevState.openMenus, [householdId]: false };
-      const newHouseholds = prevState.households.filter(
-        (h) => h.householdId !== householdId
-      );
-      return {
-        households: newHouseholds,
-        openMenus: newOpenMenus,
-      };
-    });
+          const newOpenMenus = { ...prevState.openMenus, [householdId]: false };
+          const newHouseholds = prevState.households.filter(
+            (h) => h.householdId !== householdId
+          );
+          return {
+            households: newHouseholds,
+            openMenus: newOpenMenus,
+          };
+        });
+      })
+      .catch((error) => {
+        console.error("Error deleting household:", error);
+      });
     console.log(households);
   };
 
