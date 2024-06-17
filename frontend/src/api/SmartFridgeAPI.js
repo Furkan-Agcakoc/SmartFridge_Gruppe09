@@ -43,7 +43,7 @@ export default class SmartFridgeAPI {
 
   // groceryStatement related
   #getGroceryStatementURL = () =>
-    `${this.#SmartFridgeBaseURL}/groceryStatement/}`;
+    `${this.#SmartFridgeBaseURL}/groceryStatement/`;
   #getGroceryStatementByIdURL = (id) =>
     `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
   #addGroceryStatementURL = () =>
@@ -54,7 +54,7 @@ export default class SmartFridgeAPI {
     `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
 
   // household related
-  #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household/}`;
+  #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household/`;
   #getHouseholdByIdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
   #addHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household`;
   #deleteHouseholdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
@@ -67,7 +67,7 @@ export default class SmartFridgeAPI {
   #deleteInhabitantURL = (id) => `${this.#SmartFridgeBaseURL}/inhabitant/${id}`;
 
   // recipe related
-  #getRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/}`;
+  #getRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/`;
   #getRecipeByNameURL = (recipe_name) =>
     `${this.#SmartFridgeBaseURL}/recipe/${recipe_name}}`;
   #getRecipeByIdURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
@@ -76,9 +76,9 @@ export default class SmartFridgeAPI {
   #updateRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
 
   // user related
-  #getUserURL = () => `${this.#SmartFridgeBaseURL}/user/}`;
+  #getUserURL = () => `${this.#SmartFridgeBaseURL}/user/`;
   #getUserByGoogleIdURL = (google_user_id) =>
-    `${this.#SmartFridgeBaseURL}/user/google_user_id/${google_user_id}}`;
+    `${this.#SmartFridgeBaseURL}/user/google_user_id/${google_user_id}`;
   #getUserByIdURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
   #addUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
   #deleteUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
@@ -543,7 +543,7 @@ export default class SmartFridgeAPI {
     });
   }
 
-  adduser(userBO) {
+  addUser(userBO) {
     return this.#fetchAdvanced(this.#addUserURL(), {
       method: "POST",
       headers: {

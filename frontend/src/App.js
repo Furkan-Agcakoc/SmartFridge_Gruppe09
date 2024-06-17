@@ -86,9 +86,10 @@ class App extends Component {
   componentDidMount() {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-
+  
     auth.languageCode = "en";
     onAuthStateChanged(auth, (user) => {
+      console.log(user)
       if (user) {
         this.setState({
           authLoading: true,
@@ -102,8 +103,17 @@ class App extends Component {
               authError: null,
               authLoading: false,
             });
-            // this.getUserByGid(user);
-            // this.addUser(user); // Call addUser here
+            this.getUserByGid(user);
+            
+            // Add user to the database directly here
+            SmartFridgeAPI.api.addUser({
+              id: user.uid,
+              email: user.email,
+            }).then(() => {
+              console.log('User added to the database successfully');
+            }).catch((e) => {
+              console.error('Error adding user to the database', e);
+            });
           })
           .catch((e) => {
             this.setState({
@@ -145,24 +155,6 @@ class App extends Component {
     this.setState({ dialogOpen: false, dialogType: "" });
   };
 
-  // handleConfirmDelete = (id) => {
-  //   console.log("App => Confirm delete");
-  //   console.log(id);
-  //   if (id !== null) {
-  //     this.handleAnchorDelete(id);
-  //   }
-  //   this.handleCloseDialog();
-  // };
-
-  // handleConfirmDelete = () => {
-  //   console.log("HouseholdPage => Confirm delete");
-  //   const { householdIdToDelete } = this.state;
-  //   console.log(householdIdToDelete);
-  //   if (householdIdToDelete !== null) {
-  //     this.handleAnchorDelete(householdIdToDelete);
-  //   }
-  //   this.props.handleCloseDialog();
-  // };
 
   render() {
     const { currentUser, dialogOpen, dialogType } = this.state;

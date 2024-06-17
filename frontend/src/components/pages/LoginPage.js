@@ -87,10 +87,10 @@ class LoginPage extends Component {
                   }}
                 >
                   <Typography
-                    // fontFamily="Segoe UI"
                     fontSize={"18px"}
                     fontWeight={600}
                     top={"50px"}
+                    
                   >
                     Login
                   </Typography>

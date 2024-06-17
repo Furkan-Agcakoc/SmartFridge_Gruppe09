@@ -11,7 +11,7 @@ import FridgeSearchBar from "../FridgeSearchBar";
 import GroceryDialog from "../grocery/GroceryDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import RecipeDialog from "../recipe/RecipeDialog";
-import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+// import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 class FridgePage extends Component {
   constructor(props) {
@@ -77,12 +77,12 @@ class FridgePage extends Component {
     const { currentlyEditing, groceries } = this.state;
   
     if (currentlyEditing !== null) {
-      SmartFridgeAPI.api.updateGrocery({
-        id: currentlyEditing,
-        grocery_name: groceryData.name,
-        // quantity: groceryData.quantity,
-        // unit: groceryData.unit,
-      }).then((updatedGrocery) => {
+      // SmartFridgeAPI.api.updateGrocery({
+      //   id: currentlyEditing,
+      //   grocery_name: groceryData.name,
+      //   quantity: groceryData.quantity,
+      //   unit: groceryData.unit,
+      // }).then((updatedGrocery) => {
         const updatedGroceries = groceries.map((grocery) => {
           if (grocery.groceryId === currentlyEditing) {
             return {
@@ -100,17 +100,17 @@ class FridgePage extends Component {
           popupGroceryOpen: false,
           currentlyEditing: null,
         });
-      }).catch((error) => {
-        console.error("Error updating grocery:", error);
-      });
+      // }).catch((error) => {
+      //   console.error("Error updating grocery:", error);
+      // });
     } else {
       const id = groceries.length + 1;
-      SmartFridgeAPI.api.addGrocery({
-        id: id,
-        grocery_name: groceryData.name,
-        // quantity: groceryData.quantity,
-        // unit: groceryData.unit,
-      }).then((newGrocery) => {
+      // SmartFridgeAPI.api.addGrocery({
+      //   id: id,
+      //   grocery_name: groceryData.name,
+      //   // quantity: groceryData.quantity,
+      //   // unit: groceryData.unit,
+      // }).then((newGrocery) => {
         this.setState((prevState) => {
           const newGroceries = [
             ...prevState.groceries,
@@ -130,9 +130,9 @@ class FridgePage extends Component {
             openMenus: newOpenMenus,
           };
         });
-      }).catch((error) => {
-        console.error("Error adding grocery:", error);
-      });
+      // }).catch((error) => {
+      //   console.error("Error adding grocery:", error);
+      // });
     }
   };
   
