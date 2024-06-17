@@ -368,10 +368,11 @@ class RecipeDialog extends Component {
                   gap: "10px",
                   width: "100%",
                   height: "auto",
-                  maxHeight: "200px",
+                  maxHeight: "100px",
                   bgcolor: "transparent",
                   position: "relative",
                   overflow: "auto",
+                  paddingTop: "50px",
                   "& ul": { padding: 0 },
                   marginTop: "-10px",
                   "&::-webkit-scrollbar": {
@@ -386,7 +387,7 @@ class RecipeDialog extends Component {
                 {ingredients.map((ingredient, index) => (
                   <ListItem
                     key={index}
-                    sx={{ marginBottom: "-18px", marginTop: "-15px" }}
+                    sx={{ marginBottom: "-18px", marginTop: "-15px", }}
                     secondaryAction={
                       <IconButton
                         edge="end"
@@ -410,7 +411,7 @@ class RecipeDialog extends Component {
                     }
                   >
                     <ListItemText
-                      primary={`⪧ ${ingredient.amount}${ingredient.unit} → ${ingredient.name}`}
+                      primary={`⪧ ${ingredient.amount} ${ingredient.unit} / ${ingredient.name}`}
                       sx={{
                         color: "text.primary",
                       }}
@@ -425,7 +426,7 @@ class RecipeDialog extends Component {
                 placeholder="Anleitung"
                 InputLabelProps={{ style: { fontSize: "15px" } }}
                 multiline
-                rows={2}
+                rows={5}
                 name="instructions"
                 value={instructions}
                 onChange={(e) =>
@@ -437,6 +438,7 @@ class RecipeDialog extends Component {
                   })
                 }
                 onInput={() => this.setState({ showAlert: false })}
+                sx={{height:"auto", maxHeight:"200px"}}
               />
             </Box>
             <Box
