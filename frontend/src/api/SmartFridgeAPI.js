@@ -224,7 +224,7 @@ export default class SmartFridgeAPI {
   }
 
   updateGrocery(groceryBO) {
-    return this.#fetchAdvanced(this.#updateGroceryURL(groceryBO.getID()), {
+    return this.#fetchAdvanced(this.#updateGroceryURL(groceryBO.id), {
       method: "PUT",
       headers: {
         Accept: "application/json, text/plain",
@@ -367,21 +367,21 @@ export default class SmartFridgeAPI {
   }
 
   updateHousehold(householdBO) {
-    return this.#fetchAdvanced(this.#updateHouseholdURL(householdBO.getID()), {
+    return this.#fetchAdvanced(this.#updateHouseholdURL(householdBO.id), {
       method: "PUT",
       headers: {
         Accept: "application/json, text/plain",
         "Content-type": "application/json",
       },
-      body: JSON.stringify(HouseholdBO),
+      body: JSON.stringify(householdBO),
     }).then((responseJSON) => {
-      let responseGroceryStatementBO =
-        GroceryStatementBO.fromJSON(responseJSON)[0];
+      let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON)[0];
       return new Promise(function (resolve) {
-        resolve(responseGroceryStatementBO);
+        resolve(responseHouseholdBO);
       });
     });
   }
+  
 
   /** inhabitant related **/
 
