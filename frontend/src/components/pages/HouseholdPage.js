@@ -6,7 +6,7 @@ import AddHomeWorkRoundedIcon from "@mui/icons-material/AddHomeWorkRounded";
 import Tooltip from "@mui/material/Tooltip";
 import HouseholdDialog from "../household/HouseholdDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
-import HouseholdAnchor from "../household/HouseholdAnchor";
+import HouseholdAnchor from "../household/Household";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 class HouseholdPage extends Component {

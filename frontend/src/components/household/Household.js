@@ -12,7 +12,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const HouseholdList = ({
+const Household = ({
   households,
   handleAnchorClick,
   handleAnchorClose,
@@ -112,4 +112,4 @@ const HouseholdList = ({
   ));
 };
 
-export default HouseholdList;
+export default Household;

@@ -3,7 +3,7 @@ import BusinessObject from './BusinessObject';
 /**
  * Represents a Grocery object.
  */
-export default class GroceryBOBO extends BusinessObject {
+export default class GroceryBO extends BusinessObject {
 
     constructor(aGrocery_name) {
         super();

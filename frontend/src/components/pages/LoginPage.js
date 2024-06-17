@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import FontLogin from "../FontLogin";
+import FontLogin from "../dialogs/FontLogin";
 import Logo from "../../images/Fridge_Logo.png";
 import { Typography } from "@mui/material";
 import Card from "@mui/material/Card";
