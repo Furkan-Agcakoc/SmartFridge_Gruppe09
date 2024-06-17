@@ -11,6 +11,7 @@ import FridgeSearchBar from "../FridgeSearchBar";
 import GroceryDialog from "../grocery/GroceryDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import RecipeDialog from "../recipe/RecipeDialog";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 class FridgePage extends Component {
   constructor(props) {
@@ -74,45 +75,67 @@ class FridgePage extends Component {
 
   handleCreateGroceries = (groceryData) => {
     const { currentlyEditing, groceries } = this.state;
-
+  
     if (currentlyEditing !== null) {
-      const updatedGroceries = this.updateGrocery({
-        groceryId: currentlyEditing,
-        groceryName: groceryData.name,
-        groceryQuantity: groceryData.quantity,
-        groceryUnit: groceryData.unit,
-      });
-
-      this.setState({
-        groceries: updatedGroceries,
-        popupGroceryOpen: false,
-        currentlyEditing: null,
+      SmartFridgeAPI.api.updateGrocery({
+        id: currentlyEditing,
+        grocery_name: groceryData.name,
+        // quantity: groceryData.quantity,
+        // unit: groceryData.unit,
+      }).then((updatedGrocery) => {
+        const updatedGroceries = groceries.map((grocery) => {
+          if (grocery.groceryId === currentlyEditing) {
+            return {
+              ...grocery,
+              groceryName: groceryData.name,
+              groceryQuantity: groceryData.quantity,
+              groceryUnit: groceryData.unit,
+            };
+          }
+          return grocery;
+        });
+  
+        this.setState({
+          groceries: updatedGroceries,
+          popupGroceryOpen: false,
+          currentlyEditing: null,
+        });
+      }).catch((error) => {
+        console.error("Error updating grocery:", error);
       });
     } else {
       const id = groceries.length + 1;
-
-      this.setState((prevState) => {
-        const newGroceries = [
-          ...prevState.groceries,
-          {
-            groceryId: id,
-            groceryName: groceryData.name,
-            groceryQuantity: groceryData.quantity,
-            groceryUnit: groceryData.unit,
-          },
-        ];
-        const newOpenMenus = { ...prevState.openMenus, [id]: false };
-
-        return {
-          groceryCount: prevState.groceryCount + 1,
-          popupGroceryOpen: false,
-          groceries: newGroceries,
-          openMenus: newOpenMenus,
-        };
+      SmartFridgeAPI.api.addGrocery({
+        id: id,
+        grocery_name: groceryData.name,
+        // quantity: groceryData.quantity,
+        // unit: groceryData.unit,
+      }).then((newGrocery) => {
+        this.setState((prevState) => {
+          const newGroceries = [
+            ...prevState.groceries,
+            {
+              groceryId: id,
+              groceryName: groceryData.name,
+              groceryQuantity: groceryData.quantity,
+              groceryUnit: groceryData.unit,
+            },
+          ];
+          const newOpenMenus = { ...prevState.openMenus, [id]: false };
+  
+          return {
+            groceryCount: prevState.groceryCount + 1,
+            popupGroceryOpen: false,
+            groceries: newGroceries,
+            openMenus: newOpenMenus,
+          };
+        });
+      }).catch((error) => {
+        console.error("Error adding grocery:", error);
       });
     }
   };
-
+  
   updateGrocery(grocery) {
     const updatedGroceries = this.state.groceries.map((e) => {
       if (grocery.groceryId === e.groceryId) {

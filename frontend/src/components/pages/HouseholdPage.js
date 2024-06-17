@@ -49,42 +49,64 @@ class HouseholdPage extends Component {
     const { currentlyEditing, households } = this.state;
 
     if (currentlyEditing !== null) {
-      const updatedHouseholds = this.updateHousehold({
-        householdId: currentlyEditing,
-        householdName: householdData.householdName,
-        emails: householdData.emails,
-      });
+      SmartFridgeAPI.api
+        .updateHousehold({
+          id: currentlyEditing,
+          household_name: householdData.householdName,
+          emails: householdData.emails,
+        })
+        .then((updatedHousehold) => {
+          const updatedHouseholds = this.state.households.map((household) => {
+            if (household.householdId === currentlyEditing) {
+              return {
+                ...household,
+                householdName: householdData.householdName,
+                emails: householdData.emails,
+              };
+            }
+            return household;
+          });
 
-      this.setState({
-        households: updatedHouseholds,
-        popupOpen: false,
-        currentlyEditing: null,
-      });
+          this.setState({
+            households: updatedHouseholds,
+            popupOpen: false,
+            currentlyEditing: null,
+          });
+        })
+        .catch((error) => {
+          console.error("Error updating household:", error);
+        });
     } else {
       const id = households.length + 1;
-      SmartFridgeAPI.api.addHouseHold({
-        id: id,
-        household_name: householdData["householdName"],
-        emails: householdData["emails"],
-      });
-      this.setState((prevState) => {
-        const newHouseholds = [
-          ...prevState.households,
-          {
-            householdId: id,
-            householdName: householdData.householdName,
-            emails: [],
-          },
-        ];
-        const newOpenMenus = { ...prevState.openMenus, [id]: false };
+      SmartFridgeAPI.api
+        .addHouseHold({
+          id: id,
+          household_name: householdData.householdName,
+          emails: householdData.emails,
+        })
+        .then((newHousehold) => {
+          this.setState((prevState) => {
+            const newHouseholds = [
+              ...prevState.households,
+              {
+                householdId: id,
+                householdName: householdData.householdName,
+                emails: [],
+              },
+            ];
+            const newOpenMenus = { ...prevState.openMenus, [id]: false };
 
-        return {
-          householdCount: prevState.householdCount + 1,
-          popupOpen: false,
-          households: newHouseholds,
-          openMenus: newOpenMenus,
-        };
-      });
+            return {
+              householdCount: prevState.householdCount + 1,
+              popupOpen: false,
+              households: newHouseholds,
+              openMenus: newOpenMenus,
+            };
+          });
+        })
+        .catch((error) => {
+          console.error("Error adding household:", error);
+        });
     }
   };
 
