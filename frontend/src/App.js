@@ -86,9 +86,9 @@ class App extends Component {
   componentDidMount() {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-
     auth.languageCode = "en";
     onAuthStateChanged(auth, (user) => {
+      console.log(user)
       if (user) {
         this.setState({
           authLoading: true,
@@ -102,8 +102,21 @@ class App extends Component {
               authError: null,
               authLoading: false,
             });
-            // this.getUserByGid(user);
-            // this.addUser(user); // Call addUser here
+
+
+
+            SmartFridgeAPI.api.addUser({
+              firstname: "",
+              lastname: "",
+              nickname: "",
+              email: user.email,
+              google_user_id: user.uid,
+
+            }).then(() => {
+              console.log('User added to the database successfully');
+            }).catch((e) => {
+              console.error('Error adding user to the database', e);
+            });
           })
           .catch((e) => {
             this.setState({
