@@ -87,13 +87,14 @@ class GroceryDialog extends Component {
     const { handlePopupGroceryClose, isEditMode } = this.props;
     const {
       showAlert,
-      groceryData: { name, quantity, unit, groceryUnit },
+      groceryData: { name, quantity, unit },
       foodOptions,
       groceryUnit: measureOptions,
     } = this.state;
 
     // Sort food options alphabetically
     const sortedFoodOptions = foodOptions.sort((a, b) => a.localeCompare(b));
+    const sortedMeasureOptions = measureOptions.sort((a, b) => a.localeCompare(b));
 
     return (
       <>
@@ -266,28 +267,76 @@ class GroceryDialog extends Component {
                 />
                 <Autocomplete
                   id="measurements-box"
-                  options={measureOptions} // Hier sind die Mengeneinheiten
+                  options={sortedMeasureOptions.map((option) => ({
+                    title: option,
+                  }))} // Hier sind die Mengeneinheiten
                   value={unit}
                   freeSolo
-                  onChange={(event, value) =>
-                    this.setState((prevState) => ({
-                      groceryData: { ...prevState.groceryData, unit: value },
-                    }))
-                  }
-                  onInputChange={() => this.setState({ showAlert: false })}
+                  onChange={(event, newValue) => {
+                    if (newValue === null) {
+                      this.setState({
+                        groceryData: {
+                          ...this.state.groceryData,
+                          unit: "",
+                        },
+                      });
+                    } else if (typeof newValue === "string") {
+                      this.setState({
+                        groceryData: {
+                          ...this.state.groceryData,
+                          unit: newValue,
+                        },
+                      });
+                    } else if (newValue && newValue.inputValue) {
+                      this.setState({
+                        groceryData: {
+                          ...this.state.groceryData,
+                          unit: newValue.inputValue,
+                        },
+                      });
+                    } else {
+                      this.setState({
+                        groceryData: {
+                          ...this.state.groceryData,
+                          unit: newValue.title,
+                        },
+                      });
+                    }
+                  }}
+                  filterOptions={(options, params) => {
+                    const filtered = filter(options, params);
+                    const { inputValue } = params;
+                    const isExisting = options.some(
+                      (option) => inputValue === option.title
+                    );
+                    if (inputValue !== "" && !isExisting) {
+                      filtered.push({
+                        inputValue,
+                        title: `"${inputValue} neu hinzufügen"`,
+                      });
+                    }
+                    return filtered;
+                  }}
+                  selectOnFocus
+                  clearOnBlur
+                  handleHomeEndKeys
+                  getOptionLabel={(option) => {
+                    if (typeof option === "string") {
+                      return option;
+                    }
+                    if (option.inputValue) {
+                      return option.inputValue;
+                    }
+                    return option.title;
+                  }}
+                  renderOption={(props, option) => (
+                    <li {...props}>{option.title}</li>
+                  )}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       required
                       onInput={() => this.setState({ showAlert: false })}
-                      onChange={(e) =>
-                        this.setState({
-                          groceryData: {
-                            ...this.state.groceryData,
-                            unit: e.target.value,
-                          },
-                        })
-                      }
                       name="unit"
                       label="Mengeneinheit angeben"
                       placeholder="Mengeneinheit"
