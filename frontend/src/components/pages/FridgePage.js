@@ -18,26 +18,18 @@ class FridgePage extends Component {
     super(props);
     this.state = {
       value: "1",
-      // Grocery
       popupGroceryOpen: false,
       groceryCount: 0,
       groceries: [],
       groceryIdToDelete: null,
-
-      // Edit Props
       isEditMode: false,
       currentlyEditing: null,
       anchorEls: {},
       openMenus: {},
-
-      // Recipe
       popupRecipeOpen: false,
       recipeCount: 0,
       recipes: [],
       recipeIdToDelete: null,
-
-      // Dialog Props
-
       dialogopen: false,
     };
 
@@ -53,8 +45,6 @@ class FridgePage extends Component {
       value: newValue,
     });
   }
-
-  // -----------------------------------------Grocery--------------------------------------
 
   handlePopupGroceryOpen = (isEditMode = false, grocery = null) => {
     console.log("Grocery-Popup opened");
@@ -75,42 +65,49 @@ class FridgePage extends Component {
 
   handleCreateGroceries = (groceryData) => {
     const { currentlyEditing, groceries } = this.state;
-  
     if (currentlyEditing !== null) {
-      // SmartFridgeAPI.api.updateGrocery({
-      //   id: currentlyEditing,
-      //   grocery_name: groceryData.name,
-      //   quantity: groceryData.quantity,
-      //   unit: groceryData.unit,
-      // }).then((updatedGrocery) => {
+      const updatedGroceries = groceries.map((grocery) => {
+        if (grocery.groceryId === currentlyEditing) {
+          return {
+            ...grocery,
+            groceryName: groceryData.name,
+            groceryQuantity: groceryData.quantity,
+            groceryUnit: groceryData.unit,
+          };
+        }
+        return grocery;
+      });
+
+      this.setState({
+        groceries: updatedGroceries,
+        popupGroceryOpen: false,
+        currentlyEditing: null,
+      });
+    } else {
+      const existingGrocery = groceries.find(
+        (grocery) => grocery.groceryName === groceryData.name
+      );
+
+      if (existingGrocery) {
         const updatedGroceries = groceries.map((grocery) => {
-          if (grocery.groceryId === currentlyEditing) {
+          if (grocery.groceryName === groceryData.name) {
             return {
               ...grocery,
-              groceryName: groceryData.name,
-              groceryQuantity: groceryData.quantity,
-              groceryUnit: groceryData.unit,
+              groceryQuantity:
+                parseFloat(grocery.groceryQuantity) +
+                parseFloat(groceryData.quantity),
             };
           }
           return grocery;
         });
-  
+
         this.setState({
           groceries: updatedGroceries,
           popupGroceryOpen: false,
           currentlyEditing: null,
         });
-      // }).catch((error) => {
-      //   console.error("Error updating grocery:", error);
-      // });
-    } else {
-      const id = groceries.length + 1;
-      // SmartFridgeAPI.api.addGrocery({
-      //   id: id,
-      //   grocery_name: groceryData.name,
-      //   // quantity: groceryData.quantity,
-      //   // unit: groceryData.unit,
-      // }).then((newGrocery) => {
+      } else {
+        const id = groceries.length + 1;
         this.setState((prevState) => {
           const newGroceries = [
             ...prevState.groceries,
@@ -122,7 +119,7 @@ class FridgePage extends Component {
             },
           ];
           const newOpenMenus = { ...prevState.openMenus, [id]: false };
-  
+
           return {
             groceryCount: prevState.groceryCount + 1,
             popupGroceryOpen: false,
@@ -130,12 +127,10 @@ class FridgePage extends Component {
             openMenus: newOpenMenus,
           };
         });
-      // }).catch((error) => {
-      //   console.error("Error adding grocery:", error);
-      // });
+      }
     }
   };
-  
+
   updateGrocery(grocery) {
     const updatedGroceries = this.state.groceries.map((e) => {
       if (grocery.groceryId === e.groceryId) {
@@ -146,8 +141,6 @@ class FridgePage extends Component {
     console.log("Grocery updated:", updatedGroceries);
     return updatedGroceries;
   }
-
-  // -------------------------------Methoden für Grocery & Recipe--------------------------------------
 
   handleAnchorClick = (Id, event) => {
     console.log("Anchor clicked for grocery ID:", Id);
@@ -242,8 +235,6 @@ class FridgePage extends Component {
       recipeIdToDelete: prevState.value === "2" ? Id : null,
     }));
   }
-
-  // -----------------------------------------Recipe--------------------------------------
 
   handlePopupRecipeOpen = (isEditMode = false, recipe = null) => {
     console.log("Recipe-Popup openedd");
@@ -351,7 +342,6 @@ class FridgePage extends Component {
             justifyContent: "center",
             position: "relative",
             top: "200px",
-            // border: "5px solid blue",
           }}
         >
           <Box
@@ -364,7 +354,6 @@ class FridgePage extends Component {
               width: "1100px",
               height: "auto",
               padding: "0px 50px 30px 50px",
-              // border: "5px solid red",
             }}
           >
             <Paper
@@ -374,7 +363,7 @@ class FridgePage extends Component {
                 backgroundColor: "background.default",
               }}
             >
-              <FridgeSearchBar></FridgeSearchBar>
+              <FridgeSearchBar />
               <TabContext
                 value={value}
                 sx={{
@@ -387,7 +376,7 @@ class FridgePage extends Component {
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                   <TabList
                     onChange={this.handleTabChange}
-                    aria-label="Smart Fridge enviorment"
+                    aria-label="Smart Fridge environment"
                     centered
                   >
                     <Tab
@@ -404,7 +393,6 @@ class FridgePage extends Component {
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-                    // border: "5px solid red",
                   }}
                 >
                   <TabPanel
@@ -415,12 +403,10 @@ class FridgePage extends Component {
                       flexWrap: "wrap",
                       justifyContent: "baseline",
                       marginTop: "10px",
-                      // marginLeft: "0px",
                       marginBottom: "-40px",
                       gap: "30px",
                       width: "100%",
                       maxWidth: "895px",
-                      // border: "5px solid violet",
                     }}
                   >
                     <Link onClick={() => this.handlePopupGroceryOpen(false)}>
@@ -475,7 +461,7 @@ class FridgePage extends Component {
                       openMenus={openMenus}
                       setIdToDelete={this.setIdToDelete}
                       handleOpenDialog={this.props.handleOpenDialog}
-                    ></Grocery>
+                    />
                   </TabPanel>
                   {popupGroceryOpen && (
                     <GroceryDialog
@@ -491,7 +477,8 @@ class FridgePage extends Component {
                       }
                       handlePopupGroceryClose={this.handlePopupGroceryClose}
                       handleCreateGroceries={this.handleCreateGroceries}
-                    ></GroceryDialog>
+                      foodOptions={groceries.map((g) => g.groceryName)} // pass foodOptions to GroceryDialog
+                    />
                   )}
                   <DeleteConfirmationDialog
                     dialogOpen={dialogOpen}
@@ -506,7 +493,6 @@ class FridgePage extends Component {
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-                    // border: "5px solid red",
                   }}
                 >
                   <TabPanel
@@ -524,7 +510,6 @@ class FridgePage extends Component {
                       maxWidth: "895px",
                       position: "relative",
                       top: "-18px",
-                      // border: "5px solid violet",
                     }}
                   >
                     <Link onClick={() => this.handlePopupRecipeOpen(false)}>
@@ -588,7 +573,7 @@ class FridgePage extends Component {
                       setIdToDelete={this.setIdToDelete}
                       anchorEls={anchorEls}
                       openMenus={openMenus}
-                    ></Recipe>
+                    />
                   </TabPanel>
                   {popupRecipeOpen && (
                     <RecipeDialog
