@@ -459,6 +459,10 @@ class Administration():
         with MeasureMapper() as mapper:
             return mapper.find_all()
 
+    def get_measure_by_unit(self, unit):
+        with MeasureMapper() as mapper:
+            return mapper.find_by_unit_name(unit)
+
     def update_measure(self, measure):
         with MeasureMapper() as mapper:
             mapper.update(measure)

@@ -768,6 +768,17 @@ class MeasureListOperations(Resource):
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
+@smartfridge.route('/measure/unit/<string:unit>')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
+@smartfridge.param('unit', 'Die Unit des Measure-Objekts')
+class MeasureNameOperations(Resource):
+    @smartfridge.marshal_with(measure)
+    def get(self, unit):
+        """Wiedergabe des Measure durch Unit"""
+        adm = Administration()
+        unit = adm.get_measure_by_unit(unit)
+        return unit
+
 
 
 
