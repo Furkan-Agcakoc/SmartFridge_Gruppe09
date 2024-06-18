@@ -11,6 +11,7 @@ import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlin
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import AlertComponent from "../dialogs/AlertComponent";
 import { createFilterOptions } from "@mui/material/Autocomplete";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 const filter = createFilterOptions();
 
@@ -23,11 +24,16 @@ class GroceryDialog extends Component {
         name: props.isEditMode ? props.groceryName : "",
         quantity: props.isEditMode ? props.groceryQuantity : "",
         unit: props.isEditMode ? props.groceryUnit : "",
-        groceryUnit: ["g", "kg", "ml", "l", "Stück"],
+        groceryUnit: [],
       },
       showAlert: false,
       foodOptions: props.foodOptions || [],
+      groceryUnit: [], // State für Mengeneinheiten hinzugefügt
     };
+  }
+
+  componentDidMount() {
+    this.getMeasure(); // Initialer Abruf der Mengeneinheiten beim Laden des Dialogs
   }
 
   componentDidUpdate(prevProps) {
@@ -43,7 +49,7 @@ class GroceryDialog extends Component {
           name: this.props.groceryName,
           quantity: this.props.groceryQuantity,
           unit: this.props.groceryUnit,
-          groceryUnit: ["g", "kg", "ml", "l", "Stück"],
+          groceryUnit: [],
         },
         foodOptions: this.props.foodOptions || [],
       });
@@ -61,12 +67,29 @@ class GroceryDialog extends Component {
     }
   };
 
+  getGrocery = () => {
+    SmartFridgeAPI.api.getGrocery().then((groceries) => {
+      this.setState({
+        foodOptions: groceries.map((grocery) => grocery.getGroceryName()),
+      });
+    });
+  };
+
+  getMeasure = () => {
+    SmartFridgeAPI.api.getMeasure().then((measures) => {
+      this.setState({
+        groceryUnit: measures.map((measure) => measure.getUnit()),
+      });
+    });
+  };
+
   render() {
     const { handlePopupGroceryClose, isEditMode } = this.props;
     const {
       showAlert,
       groceryData: { name, quantity, unit, groceryUnit },
       foodOptions,
+      groceryUnit: measureOptions,
     } = this.state;
 
     // Sort food options alphabetically
@@ -204,6 +227,7 @@ class GroceryDialog extends Component {
                   <TextField
                     {...params}
                     required
+                    onClick={this.getGrocery} // Hier wird die Methode aufgerufen
                     onInput={() => this.setState({ showAlert: false })}
                     id="outlined-required"
                     name="groceryName"
@@ -242,7 +266,7 @@ class GroceryDialog extends Component {
                 />
                 <Autocomplete
                   id="measurements-box"
-                  options={groceryUnit}
+                  options={measureOptions} // Hier sind die Mengeneinheiten
                   value={unit}
                   freeSolo
                   onChange={(event, value) =>

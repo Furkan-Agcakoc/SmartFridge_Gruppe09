@@ -316,18 +316,20 @@ CREATE TABLE IF NOT EXISTS `grocerystatement` (
 --
 
 DROP TABLE IF EXISTS `users`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `users` (
-  `id` int NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
   `firstname` varchar(128) NOT NULL DEFAULT '',
   `lastname` varchar(256) NOT NULL DEFAULT '',
   `nickname` varchar(128) NOT NULL DEFAULT '',
   `email` varchar(128) NOT NULL DEFAULT '',
   `google_user_id` varchar(128) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_google_user_id` (`google_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `recipe`

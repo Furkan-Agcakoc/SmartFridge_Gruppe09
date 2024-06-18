@@ -5,6 +5,7 @@ import HouseholdBO from "./HouseholdBO";
 import InhabitantBO from "./InhabitantBO";
 import RecipeBO from "./RecipeBO";
 import UserBO from "./UserBO";
+import MeasureBO from "./MeasureBO";
 
 export default class SmartFridgeAPI {
   // Singelton instance
@@ -83,6 +84,11 @@ export default class SmartFridgeAPI {
   #addUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
   #deleteUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
   #updateUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
+
+  #getMeasureURL = () => `${this.#SmartFridgeBaseURL}/measure`;
+  
+
+
 
   /**
    *  Returns a Promise which resolves to a json object.
@@ -574,4 +580,16 @@ export default class SmartFridgeAPI {
       });
     });
   }
+
+  /**  Measure related  **/
+
+  getMeasure() {
+    return this.#fetchAdvanced(this.#getMeasureURL()).then((responseJSON) => {
+      let measureBOs = MeasureBO.fromJSON(responseJSON);
+      return new Promise(function (resolve) {
+        resolve(measureBOs);
+      });
+    });
+  }
+
 }

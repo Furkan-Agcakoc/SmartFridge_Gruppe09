@@ -8,6 +8,7 @@ export default class GroceryBO extends BusinessObject {
     constructor(aGrocery_name) {
         super();
         this.grocery_name = aGrocery_name;
+        //this.household_id = null;
     }
 
     setGroceryName(aGrocery_name) {
@@ -17,6 +18,15 @@ export default class GroceryBO extends BusinessObject {
     getGroceryName() {
         return this.grocery_name;
     }
+
+    // setHouseholdId(household_id) {
+    //     this.household_id = household_id;
+    // }
+
+    // getHouseholdId() {
+    //     return this.household_id;
+    // }
+
 
 
     static fromJSON(grocery) {
