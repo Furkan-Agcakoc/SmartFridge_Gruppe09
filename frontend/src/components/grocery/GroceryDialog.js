@@ -26,7 +26,7 @@ class GroceryDialog extends Component {
         groceryUnit: ["g", "kg", "ml", "l", "Stück"],
       },
       showAlert: false,
-      foodOptions: props.foodOptions || [], // Assuming foodOptions is passed as a prop
+      foodOptions: props.foodOptions || [],
     };
   }
 
@@ -35,7 +35,8 @@ class GroceryDialog extends Component {
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.groceryName !== this.props.groceryName ||
       prevProps.groceryQuantity !== this.props.groceryQuantity ||
-      prevProps.groceryUnit !== this.props.groceryUnit
+      prevProps.groceryUnit !== this.props.groceryUnit ||
+      prevProps.foodOptions !== this.props.foodOptions
     ) {
       this.setState({
         groceryData: {
@@ -44,6 +45,7 @@ class GroceryDialog extends Component {
           unit: this.props.groceryUnit,
           groceryUnit: ["g", "kg", "ml", "l", "Stück"],
         },
+        foodOptions: this.props.foodOptions || [],
       });
     }
   }
@@ -134,7 +136,14 @@ class GroceryDialog extends Component {
               <Autocomplete
                 value={name}
                 onChange={(event, newValue) => {
-                  if (typeof newValue === "string") {
+                  if (newValue === null) {
+                    this.setState({
+                      groceryData: {
+                        ...this.state.groceryData,
+                        name: "",
+                      },
+                    });
+                  } else if (typeof newValue === "string") {
                     this.setState({
                       groceryData: {
                         ...this.state.groceryData,
@@ -166,7 +175,7 @@ class GroceryDialog extends Component {
                   if (inputValue !== "" && !isExisting) {
                     filtered.push({
                       inputValue,
-                      title: `"${inputValue}" neu hinzufügen`,
+                      title: `"${inputValue} neu hinzufügen"`,
                     });
                   }
                   return filtered;
@@ -175,7 +184,9 @@ class GroceryDialog extends Component {
                 clearOnBlur
                 handleHomeEndKeys
                 id="free-solo-with-text-demo"
-                options={sortedFoodOptions.map((option) => ({ title: option }))}
+                options={sortedFoodOptions.map((option) => ({
+                  title: option,
+                }))}
                 freeSolo
                 getOptionLabel={(option) => {
                   if (typeof option === "string") {

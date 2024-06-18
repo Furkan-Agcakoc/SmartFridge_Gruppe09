@@ -11,7 +11,6 @@ import FridgeSearchBar from "../FridgeSearchBar";
 import GroceryDialog from "../grocery/GroceryDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import RecipeDialog from "../recipe/RecipeDialog";
-// import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 class FridgePage extends Component {
   constructor(props) {
@@ -65,18 +64,47 @@ class FridgePage extends Component {
 
   handleCreateGroceries = (groceryData) => {
     const { currentlyEditing, groceries } = this.state;
+
     if (currentlyEditing !== null) {
-      const updatedGroceries = groceries.map((grocery) => {
+      const currentGrocery = groceries.find(
+        (grocery) => grocery.groceryId === currentlyEditing
+      );
+
+      if (
+        currentGrocery.groceryName === groceryData.name &&
+        currentGrocery.groceryQuantity === groceryData.quantity &&
+        currentGrocery.groceryUnit === groceryData.unit
+      ) {
+        this.setState({
+          popupGroceryOpen: false,
+          currentlyEditing: null,
+        });
+        return;
+      }
+
+      const existingGroceryIndex = groceries.findIndex(
+        (grocery) => grocery.groceryName === groceryData.name
+      );
+
+      const updatedGroceries = groceries.map((grocery, index) => {
         if (grocery.groceryId === currentlyEditing) {
-          return {
-            ...grocery,
-            groceryName: groceryData.name,
-            groceryQuantity: groceryData.quantity,
-            groceryUnit: groceryData.unit,
-          };
+          if (existingGroceryIndex !== -1 && existingGroceryIndex !== index) {
+            return null; // Mark for deletion
+          } else {
+            return {
+              ...grocery,
+              groceryName: groceryData.name,
+              groceryQuantity: groceryData.quantity,
+              groceryUnit: groceryData.unit,
+            };
+          }
         }
         return grocery;
-      });
+      }).filter(grocery => grocery !== null);
+
+      if (existingGroceryIndex !== -1 && existingGroceryIndex !== currentlyEditing) {
+        updatedGroceries[existingGroceryIndex].groceryQuantity = parseFloat(updatedGroceries[existingGroceryIndex].groceryQuantity) + parseFloat(groceryData.quantity);
+      }
 
       this.setState({
         groceries: updatedGroceries,
