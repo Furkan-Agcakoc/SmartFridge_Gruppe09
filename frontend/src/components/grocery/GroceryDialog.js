@@ -312,7 +312,7 @@ class GroceryDialog extends Component {
                     if (inputValue !== "" && !isExisting) {
                       filtered.push({
                         inputValue,
-                        title: `"${inputValue} neu hinzufügen"`,
+                        title: `"${inputValue}" neu hinzufügen`,
                       });
                     }
                     return filtered;
