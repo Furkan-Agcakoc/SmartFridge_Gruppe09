@@ -56,6 +56,26 @@ class MeasureMapper(Mapper):
         cursor.close()
         return result
 
+    def find_by_unit_name(self, unit):
+        result = []
+        cursor = self._cnx.cursor()
+        command = "SELECT * FROM measure WHERE unit LIKE '{}' ORDER BY id".format(unit)
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+
+        for (id, unit, household_id) in tuples:
+            measure = Measure()
+            measure.set_id(id)
+            measure.set_unit(unit)
+            measure.set_household_id(household_id)
+            result.append(measure)
+
+        self._cnx.commit()
+        cursor.close()
+
+        return result
+
+
     def insert(self, measure):
 
         cursor = self._cnx.cursor()
