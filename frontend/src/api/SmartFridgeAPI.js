@@ -13,6 +13,7 @@ export default class SmartFridgeAPI {
 
   // Local Python backend
   #SmartFridgeBaseURL = "http://127.0.0.1:5000/Smartfridge";
+
   /**
    * Get the Singelton instance
    *
@@ -77,7 +78,7 @@ export default class SmartFridgeAPI {
   #updateRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
 
   // user related
-  #getUserURL = () => `${this.#SmartFridgeBaseURL}/user/`;
+  #getUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
   #getUserByGoogleIdURL = (google_user_id) =>
     `${this.#SmartFridgeBaseURL}/user/google_user_id/${google_user_id}`;
   #getUserByIdURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
@@ -508,13 +509,18 @@ export default class SmartFridgeAPI {
   /**  user related  **/
 
   getUser() {
-    return this.#fetchAdvanced(this.#getUserURL()).then((responseJSON) => {
+    const url = this.#getUserURL();
+    console.log('Fetching URL:', url);  // Debugging-Zweck
+    return this.#fetchAdvanced(url).then((responseJSON) => {
       let userBOs = UserBO.fromJSON(responseJSON);
       return new Promise(function (resolve) {
         resolve(userBOs);
       });
+    }).catch(error => {
+      console.error('Error fetching users:', error);
     });
   }
+  
 
   getUserById(userID) {
     return this.#fetchAdvanced(this.#getUserByIdURL(userID)).then(
