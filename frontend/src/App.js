@@ -41,30 +41,6 @@ class App extends Component {
     };
   }
 
-  getUserByGid = (currentUser) => {
-    SmartFridgeAPI.getAPI()
-      .getUserByGoogleId(currentUser.uid)
-      .then((user) =>
-        this.setState({
-          user: user,
-          loadingInProgress: false,
-          loadingError: null,
-        })
-      )
-      .catch((e) =>
-        this.setState({
-          // Reset state with error from catch
-          user: null,
-          loadingInProgress: false,
-          loadingError: e,
-        })
-      );
-    // set loading to true
-    this.setState({
-      loadingInProgress: true,
-      loadingError: null,
-    });
-  };
 
   handleSignIn = () => {
     this.setState({ authLoading: true });
@@ -106,9 +82,9 @@ class App extends Component {
 
 
             SmartFridgeAPI.api.addUser({
-              firstname: "",
-              lastname: "",
-              nickname: "",
+              firstname: "hllo",
+              lastname: "wie",
+              nickname: "gehts",
               email: user.email,
               google_user_id: user.uid,
 

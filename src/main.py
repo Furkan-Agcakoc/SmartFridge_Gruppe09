@@ -21,7 +21,14 @@ app = Flask(__name__)
 
 # CORS(app)
 # CORS(app, resources={r"/Smartfridge/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
-CORS(app, resources=r'/Smartfridge/*', supports_credentials=True)
+#CORS(app, resources=r'/Smartfridge/*', supports_credentials=True)
+##Neu---
+# CORS(app, resources={r"/Smartfridge/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+#CORS(app, res)
+# CORS(app, resources={r"/Smartfridge/*": {"origins": "*"}})
+CORS(app, resources={r"/Smartfridge/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+
+
 
 api = Api(app, version='1.0', title='Smartfridge API',
           description='Eine rudimentäre Demo-API für einen Smartfridge.')
