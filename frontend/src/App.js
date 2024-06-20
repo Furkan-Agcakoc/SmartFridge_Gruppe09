@@ -38,9 +38,9 @@ class App extends Component {
       showAlert: false,
       dialogOpen: false,
       dialogType: "",
+      userList: [],
     };
   }
-
 
   handleSignIn = () => {
     this.setState({ authLoading: true });
@@ -69,6 +69,7 @@ class App extends Component {
         this.setState({
           authLoading: true,
         });
+
         user
           .getIdToken()
           .then((token) => {
@@ -79,20 +80,47 @@ class App extends Component {
               authLoading: false,
             });
 
+            // Benutzer hinzufügen, wenn er nicht existiert
+            SmartFridgeAPI.api
+              .getUser()
+              .then((userBOs) => {
+                const existingUser = userBOs.find(
+                  (u) => u.google_user_id === user.uid || u.email === user.email
+                );
 
-
-            SmartFridgeAPI.api.addUser({
-              firstname: "hllo",
-              lastname: "wie",
-              nickname: "gehts",
-              email: user.email,
-              google_user_id: user.uid,
-
-            }).then(() => {
-              console.log('User added to the database successfully');
-            }).catch((e) => {
-              console.error('Error adding user to the database', e);
-            });
+                if (!existingUser) {
+                  SmartFridgeAPI.api
+                    .addUser({
+                      firstname: "",
+                      lastname: "",
+                      nickname: "",
+                      email: user.email,
+                      google_user_id: user.uid,
+                    })
+                    .then((newUser) => {
+                      this.setState((prevState) => ({
+                        userList: [...prevState.userList, newUser],
+                      }));
+                    })
+                    .catch((e) => {
+                      if (e.response && e.response.status === 409) {
+                        // Konfliktfehler
+                        console.log("User already exists in the database");
+                        console.log("Zeige die liste", this.state.userList);
+                      } else {
+                        console.error("Error adding user to the database", e);
+                      }
+                    });
+                } else {
+                  console.log("User already exists in the database");
+                }
+              })
+              .catch((e) => {
+                console.error(
+                  "Error checking user existence in the database",
+                  e
+                );
+              });
           })
           .catch((e) => {
             this.setState({
@@ -201,6 +229,7 @@ class App extends Component {
                       handleOpenDialog={this.handleOpenDialog}
                       handleCloseDialog={this.handleCloseDialog}
                       handleConfirmDelete={this.handleConfirmDelete}
+                      userList={this.state.userList}
                     />
                   </Secured>
                 }

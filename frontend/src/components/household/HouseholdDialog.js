@@ -10,6 +10,7 @@ import {
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import AlertComponent from "../dialogs/AlertComponent";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 class HouseholdDialog extends Component {
   constructor(props) {
@@ -17,22 +18,31 @@ class HouseholdDialog extends Component {
     this.state = {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
-        // emails: props.isEditMode ? props.householdEmails : [],
-        inhabitant: [
-          {
-            id: 0,
-            firstname: "string",
-            lastname: "string",
-            nickname: "string",
-            email: "string",
-            google_user_id: "string",
-          },
-        ],
+        inhabitants: props.isEditMode ? props.householdInhabitants : [],
       },
+      allInhabitants: [],
       showAlert: false,
-      // households: props.households,
     };
   }
+
+  componentDidMount() {
+    this.fetchInhabitants();
+  }
+
+  fetchInhabitants = () => {
+    SmartFridgeAPI.api
+      .getUser()
+      .then((userBOs) => {
+        const inhabitants = userBOs.map((user) => ({
+          email: user.email,
+          id: user.id,
+        }));
+        this.setState({ allInhabitants: inhabitants });
+      })
+      .catch((error) => {
+        console.error("Fehler beim Abrufen der Einwohnerdaten:", error);
+      });
+  };
 
   componentDidUpdate(prevProps) {
     if (
@@ -42,7 +52,7 @@ class HouseholdDialog extends Component {
       this.setState({
         householdData: {
           householdName: this.props.householdName,
-          inhabitant: this.props.householdInhabitant || [],
+          inhabitants: this.props.householdInhabitants,
         },
       });
     }
@@ -57,14 +67,16 @@ class HouseholdDialog extends Component {
     } else {
       this.setState({ showAlert: true });
     }
+    console.log(householdData.inhabitants);
   };
 
   render() {
     const { closePopup, isEditMode } = this.props;
 
     const {
-      householdData: { householdName, inhabitant },
+      householdData: { householdName},
       showAlert,
+      allInhabitants,
     } = this.state;
 
     return (
@@ -130,8 +142,17 @@ class HouseholdDialog extends Component {
                 InputLabelProps={{ style: { fontSize: "15px" } }}
               />
               <Autocomplete
-                options={inhabitant}
+                options={allInhabitants}
+                getOptionLabel={(option) => option.email}
                 multiple
+                onChange={(event, value) => {
+                  this.setState((prevState) => ({
+                    householdData: {
+                      ...prevState.householdData,
+                      inhabitants: value,
+                    },
+                  }));
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}

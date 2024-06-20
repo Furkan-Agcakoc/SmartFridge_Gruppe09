@@ -328,7 +328,8 @@ CREATE TABLE `users` (
   `email` varchar(128) NOT NULL DEFAULT '',
   `google_user_id` varchar(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_google_user_id` (`google_user_id`)
+  UNIQUE KEY (`email`),
+  UNIQUE KEY (`google_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
