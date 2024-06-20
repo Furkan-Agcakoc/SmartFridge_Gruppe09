@@ -98,7 +98,7 @@ class Administration():
 
                 if len(users) > 0:
                     for i in users:
-                        self.delete_inhabitant(i.get_id(), household.get_id(), outercall=True)
+                        self.delete_inhabitant(i.get_id(), household.get_id())
 
                 if i in fridge:
                     self.delete_fridge(i)

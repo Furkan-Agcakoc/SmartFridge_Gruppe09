@@ -21,6 +21,7 @@ class HouseholdPage extends Component {
       anchorEls: {},
       openMenus: {},
       householdIdToDelete: null,
+      userList: this.props.userList,
     };
   }
 
@@ -45,23 +46,182 @@ class HouseholdPage extends Component {
     });
   };
 
+  // handleCreateObject = (householdData) => {
+  //   const { currentlyEditing, households } = this.state;
+
+  //   if (currentlyEditing !== null) {
+  //     SmartFridgeAPI.api
+  //       .updateHousehold({
+  //         id: currentlyEditing,
+  //         household_name: householdData.householdName,
+  //         household_inhabitants: householdData.inhabitants.map(
+  //           (inhabitant) => inhabitant.id
+  //         ),
+  //       })
+  //       .then((updatedHousehold) => {
+  //         const updatedHouseholds = households.map((household) => {
+  //           if (household.householdId === currentlyEditing) {
+  //             return {
+  //               ...household,
+  //               householdName: householdData.householdName,
+  //               household_inhabitants: householdData.inhabitants,
+  //             };
+  //           }
+  //           return household;
+  //         });
+
+  //         this.setState({
+  //           households: updatedHouseholds,
+  //           popupOpen: false,
+  //           currentlyEditing: null,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error updating household:", error);
+  //       });
+  //   } else {
+  //     const id = households.length + 1;
+  //     SmartFridgeAPI.api
+  //       .addInhabitant({
+  //         household_id: id,
+  //         user_id: householdData.inhabitants.map((inhabitant) => inhabitant.id),
+  //       })
+  //       .then(() => {
+  //         return SmartFridgeAPI.api.addHouseHold({
+  //           id: id,
+  //           household_name: householdData.householdName,
+  //           household_inhabitants: householdData.inhabitants.map(
+  //             (inhabitant) => inhabitant.id
+  //           ),
+  //         });
+  //       })
+  //       .then((newHousehold) => {
+  //         const newHouseholds = [
+  //           ...households,
+  //           {
+  //             householdId: id,
+  //             householdName: householdData.householdName,
+  //             household_inhabitants: householdData.inhabitants,
+  //           },
+  //         ];
+  //         const newOpenMenus = { ...this.state.openMenus, [id]: false };
+
+  //         this.setState({
+  //           householdCount: this.state.householdCount + 1,
+  //           popupOpen: false,
+  //           households: newHouseholds,
+  //           openMenus: newOpenMenus,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error creating household:", error);
+  //       });
+  //   }
+  // };
+
+  // handleCreateObject = (householdData) => {
+  //   const { currentlyEditing, households } = this.state;
+
+  //   if (currentlyEditing !== null) {
+  //     SmartFridgeAPI.api
+  //       .updateHousehold({
+  //         id: currentlyEditing,
+  //         household_name: householdData.householdName,
+  //         household_inhabitants: householdData.inhabitants.map(
+  //           (inhabitant) => inhabitant.id
+  //         ),
+  //       })
+  //       .then((updatedHousehold) => {
+  //         const updatedHouseholds = households.map((household) => {
+  //           if (household.householdId === currentlyEditing) {
+  //             return {
+  //               ...household,
+  //               householdName: householdData.householdName,
+  //               household_inhabitants: householdData.inhabitants,
+  //             };
+  //           }
+  //           return household;
+  //         });
+
+  //         this.setState({
+  //           households: updatedHouseholds,
+  //           popupOpen: false,
+  //           currentlyEditing: null,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error updating household:", error);
+  //       });
+  //   } else {
+  //     const id = households.length + 1;
+  //     SmartFridgeAPI.api
+  //       .addHouseHold({
+  //         id: id,
+  //         household_name: householdData.householdName,
+  //         household_inhabitants: householdData.inhabitants.map(
+  //           (inhabitant) => inhabitant.id
+  //         ),
+  //       })
+  //       .then(() => {
+  //         const promises = householdData.inhabitants.map((inhabitant) =>
+  //           SmartFridgeAPI.api.addInhabitant(inhabitant.id, id)
+  //         );
+
+  //         return Promise.all(promises);
+  //       })
+  //       .then(() => {
+  //         const newHouseholds = [
+  //           ...households,
+  //           {
+  //             householdId: id,
+  //             householdName: householdData.householdName,
+  //             household_inhabitants: householdData.inhabitants,
+  //           },
+  //         ];
+  //         const newOpenMenus = { ...this.state.openMenus, [id]: false };
+
+  //         this.setState({
+  //           householdCount: this.state.householdCount + 1,
+  //           popupOpen: false,
+  //           households: newHouseholds,
+  //           openMenus: newOpenMenus,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error creating household:", error);
+  //       });
+  //   }
+  // };
+
   handleCreateObject = (householdData) => {
     const { currentlyEditing, households } = this.state;
+
+    const generateUniqueId = () => {
+      let maxId = 0;
+      households.forEach((household) => {
+        if (household.householdId > maxId) {
+          maxId = household.householdId;
+        }
+      });
+      return maxId + 1;
+    };
 
     if (currentlyEditing !== null) {
       SmartFridgeAPI.api
         .updateHousehold({
           id: currentlyEditing,
           household_name: householdData.householdName,
-          emails: householdData.emails,
+          household_inhabitants: householdData.inhabitants.map(
+            (inhabitant) => inhabitant.id
+          ),
         })
         .then((updatedHousehold) => {
-          const updatedHouseholds = this.state.households.map((household) => {
+          const updatedHouseholds = households.map((household) => {
             if (household.householdId === currentlyEditing) {
               return {
                 ...household,
                 householdName: householdData.householdName,
-                emails: householdData.emails,
+                household_inhabitants: householdData.inhabitants,
               };
             }
             return household;
@@ -77,35 +237,42 @@ class HouseholdPage extends Component {
           console.error("Error updating household:", error);
         });
     } else {
-      const id = households.length + 1;
+      const id = generateUniqueId();
       SmartFridgeAPI.api
         .addHouseHold({
           id: id,
           household_name: householdData.householdName,
-          emails: householdData.emails,
+          household_inhabitants: householdData.inhabitants.map(
+            (inhabitant) => inhabitant.id
+          ),
         })
-        .then((newHousehold) => {
-          this.setState((prevState) => {
-            const newHouseholds = [
-              ...prevState.households,
-              {
-                householdId: id,
-                householdName: householdData.householdName,
-                emails: [],
-              },
-            ];
-            const newOpenMenus = { ...prevState.openMenus, [id]: false };
+        .then(() => {
+          const promises = householdData.inhabitants.map((inhabitant) =>
+            SmartFridgeAPI.api.addInhabitant(inhabitant.id, id)
+          );
 
-            return {
-              householdCount: prevState.householdCount + 1,
-              popupOpen: false,
-              households: newHouseholds,
-              openMenus: newOpenMenus,
-            };
+          return Promise.all(promises);
+        })
+        .then(() => {
+          const newHouseholds = [
+            ...households,
+            {
+              householdId: id,
+              householdName: householdData.householdName,
+              household_inhabitants: householdData.inhabitants,
+            },
+          ];
+          const newOpenMenus = { ...this.state.openMenus, [id]: false };
+
+          this.setState({
+            householdCount: this.state.householdCount + 1,
+            popupOpen: false,
+            households: newHouseholds,
+            openMenus: newOpenMenus,
           });
         })
         .catch((error) => {
-          console.error("Error adding household:", error);
+          console.error("Error creating household:", error);
         });
     }
   };
@@ -168,29 +335,37 @@ class HouseholdPage extends Component {
       }
     );
   };
-
   handleAnchorDelete = (householdId) => {
     const { households } = this.state;
     SmartFridgeAPI.api
       .deleteHousehold(householdId)
       .then(() => {
-        this.setState((prevState) => {
-          console.log("HouseholdPage => Household deleted");
+        this.setState(
+          (prevState) => {
+            console.log("HouseholdPage => Household deleted", householdId);
 
-          const newOpenMenus = { ...prevState.openMenus, [householdId]: false };
-          const newHouseholds = prevState.households.filter(
-            (h) => h.householdId !== householdId
-          );
-          return {
-            households: newHouseholds,
-            openMenus: newOpenMenus,
-          };
-        });
+            const newOpenMenus = {
+              ...prevState.openMenus,
+              [householdId]: false,
+            };
+            const newHouseholds = prevState.households.filter(
+              (h) => h.householdId !== householdId
+            );
+
+            return {
+              households: newHouseholds,
+              openMenus: newOpenMenus,
+            };
+          },
+          () => {
+            // Callback after setState to ensure state is updated before logging
+            console.log("Updated households list:", this.state.households);
+          }
+        );
       })
       .catch((error) => {
         console.error("Error deleting household:", error);
       });
-    console.log(households);
   };
 
   handleConfirmDelete = () => {
