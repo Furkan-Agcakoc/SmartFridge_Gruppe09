@@ -21,7 +21,7 @@ class HouseholdPage extends Component {
       anchorEls: {},
       openMenus: {},
       householdIdToDelete: null,
-      userList: this.props.userList,
+      inhabitants: {},
     };
   }
 
@@ -46,182 +46,25 @@ class HouseholdPage extends Component {
     });
   };
 
-  // handleCreateObject = (householdData) => {
-  //   const { currentlyEditing, households } = this.state;
-
-  //   if (currentlyEditing !== null) {
-  //     SmartFridgeAPI.api
-  //       .updateHousehold({
-  //         id: currentlyEditing,
-  //         household_name: householdData.householdName,
-  //         household_inhabitants: householdData.inhabitants.map(
-  //           (inhabitant) => inhabitant.id
-  //         ),
-  //       })
-  //       .then((updatedHousehold) => {
-  //         const updatedHouseholds = households.map((household) => {
-  //           if (household.householdId === currentlyEditing) {
-  //             return {
-  //               ...household,
-  //               householdName: householdData.householdName,
-  //               household_inhabitants: householdData.inhabitants,
-  //             };
-  //           }
-  //           return household;
-  //         });
-
-  //         this.setState({
-  //           households: updatedHouseholds,
-  //           popupOpen: false,
-  //           currentlyEditing: null,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error updating household:", error);
-  //       });
-  //   } else {
-  //     const id = households.length + 1;
-  //     SmartFridgeAPI.api
-  //       .addInhabitant({
-  //         household_id: id,
-  //         user_id: householdData.inhabitants.map((inhabitant) => inhabitant.id),
-  //       })
-  //       .then(() => {
-  //         return SmartFridgeAPI.api.addHouseHold({
-  //           id: id,
-  //           household_name: householdData.householdName,
-  //           household_inhabitants: householdData.inhabitants.map(
-  //             (inhabitant) => inhabitant.id
-  //           ),
-  //         });
-  //       })
-  //       .then((newHousehold) => {
-  //         const newHouseholds = [
-  //           ...households,
-  //           {
-  //             householdId: id,
-  //             householdName: householdData.householdName,
-  //             household_inhabitants: householdData.inhabitants,
-  //           },
-  //         ];
-  //         const newOpenMenus = { ...this.state.openMenus, [id]: false };
-
-  //         this.setState({
-  //           householdCount: this.state.householdCount + 1,
-  //           popupOpen: false,
-  //           households: newHouseholds,
-  //           openMenus: newOpenMenus,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error creating household:", error);
-  //       });
-  //   }
-  // };
-
-  // handleCreateObject = (householdData) => {
-  //   const { currentlyEditing, households } = this.state;
-
-  //   if (currentlyEditing !== null) {
-  //     SmartFridgeAPI.api
-  //       .updateHousehold({
-  //         id: currentlyEditing,
-  //         household_name: householdData.householdName,
-  //         household_inhabitants: householdData.inhabitants.map(
-  //           (inhabitant) => inhabitant.id
-  //         ),
-  //       })
-  //       .then((updatedHousehold) => {
-  //         const updatedHouseholds = households.map((household) => {
-  //           if (household.householdId === currentlyEditing) {
-  //             return {
-  //               ...household,
-  //               householdName: householdData.householdName,
-  //               household_inhabitants: householdData.inhabitants,
-  //             };
-  //           }
-  //           return household;
-  //         });
-
-  //         this.setState({
-  //           households: updatedHouseholds,
-  //           popupOpen: false,
-  //           currentlyEditing: null,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error updating household:", error);
-  //       });
-  //   } else {
-  //     const id = households.length + 1;
-  //     SmartFridgeAPI.api
-  //       .addHouseHold({
-  //         id: id,
-  //         household_name: householdData.householdName,
-  //         household_inhabitants: householdData.inhabitants.map(
-  //           (inhabitant) => inhabitant.id
-  //         ),
-  //       })
-  //       .then(() => {
-  //         const promises = householdData.inhabitants.map((inhabitant) =>
-  //           SmartFridgeAPI.api.addInhabitant(inhabitant.id, id)
-  //         );
-
-  //         return Promise.all(promises);
-  //       })
-  //       .then(() => {
-  //         const newHouseholds = [
-  //           ...households,
-  //           {
-  //             householdId: id,
-  //             householdName: householdData.householdName,
-  //             household_inhabitants: householdData.inhabitants,
-  //           },
-  //         ];
-  //         const newOpenMenus = { ...this.state.openMenus, [id]: false };
-
-  //         this.setState({
-  //           householdCount: this.state.householdCount + 1,
-  //           popupOpen: false,
-  //           households: newHouseholds,
-  //           openMenus: newOpenMenus,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error creating household:", error);
-  //       });
-  //   }
-  // };
-
   handleCreateObject = (householdData) => {
     const { currentlyEditing, households } = this.state;
-
-    const generateUniqueId = () => {
-      let maxId = 0;
-      households.forEach((household) => {
-        if (household.householdId > maxId) {
-          maxId = household.householdId;
-        }
-      });
-      return maxId + 1;
-    };
 
     if (currentlyEditing !== null) {
       SmartFridgeAPI.api
         .updateHousehold({
           id: currentlyEditing,
           household_name: householdData.householdName,
-          household_inhabitants: householdData.inhabitants.map(
+          inhabitants: householdData.inhabitants.map(
             (inhabitant) => inhabitant.id
           ),
         })
         .then((updatedHousehold) => {
           const updatedHouseholds = households.map((household) => {
-            if (household.householdId === currentlyEditing) {
+            if (household.id === currentlyEditing) {
               return {
                 ...household,
                 householdName: householdData.householdName,
-                household_inhabitants: householdData.inhabitants,
+                inhabitants: householdData.inhabitants,
               };
             }
             return household;
@@ -237,38 +80,39 @@ class HouseholdPage extends Component {
           console.error("Error updating household:", error);
         });
     } else {
-      const id = generateUniqueId();
+      // const id = households.length + 1;
+      console.log(householdData.householdName);
       SmartFridgeAPI.api
         .addHouseHold({
-          id: id,
           household_name: householdData.householdName,
-          household_inhabitants: householdData.inhabitants.map(
-            (inhabitant) => inhabitant.id
-          ),
+          // inhabitants: householdData.inhabitants.map(
+          //   (inhabitant) => inhabitant.id
+          // ),
         })
-        .then(() => {
+        .then(async (responseHouseholdBO) => {
           const promises = householdData.inhabitants.map((inhabitant) =>
-            SmartFridgeAPI.api.addInhabitant(inhabitant.id, id)
+            SmartFridgeAPI.api.addInhabitant(
+              inhabitant.id,
+              responseHouseholdBO.id
+            )
           );
+          await Promise.all(promises);
+          console.log(responseHouseholdBO)
 
-          return Promise.all(promises);
-        })
-        .then(() => {
-          const newHouseholds = [
-            ...households,
-            {
-              householdId: id,
-              householdName: householdData.householdName,
-              household_inhabitants: householdData.inhabitants,
-            },
-          ];
-          const newOpenMenus = { ...this.state.openMenus, [id]: false };
+          const newHouseholds = [...households, responseHouseholdBO];
+          const newOpenMenus = {
+            ...this.state.openMenus,
+            [responseHouseholdBO.id]: false,
+          };
+          console.log(households);
+          console.log(newHouseholds, newOpenMenus);
 
           this.setState({
             householdCount: this.state.householdCount + 1,
             popupOpen: false,
             households: newHouseholds,
             openMenus: newOpenMenus,
+            inhabitants: {...this.state.inhabitants, [responseHouseholdBO.id]: householdData.inhabitants},
           });
         })
         .catch((error) => {
@@ -279,7 +123,7 @@ class HouseholdPage extends Component {
 
   updateHousehold(household) {
     const updatedHouseholds = this.state.households.map((e) => {
-      if (household.householdId === e.householdId) {
+      if (household.id === e.id) {
         return { ...e, ...household };
       }
       return e;
@@ -336,7 +180,6 @@ class HouseholdPage extends Component {
     );
   };
   handleAnchorDelete = (householdId) => {
-    const { households } = this.state;
     SmartFridgeAPI.api
       .deleteHousehold(householdId)
       .then(() => {
@@ -349,7 +192,7 @@ class HouseholdPage extends Component {
               [householdId]: false,
             };
             const newHouseholds = prevState.households.filter(
-              (h) => h.householdId !== householdId
+              (h) => h.id !== householdId
             );
 
             return {
@@ -388,13 +231,14 @@ class HouseholdPage extends Component {
       popupOpen,
       isEditMode,
       currentlyEditing,
+      inhabitants,
     } = this.state;
 
     const { dialogOpen, dialogType, handleOpenDialog, handleCloseDialog } =
       this.props;
 
     const editingHousehold = currentlyEditing
-      ? households.find((h) => h.householdId === currentlyEditing)
+      ? households.find((h) => h.id === currentlyEditing)
       : null;
 
     return (
@@ -485,7 +329,10 @@ class HouseholdPage extends Component {
               <HouseholdDialog
                 isEditMode={isEditMode}
                 householdName={
-                  editingHousehold ? editingHousehold.householdName : ""
+                  editingHousehold ? editingHousehold.household_name : ""
+                }
+                inhabitants={
+                  editingHousehold ? inhabitants[editingHousehold.id] : []
                 }
                 closePopup={this.closePopup}
                 handleCreateObject={this.handleCreateObject}

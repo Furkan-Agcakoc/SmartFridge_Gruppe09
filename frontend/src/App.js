@@ -38,7 +38,6 @@ class App extends Component {
       showAlert: false,
       dialogOpen: false,
       dialogType: "",
-      userList: [],
     };
   }
 
@@ -97,16 +96,10 @@ class App extends Component {
                       email: user.email,
                       google_user_id: user.uid,
                     })
-                    .then((newUser) => {
-                      this.setState((prevState) => ({
-                        userList: [...prevState.userList, newUser],
-                      }));
-                    })
                     .catch((e) => {
                       if (e.response && e.response.status === 409) {
                         // Konfliktfehler
                         console.log("User already exists in the database");
-                        console.log("Zeige die liste", this.state.userList);
                       } else {
                         console.error("Error adding user to the database", e);
                       }
@@ -229,7 +222,6 @@ class App extends Component {
                       handleOpenDialog={this.handleOpenDialog}
                       handleCloseDialog={this.handleCloseDialog}
                       handleConfirmDelete={this.handleConfirmDelete}
-                      userList={this.state.userList}
                     />
                   </Secured>
                 }

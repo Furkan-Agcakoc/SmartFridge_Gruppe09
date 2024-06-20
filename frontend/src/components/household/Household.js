@@ -30,7 +30,7 @@ const Household = ({
 
   return households.map((household) => (
     <Box
-      key={household.householdId}
+      key={household.id}
       sx={{
         position: "relative",
         display: "flex",
@@ -50,11 +50,11 @@ const Household = ({
         aria-label="more"
         id="long-button"
         aria-controls={
-          openMenus[household.householdId] ? "long-menu" : undefined
+          openMenus[household.id] ? "long-menu" : undefined
         }
-        aria-expanded={openMenus[household.householdId] ? "true" : undefined}
+        aria-expanded={openMenus[household.id] ? "true" : undefined}
         aria-haspopup="true"
-        onClick={(event) => handleAnchorClick(household.householdId, event)}
+        onClick={(event) => handleAnchorClick(household.id, event)}
         style={{
           position: "absolute",
           top: "2px",
@@ -68,12 +68,12 @@ const Household = ({
 
       <Menu
         MenuListProps={{ "aria-labelledby": "long-button" }}
-        anchorEl={anchorEls[household.householdId]}
-        open={openMenus[household.householdId]}
-        onClose={() => handleAnchorClose(household.householdId)}
+        anchorEl={anchorEls[household.id]}
+        open={openMenus[household.id]}
+        onClose={() => handleAnchorClose(household.id)}
       >
         <MenuItem
-          onClick={() => handleAnchorEdit(household.householdId)}
+          onClick={() => handleAnchorEdit(household.id)}
           className="menu-item"
           disableRipple
         >
@@ -84,7 +84,7 @@ const Household = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleDeleteClick(household.householdId)}
+          onClick={() => handleDeleteClick(household.id)}
           className="menu-item"
           disableRipple
         >
@@ -106,7 +106,7 @@ const Household = ({
           height: "125px",
         }}
       >
-        {household.householdName}
+        {household.household_name}
       </Typography>
     </Box>
   ));

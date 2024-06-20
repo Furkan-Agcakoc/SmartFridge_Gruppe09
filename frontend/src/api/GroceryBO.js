@@ -19,13 +19,13 @@ export default class GroceryBO extends BusinessObject {
         return this.grocery_name;
     }
 
-    // setHouseholdId(household_id) {
-    //     this.household_id = household_id;
-    // }
+    setHouseholdId(household_id) {
+        this.household_id = household_id;
+    }
 
-    // getHouseholdId() {
-    //     return this.household_id;
-    // }
+    getHouseholdId() {
+        return this.household_id;
+    }
 
 
 

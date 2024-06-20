@@ -18,7 +18,7 @@ class HouseholdDialog extends Component {
     this.state = {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
-        inhabitants: props.isEditMode ? props.householdInhabitants : [],
+        inhabitants: props.isEditMode ? props.inhabitants : [],
       },
       allInhabitants: [],
       showAlert: false,
@@ -47,12 +47,13 @@ class HouseholdDialog extends Component {
   componentDidUpdate(prevProps) {
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
-      prevProps.householdName !== this.props.householdName
+      prevProps.householdName !== this.props.householdName ||
+      prevProps.inhabitants !== this.props.inhabitants
     ) {
       this.setState({
         householdData: {
           householdName: this.props.householdName,
-          inhabitants: this.props.householdInhabitants,
+          inhabitants: this.props.inhabitants,
         },
       });
     }
@@ -70,14 +71,25 @@ class HouseholdDialog extends Component {
     console.log(householdData.inhabitants);
   };
 
+  getAvailableInhabitants = () => {
+    const { allInhabitants, householdData } = this.state;
+    const currentInhabitantsIds = householdData.inhabitants.map(
+      (inhabitant) => inhabitant.id
+    );
+    return allInhabitants.filter(
+      (inhabitant) => !currentInhabitantsIds.includes(inhabitant.id)
+    );
+  };
+
   render() {
     const { closePopup, isEditMode } = this.props;
 
     const {
-      householdData: { householdName},
+      householdData: { householdName, inhabitants },
       showAlert,
-      allInhabitants,
     } = this.state;
+
+    const availableInhabitants = this.getAvailableInhabitants();
 
     return (
       <>
@@ -142,8 +154,10 @@ class HouseholdDialog extends Component {
                 InputLabelProps={{ style: { fontSize: "15px" } }}
               />
               <Autocomplete
-                options={allInhabitants}
+                options={availableInhabitants}
                 getOptionLabel={(option) => option.email}
+                value={inhabitants}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 multiple
                 onChange={(event, value) => {
                   this.setState((prevState) => ({
