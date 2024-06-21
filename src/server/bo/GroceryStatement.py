@@ -5,7 +5,7 @@ class GroceryStatement(BusinessObject):
         super().__init__()
         self._grocery_name = 0
         self._unit = 0
-        self._quantity = 0
+        self.quantity = 0.0
 
 
 
@@ -18,10 +18,10 @@ class GroceryStatement(BusinessObject):
         self._grocery_name = new_grocery_name
 
     def get_quantity(self):
-        return self._quantity
+        return self.quantity
 
     def set_quantity(self, new_quantity):
-        self._quantity = new_quantity
+        self.quantity = new_quantity
 
     def get_unit(self):
         return self._unit
@@ -38,5 +38,3 @@ class GroceryStatement(BusinessObject):
         obj.set_unit(dictionary["unit"])
         obj.set_quantity(dictionary["quantity"])
         return obj
-
-    #

@@ -119,7 +119,7 @@ class Administration():
 
         fridge = self.create_fridge(household.get_id())
 
-        return household, fridge
+        return household
 
     """
     def delete_household(self, household):  # prüfen
