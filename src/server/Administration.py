@@ -98,7 +98,7 @@ class Administration():
 
                 if len(users) > 0:
                     for i in users:
-                        self.delete_inhabitant(i.get_id(), household.get_id(), outercall=True)
+                        self.delete_inhabitant(i.get_id(), household.get_id())
 
                 if i in fridge:
                     self.delete_fridge(i)
@@ -386,7 +386,6 @@ class Administration():
                 i = str(e) + " error in del user"
 
             return i
-
 
 
     def get_users_by_household_id(self, household_id):
