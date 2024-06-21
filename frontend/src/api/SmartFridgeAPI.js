@@ -363,9 +363,9 @@ export default class SmartFridgeAPI {
       },
       body: JSON.stringify(householdBO),
     }).then((responseJSON) => {
-      let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON)[0];
+      let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON);
       return new Promise(function (resolve) {
-        resolve(responseHouseholdBO);
+        resolve(responseHouseholdBO[0]);
       });
     });
   }

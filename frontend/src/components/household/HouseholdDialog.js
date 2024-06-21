@@ -6,11 +6,9 @@ import {
   TextField,
   Autocomplete,
   Button,
-  IconButton,
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
-import DeleteIcon from "@mui/icons-material/Delete";
 import AlertComponent from "../dialogs/AlertComponent";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
@@ -20,7 +18,7 @@ class HouseholdDialog extends Component {
     this.state = {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
-        inhabitants: props.isEditMode ? props.householdInhabitants : [],
+        inhabitants: props.isEditMode ? props.inhabitants : [],
       },
       allInhabitants: [],
       showAlert: false,
@@ -49,12 +47,13 @@ class HouseholdDialog extends Component {
   componentDidUpdate(prevProps) {
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
-      prevProps.householdName !== this.props.householdName
+      prevProps.householdName !== this.props.householdName ||
+      prevProps.inhabitants !== this.props.inhabitants
     ) {
       this.setState({
         householdData: {
           householdName: this.props.householdName,
-          inhabitants: this.props.householdInhabitants,
+          inhabitants: this.props.inhabitants,
         },
       });
     }
@@ -72,15 +71,14 @@ class HouseholdDialog extends Component {
     console.log(householdData.inhabitants);
   };
 
-  handleDeleteInhabitant = (inhabitant) => {
-    this.setState((prevState) => ({
-      householdData: {
-        ...prevState.householdData,
-        inhabitants: prevState.householdData.inhabitants.filter(
-          (inh) => inh.id !== inhabitant.id
-        ),
-      },
-    }));
+  getAvailableInhabitants = () => {
+    const { allInhabitants, householdData } = this.state;
+    const currentInhabitantsIds = householdData.inhabitants.map(
+      (inhabitant) => inhabitant.id
+    );
+    return allInhabitants.filter(
+      (inhabitant) => !currentInhabitantsIds.includes(inhabitant.id)
+    );
   };
 
   render() {
@@ -89,8 +87,9 @@ class HouseholdDialog extends Component {
     const {
       householdData: { householdName, inhabitants },
       showAlert,
-      allInhabitants,
     } = this.state;
+
+    const availableInhabitants = this.getAvailableInhabitants();
 
     return (
       <>
@@ -155,8 +154,10 @@ class HouseholdDialog extends Component {
                 InputLabelProps={{ style: { fontSize: "15px" } }}
               />
               <Autocomplete
-                options={allInhabitants}
+                options={availableInhabitants}
                 getOptionLabel={(option) => option.email}
+                value={inhabitants}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 multiple
                 onChange={(event, value) => {
                   this.setState((prevState) => ({
@@ -175,30 +176,7 @@ class HouseholdDialog extends Component {
                     InputLabelProps={{ style: { fontSize: "15px" } }}
                   />
                 )}
-                renderTags={() => null}
               />
-              <Box sx={{ mt: 2 }}>
-                {inhabitants.map((inhabitant) => (
-                  <Box
-                    key={inhabitant.id}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "5px 0",
-                    }}
-                  >
-                    <Typography>{inhabitant.email}</Typography>
-                    <IconButton
-                      size="small"
-                      onClick={() => this.handleDeleteInhabitant(inhabitant)}
-                      sx={{ color: "error.main" }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                ))}
-              </Box>
             </Box>
             <Box
               sx={{
