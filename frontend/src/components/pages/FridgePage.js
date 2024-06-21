@@ -417,7 +417,7 @@ class FridgePage extends Component {
                       sx={{ width: "300px" }}
                     />
                     <Tab label="Rezepte" value="2" sx={{ width: "300px" }} />
-                    <Tab label="Lebensmittel / Einheit" value="3" sx={{ width: "300px" }} />
+                    <Tab label="Verwaltung" value="3" sx={{ width: "300px" }} />
                   </TabList>
                 </Box>
                 <Container

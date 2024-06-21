@@ -1,41 +1,37 @@
 import React, { Component } from "react";
 import {
   Paper,
-  TextField,
-  Container,
   List,
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
   IconButton,
   Typography,
-  Box,
+  Container,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Button
+  Button,
+  Box, 
+  TextField
 } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 class AllGrocery extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      groceries: [
-        { groceryId: 1, groceryName: "Milk" },
-        { groceryId: 2, groceryName: "Eggs" },
-      ],
-      measures: [
-        { measureId: 1, measureName: "Kilogram" },
-        { measureId: 2, measureName: "Liter" },
-      ],
+      groceries: [],
+      measures: [],
+      inhabitants: [],
       editDialogOpen: false,
       editItem: null,
       editType: '',
@@ -44,6 +40,30 @@ class AllGrocery extends Component {
       deleteType: '',
     };
   }
+
+  componentDidMount() {
+    this.loadGroceries();
+    this.loadMeasures();
+  }
+
+  loadGroceries = () => {
+    SmartFridgeAPI.api.getGrocery().then((groceries) => {
+      this.setState({ groceries });
+    });
+  };
+
+  loadMeasures = () => {
+    SmartFridgeAPI.api.getMeasure().then((measures) => {
+      this.setState({ measures });
+    });
+  };
+
+  loadInhabitants = () => {
+    const householdId = 1; // Assuming a household ID is provided or derived from somewhere
+    SmartFridgeAPI.api.getInhabitants(householdId).then((inhabitants) => {
+      this.setState({ inhabitants });
+    });
+  };
 
   handleEditClick = (item, type) => {
     this.setState({
@@ -127,15 +147,15 @@ class AllGrocery extends Component {
       editType: '',
     });
   };
-
+  
   render() {
-    const { groceries, measures, editDialogOpen, editItem, deleteConfirmationOpen } = this.state;
+    const { groceries, measures, inhabitants, editDialogOpen, editItem, deleteConfirmationOpen } = this.state;
 
     return (
       <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 3 }}>
         <Paper sx={{ width: "100%", maxWidth: "895px" }}>
-          <Typography variant="h6" gutterBottom sx={{ padding: 2 }}>
-            Lists
+          <Typography variant="h6" gutterBottom sx={{ padding: 2, fontWeight:"bold" }}>
+            Haushaltsverwaltung
           </Typography>
           <Accordion>
             <AccordionSummary
@@ -143,7 +163,7 @@ class AllGrocery extends Component {
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography>All Groceries</Typography>
+              <Typography>Lebensmittel bearbeiten</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <List>
@@ -171,7 +191,7 @@ class AllGrocery extends Component {
               aria-controls="panel2a-content"
               id="panel2a-header"
             >
-              <Typography>All Measures</Typography>
+              <Typography>Maßeinheiten bearbeiten</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <List>
@@ -193,12 +213,40 @@ class AllGrocery extends Component {
               </List>
             </AccordionDetails>
           </Accordion>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel3a-content"
+              id="panel3a-header"
+            >
+              <Typography>Bewohner bearbeiten</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <List>
+                {inhabitants.map((inhabitant) => (
+                  <ListItem key={inhabitant.userId}>
+                    <ListItemText
+                      primary={`${inhabitant.userName}`}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="edit" onClick={() => this.handleEditClick(inhabitant, 'inhabitant')}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton edge="end" aria-label="delete" onClick={() => this.handleDeleteClick(inhabitant.userId, 'inhabitant')}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            </AccordionDetails>
+          </Accordion>
         </Paper>
         <Dialog open={editDialogOpen} onClose={this.handleEditCancel}>
-          <DialogTitle>Edit Item</DialogTitle>
+          <DialogTitle>Bearbeiten</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Edit the name of the item.
+              Namen bearbeiten
             </DialogContentText>
             {editItem && (
               <Box
