@@ -85,11 +85,11 @@ class AllGrocery extends Component {
 
     if (itemToDelete.type === 'grocery') {
       this.setState({
-        groceries: groceries.filter((grocery) => grocery.groceryId !== itemToDelete.id),
+        groceries: groceries.filter((grocery) => grocery.id !== itemToDelete.id),
       });
     } else if (itemToDelete.type === 'measure') {
       this.setState({
-        measures: measures.filter((measure) => measure.measureId !== itemToDelete.id),
+        measures: measures.filter((measure) => measure.id !== itemToDelete.id),
       });
     }
 
@@ -122,13 +122,13 @@ class AllGrocery extends Component {
     if (editType === 'grocery') {
       this.setState({
         groceries: groceries.map((grocery) =>
-          grocery.groceryId === editItem.groceryId ? editItem : grocery
+          grocery.id === editItem.id ? editItem : grocery
         ),
       });
     } else if (editType === 'measure') {
       this.setState({
         measures: measures.map((measure) =>
-          measure.measureId === editItem.measureId ? editItem : measure
+          measure.id === editItem.id ? editItem : measure
         ),
       });
     }
@@ -168,15 +168,15 @@ class AllGrocery extends Component {
             <AccordionDetails>
               <List>
                 {groceries.map((grocery) => (
-                  <ListItem key={grocery.groceryId}>
+                  <ListItem key={grocery.id}>
                     <ListItemText
-                      primary={`${grocery.groceryName}`}
+                      primary={`${grocery.grocery_name}`}
                     />
                     <ListItemSecondaryAction>
                       <IconButton edge="end" aria-label="edit" onClick={() => this.handleEditClick(grocery, 'grocery')}>
                         <EditIcon />
                       </IconButton>
-                      <IconButton edge="end" aria-label="delete" onClick={() => this.handleDeleteClick(grocery.groceryId, 'grocery')}>
+                      <IconButton edge="end" aria-label="delete" onClick={() => this.handleDeleteClick(grocery.id, 'grocery')}>
                         <DeleteIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -196,15 +196,15 @@ class AllGrocery extends Component {
             <AccordionDetails>
               <List>
                 {measures.map((measure) => (
-                  <ListItem key={measure.measureId}>
+                  <ListItem key={measure.id}>
                     <ListItemText
-                      primary={`${measure.measureName}`}
+                      primary={`${measure.unit}`}
                     />
                     <ListItemSecondaryAction>
                       <IconButton edge="end" aria-label="edit" onClick={() => this.handleEditClick(measure, 'measure')}>
                         <EditIcon />
                       </IconButton>
-                      <IconButton edge="end" aria-label="delete" onClick={() => this.handleDeleteClick(measure.measureId, 'measure')}>
+                      <IconButton edge="end" aria-label="delete" onClick={() => this.handleDeleteClick(measure.id, 'measure')}>
                         <DeleteIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -258,8 +258,8 @@ class AllGrocery extends Component {
               >
                 <TextField
                   label="Name"
-                  name="groceryName"
-                  value={editItem.groceryName || editItem.measureName}
+                  name="grocery_name"
+                  value={editItem.grocery_name || editItem.unit}
                   onChange={this.handleEditChange}
                   fullWidth
                 />
