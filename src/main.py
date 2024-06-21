@@ -419,8 +419,12 @@ class GroceryOperations(Resource):
     def delete(self, id):
         """Löschen eines Grocery Objekts"""
         adm = Administration()
-        grocery = adm.get_grocery_by_id(id)
-        adm.delete_grocery(grocery)
+        try:
+            grocery = adm.get_grocery_by_id(id)
+            adm.delete_grocery(grocery)
+        except Exception:
+            # Rückgabe einer Fehlermeldung, wenn während des Löschens ein Fehler auftritt
+            return "Lebensmittel wird im Kühlschrank/Rezept verwendet, erst dort löschen.", 400
         return '', 200
 
     @smartfridge.marshal_with(grocery)

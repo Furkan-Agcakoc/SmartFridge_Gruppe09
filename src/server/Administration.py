@@ -388,7 +388,6 @@ class Administration():
             return i
 
 
-
     def get_users_by_household_id(self, household_id):
 
         with HouseholdMapper() as mapper:
