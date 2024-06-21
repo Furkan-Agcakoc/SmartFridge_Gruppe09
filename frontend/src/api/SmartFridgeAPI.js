@@ -170,6 +170,7 @@ export default class SmartFridgeAPI {
   /**  grocery related  **/
 
   getGrocery() {
+    console.log("Fetching URL erfolgreich:", this.#getGroceryURL()); // Debugging-Zweck
     return this.#fetchAdvanced(this.#getGroceryURL()).then((responseJSON) => {
       let groceryBOs = GroceryBO.fromJSON(responseJSON);
       return new Promise(function (resolve) {

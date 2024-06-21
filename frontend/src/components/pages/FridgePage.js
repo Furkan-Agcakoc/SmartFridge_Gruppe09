@@ -11,8 +11,7 @@ import FridgeSearchBar from "../FridgeSearchBar";
 import GroceryDialog from "../grocery/GroceryDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import RecipeDialog from "../recipe/RecipeDialog";
-import AllGrocery from "../grocery/allGrocery";
-
+import Settings from "../household/Settings";
 
 class FridgePage extends Component {
   constructor(props) {
@@ -662,7 +661,7 @@ class FridgePage extends Component {
                       top: "-100px",
                     }}
                   >
-                   <AllGrocery />
+                    <Settings />
                   </TabPanel>
                 </Container>
               </TabContext>
