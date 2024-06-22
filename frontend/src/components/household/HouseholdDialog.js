@@ -77,18 +77,18 @@ class HouseholdDialog extends Component {
 
   getAvailableInhabitants = () => {
     const { allInhabitants, householdData } = this.state;
-  
-    const currentInhabitantsIds = householdData?.inhabitants?.map(
-      (inhabitant) => inhabitant.id
-    ) || [];
-  
+
+    const currentInhabitantsIds =
+      householdData?.inhabitants?.map((inhabitant) => inhabitant.id) || [];
+
     return allInhabitants.filter(
       (inhabitant) =>
         !currentInhabitantsIds.includes(inhabitant.id) &&
-        (this.context && this.context.id ? inhabitant.id !== this.context.id : true)
+        (this.context && this.context.id
+          ? inhabitant.id !== this.context.id
+          : true)
     );
   };
-  
 
   handleDeleteInhabitant = (inhabitant) => {
     this.setState((prevState) => ({
