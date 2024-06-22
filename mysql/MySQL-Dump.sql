@@ -59,11 +59,11 @@ DROP TABLE IF EXISTS `grocery`;
 CREATE TABLE `grocery` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `grocery_name` varchar(128) NOT NULL DEFAULT '',
-  `household_id` int(11) DEFAULT NULL,
+  `fridge_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `household_id` (`household_id`),
-  CONSTRAINT `grocery_fk1` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+  KEY `fridge_id` (`fridge_id`),
+  CONSTRAINT `grocery_fk1` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 INSERT INTO `grocery` (`grocery_name`) VALUES
 ('Mehl'),
@@ -102,7 +102,7 @@ INSERT INTO `grocery` (`grocery_name`) VALUES
 
 
 ALTER TABLE `grocery`
-ADD CONSTRAINT `fk_grocery_household` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`) ON DELETE CASCADE;
+ADD CONSTRAINT `fk_grocery_household` FOREIGN KEY (`fridge_id`) REFERENCES `household` (`id`) ON DELETE CASCADE;
 
 
 --
@@ -137,7 +137,7 @@ ADD CONSTRAINT `fk_measure_household` FOREIGN KEY (`household_id`) REFERENCES `h
 -- Table structure for table `grocerystatement`
 DROP TABLE IF EXISTS `grocerystatement`;
 CREATE TABLE IF NOT EXISTS `grocerystatement` (
-  `id` INT NOT NULL AUTO_INCREMENT, ,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `grocery_name` INT NOT NULL DEFAULT '0',
   `unit` INT NOT NULL DEFAULT '0',
   `quantity` FLOAT NOT NULL DEFAULT '0.00',
@@ -183,12 +183,12 @@ CREATE TABLE `recipe` (
   `portion` int NOT NULL DEFAULT '0',
   `instruction` varchar(1024) NOT NULL DEFAULT '',
   `user_id` int NOT NULL DEFAULT '0',
-  `household_id` int NOT NULL DEFAULT '0',
+  `fridge_id` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
-  KEY `household_id` (`household_id`),
+  KEY `fridge_id` (`fridge_id`),
   CONSTRAINT `recipe_fk1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `recipe_fk2` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`) ON DELETE CASCADE
+  CONSTRAINT `recipe_fk2` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

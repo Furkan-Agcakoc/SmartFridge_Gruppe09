@@ -9,7 +9,7 @@ class Recipe (bo.BusinessObject):
         self._instruction = ""
         self._duration = ""
         self._user_id = 0
-        self._household_id = 0
+        self._fridge_id = 0
 
 
     def get_recipe_name(self):
@@ -42,11 +42,11 @@ class Recipe (bo.BusinessObject):
     def set_user_id(self, user_id):
        self._user_id = user_id
 
-    def get_household_id(self):
-        return self._household_id
+    def get_fridge_id(self):
+        return self._fridge_id
 
-    def set_household_id(self, household_id):
-        self._household_id = household_id
+    def set_fridge_id(self, fridge_id):
+        self._fridge_id = fridge_id
 
 
 
@@ -60,7 +60,7 @@ class Recipe (bo.BusinessObject):
         obj.set_instruction(dictionary["instruction"])
         obj.set_duration(dictionary["duration"])
         obj.set_user_id(dictionary["user_id"])
-        obj.set_household_id(dictionary["household_id"])
+        obj.set_fridge_id(dictionary["fridge_id"])
 
 
 

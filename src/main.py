@@ -57,12 +57,12 @@ recipe = api.inherit('Recipe', bo, {
     'instruction': fields.String(attribute='_instruction', description='Anleitung eines Rezepts'),
     'duration': fields.String(attribute='_duration', description='Dauer eines Rezepts'),
     'user_id': fields.Integer(attribute='_user_id', description='Die Id eines Users'),
-    'household_id': fields.Integer(attribute='_household_id', description='Die Id eines Haushalts'),
+    'fridge_id': fields.Integer(attribute='_fridge_id', description='Die Id eines Kühlschrankes'),
 })
 
 grocery = api.inherit('Grocery', bo, {
     'grocery_name': fields.String(attribute='_grocery_name', description='Name eines Lebensmittels'),
-    'household_id': fields.Integer(attribute='_household_id', description='Die Id eines Haushalts')
+    'fridge_id': fields.Integer(attribute='_fridge_id', description='Die Id eines Kühlschrankes')
 })
 
 household = api.inherit('Household', bo, {
@@ -361,7 +361,7 @@ class HouseholdOperations(Resource):
         if house is not None:
             house.set_id(id)
             adm.update_household(house)
-            return '', 200
+            return house, 200
         else:
             return '', 500
 
@@ -405,7 +405,7 @@ class GroceryListOperations(Resource):
 
         if proposal is not None:
             g = adm.create_grocery(
-                proposal.get_grocery_name(), proposal.get_household_id())
+                proposal.get_grocery_name(), proposal.get_fridge_id())
             return g, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
@@ -476,15 +476,15 @@ recipe
 class RecipeOperations(Resource):
     @smartfridge.marshal_list_with(recipe)
     @smartfridge.param('user_id', 'ID des Users, der das Rezept erstellt hat')
-    @smartfridge.param('household_id', 'ID des Haushalts, zu dem das Rezept gehört')
+    @smartfridge.param('fridge_id', 'ID des Fridge, zu dem das Rezept gehört')
     def get(self):
         """
         Wiedergabe von Rezepten basierend auf User- und Haushalts-ID.
         """
         user_id = request.args.get('user_id')
-        household_id = request.args.get('household_id')
+        fridge_id = request.args.get('fridge_id')
         adm = Administration()
-        return adm.get_recipe_by_user_id(user_id) and adm.get_recipe_by_household_id(household_id)
+        return adm.get_recipe_by_user_id(user_id) and adm.get_recipe_by_fridge_id(fridge_id)
 
 
     @smartfridge.marshal_with(recipe, code=200)
@@ -498,7 +498,7 @@ class RecipeOperations(Resource):
 
         if proposal is not None:
             rec = adm.create_recipe(
-                proposal.get_recipe_name(), proposal.get_duration(), proposal.get_portion(), proposal.get_instruction(), proposal.get_household_id(), proposal.get_user_id())
+                proposal.get_recipe_name(), proposal.get_duration(), proposal.get_portion(), proposal.get_instruction(), proposal.get_fridge_id(), proposal.get_user_id())
             return rec, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
