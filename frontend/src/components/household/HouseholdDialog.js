@@ -11,8 +11,11 @@ import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlin
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import AlertComponent from "../dialogs/AlertComponent";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import UserContext from "../contexts/UserContext";
 
 class HouseholdDialog extends Component {
+  static contextType = UserContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -68,16 +71,18 @@ class HouseholdDialog extends Component {
     } else {
       this.setState({ showAlert: true });
     }
-    console.log(householdData.inhabitants);
   };
 
   getAvailableInhabitants = () => {
     const { allInhabitants, householdData } = this.state;
-    const currentInhabitantsIds = householdData.inhabitants.map(
+
+    const currentInhabitantsIds = householdData?.inhabitants?.map(
       (inhabitant) => inhabitant.id
-    );
+    ) || [];
     return allInhabitants.filter(
-      (inhabitant) => !currentInhabitantsIds.includes(inhabitant.id)
+      (inhabitant) =>
+        !currentInhabitantsIds.includes(inhabitant.id) &&
+        inhabitant.id !== this.context.id
     );
   };
 
@@ -154,9 +159,9 @@ class HouseholdDialog extends Component {
                 InputLabelProps={{ style: { fontSize: "15px" } }}
               />
               <Autocomplete
-                options={availableInhabitants}
+                options={availableInhabitants || []}
                 getOptionLabel={(option) => option.email}
-                value={inhabitants}
+                value={inhabitants || []}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 multiple
                 onChange={(event, value) => {

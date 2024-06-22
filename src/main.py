@@ -1,5 +1,5 @@
 # Unser Service basiert auf Flask
-from flask import Flask, request
+from flask import Flask, request, g
 # Auf Flask aufbauend nutzen wir RestX
 from flask_restx import Api, Resource, fields
 # Wir benutzen noch eine Flask-Erweiterung für Cross-Origin Resource Sharing
@@ -66,7 +66,8 @@ grocery = api.inherit('Grocery', bo, {
 })
 
 household = api.inherit('Household', bo, {
-    'household_name': fields.String(attribute='_household_name', description='Name des Haushalts')
+    'household_name': fields.String(attribute='_household_name', description='Name des Haushalts'),
+    'owner_id': fields.Integer(attribute='_owner_id', description='Die Id eines Users')
 })
 
 grocerystatement = api.inherit('GroceryStatement', bo, {
@@ -107,9 +108,6 @@ class InhabitantDeleteOperations(Resource):
         adm = Administration()
         adm.delete_inhabitant(user_id, household_id)
         return "", 200
-
-
-
 
 @smartfridge.route('/inhabitant/<int:household_id>')
 @smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
@@ -312,6 +310,7 @@ class HouseholdListOperations(Resource):
     @smartfridge.expect(household)
     # @secured
     def post(self):
+        
         """Erstellen eines Household Objekts"""
 
         adm = Administration()
@@ -320,7 +319,9 @@ class HouseholdListOperations(Resource):
 
         if proposal is not None:
             hh = adm.create_household_and_fridge(
-                proposal.get_household_name())
+                proposal.get_household_name(),
+                proposal.get_owner_id()
+                )
             return hh, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
@@ -363,6 +364,18 @@ class HouseholdOperations(Resource):
             return '', 200
         else:
             return '', 500
+
+
+@smartfridge.route('/household/user/<int:user_id>')
+@smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
+class HouseholdOperations(Resource):
+    def get(self, user_id):
+        'Wiedergabe der Households von einem User'
+        print(user_id)
+        adm = Administration()
+        households = adm.get_households_by_user(user_id)
+        return api.marshal(households, household), 200
+
 
 '''
 grocery

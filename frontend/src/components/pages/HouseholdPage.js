@@ -8,8 +8,11 @@ import HouseholdDialog from "../household/HouseholdDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import HouseholdAnchor from "../household/Household";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import UserContext from "../contexts/UserContext";
 
 class HouseholdPage extends Component {
+  static contextType = UserContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -19,11 +22,25 @@ class HouseholdPage extends Component {
       householdCount: 0,
       currentlyEditing: null,
       anchorEls: {},
-      openMenus: {},
+      openMenus: {
+        
+      },
       householdIdToDelete: null,
       inhabitants: {},
     };
   }
+
+  getHouseholdsByUserId = () => {
+    const user = this.context;
+    console.log(user);
+
+    SmartFridgeAPI.api.getHouseholdsByUserId(user.id).then((households) => {
+      console.log(households);
+      this.setState({
+        households: households,
+      });
+    });
+  };
 
   updateHouseholdId = (newId) => {
     this.setState({ householdIdToDelete: newId });
@@ -85,6 +102,7 @@ class HouseholdPage extends Component {
       SmartFridgeAPI.api
         .addHouseHold({
           household_name: householdData.householdName,
+          owner_id: this.context.id,
           // inhabitants: householdData.inhabitants.map(
           //   (inhabitant) => inhabitant.id
           // ),
@@ -97,7 +115,7 @@ class HouseholdPage extends Component {
             )
           );
           await Promise.all(promises);
-          console.log(responseHouseholdBO)
+          console.log(responseHouseholdBO);
 
           const newHouseholds = [...households, responseHouseholdBO];
           const newOpenMenus = {
@@ -112,7 +130,10 @@ class HouseholdPage extends Component {
             popupOpen: false,
             households: newHouseholds,
             openMenus: newOpenMenus,
-            inhabitants: {...this.state.inhabitants, [responseHouseholdBO.id]: householdData.inhabitants},
+            inhabitants: {
+              ...this.state.inhabitants,
+              [responseHouseholdBO.id]: householdData.inhabitants,
+            },
           });
         })
         .catch((error) => {
@@ -223,6 +244,17 @@ class HouseholdPage extends Component {
     this.setState({ householdIdToDelete: householdId });
   };
 
+  componentDidMount() {
+    const checkContext = () => {
+      if (this.context) {
+        this.getHouseholdsByUserId();
+      } else {
+        setTimeout(checkContext, 100); // wait 100ms then re-check
+      }
+    };
+    checkContext();
+  }
+
   render() {
     const {
       households,
@@ -243,6 +275,7 @@ class HouseholdPage extends Component {
 
     return (
       <>
+        <p>{JSON.stringify(this.context)}</p>
         <TitleHH />
         <Box
           sx={{

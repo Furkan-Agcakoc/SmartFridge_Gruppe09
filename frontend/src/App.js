@@ -24,6 +24,8 @@ import Footer from "./components/layout/Footer";
 import EditProfilePage from "./components/pages/EditProfilePage";
 import SmartFridgeAPI from "./api/SmartFridgeAPI"; // Import the API class
 import FridgePage from "./components/pages/FridgePage";
+import UserContext from "./components/contexts/UserContext";
+
 // import { Config } from "./config";
 
 class App extends Component {
@@ -87,7 +89,12 @@ class App extends Component {
                   (u) => u.google_user_id === user.uid || u.email === user.email
                 );
 
+                this.setState({
+                  user: existingUser,
+                });
+
                 if (!existingUser) {
+                  console.log("User does not exist in the database");
                   SmartFridgeAPI.api
                     .addUser({
                       firstname: "",
@@ -106,6 +113,9 @@ class App extends Component {
                     });
                 } else {
                   console.log("User already exists in the database");
+                  this.setState({
+                    user: existingUser,
+                  });
                 }
               })
               .catch((e) => {
@@ -175,75 +185,77 @@ class App extends Component {
   // };
 
   render() {
-    const { currentUser, dialogOpen, dialogType } = this.state;
+    const { currentUser, dialogOpen, dialogType, user } = this.state;
     return (
       <>
-        <ThemeProvider theme={Theme}>
-          <Router>
-            <Header
-              user={currentUser}
-              onSignIn={this.handleSignIn}
-              onSignOut={this.handleSignOut}
-            />
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  currentUser ? (
-                    <Navigate replace to={"/household"} />
-                  ) : (
-                    <LoginPage onSignIn={this.handleSignIn} />
-                  )
-                }
+        <UserContext.Provider value={user}>
+          <ThemeProvider theme={Theme}>
+            <Router>
+              <Header
+                user={currentUser}
+                onSignIn={this.handleSignIn}
+                onSignOut={this.handleSignOut}
               />
-              <Route
-                path="/login"
-                element={
-                  <Secured user={currentUser}>
-                    <LoginPage />
-                  </Secured>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <Secured user={currentUser}>
-                    <EditProfilePage />
-                  </Secured>
-                }
-              />
-              <Route
-                path="/household"
-                element={
-                  <Secured user={currentUser}>
-                    <HouseholdPage
-                      dialogOpen={dialogOpen}
-                      dialogType={dialogType}
-                      handleOpenDialog={this.handleOpenDialog}
-                      handleCloseDialog={this.handleCloseDialog}
-                      handleConfirmDelete={this.handleConfirmDelete}
-                    />
-                  </Secured>
-                }
-              />
-              <Route
-                path="/home"
-                element={
-                  <Secured user={currentUser}>
-                    <FridgePage
-                      dialogOpen={dialogOpen}
-                      dialogType={dialogType}
-                      handleOpenDialog={this.handleOpenDialog}
-                      handleCloseDialog={this.handleCloseDialog}
-                      handleConfirmDelete={this.handleConfirmDelete}
-                    />
-                  </Secured>
-                }
-              />
-            </Routes>
-            <Footer />
-          </Router>
-        </ThemeProvider>
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    currentUser ? (
+                      <Navigate replace to={"/household"} />
+                    ) : (
+                      <LoginPage onSignIn={this.handleSignIn} />
+                    )
+                  }
+                />
+                <Route
+                  path="/login"
+                  element={
+                    <Secured user={currentUser}>
+                      <LoginPage />
+                    </Secured>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <Secured user={currentUser}>
+                      <EditProfilePage />
+                    </Secured>
+                  }
+                />
+                <Route
+                  path="/household"
+                  element={
+                    <Secured user={currentUser}>
+                      <HouseholdPage
+                        dialogOpen={dialogOpen}
+                        dialogType={dialogType}
+                        handleOpenDialog={this.handleOpenDialog}
+                        handleCloseDialog={this.handleCloseDialog}
+                        handleConfirmDelete={this.handleConfirmDelete}
+                      />
+                    </Secured>
+                  }
+                />
+                <Route
+                  path="/home"
+                  element={
+                    <Secured user={currentUser}>
+                      <FridgePage
+                        dialogOpen={dialogOpen}
+                        dialogType={dialogType}
+                        handleOpenDialog={this.handleOpenDialog}
+                        handleCloseDialog={this.handleCloseDialog}
+                        handleConfirmDelete={this.handleConfirmDelete}
+                      />
+                    </Secured>
+                  }
+                />
+              </Routes>
+              <Footer />
+            </Router>
+          </ThemeProvider>
+        </UserContext.Provider>
       </>
     );
   }
