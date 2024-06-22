@@ -6,9 +6,11 @@ import {
   TextField,
   Autocomplete,
   Button,
+  IconButton,
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import DeleteIcon from "@mui/icons-material/Delete";
 import AlertComponent from "../dialogs/AlertComponent";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import UserContext from "../contexts/UserContext";
@@ -87,6 +89,17 @@ class HouseholdDialog extends Component {
     );
   };
   
+
+  handleDeleteInhabitant = (inhabitant) => {
+    this.setState((prevState) => ({
+      householdData: {
+        ...prevState.householdData,
+        inhabitants: prevState.householdData.inhabitants.filter(
+          (inh) => inh.id !== inhabitant.id
+        ),
+      },
+    }));
+  };
 
   render() {
     const { closePopup, isEditMode } = this.props;
@@ -183,7 +196,30 @@ class HouseholdDialog extends Component {
                     InputLabelProps={{ style: { fontSize: "15px" } }}
                   />
                 )}
+                renderTags={() => null}
               />
+              <Box sx={{ mt: 2 }}>
+                {inhabitants.map((inhabitant) => (
+                  <Box
+                    key={inhabitant.id}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "5px 0",
+                    }}
+                  >
+                    <Typography>{inhabitant.email}</Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => this.handleDeleteInhabitant(inhabitant)}
+                      sx={{ color: "error.main" }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                ))}
+              </Box>
             </Box>
             <Box
               sx={{
