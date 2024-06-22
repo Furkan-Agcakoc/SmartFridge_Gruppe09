@@ -83,10 +83,11 @@ class HouseholdMapper(Mapper):
         tuples = cursor.fetchall()
 
         if tuples:
-            (id, household_name) = tuples[0]
+            (id, household_name, owner_id) = tuples[0]
             household = Household()
             household.set_id(id)
             household.set_household_name(household_name)
+            household.set_owner_id(owner_id)
             result = household
 
         self._cnx.commit()

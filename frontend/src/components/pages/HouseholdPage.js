@@ -22,9 +22,7 @@ class HouseholdPage extends Component {
       householdCount: 0,
       currentlyEditing: null,
       anchorEls: {},
-      openMenus: {
-        
-      },
+      openMenus: {},
       householdIdToDelete: null,
       inhabitants: {},
     };
@@ -66,23 +64,23 @@ class HouseholdPage extends Component {
   handleCreateObject = (householdData) => {
     const { currentlyEditing, households } = this.state;
 
+    // Sicherstellen, dass der Kontext initialisiert ist
+    if (!this.context || !this.context.id) {
+      console.error("User context is not initialized.");
+      return;
+    }
+
     if (currentlyEditing !== null) {
       SmartFridgeAPI.api
         .updateHousehold({
           id: currentlyEditing,
           household_name: householdData.householdName,
-          inhabitants: householdData.inhabitants.map(
-            (inhabitant) => inhabitant.id
-          ),
+          owner_id: this.context.id,
         })
         .then((updatedHousehold) => {
           const updatedHouseholds = households.map((household) => {
-            if (household.id === currentlyEditing) {
-              return {
-                ...household,
-                householdName: householdData.householdName,
-                inhabitants: householdData.inhabitants,
-              };
+            if (household.id === updatedHousehold.id) {
+              return updatedHousehold;
             }
             return household;
           });
@@ -97,15 +95,11 @@ class HouseholdPage extends Component {
           console.error("Error updating household:", error);
         });
     } else {
-      // const id = households.length + 1;
       console.log(householdData.householdName);
       SmartFridgeAPI.api
         .addHouseHold({
           household_name: householdData.householdName,
           owner_id: this.context.id,
-          // inhabitants: householdData.inhabitants.map(
-          //   (inhabitant) => inhabitant.id
-          // ),
         })
         .then(async (responseHouseholdBO) => {
           const promises = householdData.inhabitants.map((inhabitant) =>

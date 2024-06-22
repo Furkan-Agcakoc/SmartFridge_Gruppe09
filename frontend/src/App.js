@@ -238,6 +238,20 @@ class App extends Component {
                   }
                 />
                 <Route
+                  path="/home/:id"
+                  element={
+                    <Secured user={currentUser}>
+                      <FridgePage
+                        dialogOpen={dialogOpen}
+                        dialogType={dialogType}
+                        handleOpenDialog={this.handleOpenDialog}
+                        handleCloseDialog={this.handleCloseDialog}
+                        handleConfirmDelete={this.handleConfirmDelete}
+                      />
+                    </Secured>
+                  }
+                />
+                <Route
                   path="/home"
                   element={
                     <Secured user={currentUser}>

@@ -75,16 +75,18 @@ class HouseholdDialog extends Component {
 
   getAvailableInhabitants = () => {
     const { allInhabitants, householdData } = this.state;
-
+  
     const currentInhabitantsIds = householdData?.inhabitants?.map(
       (inhabitant) => inhabitant.id
     ) || [];
+  
     return allInhabitants.filter(
       (inhabitant) =>
         !currentInhabitantsIds.includes(inhabitant.id) &&
-        inhabitant.id !== this.context.id
+        (this.context && this.context.id ? inhabitant.id !== this.context.id : true)
     );
   };
+  
 
   render() {
     const { closePopup, isEditMode } = this.props;
