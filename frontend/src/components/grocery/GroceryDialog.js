@@ -61,6 +61,7 @@ class GroceryDialog extends Component {
     const form = e.target.closest("form");
     if (form.checkValidity()) {
       this.props.handleCreateGroceries(groceryData);
+      this.addGrocery(groceryName);
       console.log("Form is valid");
     } else {
       this.setState({ showAlert: true });
@@ -83,6 +84,20 @@ class GroceryDialog extends Component {
     });
   };
 
+  addGrocery = (groceryName) => {
+  
+    SmartFridgeAPI.api.addGrocery(groceryBO)
+      .then((responseGroceryBO) => {
+        this.setState({
+          foodOptions: [...this.state.foodOptions, responseGroceryBO.name],
+        });
+      })
+      .catch((error) => {
+        console.error("Error adding grocery:", error);
+        this.setState({ showAlert: true });
+      });
+  };
+
   render() {
     const { handlePopupGroceryClose, isEditMode } = this.props;
     const {
@@ -94,7 +109,9 @@ class GroceryDialog extends Component {
 
     // Sort food options alphabetically
     const sortedFoodOptions = foodOptions.sort((a, b) => a.localeCompare(b));
-    const sortedMeasureOptions = measureOptions.sort((a, b) => a.localeCompare(b));
+    const sortedMeasureOptions = measureOptions.sort((a, b) =>
+      a.localeCompare(b)
+    );
 
     return (
       <>

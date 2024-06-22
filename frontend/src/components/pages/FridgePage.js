@@ -11,6 +11,7 @@ import FridgeSearchBar from "../FridgeSearchBar";
 import GroceryDialog from "../grocery/GroceryDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import RecipeDialog from "../recipe/RecipeDialog";
+import Settings from "../household/Settings";
 
 class FridgePage extends Component {
   constructor(props) {
@@ -410,11 +411,12 @@ class FridgePage extends Component {
                     centered
                   >
                     <Tab
-                      label="Lebensmittel"
+                      label="Kühlschrank"
                       value="1"
-                      sx={{ width: "400px" }}
+                      sx={{ width: "300px" }}
                     />
-                    <Tab label="Rezepte" value="2" sx={{ width: "400px" }} />
+                    <Tab label="Rezepte" value="2" sx={{ width: "300px" }} />
+                    <Tab label="Verwaltung" value="3" sx={{ width: "300px" }} />
                   </TabList>
                 </Box>
                 <Container
@@ -633,6 +635,34 @@ class FridgePage extends Component {
                     handleCloseDialog={this.props.handleCloseDialog}
                     handleConfirmDelete={this.handleConfirmDelete}
                   />
+                </Container>
+                <Container
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <TabPanel
+                    value="3"
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      justifyContent: "baseline",
+                      marginTop: "10px",
+                      marginLeft: "0px",
+                      marginBottom: "0px",
+                      gap: "30px",
+                      width: "100%",
+                      maxWidth: "895px",
+                      position: "relative",
+                      top: "-100px",
+                    }}
+                  >
+                    <Settings />
+                  </TabPanel>
                 </Container>
               </TabContext>
             </Paper>

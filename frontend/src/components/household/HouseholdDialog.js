@@ -13,14 +13,17 @@ import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AlertComponent from "../dialogs/AlertComponent";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import UserContext from "../contexts/UserContext";
 
 class HouseholdDialog extends Component {
+  static contextType = UserContext;
+
   constructor(props) {
     super(props);
     this.state = {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
-        inhabitants: props.isEditMode ? props.householdInhabitants : [],
+        inhabitants: props.isEditMode ? props.inhabitants : [],
       },
       allInhabitants: [],
       showAlert: false,
@@ -49,12 +52,13 @@ class HouseholdDialog extends Component {
   componentDidUpdate(prevProps) {
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
-      prevProps.householdName !== this.props.householdName
+      prevProps.householdName !== this.props.householdName ||
+      prevProps.inhabitants !== this.props.inhabitants
     ) {
       this.setState({
         householdData: {
           householdName: this.props.householdName,
-          inhabitants: this.props.householdInhabitants,
+          inhabitants: this.props.inhabitants,
         },
       });
     }
@@ -69,7 +73,19 @@ class HouseholdDialog extends Component {
     } else {
       this.setState({ showAlert: true });
     }
-    console.log(householdData.inhabitants);
+  };
+
+  getAvailableInhabitants = () => {
+    const { allInhabitants, householdData } = this.state;
+
+    const currentInhabitantsIds = householdData?.inhabitants?.map(
+      (inhabitant) => inhabitant.id
+    ) || [];
+    return allInhabitants.filter(
+      (inhabitant) =>
+        !currentInhabitantsIds.includes(inhabitant.id) &&
+        inhabitant.id !== this.context.id
+    );
   };
 
   handleDeleteInhabitant = (inhabitant) => {
@@ -89,8 +105,9 @@ class HouseholdDialog extends Component {
     const {
       householdData: { householdName, inhabitants },
       showAlert,
-      allInhabitants,
     } = this.state;
+
+    const availableInhabitants = this.getAvailableInhabitants();
 
     return (
       <>
@@ -155,8 +172,10 @@ class HouseholdDialog extends Component {
                 InputLabelProps={{ style: { fontSize: "15px" } }}
               />
               <Autocomplete
-                options={allInhabitants}
+                options={availableInhabitants || []}
                 getOptionLabel={(option) => option.email}
+                value={inhabitants || []}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 multiple
                 onChange={(event, value) => {
                   this.setState((prevState) => ({

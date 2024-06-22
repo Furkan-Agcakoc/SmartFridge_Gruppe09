@@ -58,13 +58,16 @@ export default class SmartFridgeAPI {
   // household related
   #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household/`;
   #getHouseholdByIdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
+  #getHouseholdsByUserIdURL = (userId) => `${this.#SmartFridgeBaseURL}/household/user/${userId}`;
   #addHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household`;
   #deleteHouseholdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
   #updateHouseholdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
 
   // inhabitant related
   #addInhabitantURL = () => `${this.#SmartFridgeBaseURL}/inhabitant`;
-  #getInhabitantURL = (household_id) =>
+  #getInhabitantURL = () => `${this.#SmartFridgeBaseURL}/inhabitant`;
+
+  #getInhabitantByIdURL = (household_id) =>
     `${this.#SmartFridgeBaseURL}/inhabitant/${household_id}`;
   #deleteInhabitantURL = (id) => `${this.#SmartFridgeBaseURL}/inhabitant/${id}`;
 
@@ -170,6 +173,7 @@ export default class SmartFridgeAPI {
   /**  grocery related  **/
 
   getGrocery() {
+    console.log("Fetching URL erfolgreich:", this.#getGroceryURL()); // Debugging-Zweck
     return this.#fetchAdvanced(this.#getGroceryURL()).then((responseJSON) => {
       let groceryBOs = GroceryBO.fromJSON(responseJSON);
       return new Promise(function (resolve) {
@@ -342,6 +346,18 @@ export default class SmartFridgeAPI {
     );
   }
 
+  getHouseholdsByUserId(userId) {
+    return this.#fetchAdvanced(this.#getHouseholdsByUserIdURL(userId)).then(
+    (responseJSON) => {
+            let responseHouseholdBOs = HouseholdBO.fromJSON(responseJSON);
+            return new Promise(function (resolve) {
+                resolve(responseHouseholdBOs);
+            });
+        }
+    );
+}
+
+
   deleteHousehold(householdID) {
     return this.#fetchAdvanced(this.#deleteHouseholdURL(householdID), {
       method: "DELETE",
@@ -363,9 +379,9 @@ export default class SmartFridgeAPI {
       },
       body: JSON.stringify(householdBO),
     }).then((responseJSON) => {
-      let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON)[0];
+      let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON);
       return new Promise(function (resolve) {
-        resolve(responseHouseholdBO);
+        resolve(responseHouseholdBO[0]);
       });
     });
   }
@@ -388,10 +404,10 @@ export default class SmartFridgeAPI {
 
   /** inhabitant related **/
 
-  getInhabitant(household_id) {
-    return this.#fetchAdvanced(this.#getInhabitantURL(household_id)).then(
+  getInhabitant() {
+    return this.#fetchAdvanced(this.getInhabitantByIdURL()).then(
       (responseJSON) => {
-        let inhabitantBOs = responseJSON; // Anpassen je nach tatsächlichem API-Response-Format
+        let inhabitantBOs = responseJSON;
         return new Promise(function (resolve) {
           resolve(inhabitantBOs);
         });
@@ -443,16 +459,7 @@ export default class SmartFridgeAPI {
     });
   }
 
-  // getInhabitant() {
-  //   return this.#fetchAdvanced(this.#getInhabitantURL()).then(
-  //     (responseJSON) => {
-  //       let inhabitantBOs = InhabitantBO.fromJSON(responseJSON);
-  //       return new Promise(function (resolve) {
-  //         resolve(inhabitantBOs);
-  //       });
-  //     }
-  //   );
-  // }
+
 
   // addInhabitant(inhabitantBO) {
   //   return this.#fetchAdvanced(this.#addInhabitantURL(), {

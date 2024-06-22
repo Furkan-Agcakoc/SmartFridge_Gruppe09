@@ -42,8 +42,11 @@ DROP TABLE IF EXISTS `household`;
 CREATE TABLE `household` (
   `id` int NOT NULL DEFAULT '0',
   `household_name` varchar(100) NOT NULL DEFAULT '',
+  `owner_id` int,
+  FOREIGN KEY (`owner_id`) REFERENCES users (`id`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 --

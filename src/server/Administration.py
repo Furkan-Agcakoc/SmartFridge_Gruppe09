@@ -62,9 +62,14 @@ class Administration():
     Haushalt Spezifische Methoden
     """
 
-    def create_household(self, household_name):
+    def get_households_by_user(self, user_id):
+        with HouseholdMapper() as mapper:
+            return mapper.find_by_user_id(user_id)
+
+    def create_household(self, household_name, owner_id):
         household = Household()
         household.set_household_name(household_name)
+        household.set_owner_id(owner_id)
         household.set_id(1)
 
         with HouseholdMapper() as mapper:
@@ -114,8 +119,8 @@ class Administration():
 
             return house
 
-    def create_household_and_fridge(self, household_name):
-        household = self.create_household(household_name)
+    def create_household_and_fridge(self, household_name, owner_id):
+        household = self.create_household(household_name, owner_id)
 
         fridge = self.create_fridge(household.get_id())
 
