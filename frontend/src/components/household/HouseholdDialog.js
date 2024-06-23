@@ -23,7 +23,9 @@ class HouseholdDialog extends Component {
     this.state = {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
-        inhabitants: props.isEditMode ? props.inhabitants : [],
+        inhabitants: props.isEditMode ? props.inhabitants : [], // ÄNDERUNG 1
+
+        // inhabitants: props.isEditMode ? props.inhabitants : [],
       },
       allInhabitants: [],
       showAlert: false,
@@ -58,7 +60,8 @@ class HouseholdDialog extends Component {
       this.setState({
         householdData: {
           householdName: this.props.householdName,
-          inhabitants: this.props.inhabitants,
+          inhabitants: this.props.inhabitants || [], // ÄNDERUNG 2
+          // inhabitants: this.props.inhabitants,
         },
       });
     }
@@ -99,6 +102,18 @@ class HouseholdDialog extends Component {
         ),
       },
     }));
+  };
+
+  getHouseholdsByUserId = () => {
+    const user = this.context;
+    console.log(user);
+
+    SmartFridgeAPI.api.getHouseholdsByUserId(user.id).then((households) => {
+      console.log(households);
+      this.setState({
+        households: households,
+      });
+    });
   };
 
   render() {

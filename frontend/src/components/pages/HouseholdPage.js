@@ -24,8 +24,30 @@ class HouseholdPage extends Component {
       anchorEls: {},
       openMenus: {},
       householdIdToDelete: null,
-      inhabitants: {},
+      inhabitants: [],
     };
+  }
+
+  componentDidMount() {
+    // const householdId = this.context.householdId;
+    const checkContext = () => {
+      if (this.context) {
+        this.getHouseholdsByUserId();
+      } else {
+        setTimeout(checkContext, 100); // wait 100ms then re-check
+      }
+    };
+    checkContext();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log("Context", this.context);
+    console.log("Inhabitants", this.state.inhabitants);
+    if (prevState.households !== this.state.households) {
+      console.log("Households updated", this.state.households);
+      console.log("Inhabitants updated", this.state.inhabitants);
+    }
+    // console.log("Alle User", this.)
   }
 
   getHouseholdsByUserId = () => {
@@ -39,6 +61,38 @@ class HouseholdPage extends Component {
       });
     });
   };
+
+  getInhabitantsByHouseholdId = (householdId) => {
+    SmartFridgeAPI.api
+      .getInhabitantsByHouseholdId(householdId)
+      .then((inhabitants) => {
+        console.log("Aus der Methode", inhabitants);
+        this.setState((prevState) => ({
+          inhabitants: {
+            ...prevState.inhabitants,
+            [householdId]: inhabitants,
+          },
+        }));
+      });
+  };
+
+  // getInhabitantsByHouseholdId = async (householdId) => {
+  //   try {
+  //     const inhabitants = await SmartFridgeAPI.api.getInhabitantsByHouseholdId(
+  //       householdId
+  //     );
+
+  //     console.log(inhabitants);
+  //     this.setState((prevState) => ({
+  //       inhabitants: {
+  //         ...prevState.inhabitants,
+  //         [householdId]: inhabitants,
+  //       },
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error fetching inhabitants:", error);
+  //   }
+  // };
 
   updateHouseholdId = (newId) => {
     this.setState({ householdIdToDelete: newId });
@@ -109,14 +163,20 @@ class HouseholdPage extends Component {
             )
           );
           await Promise.all(promises);
-          console.log(responseHouseholdBO);
+          console.log("Promises", promises);
+          console.log("Nach addHousehold im then", responseHouseholdBO);
 
           const newHouseholds = [...households, responseHouseholdBO];
+          const newInhabitants = {
+            ...this.state.inhabitants,
+            [responseHouseholdBO.id]: householdData.inhabitants,
+          };
           const newOpenMenus = {
             ...this.state.openMenus,
             [responseHouseholdBO.id]: false,
           };
-          console.log(households);
+          console.log("Alle Haushalte", households);
+          console.log("Alle Inhabitants", newInhabitants);
           console.log(newHouseholds, newOpenMenus);
 
           this.setState({
@@ -124,10 +184,7 @@ class HouseholdPage extends Component {
             popupOpen: false,
             households: newHouseholds,
             openMenus: newOpenMenus,
-            inhabitants: {
-              ...this.state.inhabitants,
-              [responseHouseholdBO.id]: householdData.inhabitants,
-            },
+            inhabitants: newInhabitants,
           });
         })
         .catch((error) => {
@@ -177,6 +234,10 @@ class HouseholdPage extends Component {
   };
 
   handleAnchorEdit = (householdId) => {
+    console.log(this.state.inhabitants[householdId]);
+    console.log(this.state.inhabitants);
+    this.getInhabitantsByHouseholdId(householdId);
+
     this.setState(
       (prevState) => {
         const newOpenMenus = {
@@ -194,6 +255,7 @@ class HouseholdPage extends Component {
       }
     );
   };
+
   handleAnchorDelete = (householdId) => {
     SmartFridgeAPI.api
       .deleteHousehold(householdId)
@@ -237,17 +299,6 @@ class HouseholdPage extends Component {
   setHouseholdIdToDelete = (householdId) => {
     this.setState({ householdIdToDelete: householdId });
   };
-
-  componentDidMount() {
-    const checkContext = () => {
-      if (this.context) {
-        this.getHouseholdsByUserId();
-      } else {
-        setTimeout(checkContext, 100); // wait 100ms then re-check
-      }
-    };
-    checkContext();
-  }
 
   render() {
     const {
