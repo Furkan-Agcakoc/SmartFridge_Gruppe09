@@ -320,7 +320,6 @@ class HouseholdPage extends Component {
 
     return (
       <>
-        <p>{JSON.stringify(this.context)}</p>
         <TitleHH />
         <Box
           sx={{

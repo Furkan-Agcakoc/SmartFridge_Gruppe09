@@ -29,14 +29,37 @@ class HouseholdDialog extends Component {
       },
       allInhabitants: [],
       showAlert: false,
+      contextLoaded: false,
     };
   }
 
   componentDidMount() {
-    this.fetchInhabitants();
+    const checkContext = () => {
+      if (this.context) {
+        this.setState({ contextLoaded: true });
+        this.fetchInhabitants();
+      } else {
+        setTimeout(checkContext, 100); // wait 100ms then re-check
+      }
+    };
+    checkContext();
   }
 
+  // componentDidMount() {
+  //   const checkContext = () => {
+  //     if (this.context) {
+  //       this.getAvailableInhabitants();
+  //     } else {
+  //       setTimeout(checkContext, 100); // wait 100ms then re-check
+  //     }
+  //   };
+  //   checkContext();
+  //   // this.getAvailableInhabitants();
+  //   this.fetchInhabitants();
+  // }
+
   fetchInhabitants = () => {
+    this.getAvailableInhabitants();
     SmartFridgeAPI.api
       .getUser()
       .then((userBOs) => {
@@ -51,7 +74,23 @@ class HouseholdDialog extends Component {
       });
   };
 
-  componentDidUpdate(prevProps) {
+  // componentDidUpdate(prevProps) {
+  //   if (
+  //     prevProps.isEditMode !== this.props.isEditMode ||
+  //     prevProps.householdName !== this.props.householdName ||
+  //     prevProps.inhabitants !== this.props.inhabitants
+  //   ) {
+  //     this.setState({
+  //       householdData: {
+  //         householdName: this.props.householdName,
+  //         inhabitants: this.props.inhabitants || [], // ÄNDERUNG 2
+  //         // inhabitants: this.props.inhabitants,
+  //       },
+  //     });
+  //   }
+  // }
+
+  componentDidUpdate(prevProps, prevState) {
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.householdName !== this.props.householdName ||
@@ -60,10 +99,13 @@ class HouseholdDialog extends Component {
       this.setState({
         householdData: {
           householdName: this.props.householdName,
-          inhabitants: this.props.inhabitants || [], // ÄNDERUNG 2
-          // inhabitants: this.props.inhabitants,
+          inhabitants: this.props.inhabitants || [],
         },
       });
+    }
+
+    if (!prevState.contextLoaded && this.state.contextLoaded) {
+      this.getAvailableInhabitants();
     }
   }
 
