@@ -66,7 +66,7 @@ export default class SmartFridgeAPI {
 
   // inhabitant related
   #addInhabitantURL = () => `${this.#SmartFridgeBaseURL}/inhabitant`;
-  #getInhabitantURL = () => `${this.#SmartFridgeBaseURL}/inhabitant`;
+  // #getInhabitantURL = () => `${this.#SmartFridgeBaseURL}/inhabitant`;
 
   #getInhabitantByIdURL = (household_id) =>
     `${this.#SmartFridgeBaseURL}/inhabitant/${household_id}`;

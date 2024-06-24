@@ -23,6 +23,7 @@ class HouseholdDialog extends Component {
     this.state = {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
+        householdId: props.isEditMode ? props.householdId : null,
         inhabitants: props.isEditMode ? props.inhabitants : [],
       },
       allInhabitants: [],
@@ -35,13 +36,16 @@ class HouseholdDialog extends Component {
     const checkContext = () => {
       if (this.context) {
         this.setState({ contextLoaded: true });
-        this.fetchInhabitants();
-      } else {
-        setTimeout(checkContext, 100); // wait 100ms then re-check
+        this.updateState();
       }
     };
     checkContext();
   }
+
+  updateState = () => {
+    this.fetchInhabitants();
+    setTimeout(this.updatestate, 30000); // wait 100ms then re-check
+  };
 
   // componentDidMount() {
   //   const checkContext = () => {
@@ -89,7 +93,8 @@ class HouseholdDialog extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('Inhabitants aus Dialog',this.props.inhabitants);
+    console.log("Householddata aus State", this.state.householdData);
+    console.log("Inhabitants aus Dialog", this.props.inhabitants);
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.householdName !== this.props.householdName ||
@@ -99,6 +104,7 @@ class HouseholdDialog extends Component {
         householdData: {
           householdName: this.props.householdName,
           inhabitants: this.props.inhabitants || [],
+          householdId: this.props.householdId,
         },
       });
     }
@@ -134,27 +140,63 @@ class HouseholdDialog extends Component {
     );
   };
 
-  getInhabitantById = (id) => { 
+  getInhabitantById = (id) => {
     return this.state.allInhabitants.find((inhabitant) => inhabitant.id === id);
   };
 
   deleteInhabitantByUserIdHouseholdId = (userId, householdId) => {
+    console.log("Bewohner erfolgreich gelöscht");
+    console.log(userId, householdId);
+    console.log(
+      "Das sind die Inhabitants die gelöscht wurden",
+      this.state.householdData.inhabitants
+    );
+
     SmartFridgeAPI.api
       .deleteInhabitant(userId, householdId)
       .then(() => {
-        this.setState((prevState) => ({
-          householdData: {
-            ...prevState.householdData,
-            inhabitants: prevState.householdData.inhabitants.filter(
-              (inh) => inh.id !== userId
-            ),
-          },
-        }));
+        this.setState((prevState) => {
+          // Entfernen des Benutzers aus der Liste der Bewohner
+          const updatedInhabitants = prevState.householdData.inhabitants.filter(
+            (inh) => inh.id !== userId
+          );
+
+          return {
+            householdData: {
+              ...prevState.householdData,
+              inhabitants: updatedInhabitants,
+            },
+          };
+        });
       })
       .catch((error) => {
         console.error("Fehler beim Löschen des Bewohners:", error);
       });
   };
+
+  // deleteInhabitantByUserIdHouseholdId = (userId, householdId) => {
+  //   console.log("Bewohner erfolgreich gelöscht");
+  //   console.log(userId, householdId);
+  //   console.log(
+  //     "Das sind die Inhabitants die gelöscht wurden",
+  //     this.state.householdData.inhabitants
+  //   );
+  //   SmartFridgeAPI.api
+  //     .deleteInhabitant(userId, householdId)
+  //     .then(() => {
+  //       this.setState((prevState) => ({
+  //         householdData: {
+  //           ...prevState.householdData,
+  //           inhabitants: prevState.householdData.inhabitants.filter(
+  //             (inh) => inh.id !== userId
+  //           ),
+  //         },
+  //       }));
+  //     })
+  //     .catch((error) => {
+  //       console.error("Fehler beim Löschen des Bewohners:", error);
+  //     });
+  // };
 
   handleDeleteInhabitant = (inhabitant) => {
     console.log(inhabitant);
@@ -168,8 +210,6 @@ class HouseholdDialog extends Component {
       },
     }));
   };
-  
-  
 
   getHouseholdsByUserId = () => {
     const user = this.context;
@@ -187,7 +227,7 @@ class HouseholdDialog extends Component {
     const { closePopup, isEditMode } = this.props;
 
     const {
-      householdData: { householdName, inhabitants },
+      householdData: { householdName, inhabitants, householdId },
       showAlert,
     } = this.state;
 
@@ -297,7 +337,7 @@ class HouseholdDialog extends Component {
                       onClick={() =>
                         this.deleteInhabitantByUserIdHouseholdId(
                           inhabitant.id,
-                          this.context.id
+                          householdId
                         )
                       }
                       sx={{ color: "error.main" }}
