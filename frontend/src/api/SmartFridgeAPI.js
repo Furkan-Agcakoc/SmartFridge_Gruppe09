@@ -70,7 +70,8 @@ export default class SmartFridgeAPI {
 
   #getInhabitantByIdURL = (household_id) =>
     `${this.#SmartFridgeBaseURL}/inhabitant/${household_id}`;
-  #deleteInhabitantURL = (id) => `${this.#SmartFridgeBaseURL}/inhabitant/${id}`;
+  #deleteInhabitantURL = (user_id, household_id) =>
+    `${this.#SmartFridgeBaseURL}/inhabitant/${user_id}/${household_id}`;
 
   // recipe related
   #getRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/`;
@@ -419,16 +420,6 @@ export default class SmartFridgeAPI {
     });
   }
 
-  // getHouseholdById(householdID) {
-  //   return this.#fetchAdvanced(this.#getHouseholdByIdURL(householdID)).then(
-  //     (responseJSON) => {
-  //       let responseHouseholdBO = HouseholdBO.fromJSON(responseJSON);
-  //       return new Promise(function (resolve) {
-  //         resolve(responseHouseholdBO);
-  //       });
-  //     }
-  //   );
-  // }
   getInhabitantsByHouseholdId(householdId) {
     return this.#fetchAdvanced(this.#getInhabitantByIdURL(householdId)).then(
       (responseJSON) => {
@@ -440,8 +431,8 @@ export default class SmartFridgeAPI {
     );
   }
 
-  deleteInhabitant(inhabitantID) {
-    return this.#fetchAdvanced(this.#deleteInhabitantURL(inhabitantID), {
+  deleteInhabitant(userId, householdId) {
+    return this.#fetchAdvanced(this.#deleteInhabitantURL(userId, householdId), {
       method: "DELETE",
     }).then((responseJSON) => {
       let responseInhabitantBO = responseJSON; // Anpassen je nach tatsächlichem API-Response-Format

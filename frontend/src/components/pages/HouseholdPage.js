@@ -42,10 +42,10 @@ class HouseholdPage extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     console.log("Context", this.context);
-    console.log("Inhabitants", this.state.inhabitants);
+    // console.log("Inhabitants", this.state.inhabitants);
     if (prevState.households !== this.state.households) {
       console.log("Households updated", this.state.households);
-      console.log("Inhabitants updated", this.state.inhabitants);
+      // console.log("Inhabitants updated", this.state.inhabitants);
     }
     // console.log("Alle User", this.)
   }

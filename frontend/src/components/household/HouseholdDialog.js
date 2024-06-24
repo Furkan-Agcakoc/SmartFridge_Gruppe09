@@ -23,9 +23,7 @@ class HouseholdDialog extends Component {
     this.state = {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
-        inhabitants: props.isEditMode ? props.inhabitants : [], // ÄNDERUNG 1
-
-        // inhabitants: props.isEditMode ? props.inhabitants : [],
+        inhabitants: props.isEditMode ? props.inhabitants : [],
       },
       allInhabitants: [],
       showAlert: false,
@@ -91,6 +89,7 @@ class HouseholdDialog extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('Inhabitants aus Dialog',this.props.inhabitants);
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.householdName !== this.props.householdName ||
@@ -135,7 +134,31 @@ class HouseholdDialog extends Component {
     );
   };
 
+  getInhabitantById = (id) => { 
+    return this.state.allInhabitants.find((inhabitant) => inhabitant.id === id);
+  };
+
+  deleteInhabitantByUserIdHouseholdId = (userId, householdId) => {
+    SmartFridgeAPI.api
+      .deleteInhabitant(userId, householdId)
+      .then(() => {
+        this.setState((prevState) => ({
+          householdData: {
+            ...prevState.householdData,
+            inhabitants: prevState.householdData.inhabitants.filter(
+              (inh) => inh.id !== userId
+            ),
+          },
+        }));
+      })
+      .catch((error) => {
+        console.error("Fehler beim Löschen des Bewohners:", error);
+      });
+  };
+
   handleDeleteInhabitant = (inhabitant) => {
+    console.log(inhabitant);
+
     this.setState((prevState) => ({
       householdData: {
         ...prevState.householdData,
@@ -145,6 +168,8 @@ class HouseholdDialog extends Component {
       },
     }));
   };
+  
+  
 
   getHouseholdsByUserId = () => {
     const user = this.context;
@@ -231,9 +256,9 @@ class HouseholdDialog extends Component {
                 InputLabelProps={{ style: { fontSize: "15px" } }}
               />
               <Autocomplete
-                options={availableInhabitants || []}
+                options={availableInhabitants}
                 getOptionLabel={(option) => option.email}
-                value={inhabitants || []}
+                value={inhabitants}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 multiple
                 onChange={(event, value) => {
@@ -269,7 +294,12 @@ class HouseholdDialog extends Component {
                     <Typography>{inhabitant.email}</Typography>
                     <IconButton
                       size="small"
-                      onClick={() => this.handleDeleteInhabitant(inhabitant)}
+                      onClick={() =>
+                        this.deleteInhabitantByUserIdHouseholdId(
+                          inhabitant.id,
+                          this.context.id
+                        )
+                      }
                       sx={{ color: "error.main" }}
                     >
                       <DeleteIcon />

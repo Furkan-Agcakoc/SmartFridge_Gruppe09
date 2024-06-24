@@ -12,6 +12,10 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Modal,
+  Box,
+  TextField,
+  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,6 +27,9 @@ class Settings extends Component {
     this.state = {
       groceries: [],
       measures: [],
+      modalOpen: false,
+      selectedGrocery: null,
+      editedGroceryName: "",
     };
   }
 
@@ -34,7 +41,6 @@ class Settings extends Component {
       })
       .catch((error) => {
         console.error("Error fetching groceries:", error);
-        // this.setState({  });
       });
     SmartFridgeAPI.api
       .getMeasure()
@@ -42,13 +48,57 @@ class Settings extends Component {
         this.setState({ measures: measureBOs });
       })
       .catch((error) => {
-        console.error("Error fetching groceries:", error);
-        // this.setState({  });
+        console.error("Error fetching measures:", error);
       });
   }
 
+  handleOpenModal = (grocery) => {
+    this.setState({
+      modalOpen: true,
+      selectedGrocery: grocery,
+      editedGroceryName: grocery.grocery_name,
+    });
+  };
+
+  handleCloseModal = () => {
+    this.setState({ modalOpen: false, selectedGrocery: null, editedGroceryName: "" });
+  };
+
+  handleEditChange = (event) => {
+    this.setState({ editedGroceryName: event.target.value });
+  };
+
+  handleUpdateGrocery = () => {
+    const { selectedGrocery, editedGroceryName, groceries } = this.state;
+
+    if (selectedGrocery !== null) {
+      SmartFridgeAPI.api
+        .updateGrocery({
+          id: selectedGrocery.id,
+          grocery_name: editedGroceryName,
+        })
+        .then((updatedGrocery) => {
+          const updatedGroceries = groceries.map((grocery) =>
+            grocery.id === selectedGrocery.id
+              ? { ...grocery, grocery_name: editedGroceryName }
+              : grocery
+          );
+
+          this.setState({
+            groceries: updatedGroceries,
+            modalOpen: false,
+            selectedGrocery: null,
+            editedGroceryName: "",
+          });
+        })
+        .catch((error) => {
+          console.error("Error updating grocery:", error);
+        });
+    }
+  };
+
   render() {
-    const { groceries, measures } = this.state;
+    const { groceries, measures, modalOpen, editedGroceryName } = this.state;
 
     return (
       <>
@@ -81,7 +131,11 @@ class Settings extends Component {
                       <ListItemText primary={grocery.grocery_name} />
                       <Container sx={{ gap: "10px" }}>
                         <ListItemSecondaryAction>
-                          <IconButton edge="end" aria-label="edit">
+                          <IconButton
+                            edge="end"
+                            aria-label="edit"
+                            onClick={() => this.handleOpenModal(grocery)}
+                          >
                             <EditIcon />
                           </IconButton>
                           <IconButton edge="end" aria-label="delete">
@@ -126,6 +180,48 @@ class Settings extends Component {
             </Accordion>
           </Paper>
         </Container>
+        <Modal open={modalOpen} onClose={this.handleCloseModal}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 400,
+              bgcolor: "background.paper",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+            }}
+          >
+            <Typography variant="h6" component="h2">
+              Lebensmittel bearbeiten
+            </Typography>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Name"
+              value={editedGroceryName}
+              onChange={this.handleEditChange}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleUpdateGrocery}
+              sx={{ mt: 2 }}
+            >
+              Speichern
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={this.handleCloseModal}
+              sx={{ mt: 2, ml: 2 }}
+            >
+              Abbrechen
+            </Button>
+          </Box>
+        </Modal>
       </>
     );
   }
