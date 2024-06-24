@@ -114,7 +114,10 @@ DROP TABLE IF EXISTS `measure`;
 CREATE TABLE `measure` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `unit` varchar(128) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  `fridge_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fridge_id` (`fridge_id`),
+  CONSTRAINT `measure_fk1` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 INSERT INTO measure (unit) VALUES
@@ -128,8 +131,7 @@ INSERT INTO measure (unit) VALUES
 ('Stück');
 
 ALTER TABLE `measure`
-ADD COLUMN `household_id` int(11) DEFAULT NULL,
-ADD CONSTRAINT `fk_measure_household` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`) ON DELETE CASCADE;
+ADD CONSTRAINT `fk_measure_fridge` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE;
 
 
 

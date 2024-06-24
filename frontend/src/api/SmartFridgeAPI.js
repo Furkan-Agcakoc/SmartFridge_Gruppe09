@@ -90,8 +90,10 @@ export default class SmartFridgeAPI {
   #addUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
   #deleteUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
   #updateUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
-
+  // measure related
   #getMeasureURL = () => `${this.#SmartFridgeBaseURL}/measure`;
+  #addMeasureURL = () => `${this.#SmartFridgeBaseURL}/measure`;
+  #deleteMeasureURL = (id) => `${this.#SmartFridgeBaseURL}/measure/${id}`;
 
   /**
    *  Returns a Promise which resolves to a json object.
@@ -719,4 +721,32 @@ export default class SmartFridgeAPI {
       });
     });
   }
+  addMeasure(measureBO) {
+    return this.#fetchAdvanced(this.#addMeasureURL(), {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(measureBO),
+    }).then((responseJSON) => {
+      let responseMeasureBO = MeasureBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseMeasureBO);
+      });
+    });
+  }
+
+  deleteMeasure(measureID) {
+    return this.#fetchAdvanced(this.#deleteMeasureURL(measureID), {
+      method: "DELETE",
+    }).then((responseJSON) => {
+      let responseMeasureBOs = MeasureBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseMeasureBOs);
+      });
+    });
+  }
+  
+
 }

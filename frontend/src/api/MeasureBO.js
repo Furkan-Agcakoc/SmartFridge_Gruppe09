@@ -5,10 +5,10 @@ import BusinessObject from './BusinessObject';
  */
 export default class MeasureBO extends BusinessObject {
 
-    constructor(unit, household_id) {
+    constructor(unit) {
         super();
         this.unit = unit;
-        this.household_id = null;
+        this.fridge_id = null;
     }
 
     getUnit() {
@@ -19,12 +19,12 @@ export default class MeasureBO extends BusinessObject {
         this.unit = unit;
     }
 
-    getHouseholdId() {
-        return this.household_id;
+    getFridgeId() {
+        return this.fridge_id;
     }
 
-    setHouseholdId(household_id) {
-        this.household_id = household_id;
+    setFridgeId(fridge_id) {
+        this.fridge_id = fridge_id;
     }
 
     static fromJSON(grocery) {

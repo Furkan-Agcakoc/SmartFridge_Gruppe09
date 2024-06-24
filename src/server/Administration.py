@@ -446,10 +446,10 @@ class Administration():
     Measure Spezifische Methoden
     """
 
-    def create_measure(self, unit, household_id):
+    def create_measure(self, unit, fridge_id):
         measure = Measure()
         measure.set_unit(unit)
-        measure.set_household_id(household_id)
+        measure.set_fridge_id(fridge_id)
         measure.set_id(1)
 
         with MeasureMapper() as mapper:

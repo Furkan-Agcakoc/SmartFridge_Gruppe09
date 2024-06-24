@@ -66,7 +66,7 @@ class GroceryDialog extends Component {
       console.log("Form is valid, groceryInputValue:", newGrocery);
       this.addGrocery(newGrocery);
       console.log("Form is valid, measurementInputValue:", newMeasurement);
-      // this.addMeasure(newMeasurement);
+      this.addMeasure(newMeasurement);
     } else {
       this.setState({ showAlert: true });
     }
@@ -105,12 +105,14 @@ class GroceryDialog extends Component {
     SmartFridgeAPI.api
       .addMeasure({
         unit: measureName,
+        fridge_id: 1,
       })
       .then((measure) => {
         this.setState({
           groceryUnit: [...this.state.groceryUnit, measure.getUnit()],
         });
       });
+
   };
 
   render() {

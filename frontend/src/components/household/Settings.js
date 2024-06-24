@@ -52,6 +52,32 @@ class Settings extends Component {
       });
   }
 
+  deleteGrocery = (grocery) => {
+    SmartFridgeAPI.api
+      .deleteGrocery(grocery.id)
+      .then(() => {
+        const { groceries } = this.state;
+        const updatedGroceries = groceries.filter((g) => g.id !== grocery.id);
+        this.setState({ groceries: updatedGroceries });
+      })
+      .catch((error) => {
+        console.error("Fehler beim Löschen:", error);
+      });
+  };
+
+  deleteMeasure = (measure) => {
+    SmartFridgeAPI.api
+      .deleteMeasure(measure.id)
+      .then(() => {
+        const { measures } = this.state;
+        const updatedMeasures = measures.filter((m) => m.id !== measure.id);
+        this.setState({ measures: updatedMeasures });
+      })
+      .catch((error) => {
+        console.error("Fehler beim Löschen:", error);
+      });
+  };
+
   handleOpenModal = (grocery) => {
     this.setState({
       modalOpen: true,
@@ -138,10 +164,14 @@ class Settings extends Component {
                           >
                             <EditIcon />
                           </IconButton>
-                          <IconButton edge="end" aria-label="delete">
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() => this.deleteGrocery(grocery)}
+                          >
                             <DeleteIcon />
                           </IconButton>
-                        </ListItemSecondaryAction>{" "}
+                        </ListItemSecondaryAction>
                       </Container>
                     </ListItem>
                   ))}
@@ -165,10 +195,18 @@ class Settings extends Component {
                       <ListItemText primary={measure.unit} />
                       <Container sx={{ display: "flex", gap: "10px" }}>
                         <ListItemSecondaryAction>
-                          <IconButton edge="end" aria-label="edit">
+                          <IconButton
+                            edge="end"
+                            aria-label="edit"
+                           
+                          >
                             <EditIcon />
                           </IconButton>
-                          <IconButton edge="end" aria-label="delete">
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() => this.deleteMeasure(measure)}
+                          >
                             <DeleteIcon />
                           </IconButton>
                         </ListItemSecondaryAction>
