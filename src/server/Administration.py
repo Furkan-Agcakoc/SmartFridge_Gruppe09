@@ -62,9 +62,14 @@ class Administration():
     Haushalt Spezifische Methoden
     """
 
-    def create_household(self, household_name):
+    def get_households_by_user(self, user_id):
+        with HouseholdMapper() as mapper:
+            return mapper.find_by_user_id(user_id)
+
+    def create_household(self, household_name, owner_id):
         household = Household()
         household.set_household_name(household_name)
+        household.set_owner_id(owner_id)
         household.set_id(1)
 
         with HouseholdMapper() as mapper:
@@ -114,8 +119,8 @@ class Administration():
 
             return house
 
-    def create_household_and_fridge(self, household_name):
-        household = self.create_household(household_name)
+    def create_household_and_fridge(self, household_name, owner_id):
+        household = self.create_household(household_name, owner_id)
 
         fridge = self.create_fridge(household.get_id())
 
@@ -140,14 +145,14 @@ class Administration():
     Recipe Spezifische Methoden
     """
 
-    def create_recipe(self, recipe_name, duration, portion, instruction, user_id, household_id):
+    def create_recipe(self, recipe_name, duration, portion, instruction, user_id, fridge_id):
         recipe = Recipe()
         recipe.set_recipe_name(recipe_name)
         recipe.set_portion(portion)
         recipe.set_instruction(instruction)
         recipe.set_duration(duration)
         recipe.set_user_id(user_id)
-        recipe.set_household_id(household_id)
+        recipe.set_fridge_id(fridge_id)
         recipe.set_id(1)
 
         with RecipeMapper() as mapper:
@@ -167,13 +172,13 @@ class Administration():
         with RecipeMapper() as mapper:
             return mapper.find_by_user_id(user_id)
 
-    def get_recipe_by_household_id(self, household_id):
-        """  Wiedergabe deines Rezepts mit der Household_Id """
+    def get_recipe_by_fridge_id(self, fridge_id):
+        """  Wiedergabe deines Rezepts mit der Fridge_Id """
         with RecipeMapper() as mapper:
-            return mapper.find_by_household_id(household_id)
-    def get_recipe_by_user_id_and_household_id(self, user_id, household_id):
+            return mapper.find_by_household_id(fridge_id)
+    def get_recipe_by_user_id_and_household_id(self, user_id, fridge_id):
         with RecipeMapper() as mapper:
-            return mapper.find_recipe_by_user_id_and_household_id(user_id, household_id)
+            return mapper.find_recipe_by_user_id_and_fridge_id(user_id, fridge_id)
 
 
 
@@ -200,10 +205,10 @@ class Administration():
     Grocery Spezifische Methoden
     """
 
-    def create_grocery(self, grocery_name, household_id):
+    def create_grocery(self, grocery_name, fridge_id):
         grocery = Grocery()
         grocery.set_grocery_name(grocery_name)
-        grocery.set_household_id(household_id)
+        grocery.set_fridge_id(fridge_id)
         grocery.set_id(1)
 
         with GroceryMapper() as mapper:
@@ -441,10 +446,10 @@ class Administration():
     Measure Spezifische Methoden
     """
 
-    def create_measure(self, unit, household_id):
+    def create_measure(self, unit, fridge_id):
         measure = Measure()
         measure.set_unit(unit)
-        measure.set_household_id(household_id)
+        measure.set_fridge_id(fridge_id)
         measure.set_id(1)
 
         with MeasureMapper() as mapper:

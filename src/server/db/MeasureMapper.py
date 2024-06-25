@@ -8,14 +8,14 @@ class MeasureMapper(Mapper):
     def find_all(self):
         result = []
         cursor = self._cnx.cursor()
-        cursor.execute("SELECT id, unit, household_id FROM measure")
+        cursor.execute("SELECT id, unit, fridge_id FROM measure")
         tuples = cursor.fetchall()
 
-        for (id, unit, household_id) in tuples:
+        for (id, unit, fridge_id) in tuples:
             measure = Measure()
             measure.set_id(id)
             measure.set_unit(unit)
-            measure.set_household_id(household_id)
+            measure.set_fridge_id(fridge_id)
             result.append(measure)
 
         cursor.close()
@@ -24,15 +24,15 @@ class MeasureMapper(Mapper):
     def find_by_unit_id(self, unit_id):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id, unit, household_id FROM measure WHERE measure=%s ORDER BY id"
+        command = "SELECT id, unit, fridge_id FROM measure WHERE measure=%s ORDER BY id"
         cursor.execute(command, (unit_id,))
         tuples = cursor.fetchall()
 
-        for (id, unit, household_id) in tuples:
+        for (id, unit, fridge_id) in tuples:
             measure = Measure()
             measure.set_id(id)
             measure.set_unit(unit)
-            measure.set_household_id(household_id)
+            measure.set_fridge_id(fridge_id)
             result.append(measure)
 
         cursor.close()
@@ -41,16 +41,16 @@ class MeasureMapper(Mapper):
     def find_by_key(self, key):
         result = None
         cursor = self._cnx.cursor()
-        command = "SELECT id, unit, household_id FROM measure WHERE id=%s"
+        command = "SELECT id, unit, fridge_id FROM measure WHERE id=%s"
         cursor.execute(command, (key,))
         tuples = cursor.fetchall()
 
         if tuples:
-            (id, unit, household_id) = tuples[0]
+            (id, unit, fridge_id) = tuples[0]
             measure = Measure()
             measure.set_id(id)
             measure.set_unit(unit)
-            measure.set_household_id(household_id)
+            measure.set_fridge_id(fridge_id)
             result = measure
 
         cursor.close()
@@ -63,11 +63,11 @@ class MeasureMapper(Mapper):
         cursor.execute(command)
         tuples = cursor.fetchall()
 
-        for (id, unit, household_id) in tuples:
+        for (id, unit, fridge_id) in tuples:
             measure = Measure()
             measure.set_id(id)
             measure.set_unit(unit)
-            measure.set_household_id(household_id)
+            measure.set_fridge_id(fridge_id)
             result.append(measure)
 
         self._cnx.commit()
@@ -88,8 +88,8 @@ class MeasureMapper(Mapper):
             else:
                 measure.set_id(1)
 
-        command = "INSERT INTO measure (id, unit, household_id) VALUES (%s,%s,%s)"
-        data = (measure.get_id(), measure.get_unit(), measure.get_household_id())
+        command = "INSERT INTO measure (id, unit, fridge_id) VALUES (%s,%s,%s)"
+        data = (measure.get_id(), measure.get_unit(), measure.get_fridge_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
@@ -99,8 +99,8 @@ class MeasureMapper(Mapper):
 
     def update(self, measure):
         cursor = self._cnx.cursor()
-        command = "UPDATE measure SET unit=%s, household_id=%s WHERE id=%s"
-        data = (measure.get_unit(), measure.get_id(), measure.get_household_id())
+        command = "UPDATE measure SET unit=%s, fridge_id=%s WHERE id=%s"
+        data = (measure.get_unit(), measure.get_id(), measure.get_fridge_id())
         cursor.execute(command, data)
 
         self._cnx.commit()

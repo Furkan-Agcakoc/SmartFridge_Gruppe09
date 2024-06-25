@@ -5,14 +5,14 @@ import BusinessObject from './BusinessObject';
  */
 export default class RecipeBO extends BusinessObject {
 
-    constructor(aRecipe_name, aDuration, aPortion, aInstruction, aUser_id, aHousehold_id) {
+    constructor(aRecipe_name, aDuration, aPortion, aInstruction, aUser_id, aFridge_id) {
         super();
         this.recipe_name = aRecipe_name;
         this.duration = aDuration;
         this.portion = aPortion;
         this.instruction = aInstruction;
         this.user_id = aUser_id;
-        this.household_id = aHousehold_id;
+        this.fridge_id = aFridge_id;
     }
 
     setRecipeName(aRecipe_name) {
@@ -56,11 +56,11 @@ export default class RecipeBO extends BusinessObject {
     }
 
     getHouseholdId() {
-        return this.household_id;
+        return this.fridge_id;
     }
 
-    setHouseholdId(aHousehold_id) {
-        this.household_id = aHousehold_id;
+    setHouseholdId(aFridge_id) {
+        this.fridge_id = aFridge_id;
     }
 
 
