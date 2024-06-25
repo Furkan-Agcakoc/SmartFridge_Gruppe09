@@ -66,9 +66,10 @@ class FridgeMapper (Mapper):
 
         return result
 
-    def insert(self, fridge):
 
+    def insert(self, fridge):
         cursor = self._cnx.cursor()
+
         cursor.execute("SELECT MAX(id) AS maxid FROM fridge")
         tuples = cursor.fetchall()
 
@@ -78,9 +79,36 @@ class FridgeMapper (Mapper):
             else:
                 fridge.set_id(1)
 
-        command = "INSERT INTO fridge (id, household_id) VALUES (%s, %s)"
-        data = (fridge.get_id(), fridge.get_household_id())
-        cursor.execute(command, data)
+        insert_command = "INSERT INTO fridge (id, household_id) VALUES (%s, %s)"
+        insert_data = (fridge.get_id(), fridge.get_household_id())
+        cursor.execute(insert_command, insert_data)
+
+        default_measures = [
+            ('g', fridge.get_id()),
+            ('Gramm', fridge.get_id()),
+            ('kg', fridge.get_id()),
+            ('Kilogramm', fridge.get_id()),
+            ('ml', fridge.get_id()),
+            ('Milliliter', fridge.get_id()),
+            ('l', fridge.get_id()),
+            ('Liter', fridge.get_id()),
+            ('Teelöffel', fridge.get_id()),
+            ('Esslöffel', fridge.get_id()),
+            ('Prise', fridge.get_id()),
+        ]
+
+        for unit, fridge_id in default_measures:
+            measure_insert_command = "INSERT INTO measure (unit, fridge_id) VALUES (%s, %s)"
+            measure_insert_data = (unit, fridge_id)
+            cursor.execute(measure_insert_command, measure_insert_data)
+
+        default_groceries = ['Salz', 'Zucker', 'Pfeffer', 'Mehl', 'Ei', 'Milch', 'Butter', 'Brot', 'Käse', 'Kartoffel', 'Apfel', 'Reis', 'Nudel']
+
+
+        for grocery in default_groceries:
+            grocery_insert_command = "INSERT INTO grocery (grocery_name, fridge_id) VALUES (%s, %s)"
+            grocery_insert_data = (grocery, fridge.get_id())
+            cursor.execute(grocery_insert_command, grocery_insert_data)
 
         self._cnx.commit()
         cursor.close()

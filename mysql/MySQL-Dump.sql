@@ -65,40 +65,6 @@ CREATE TABLE `grocery` (
   CONSTRAINT `grocery_fk1` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-INSERT INTO `grocery` (`grocery_name`) VALUES
-('Mehl'),
-('Zucker'),
-('Salz'),
-('Pfeffer'),
-('Olivenöl'),
-('Butter'),
-('Eier'),
-('Milch'),
-('Sahne'),
-('Käse'),
-('Zwiebeln'),
-('Knoblauch'),
-('Karotten'),
-('Tomaten'),
-('Kartoffeln'),
-('Paprika'),
-('Gurken'),
-('Zitronen'),
-('Äpfel'),
-('Bananen'),
-('Orangen'),
-('Brokkoli'),
-('Spinat'),
-('Pilze'),
-('Hähnchenbrust'),
-('Rindfleisch'),
-('Frischkäse'),
-('Lachs'),
-('Thunfisch'),
-('Garnelen'),
-('Reis'),
-('Nudeln'),
-('Brot');
 
 
 ALTER TABLE `grocery`
@@ -120,15 +86,6 @@ CREATE TABLE `measure` (
   CONSTRAINT `measure_fk1` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-INSERT INTO measure (unit) VALUES
-('g'),
-('kg'),
-('ml'),
-('l'),
-('Teelöffel'),
-('Esslöffel'),
-('Prise'),
-('Stück');
 
 ALTER TABLE `measure`
 ADD CONSTRAINT `fk_measure_fridge` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE;
