@@ -39,6 +39,8 @@ class FridgePage extends Component {
     this.handleAnchorDelete = this.handleAnchorDelete.bind(this);
   }
 
+
+
   handleTabChange(event, newValue) {
     console.log("Tab changed:", newValue);
     this.setState({
@@ -65,12 +67,12 @@ class FridgePage extends Component {
 
   handleCreateGroceries = (groceryData) => {
     const { currentlyEditing, groceries } = this.state;
-  
+
     if (currentlyEditing !== null) {
       const currentGrocery = groceries.find(
         (grocery) => grocery.groceryId === currentlyEditing
       );
-  
+
       // Überprüfen, ob sich der Name oder die Menge geändert haben
       if (
         currentGrocery.groceryName === groceryData.name &&
@@ -83,31 +85,35 @@ class FridgePage extends Component {
         });
         return;
       }
-  
+
       // Finden des Indexes eines existierenden Lebensmittels mit dem neuen Namen
       const existingGroceryIndex = groceries.findIndex(
         (grocery) => grocery.groceryName === groceryData.name
       );
-  
-      const updatedGroceries = groceries.map((grocery, index) => {
-        if (grocery.groceryId === currentlyEditing) {
-          if (existingGroceryIndex !== -1 && existingGroceryIndex !== index) {
-            // Menge zum existierenden Lebensmittel addieren
-            groceries[existingGroceryIndex].groceryQuantity = parseFloat(groceries[existingGroceryIndex].groceryQuantity) + parseFloat(groceryData.quantity);
-            return null; // Mark for deletion
-          } else {
-            // Aktualisieren des bearbeiteten Lebensmittels
-            return {
-              ...grocery,
-              groceryName: groceryData.name,
-              groceryQuantity: groceryData.quantity,
-              groceryUnit: groceryData.unit,
-            };
+
+      const updatedGroceries = groceries
+        .map((grocery, index) => {
+          if (grocery.groceryId === currentlyEditing) {
+            if (existingGroceryIndex !== -1 && existingGroceryIndex !== index) {
+              // Menge zum existierenden Lebensmittel addieren
+              groceries[existingGroceryIndex].groceryQuantity =
+                parseFloat(groceries[existingGroceryIndex].groceryQuantity) +
+                parseFloat(groceryData.quantity);
+              return null; // Mark for deletion
+            } else {
+              // Aktualisieren des bearbeiteten Lebensmittels
+              return {
+                ...grocery,
+                groceryName: groceryData.name,
+                groceryQuantity: groceryData.quantity,
+                groceryUnit: groceryData.unit,
+              };
+            }
           }
-        }
-        return grocery;
-      }).filter(grocery => grocery !== null); // Entfernen des markierten Lebensmittels
-  
+          return grocery;
+        })
+        .filter((grocery) => grocery !== null); // Entfernen des markierten Lebensmittels
+
       this.setState({
         groceries: updatedGroceries,
         popupGroceryOpen: false,
@@ -118,19 +124,21 @@ class FridgePage extends Component {
       const existingGrocery = groceries.find(
         (grocery) => grocery.groceryName === groceryData.name
       );
-  
+
       if (existingGrocery) {
         // Menge zum existierenden Lebensmittel addieren
         const updatedGroceries = groceries.map((grocery) => {
           if (grocery.groceryName === groceryData.name) {
             return {
               ...grocery,
-              groceryQuantity: parseFloat(grocery.groceryQuantity) + parseFloat(groceryData.quantity),
+              groceryQuantity:
+                parseFloat(grocery.groceryQuantity) +
+                parseFloat(groceryData.quantity),
             };
           }
           return grocery;
         });
-  
+
         this.setState({
           groceries: updatedGroceries,
           popupGroceryOpen: false,
@@ -149,7 +157,7 @@ class FridgePage extends Component {
             },
           ];
           const newOpenMenus = { ...prevState.openMenus, [id]: false };
-  
+
           return {
             groceryCount: prevState.groceryCount + 1,
             popupGroceryOpen: false,
@@ -160,7 +168,6 @@ class FridgePage extends Component {
       }
     }
   };
-  
 
   updateGrocery(grocery) {
     const updatedGroceries = this.state.groceries.map((e) => {
@@ -283,6 +290,7 @@ class FridgePage extends Component {
       currentlyEditing: null,
     });
   };
+
 
   handleCreateRecipes = (recipeData) => {
     console.log("Recipe-Popup closed recipe recipe");

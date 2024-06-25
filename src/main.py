@@ -585,16 +585,6 @@ class FridgeOperations(Resource):
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
-@smartfridge.route('/fridge/household_id/<int:household_id>')
-@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
-class FridgeOperations(Resource):
-    def get(self, household_id):
-        "Wiedergabe eines Fridge Objekts durch Household ID"
-
-        adm = Administration()
-        fridge = adm.get_fridge_of_household(household_id)
-        return fridge
-
 
 
 
@@ -881,9 +871,7 @@ class UnitConversion(Resource):
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class CalculateRecipeFridge(Resource):
     def post(self, recipe_id, fridge_id):
-        """
-         Methode zur Berechnung des neuen Kühlschrankinhalts nach dem Kochen eines Rezepts
-        """
+        # Instanz der Administrationsklasse erstellen
         adm = Administration()
 
         # Methode calculate_recipe_fridge aufrufen
@@ -898,7 +886,8 @@ class CalculateRecipeFridge(Resource):
 class RecipesByFridgeContents(Resource):
     def get(self, household_id):
         """
-        Methode zur Erfassung der kochbaren Rezepte und eventuelle Zutaten, welche fehlen
+        Retrieve recipes that can be made with the contents of the fridge within the specified household.
+        It also lists ingredients that are missing to complete each recipe.
         """
         adm = Administration()
         try:

@@ -12,6 +12,7 @@ import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import AlertComponent from "../dialogs/AlertComponent";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import GroceryBO from "../../api/GroceryBO";
 
 const filter = createFilterOptions();
 
@@ -82,15 +83,26 @@ class GroceryDialog extends Component {
       });
   };
 
-  addGrocery = (groceryName) => {
+  getFridge = () => {
     SmartFridgeAPI.getAPI()
-      .addGrocery({
-        grocery_name: groceryName,
-        fridge_id: 1,
-      })
-      .then((grocery) => {
+      .getFridge()
+      .then((fridges) => {
         this.setState({
-          foodOptions: [...this.state.foodOptions, grocery.getGroceryName()],
+          fridgeOptions: fridges.map((fridge) => fridge.getFridgeName()),
+        });
+      });
+  };
+
+  addGrocery = (groceryName) => {
+    const groceryBO = new GroceryBO(groceryName);
+    SmartFridgeAPI.getAPI()
+      .addGrocery(groceryBO)
+      .then((responseGroceryBO) => {
+        this.setState({
+          foodOptions: [
+            ...this.state.foodOptions,
+            responseGroceryBO.getGroceryName(),
+          ],
         });
       });
   };
@@ -132,7 +144,6 @@ class GroceryDialog extends Component {
     const sortedMeasureOptions = measureOptions.sort((a, b) =>
       a.localeCompare(b)
     );
-
     return (
       <>
         <Box
