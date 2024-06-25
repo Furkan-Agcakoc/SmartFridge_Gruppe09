@@ -19,7 +19,7 @@ export default class SmartFridgeAPI {
    *
    * @public
    */
-  static get api() {
+  static getAPI() {
     if (this.#api == null) {
       this.#api = new SmartFridgeAPI();
     }

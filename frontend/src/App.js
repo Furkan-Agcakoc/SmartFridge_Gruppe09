@@ -82,7 +82,7 @@ class App extends Component {
             });
 
             // Benutzer hinzufügen, wenn er nicht existiert
-            SmartFridgeAPI.api
+            SmartFridgeAPI.getAPI()
               .getUser()
               .then((userBOs) => {
                 const existingUser = userBOs.find(
@@ -95,7 +95,7 @@ class App extends Component {
 
                 if (!existingUser) {
                   console.log("User does not exist in the database");
-                  SmartFridgeAPI.api
+                  SmartFridgeAPI.getAPI()
                     .addUser({
                       firstname: "",
                       lastname: "",

@@ -43,6 +43,7 @@ class User (bo.BusinessObject):
     @staticmethod
     def from_dict(dictionary=dict()):
         obj = User()
+        # obj.set_id(dictionary["id"])
         obj.set_firstname(dictionary["firstname"])
         obj.set_lastname(dictionary["lastname"])
         obj.set_nickname(dictionary["nickname"])
@@ -50,4 +51,4 @@ class User (bo.BusinessObject):
         obj.set_google_user_id(dictionary["google_user_id"])
         return obj
 
-    #
+    

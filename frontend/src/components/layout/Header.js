@@ -85,7 +85,7 @@ class Header extends Component {
                 sx={{
                   width: "130px",
                   height: "40px",
-                  fontWeight: 500,
+                  fontWeight: "bold",
                   backgroundColor: "background.paper",
                   border: "none",
                   borderRadius: "30px",

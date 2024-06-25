@@ -73,15 +73,17 @@ class GroceryDialog extends Component {
   };
 
   getGrocery = () => {
-    SmartFridgeAPI.api.getGrocery().then((groceries) => {
-      this.setState({
-        foodOptions: groceries.map((grocery) => grocery.getGroceryName()),
+    SmartFridgeAPI.getAPI()
+      .getGrocery()
+      .then((groceries) => {
+        this.setState({
+          foodOptions: groceries.map((grocery) => grocery.getGroceryName()),
+        });
       });
-    });
   };
 
   addGrocery = (groceryName) => {
-    SmartFridgeAPI.api
+    SmartFridgeAPI.getAPI()
       .addGrocery({
         grocery_name: groceryName,
         fridge_id: 1,
@@ -94,15 +96,17 @@ class GroceryDialog extends Component {
   };
 
   getMeasure = () => {
-    SmartFridgeAPI.api.getMeasure().then((measures) => {
-      this.setState({
-        groceryUnit: measures.map((measure) => measure.getUnit()),
+    SmartFridgeAPI.getAPI()
+      .getMeasure()
+      .then((measures) => {
+        this.setState({
+          groceryUnit: measures.map((measure) => measure.getUnit()),
+        });
       });
-    });
   };
 
   addMeasure = (measureName) => {
-    SmartFridgeAPI.api
+    SmartFridgeAPI.getAPI()
       .addMeasure({
         unit: measureName,
         fridge_id: 1,
@@ -112,7 +116,6 @@ class GroceryDialog extends Component {
           groceryUnit: [...this.state.groceryUnit, measure.getUnit()],
         });
       });
-
   };
 
   render() {

@@ -11,7 +11,7 @@ import Tooltip from "@mui/material/Tooltip";
 // import PersonAdd from "@mui/icons-material/PersonAdd";
 // import Settings from "@mui/icons-material/Settings";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
+// import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import { Link } from "react-router-dom";
 import HolidayVillageRoundedIcon from "@mui/icons-material/HolidayVillageRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
@@ -37,11 +37,22 @@ export default function AccountMenu({ user, onSignIn, onSignOut }) {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32, color: "primary.dark", backgroundColor:"background.paper", cursor: "pointer",
-                  transition: "0.3s ease",
-                  "&:hover": {
-                    background: "rgba(255, 255, 255, 0.8)",
-                  }, }}>M</Avatar>
+            <Avatar sx={{ 
+              width: 38, 
+              height: 38,
+              p: "0", 
+              color: "primary.dark",
+              fontWeight: "bold",
+              backgroundColor:"background.paper", 
+              cursor: "pointer",
+              transition: "0.3s ease",
+              "&:hover": {
+                background: "rgba(255, 255, 255, 0.8)",
+              }
+              }}
+              >
+                M
+              </Avatar>
           </IconButton>
         </Tooltip>
       </Box>
