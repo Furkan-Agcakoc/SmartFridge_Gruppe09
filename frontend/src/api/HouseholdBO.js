@@ -5,9 +5,10 @@ import BusinessObject from './BusinessObject';
  */
 export default class HouseholdBO extends BusinessObject {
 
-    constructor(aHousehold_name) {
+    constructor(aHousehold_name, aOwner_id) {
         super();
         this.household_name = aHousehold_name;
+        this.owner_id = aOwner_id
     }
 
     getHouseholdName() {

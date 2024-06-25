@@ -59,6 +59,7 @@ def secured(function):
                         user.set_lastname(lastname)
                         user.set_nickname(nickname)
                         adm.update_user(user)
+
                     else:
                         """Fall: Der Benutzer war bislang noch nicht eingelogged. 
                         Wir legen daher ein neues User-Objekt an, um dieses ggf. später

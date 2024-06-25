@@ -6,30 +6,62 @@ import {
   TextField,
   Autocomplete,
   Button,
+  IconButton,
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import DeleteIcon from "@mui/icons-material/Delete";
 import AlertComponent from "../dialogs/AlertComponent";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import UserContext from "../contexts/UserContext";
 
 class HouseholdDialog extends Component {
+  static contextType = UserContext;
+
   constructor(props) {
     super(props);
     this.state = {
       householdData: {
         householdName: props.isEditMode ? props.householdName : "",
+        householdId: props.isEditMode ? props.householdId : null,
         inhabitants: props.isEditMode ? props.inhabitants : [],
       },
       allInhabitants: [],
       showAlert: false,
+      contextLoaded: false,
     };
   }
 
   componentDidMount() {
-    this.fetchInhabitants();
+    const checkContext = () => {
+      if (this.context) {
+        this.setState({ contextLoaded: true });
+        this.updateState();
+      }
+    };
+    checkContext();
   }
 
+  updateState = () => {
+    this.fetchInhabitants();
+    setTimeout(this.updatestate, 30000); // wait 100ms then re-check
+  };
+
+  // componentDidMount() {
+  //   const checkContext = () => {
+  //     if (this.context) {
+  //       this.getAvailableInhabitants();
+  //     } else {
+  //       setTimeout(checkContext, 100); // wait 100ms then re-check
+  //     }
+  //   };
+  //   checkContext();
+  //   // this.getAvailableInhabitants();
+  //   this.fetchInhabitants();
+  // }
+
   fetchInhabitants = () => {
+    this.getAvailableInhabitants();
     SmartFridgeAPI.api
       .getUser()
       .then((userBOs) => {
@@ -44,7 +76,25 @@ class HouseholdDialog extends Component {
       });
   };
 
-  componentDidUpdate(prevProps) {
+  // componentDidUpdate(prevProps) {
+  //   if (
+  //     prevProps.isEditMode !== this.props.isEditMode ||
+  //     prevProps.householdName !== this.props.householdName ||
+  //     prevProps.inhabitants !== this.props.inhabitants
+  //   ) {
+  //     this.setState({
+  //       householdData: {
+  //         householdName: this.props.householdName,
+  //         inhabitants: this.props.inhabitants || [], // ÄNDERUNG 2
+  //         // inhabitants: this.props.inhabitants,
+  //       },
+  //     });
+  //   }
+  // }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log("Householddata aus State", this.state.householdData);
+    console.log("Inhabitants aus Dialog", this.props.inhabitants);
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.householdName !== this.props.householdName ||
@@ -53,9 +103,14 @@ class HouseholdDialog extends Component {
       this.setState({
         householdData: {
           householdName: this.props.householdName,
-          inhabitants: this.props.inhabitants,
+          inhabitants: this.props.inhabitants || [],
+          householdId: this.props.householdId,
         },
       });
+    }
+
+    if (!prevState.contextLoaded && this.state.contextLoaded) {
+      this.getAvailableInhabitants();
     }
   }
 
@@ -68,24 +123,111 @@ class HouseholdDialog extends Component {
     } else {
       this.setState({ showAlert: true });
     }
-    console.log(householdData.inhabitants);
   };
 
   getAvailableInhabitants = () => {
     const { allInhabitants, householdData } = this.state;
-    const currentInhabitantsIds = householdData.inhabitants.map(
-      (inhabitant) => inhabitant.id
-    );
+
+    const currentInhabitantsIds =
+      householdData?.inhabitants?.map((inhabitant) => inhabitant.id) || [];
+
     return allInhabitants.filter(
-      (inhabitant) => !currentInhabitantsIds.includes(inhabitant.id)
+      (inhabitant) =>
+        !currentInhabitantsIds.includes(inhabitant.id) &&
+        (this.context && this.context.id
+          ? inhabitant.id !== this.context.id
+          : true)
     );
+  };
+
+  getInhabitantById = (id) => {
+    return this.state.allInhabitants.find((inhabitant) => inhabitant.id === id);
+  };
+
+  deleteInhabitantByUserIdHouseholdId = (userId, householdId) => {
+    console.log("Bewohner erfolgreich gelöscht");
+    console.log(userId, householdId);
+    console.log(
+      "Das sind die Inhabitants die gelöscht wurden",
+      this.state.householdData.inhabitants
+    );
+
+    SmartFridgeAPI.api
+      .deleteInhabitant(userId, householdId)
+      .then(() => {
+        this.setState((prevState) => {
+          // Entfernen des Benutzers aus der Liste der Bewohner
+          const updatedInhabitants = prevState.householdData.inhabitants.filter(
+            (inh) => inh.id !== userId
+          );
+
+          return {
+            householdData: {
+              ...prevState.householdData,
+              inhabitants: updatedInhabitants,
+            },
+          };
+        });
+      })
+      .catch((error) => {
+        console.error("Fehler beim Löschen des Bewohners:", error);
+      });
+  };
+
+  // deleteInhabitantByUserIdHouseholdId = (userId, householdId) => {
+  //   console.log("Bewohner erfolgreich gelöscht");
+  //   console.log(userId, householdId);
+  //   console.log(
+  //     "Das sind die Inhabitants die gelöscht wurden",
+  //     this.state.householdData.inhabitants
+  //   );
+  //   SmartFridgeAPI.api
+  //     .deleteInhabitant(userId, householdId)
+  //     .then(() => {
+  //       this.setState((prevState) => ({
+  //         householdData: {
+  //           ...prevState.householdData,
+  //           inhabitants: prevState.householdData.inhabitants.filter(
+  //             (inh) => inh.id !== userId
+  //           ),
+  //         },
+  //       }));
+  //     })
+  //     .catch((error) => {
+  //       console.error("Fehler beim Löschen des Bewohners:", error);
+  //     });
+  // };
+
+  handleDeleteInhabitant = (inhabitant) => {
+    console.log(inhabitant);
+
+    this.setState((prevState) => ({
+      householdData: {
+        ...prevState.householdData,
+        inhabitants: prevState.householdData.inhabitants.filter(
+          (inh) => inh.id !== inhabitant.id
+        ),
+      },
+    }));
+  };
+
+  getHouseholdsByUserId = () => {
+    const user = this.context;
+    console.log(user);
+
+    SmartFridgeAPI.api.getHouseholdsByUserId(user.id).then((households) => {
+      console.log(households);
+      this.setState({
+        households: households,
+      });
+    });
   };
 
   render() {
     const { closePopup, isEditMode } = this.props;
 
     const {
-      householdData: { householdName, inhabitants },
+      householdData: { householdName, inhabitants, householdId },
       showAlert,
     } = this.state;
 
@@ -176,7 +318,35 @@ class HouseholdDialog extends Component {
                     InputLabelProps={{ style: { fontSize: "15px" } }}
                   />
                 )}
+                renderTags={() => null}
               />
+              <Box sx={{ mt: 2 }}>
+                {inhabitants.map((inhabitant) => (
+                  <Box
+                    key={inhabitant.id}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "5px 0",
+                    }}
+                  >
+                    <Typography>{inhabitant.email}</Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() =>
+                        this.deleteInhabitantByUserIdHouseholdId(
+                          inhabitant.id,
+                          householdId
+                        )
+                      }
+                      sx={{ color: "error.main" }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                ))}
+              </Box>
             </Box>
             <Box
               sx={{

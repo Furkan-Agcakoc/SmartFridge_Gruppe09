@@ -22,7 +22,41 @@ class HouseholdMapper(Mapper):
         cursor.close()
 
         return result
+    
+    def find_by_user_id(self, user_id):
+        result = []
+        cursor = self._cnx.cursor()
+        
+        # Step 1: Get household_id from inhabitant table
+        command = "SELECT household_id FROM inhabitant WHERE user_id = {}".format(user_id)
+        cursor.execute(command)
+        household_ids = cursor.fetchall()
+        
+        # Prepare household_ids for use in SQL IN clause
+        household_ids = [str(id[0]) for id in household_ids]
+        
+        # Step 2: Get household details from household table where id in household_ids or owner_id is user_id
+        if household_ids:
+            household_ids_str = ','.join(household_ids)
+            command = "SELECT * FROM household WHERE id IN ({}) OR owner_id = {}".format(household_ids_str, user_id)
+        else:
+            command = "SELECT * FROM household WHERE owner_id = {}".format(user_id)
+        
+        cursor.execute(command)
+        tuples = cursor.fetchall()
+        self._cnx.commit()
+        cursor.close()
 
+        for tuple in tuples:
+            id, household_name, owner_id = tuple
+            household = Household()
+            household.set_id(id)
+            household.set_household_name(household_name)
+            household.set_owner_id(owner_id)
+            result.append(household)
+        
+        return result
+        
     def find_by_household_name(self, household_name):
         result = []
         cursor = self._cnx.cursor()
@@ -49,10 +83,11 @@ class HouseholdMapper(Mapper):
         tuples = cursor.fetchall()
 
         if tuples:
-            (id, household_name) = tuples[0]
+            (id, household_name, owner_id) = tuples[0]
             household = Household()
             household.set_id(id)
             household.set_household_name(household_name)
+            household.set_owner_id(owner_id)
             result = household
 
         self._cnx.commit()
@@ -71,8 +106,8 @@ class HouseholdMapper(Mapper):
             else:
                 household.set_id(1)
 
-        command = "INSERT INTO household (id, household_name) VALUES (%s, %s)"
-        data = (household.get_id(), household.get_household_name())
+        command = "INSERT INTO household (id, household_name, owner_id) VALUES (%s, %s, %s)"
+        data = (household.get_id(), household.get_household_name(), household.get_owner_id())
         cursor.execute(command, data)
 
         self._cnx.commit()

@@ -26,6 +26,8 @@ class GroceryDialog extends Component {
         unit: props.isEditMode ? props.groceryUnit : "",
         groceryUnit: [],
       },
+      newGrocery: "",
+      newMeasurement: "",
       showAlert: false,
       foodOptions: props.foodOptions || [],
       groceryUnit: [], // State für Mengeneinheiten hinzugefügt
@@ -57,11 +59,14 @@ class GroceryDialog extends Component {
   }
 
   handleClick = (e) => {
-    const { groceryData } = this.state;
+    const { groceryData, newGrocery, newMeasurement } = this.state;
     const form = e.target.closest("form");
     if (form.checkValidity()) {
       this.props.handleCreateGroceries(groceryData);
-      console.log("Form is valid");
+      console.log("Form is valid, groceryInputValue:", newGrocery);
+      this.addGrocery(newGrocery);
+      console.log("Form is valid, measurementInputValue:", newMeasurement);
+      this.addMeasure(newMeasurement);
     } else {
       this.setState({ showAlert: true });
     }
@@ -75,6 +80,19 @@ class GroceryDialog extends Component {
     });
   };
 
+  addGrocery = (groceryName) => {
+    SmartFridgeAPI.api
+      .addGrocery({
+        grocery_name: groceryName,
+        fridge_id: 1,
+      })
+      .then((grocery) => {
+        this.setState({
+          foodOptions: [...this.state.foodOptions, grocery.getGroceryName()],
+        });
+      });
+  };
+
   getMeasure = () => {
     SmartFridgeAPI.api.getMeasure().then((measures) => {
       this.setState({
@@ -83,7 +101,19 @@ class GroceryDialog extends Component {
     });
   };
 
-  
+  addMeasure = (measureName) => {
+    SmartFridgeAPI.api
+      .addMeasure({
+        unit: measureName,
+        fridge_id: 1,
+      })
+      .then((measure) => {
+        this.setState({
+          groceryUnit: [...this.state.groceryUnit, measure.getUnit()],
+        });
+      });
+
+  };
 
   render() {
     const { handlePopupGroceryClose, isEditMode } = this.props;
@@ -96,7 +126,9 @@ class GroceryDialog extends Component {
 
     // Sort food options alphabetically
     const sortedFoodOptions = foodOptions.sort((a, b) => a.localeCompare(b));
-    const sortedMeasureOptions = measureOptions.sort((a, b) => a.localeCompare(b));
+    const sortedMeasureOptions = measureOptions.sort((a, b) =>
+      a.localeCompare(b)
+    );
 
     return (
       <>
@@ -162,35 +194,23 @@ class GroceryDialog extends Component {
               <Autocomplete
                 value={name}
                 onChange={(event, newValue) => {
+                  let updatedValue = "";
                   if (newValue === null) {
-                    this.setState({
-                      groceryData: {
-                        ...this.state.groceryData,
-                        name: "",
-                      },
-                    });
+                    updatedValue = "";
                   } else if (typeof newValue === "string") {
-                    this.setState({
-                      groceryData: {
-                        ...this.state.groceryData,
-                        name: newValue,
-                      },
-                    });
-                  } else if (newValue && newValue.inputValue) {
-                    this.setState({
-                      groceryData: {
-                        ...this.state.groceryData,
-                        name: newValue.inputValue,
-                      },
-                    });
+                    updatedValue = newValue;
+                  } else if (newValue && newValue.groceryInputValue) {
+                    updatedValue = newValue.groceryInputValue;
                   } else {
-                    this.setState({
-                      groceryData: {
-                        ...this.state.groceryData,
-                        name: newValue.title,
-                      },
-                    });
+                    updatedValue = newValue.title;
                   }
+                  this.setState({
+                    groceryData: {
+                      ...this.state.groceryData,
+                      name: updatedValue,
+                    },
+                    newGrocery: updatedValue, // Update inputValue state
+                  });
                 }}
                 filterOptions={(options, params) => {
                   const filtered = filter(options, params);
@@ -200,8 +220,8 @@ class GroceryDialog extends Component {
                   );
                   if (inputValue !== "" && !isExisting) {
                     filtered.push({
-                      inputValue,
-                      title: `"${inputValue} neu hinzufügen"`,
+                      groceryInputValue: inputValue,
+                      title: `"${inputValue}" neu hinzufügen`,
                     });
                   }
                   return filtered;
@@ -218,8 +238,8 @@ class GroceryDialog extends Component {
                   if (typeof option === "string") {
                     return option;
                   }
-                  if (option.inputValue) {
-                    return option.inputValue;
+                  if (option.groceryInputValue) {
+                    return option.groceryInputValue;
                   }
                   return option.title;
                 }}
@@ -275,35 +295,23 @@ class GroceryDialog extends Component {
                   value={unit}
                   freeSolo
                   onChange={(event, newValue) => {
+                    let updatedUnit = "";
                     if (newValue === null) {
-                      this.setState({
-                        groceryData: {
-                          ...this.state.groceryData,
-                          unit: "",
-                        },
-                      });
+                      updatedUnit = "";
                     } else if (typeof newValue === "string") {
-                      this.setState({
-                        groceryData: {
-                          ...this.state.groceryData,
-                          unit: newValue,
-                        },
-                      });
+                      updatedUnit = newValue;
                     } else if (newValue && newValue.inputValue) {
-                      this.setState({
-                        groceryData: {
-                          ...this.state.groceryData,
-                          unit: newValue.inputValue,
-                        },
-                      });
+                      updatedUnit = newValue.inputValue;
                     } else {
-                      this.setState({
-                        groceryData: {
-                          ...this.state.groceryData,
-                          unit: newValue.title,
-                        },
-                      });
+                      updatedUnit = newValue.title;
                     }
+                    this.setState({
+                      groceryData: {
+                        ...this.state.groceryData,
+                        unit: updatedUnit,
+                      },
+                      newMeasurement: updatedUnit, // Update state with newGrocery
+                    });
                   }}
                   filterOptions={(options, params) => {
                     const filtered = filter(options, params);
