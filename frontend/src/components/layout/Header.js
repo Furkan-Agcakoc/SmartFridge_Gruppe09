@@ -57,7 +57,7 @@ class Header extends Component {
               justifyContent: "center",
               width: "200px",
               height: "40px",
-              border: "3px black solid",
+              // border: "3px black solid",
             }}
           >
             {user ? (
@@ -66,7 +66,7 @@ class Header extends Component {
                 sx={{
                   width: "130px",
                   height: "40px",
-                  fontWeight: 500,
+                  fontWeight: "bold",
                   backgroundColor: "background.paper",
                   border: "none",
                   borderRadius: "30px",
@@ -99,7 +99,11 @@ class Header extends Component {
                 Login
               </Button>
             )}
-            <AccountMenu></AccountMenu>
+            <AccountMenu
+              user={user}
+              onSignIn={onSignIn}
+              onSignOut={onSignOut}
+            ></AccountMenu>
           </Box>
         </Box>
       </>

@@ -6,6 +6,10 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
+import {IconButton } from "@mui/material";
+import { Link } from "react-router-dom";
+
+import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -61,13 +65,19 @@ export default function FridgeSearchBar() {
         }}
       >
         <Toolbar>
+          <Link
+            to="/household"
+          > <IconButton>
+              <ArrowBackIosNewRoundedIcon fontSize="small" sx={{ color: "background.paper" }}/>
+            </IconButton>
+          </Link>
           <Typography
             variant="h5"
             noWrap
             component="div"
             fontStyle={"italic"}
             fontWeight={"bold"}
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" }, pl:"10px" }}
           >
             ~Haushaltsname~
           </Typography>
