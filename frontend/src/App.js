@@ -40,8 +40,29 @@ class App extends Component {
       showAlert: false,
       dialogOpen: false,
       dialogType: "",
+      households: [],
     };
   }
+
+  // getHouseholdsByUserId = (userId) => {
+  //   const user = this.context;
+  //   console.log(user);
+
+  //   SmartFridgeAPI.getAPI()
+  //     .getHouseholdsByUserId(userId)
+  //     .then((households) => {
+  //       console.log(households);
+  //       this.setState({
+  //         households: households,
+  //       });
+  //     });
+  // };
+
+  householdList = (households) => {
+    this.setState({
+      households: households,
+    });
+  };
 
   handleSignIn = () => {
     this.setState({ authLoading: true });
@@ -61,6 +82,7 @@ class App extends Component {
   };
 
   componentDidMount() {
+    console.log("App", this.state.households);
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
@@ -228,6 +250,7 @@ class App extends Component {
                   element={
                     <Secured user={currentUser}>
                       <HouseholdPage
+                        householdList={this.householdList}
                         dialogOpen={dialogOpen}
                         dialogType={dialogType}
                         handleOpenDialog={this.handleOpenDialog}
@@ -238,10 +261,12 @@ class App extends Component {
                   }
                 />
                 <Route
-                  path="/home/:id"
+                  path="/home/:householdId"
                   element={
                     <Secured user={currentUser}>
                       <FridgePage
+                        getFridgeByHouseholdId={this.getFridgeByHouseholdId}
+                        households={this.state.households}
                         dialogOpen={dialogOpen}
                         dialogType={dialogType}
                         handleOpenDialog={this.handleOpenDialog}

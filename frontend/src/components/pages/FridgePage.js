@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  Paper,
-  Tooltip,
-  Tab,
-  Box,
-  Link,
-  Container,
-  Chip,
-} from "@mui/material";
+import { Paper, Tooltip, Tab, Box, Link, Container, Chip } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
@@ -20,8 +12,22 @@ import GroceryDialog from "../grocery/GroceryDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import RecipeDialog from "../recipe/RecipeDialog";
 import Settings from "../household/Settings";
+import UserContext from "../contexts/UserContext";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import { useParams } from "react-router-dom";
+
+function withRouter(Component) {
+  function ComponentWithRouterProp(props) {
+    let params = useParams();
+    return <Component {...props} params={params} />;
+  }
+
+  return ComponentWithRouterProp;
+}
 
 class FridgePage extends Component {
+  static contextType = UserContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -40,6 +46,8 @@ class FridgePage extends Component {
       recipeIdToDelete: null,
       dialogopen: false,
       chipColor: null,
+      households: [],
+      householdId: null,
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -47,6 +55,35 @@ class FridgePage extends Component {
     this.handleConfirmDelete = this.handleConfirmDelete.bind(this);
     this.handleAnchorDelete = this.handleAnchorDelete.bind(this);
   }
+
+  componentDidMount() {
+    const { householdId } = this.props.params; // HouseholdId aus den Props ziehen
+    this.setState({ householdId });
+    console.log("HouseholdId", householdId);  
+  }
+
+  componentDidUpdate() {
+    console.log("HouseholdId", this.state.householdId);
+    console.log("UserId", this.context.id);
+    console.log("Households aus App", this.state.households);
+    // this.getFridgeByHouseholdId(this.state.households.id)
+
+    console.log("FridgePage updated");
+  }
+
+  getHouseholdsByUserId = (userId) => {
+    const user = this.context;
+    console.log(user);
+
+    SmartFridgeAPI.getAPI()
+      .getHouseholdsByUserId(userId)
+      .then((households) => {
+        console.log(households);
+        this.setState({
+          households: households,
+        });
+      });
+  };
 
   handleTabChange(event, newValue) {
     console.log("Tab changed:", newValue);
@@ -720,4 +757,4 @@ class FridgePage extends Component {
   }
 }
 
-export default FridgePage;
+export default withRouter(FridgePage);

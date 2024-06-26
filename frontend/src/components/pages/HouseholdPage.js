@@ -32,6 +32,7 @@ class HouseholdPage extends Component {
 
   componentDidMount() {
     this.checkContext();
+    this.props.householdList(this.state.households);
   }
 
   componentDidUpdate(prevProps, prevState) {
