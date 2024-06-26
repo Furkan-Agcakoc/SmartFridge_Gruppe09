@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import {
   Box,
   Paper,
@@ -13,10 +13,14 @@ import AlertComponent from "../dialogs/AlertComponent";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import GroceryBO from "../../api/GroceryBO";
+import FridgeContext from "../contexts/FridgeContext";
 
 const filter = createFilterOptions();
 
 class GroceryDialog extends Component {
+
+  static contextType = FridgeContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -94,7 +98,9 @@ class GroceryDialog extends Component {
   };
 
   addGrocery = (groceryName) => {
-    const groceryBO = new GroceryBO(groceryName);
+    const { fridgeId } = this.context;
+    console.log('FRIDGE ID?!! ==>', fridgeId);
+    const groceryBO = new GroceryBO(groceryName, fridgeId);
     SmartFridgeAPI.getAPI()
       .addGrocery(groceryBO)
       .then((responseGroceryBO) => {

@@ -25,6 +25,7 @@ import EditProfilePage from "./components/pages/EditProfilePage";
 import SmartFridgeAPI from "./api/SmartFridgeAPI"; // Import the API class
 import FridgePage from "./components/pages/FridgePage";
 import UserContext from "./components/contexts/UserContext";
+import { FridgeProvider } from "./components/contexts/FridgeContext";
 
 // import { Config } from "./config";
 
@@ -211,6 +212,7 @@ class App extends Component {
     return (
       <>
         <UserContext.Provider value={user}>
+          <FridgeProvider>
           <ThemeProvider theme={Theme}>
             <Router>
               <Header
@@ -294,6 +296,7 @@ class App extends Component {
               <Footer />
             </Router>
           </ThemeProvider>
+          </FridgeProvider>
         </UserContext.Provider>
       </>
     );
