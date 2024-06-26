@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import TitleHH from "../household/TitleHousehold";
 import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import AddHomeWorkRoundedIcon from "@mui/icons-material/AddHomeWorkRounded";
 import Tooltip from "@mui/material/Tooltip";
 import HouseholdDialog from "../household/HouseholdDialog";
@@ -9,6 +9,7 @@ import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import HouseholdAnchor from "../household/Household";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import UserContext from "../contexts/UserContext";
+import HouseholdBO from "../../api/HouseholdBO";
 
 class HouseholdPage extends Component {
   static contextType = UserContext;
@@ -25,73 +26,100 @@ class HouseholdPage extends Component {
       openMenus: {},
       householdIdToDelete: null,
       inhabitants: [],
+      fridgeDetails: null,
     };
   }
 
   componentDidMount() {
-    // const householdId = this.context.householdId;
-    const checkContext = () => {
-      if (this.context) {
-        this.getHouseholdsByUserId();
-      } else {
-        setTimeout(checkContext, 100); // wait 100ms then re-check
-      }
-    };
-    checkContext();
+    this.checkContext();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("Context", this.context);
-    // console.log("Inhabitants", this.state.inhabitants);
     if (prevState.households !== this.state.households) {
       console.log("Households updated", this.state.households);
-      // console.log("Inhabitants updated", this.state.inhabitants);
     }
-    // console.log("Alle User", this.)
   }
+
+  checkContext = () => {
+    if (this.context) {
+      this.getHouseholdsByUserId();
+      const householdID = this.state.householdID;
+      if (householdID) {
+        this.getFridgeByHouseholdId(householdID);
+      } else {
+        console.log("Household ID is not set.");
+      }
+    } else {
+      setTimeout(this.checkContext, 100); // wait 100ms then re-check
+    }
+  };
 
   getHouseholdsByUserId = () => {
     const user = this.context;
     console.log(user);
 
-    SmartFridgeAPI.api.getHouseholdsByUserId(user.id).then((households) => {
-      console.log(households);
-      this.setState({
-        households: households,
-      });
-    });
-  };
-
-  getInhabitantsByHouseholdId = (householdId) => {
-    SmartFridgeAPI.api
-      .getInhabitantsByHouseholdId(householdId)
-      .then((inhabitants) => {
-        console.log("Aus der Methode", inhabitants);
-        this.setState((prevState) => ({
-          inhabitants: {
-            ...prevState.inhabitants,
-            [householdId]: inhabitants,
-          },
-        }));
+    SmartFridgeAPI.getAPI()
+      .getHouseholdsByUserId(user.id)
+      .then((households) => {
+        console.log(households);
+        this.setState({
+          households: households,
+        });
       });
   };
 
-  // getInhabitantsByHouseholdId = async (householdId) => {
-  //   try {
-  //     const inhabitants = await SmartFridgeAPI.api.getInhabitantsByHouseholdId(
-  //       householdId
-  //     );
+  getFridgeByHouseholdId = async (householdID) => {
+    try {
+      const response = await SmartFridgeAPI.getAPI().getFridgeHouseholdById(
+        householdID
+      );
+      console.log("HouseholdID", householdID);
 
-  //     console.log(inhabitants);
-  //     this.setState((prevState) => ({
-  //       inhabitants: {
-  //         ...prevState.inhabitants,
-  //         [householdId]: inhabitants,
-  //       },
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error fetching inhabitants:", error);
-  //   }
+      // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
+      const fridge_id = response.id;
+
+      // Logge die fridge_id zur Überprüfung
+      console.log("Fridge ID", fridge_id);
+
+      // Hier kannst du die fridge_id weiter verarbeiten oder speichern
+      // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
+      return fridge_id;
+    } catch (error) {
+      console.error("Error fetching fridge by household ID:", error);
+    }
+  };
+
+  // getFridgeByHouseholdId = (householdID) => {
+  //   SmartFridgeAPI.getAPI().getFridgeHouseholdById(householdID);
+  //   console
+  //     .log("HouseholdID", householdID)
+  //     .then((responseFridgeBO) => {
+  //       this.setState(
+  //         {
+  //           fridgeDetails: responseFridgeBO,
+  //         },
+  //         () => {
+  //           console.log("FridgeId", responseFridgeBO);
+  //         }
+  //       );
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching fridge details:", error);
+  //     });
+  // };
+
+  // getInhabitantsByHouseholdId = (household_id) => {
+  //   SmartFridgeAPI.getAPI()
+  //     .getInhabitantsByHouseholdId(household_id)
+  //     .then((inhabitants) => {
+  //       console.log("Aus der Methode", inhabitants);
+  //       this.setState((prevState) => ({
+  //         inhabitants: {
+  //           ...prevState.inhabitants,
+  //           [household_id]: inhabitants,
+  //         },
+  //       }));
+  //     });
   // };
 
   updateHouseholdId = (newId) => {
@@ -115,144 +143,70 @@ class HouseholdPage extends Component {
     });
   };
 
-  // handleCreateObject = (householdData) => {
-  //   const { currentlyEditing, households } = this.state;
-
-  //   // Sicherstellen, dass der Kontext initialisiert ist
-  //   if (!this.context || !this.context.id) {
-  //     console.error("User context is not initialized.");
-  //     return;
-  //   }
-
-  //   if (currentlyEditing !== null) {
-  //     SmartFridgeAPI.api
-  //       .updateHousehold({
-  //         id: currentlyEditing,
-  //         household_name: householdData.householdName,
-  //         owner_id: this.context.id,
-  //       })
-  //       .then((updatedHousehold) => {
-  //         const updatedHouseholds = households.map((household) => {
-  //           if (household.id === updatedHousehold.id) {
-  //             return updatedHousehold;
-  //           }
-  //           return household;
-  //         });
-
-  //         this.setState({
-  //           households: updatedHouseholds,
-  //           popupOpen: false,
-  //           currentlyEditing: null,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error updating household:", error);
-  //       });
-  //   } else {
-  //     console.log(householdData.householdName);
-  //     SmartFridgeAPI.api
-  //       .addHouseHold({
-  //         household_name: householdData.householdName,
-  //         owner_id: this.context.id,
-  //       })
-  //       .then(async (responseHouseholdBO) => {
-  //         const promises = householdData.inhabitants.map((inhabitant) =>
-  //           SmartFridgeAPI.api.addInhabitant(
-  //             inhabitant.id,
-  //             responseHouseholdBO.id
-  //           )
-  //         );
-  //         await Promise.all(promises);
-  //         console.log("Promises", promises);
-  //         console.log("Nach addHousehold im then", responseHouseholdBO);
-
-  //         const newHouseholds = [...households, responseHouseholdBO];
-  //         const newInhabitants = {
-  //           ...this.state.inhabitants,
-  //           [responseHouseholdBO.id]: householdData.inhabitants,
-  //         };
-  //         const newOpenMenus = {
-  //           ...this.state.openMenus,
-  //           [responseHouseholdBO.id]: false,
-  //         };
-  //         console.log("Alle Haushalte", households);
-  //         console.log("Alle Inhabitants", newInhabitants);
-  //         console.log(newHouseholds, newOpenMenus);
-
-  //         this.setState({
-  //           householdCount: this.state.householdCount + 1,
-  //           popupOpen: false,
-  //           households: newHouseholds,
-  //           openMenus: newOpenMenus,
-  //           inhabitants: newInhabitants,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error creating household:", error);
-  //       });
-  //   }
-  // };
-
-
   handleCreateObject = (householdData) => {
     const { currentlyEditing, households } = this.state;
-  
+
     // Sicherstellen, dass der Kontext initialisiert ist
     if (!this.context || !this.context.id) {
       console.error("User context is not initialized.");
       return;
     }
-  
+
+    let householdBO;
+    let apiMethod;
+    let successCallback;
+
     if (currentlyEditing !== null) {
-      SmartFridgeAPI.api
-        .updateHousehold({
-          id: currentlyEditing,
-          household_name: householdData.householdName,
-          owner_id: this.context.id,
-        })
-        .then(async (updatedHousehold) => {
-          const updatedHouseholds = households.map((household) => {
-            if (household.id === updatedHousehold.id) {
-              return updatedHousehold;
-            }
-            return household;
-          });
-  
-          const promises = householdData.inhabitants.map((inhabitant) =>
-            SmartFridgeAPI.api.addInhabitant(inhabitant.id, updatedHousehold.id)
-          );
-          await Promise.all(promises);
-  
+      householdBO = new HouseholdBO(
+        householdData.household_name,
+        this.context.id
+      );
+      householdBO.setID(currentlyEditing); // Setze die ID für das Update
+      apiMethod = SmartFridgeAPI.getAPI().updateHousehold(householdBO);
+      successCallback = (updatedHousehold) => {
+        const updatedHouseholds = households.map((household) => {
+          if (household.id === updatedHousehold.id) {
+            return updatedHousehold;
+          }
+          return household;
+        });
+
+        const promises = householdData.inhabitants.map((inhabitant) =>
+          SmartFridgeAPI.getAPI().addInhabitant(
+            inhabitant.id,
+            updatedHousehold.id
+          )
+        );
+
+        Promise.all(promises).then(() => {
           const newInhabitants = {
             ...this.state.inhabitants,
             [updatedHousehold.id]: householdData.inhabitants,
           };
-  
+
           this.setState({
             households: updatedHouseholds,
             popupOpen: false,
             currentlyEditing: null,
             inhabitants: newInhabitants,
           });
-        })
-        .catch((error) => {
-          console.error("Error updating household:", error);
         });
+      };
     } else {
-      SmartFridgeAPI.api
-        .addHouseHold({
-          household_name: householdData.householdName,
-          owner_id: this.context.id,
-        })
-        .then(async (responseHouseholdBO) => {
-          const promises = householdData.inhabitants.map((inhabitant) =>
-            SmartFridgeAPI.api.addInhabitant(
-              inhabitant.id,
-              responseHouseholdBO.id
-            )
-          );
-          await Promise.all(promises);
-  
+      householdBO = new HouseholdBO(
+        householdData.household_name,
+        this.context.id
+      );
+      apiMethod = SmartFridgeAPI.getAPI().addHouseHold(householdBO);
+      successCallback = (responseHouseholdBO) => {
+        const promises = householdData.inhabitants.map((inhabitant) =>
+          SmartFridgeAPI.getAPI().addInhabitant(
+            inhabitant.id,
+            responseHouseholdBO.id
+          )
+        );
+
+        Promise.all(promises).then(() => {
           const newHouseholds = [...households, responseHouseholdBO];
           const newInhabitants = {
             ...this.state.inhabitants,
@@ -262,7 +216,7 @@ class HouseholdPage extends Component {
             ...this.state.openMenus,
             [responseHouseholdBO.id]: false,
           };
-  
+
           this.setState({
             householdCount: this.state.householdCount + 1,
             popupOpen: false,
@@ -270,17 +224,14 @@ class HouseholdPage extends Component {
             openMenus: newOpenMenus,
             inhabitants: newInhabitants,
           });
-        })
-        .catch((error) => {
-          console.error("Error creating household:", error);
         });
+      };
     }
+
+    apiMethod.then(successCallback).catch((error) => {
+      console.error("Error handling household:", error);
+    });
   };
-  
-
-
-
-
 
   updateHousehold(household) {
     const updatedHouseholds = this.state.households.map((e) => {
@@ -293,19 +244,19 @@ class HouseholdPage extends Component {
     return updatedHouseholds;
   }
 
-  handleAnchorClick = (householdId, event) => {
+  handleAnchorClick = (household_id, event) => {
     const { householdIdToDelete, households, anchorEls } = this.state;
-    console.log(householdId);
+    console.log(household_id);
     this.setState((prevState) => {
-      const newOpenMenus = { ...prevState.openMenus, [householdId]: true };
+      const newOpenMenus = { ...prevState.openMenus, [household_id]: true };
       const newAnchorEls = {
         ...prevState.anchorEls,
-        [householdId]: event.target,
+        [household_id]: event.target,
       };
       return {
         anchorEls: newAnchorEls,
         openMenus: newOpenMenus,
-        // householdIdToDelete: householdId,
+        // householdIdToDelete: household_id,
       };
     });
     console.log(households);
@@ -313,52 +264,52 @@ class HouseholdPage extends Component {
     console.log(householdIdToDelete);
   };
 
-  handleAnchorClose = (householdId) => {
+  handleAnchorClose = (household_id) => {
     this.setState((prevState) => {
-      const newOpenMenus = { ...prevState.openMenus, [householdId]: false };
+      const newOpenMenus = { ...prevState.openMenus, [household_id]: false };
       return {
         openMenus: newOpenMenus,
       };
     });
   };
 
-  handleAnchorEdit = (householdId) => {
-    console.log(this.state.inhabitants[householdId]);
+  handleAnchorEdit = (household_id) => {
+    console.log(this.state.inhabitants[household_id]);
     console.log(this.state.inhabitants);
-    this.getInhabitantsByHouseholdId(householdId);
+    this.getInhabitantsByHouseholdId(household_id);
 
     this.setState(
       (prevState) => {
         const newOpenMenus = {
           ...prevState.openMenus,
-          [householdId]: false,
+          [household_id]: false,
         };
         return {
-          currentlyEditing: householdId,
+          currentlyEditing: household_id,
           openMenus: newOpenMenus,
           popupOpen: true,
         };
       },
       () => {
-        this.openPopup(true, householdId);
+        this.openPopup(true, household_id);
       }
     );
   };
 
-  handleAnchorDelete = (householdId) => {
-    SmartFridgeAPI.api
-      .deleteHousehold(householdId)
+  handleAnchorDelete = (household_id) => {
+    SmartFridgeAPI.getAPI()
+      .deleteHousehold(household_id)
       .then(() => {
         this.setState(
           (prevState) => {
-            console.log("HouseholdPage => Household deleted", householdId);
+            console.log("HouseholdPage => Household deleted", household_id);
 
             const newOpenMenus = {
               ...prevState.openMenus,
-              [householdId]: false,
+              [household_id]: false,
             };
             const newHouseholds = prevState.households.filter(
-              (h) => h.id !== householdId
+              (h) => h.id !== household_id
             );
 
             return {
@@ -385,8 +336,8 @@ class HouseholdPage extends Component {
     }
   };
 
-  setHouseholdIdToDelete = (householdId) => {
-    this.setState({ householdIdToDelete: householdId });
+  setHouseholdIdToDelete = (household_id) => {
+    this.setState({ householdIdToDelete: household_id });
   };
 
   render() {
@@ -454,7 +405,7 @@ class HouseholdPage extends Component {
                 placement="bottom"
                 arrow
               >
-                <Box
+                <Paper
                   sx={{
                     display: "flex",
                     justifyContent: "center",
@@ -462,14 +413,12 @@ class HouseholdPage extends Component {
                     width: "200px",
                     height: "125px",
                     borderRadius: "10px",
-                    boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-                    backgroundColor: "transparent",
+                    backgroundColor: "background.default",
                     color: "primary.main",
-                    border: "3px solid #13a88a",
                     "&:hover": {
                       color: "success.dark",
-                      backgroundColor: "rgba(29, 151, 35, 0.2)",
-                      border: "3px solid #06871D",
+                      backgroundColor: "success.gwhite",
+                      boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
                     },
                   }}
                   onClick={() => this.openPopup(false)}
@@ -477,7 +426,7 @@ class HouseholdPage extends Component {
                   <AddHomeWorkRoundedIcon
                     sx={{ width: "75px", height: "auto" }}
                   />
-                </Box>
+                </Paper>
               </Tooltip>
               <HouseholdAnchor
                 households={households}
@@ -489,22 +438,22 @@ class HouseholdPage extends Component {
                 handleOpenDialog={handleOpenDialog}
                 householdIdToDelete={this.state.householdIdToDelete}
                 setHouseholdIdToDelete={this.setHouseholdIdToDelete}
+                getFridgeByHouseholdId={this.getFridgeByHouseholdId}
               />
             </Box>
             {popupOpen && (
               <HouseholdDialog
                 isEditMode={isEditMode}
-                householdName={
+                household_name={
                   editingHousehold ? editingHousehold.household_name : ""
                 }
                 inhabitants={
                   editingHousehold ? inhabitants[editingHousehold.id] : []
                 }
-                householdId={editingHousehold ? editingHousehold.id : null} // Hier wird die householdId übergeben
+                household_id={editingHousehold ? editingHousehold.id : null} // Hier wird die household_id übergeben
                 closePopup={this.closePopup}
                 handleCreateObject={this.handleCreateObject}
                 households={households}
-                openPopup={this.openPopup}
               />
             )}
             <DeleteConfirmationDialog

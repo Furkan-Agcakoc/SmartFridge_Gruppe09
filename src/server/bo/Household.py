@@ -22,7 +22,7 @@ class Household (bo.BusinessObject):
     @staticmethod
     def from_dict (dictionary=dict()):
         obj = Household()
-        # obj.set_id(dictionary["id"])
+        obj.set_id(dictionary["id"])
         obj.set_household_name(dictionary["household_name"])
         obj.set_owner_id(dictionary["owner_id"])
         return obj

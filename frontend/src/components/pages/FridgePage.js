@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Paper, Tooltip, Tab, Box, Link, Container } from "@mui/material";
+import {
+  Paper,
+  Tooltip,
+  Tab,
+  Box,
+  Link,
+  Container,
+  Chip,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
@@ -31,6 +39,7 @@ class FridgePage extends Component {
       recipes: [],
       recipeIdToDelete: null,
       dialogopen: false,
+      chipColor: null,
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -65,12 +74,12 @@ class FridgePage extends Component {
 
   handleCreateGroceries = (groceryData) => {
     const { currentlyEditing, groceries } = this.state;
-  
+
     if (currentlyEditing !== null) {
       const currentGrocery = groceries.find(
         (grocery) => grocery.groceryId === currentlyEditing
       );
-  
+
       // Überprüfen, ob sich der Name oder die Menge geändert haben
       if (
         currentGrocery.groceryName === groceryData.name &&
@@ -83,31 +92,35 @@ class FridgePage extends Component {
         });
         return;
       }
-  
+
       // Finden des Indexes eines existierenden Lebensmittels mit dem neuen Namen
       const existingGroceryIndex = groceries.findIndex(
         (grocery) => grocery.groceryName === groceryData.name
       );
-  
-      const updatedGroceries = groceries.map((grocery, index) => {
-        if (grocery.groceryId === currentlyEditing) {
-          if (existingGroceryIndex !== -1 && existingGroceryIndex !== index) {
-            // Menge zum existierenden Lebensmittel addieren
-            groceries[existingGroceryIndex].groceryQuantity = parseFloat(groceries[existingGroceryIndex].groceryQuantity) + parseFloat(groceryData.quantity);
-            return null; // Mark for deletion
-          } else {
-            // Aktualisieren des bearbeiteten Lebensmittels
-            return {
-              ...grocery,
-              groceryName: groceryData.name,
-              groceryQuantity: groceryData.quantity,
-              groceryUnit: groceryData.unit,
-            };
+
+      const updatedGroceries = groceries
+        .map((grocery, index) => {
+          if (grocery.groceryId === currentlyEditing) {
+            if (existingGroceryIndex !== -1 && existingGroceryIndex !== index) {
+              // Menge zum existierenden Lebensmittel addieren
+              groceries[existingGroceryIndex].groceryQuantity =
+                parseFloat(groceries[existingGroceryIndex].groceryQuantity) +
+                parseFloat(groceryData.quantity);
+              return null; // Mark for deletion
+            } else {
+              // Aktualisieren des bearbeiteten Lebensmittels
+              return {
+                ...grocery,
+                groceryName: groceryData.name,
+                groceryQuantity: groceryData.quantity,
+                groceryUnit: groceryData.unit,
+              };
+            }
           }
-        }
-        return grocery;
-      }).filter(grocery => grocery !== null); // Entfernen des markierten Lebensmittels
-  
+          return grocery;
+        })
+        .filter((grocery) => grocery !== null); // Entfernen des markierten Lebensmittels
+
       this.setState({
         groceries: updatedGroceries,
         popupGroceryOpen: false,
@@ -118,19 +131,21 @@ class FridgePage extends Component {
       const existingGrocery = groceries.find(
         (grocery) => grocery.groceryName === groceryData.name
       );
-  
+
       if (existingGrocery) {
         // Menge zum existierenden Lebensmittel addieren
         const updatedGroceries = groceries.map((grocery) => {
           if (grocery.groceryName === groceryData.name) {
             return {
               ...grocery,
-              groceryQuantity: parseFloat(grocery.groceryQuantity) + parseFloat(groceryData.quantity),
+              groceryQuantity:
+                parseFloat(grocery.groceryQuantity) +
+                parseFloat(groceryData.quantity),
             };
           }
           return grocery;
         });
-  
+
         this.setState({
           groceries: updatedGroceries,
           popupGroceryOpen: false,
@@ -149,7 +164,7 @@ class FridgePage extends Component {
             },
           ];
           const newOpenMenus = { ...prevState.openMenus, [id]: false };
-  
+
           return {
             groceryCount: prevState.groceryCount + 1,
             popupGroceryOpen: false,
@@ -160,7 +175,6 @@ class FridgePage extends Component {
       }
     }
   };
-  
 
   updateGrocery(grocery) {
     const updatedGroceries = this.state.groceries.map((e) => {
@@ -342,6 +356,16 @@ class FridgePage extends Component {
     return updatedRecipes;
   }
 
+  handleAvailableRecipes = () => {
+    this.setState({ chipColor: "primary.dark" });
+    console.info("Available recipes clicked.");
+  };
+
+  handleAllRecipes = () => {
+    this.setState({ chipColor: null });
+    console.info("All recipes deleted.");
+  };
+
   render() {
     const {
       value,
@@ -353,6 +377,7 @@ class FridgePage extends Component {
       currentlyEditing,
       recipes,
       isEditMode,
+      chipColor,
     } = this.state;
 
     const { dialogOpen, dialogType } = this.props;
@@ -544,6 +569,28 @@ class FridgePage extends Component {
                       top: "-18px",
                     }}
                   >
+                    <Container sx={{ m: "0", p: "0" }}>
+                      <Chip
+                        label="VERFÜGBARE REZEPTE"
+                        sx={{
+                          width: "200px",
+                          position: "relative",
+                          left: "-25px",
+                          top: "-10px",
+                          m: "0",
+                          boxShadow: "10px",
+                          bgcolor: chipColor,
+                          color: "background.card",
+                          fontWeight: "bold",
+                          "&:hover": {
+                            color: "success.dark",
+                            backgroundColor: "success.gwhite",
+                          },
+                        }}
+                        onClick={this.handleAvailableRecipes}
+                        onDelete={this.handleAllRecipes}
+                      />
+                    </Container>
                     <Link onClick={() => this.handlePopupRecipeOpen(false)}>
                       <Tooltip
                         title="Neues Rezept hinzufügen"

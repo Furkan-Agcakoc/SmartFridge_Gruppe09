@@ -19,7 +19,7 @@ export default class SmartFridgeAPI {
    *
    * @public
    */
-  static get api() {
+  static getAPI() {
     if (this.#api == null) {
       this.#api = new SmartFridgeAPI();
     }
@@ -30,8 +30,9 @@ export default class SmartFridgeAPI {
   #getFridgeURL = () => `${this.#SmartFridgeBaseURL}/fridge`;
   #addFridgeURL = () => `${this.#SmartFridgeBaseURL}/fridge`;
   #getFridgeByIdURL = (id) => `${this.#SmartFridgeBaseURL}/fridge/${id}`;
-  #updateFridgeURL = (id) => `${this.#SmartFridgeBaseURL}/customers/${id}`;
-  #deleteFridgeURL = (id) => `${this.#SmartFridgeBaseURL}/customers/${id}`;
+  #updateFridgeURL = (id) => `${this.#SmartFridgeBaseURL}/fridge/${id}`;
+  #deleteFridgeURL = (id) => `${this.#SmartFridgeBaseURL}/fridge/${id}`;
+  #getFridgeByHouseholdIdURL = (id) => `${this.#SmartFridgeBaseURL}/fridge/${id}`
 
   // grocery related
   #getGroceryURL = () => `${this.#SmartFridgeBaseURL}/grocery`;
@@ -173,6 +174,19 @@ export default class SmartFridgeAPI {
       });
     });
   }
+
+  getFridgeHouseholdById(householdID) {
+    return this.#fetchAdvanced(this.#getFridgeByHouseholdIdURL(householdID)).then(
+      (responseJSON) => {
+        let responseFridgeBO = FridgeBO.fromJSON(responseJSON)[0];
+        return new Promise(function (resolve) {
+          resolve(responseFridgeBO);
+        });
+      }
+    );
+  }
+
+
 
   /**  grocery related  **/
 

@@ -22,8 +22,8 @@ class HouseholdDialog extends Component {
     super(props);
     this.state = {
       householdData: {
-        householdName: props.isEditMode ? props.householdName : "",
-        householdId: props.isEditMode ? props.householdId : null,
+        household_name: props.isEditMode ? props.household_name : "",
+        household_id: props.isEditMode ? props.household_id : null,
         inhabitants: props.isEditMode ? props.inhabitants : [],
       },
       allInhabitants: [],
@@ -47,22 +47,9 @@ class HouseholdDialog extends Component {
     setTimeout(this.updatestate, 30000); // wait 100ms then re-check
   };
 
-  // componentDidMount() {
-  //   const checkContext = () => {
-  //     if (this.context) {
-  //       this.getAvailableInhabitants();
-  //     } else {
-  //       setTimeout(checkContext, 100); // wait 100ms then re-check
-  //     }
-  //   };
-  //   checkContext();
-  //   // this.getAvailableInhabitants();
-  //   this.fetchInhabitants();
-  // }
-
   fetchInhabitants = () => {
     this.getAvailableInhabitants();
-    SmartFridgeAPI.api
+    SmartFridgeAPI.getAPI()
       .getUser()
       .then((userBOs) => {
         const inhabitants = userBOs.map((user) => ({
@@ -79,12 +66,12 @@ class HouseholdDialog extends Component {
   // componentDidUpdate(prevProps) {
   //   if (
   //     prevProps.isEditMode !== this.props.isEditMode ||
-  //     prevProps.householdName !== this.props.householdName ||
+  //     prevProps.household_name !== this.props.household_name ||
   //     prevProps.inhabitants !== this.props.inhabitants
   //   ) {
   //     this.setState({
   //       householdData: {
-  //         householdName: this.props.householdName,
+  //         household_name: this.props.household_name,
   //         inhabitants: this.props.inhabitants || [], // ÄNDERUNG 2
   //         // inhabitants: this.props.inhabitants,
   //       },
@@ -97,14 +84,14 @@ class HouseholdDialog extends Component {
     console.log("Inhabitants aus Dialog", this.props.inhabitants);
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
-      prevProps.householdName !== this.props.householdName ||
+      prevProps.household_name !== this.props.household_name ||
       prevProps.inhabitants !== this.props.inhabitants
     ) {
       this.setState({
         householdData: {
-          householdName: this.props.householdName,
+          household_name: this.props.household_name,
           inhabitants: this.props.inhabitants || [],
-          householdId: this.props.householdId,
+          household_id: this.props.household_id,
         },
       });
     }
@@ -144,16 +131,16 @@ class HouseholdDialog extends Component {
     return this.state.allInhabitants.find((inhabitant) => inhabitant.id === id);
   };
 
-  deleteInhabitantByUserIdHouseholdId = (userId, householdId) => {
+  deleteInhabitantByUserIdHouseholdId = (userId, household_id) => {
     console.log("Bewohner erfolgreich gelöscht");
-    console.log(userId, householdId);
+    console.log(userId, household_id);
     console.log(
       "Das sind die Inhabitants die gelöscht wurden",
       this.state.householdData.inhabitants
     );
 
-    SmartFridgeAPI.api
-      .deleteInhabitant(userId, householdId)
+    SmartFridgeAPI.getAPI()
+      .deleteInhabitant(userId, household_id)
       .then(() => {
         this.setState((prevState) => {
           // Entfernen des Benutzers aus der Liste der Bewohner
@@ -174,15 +161,15 @@ class HouseholdDialog extends Component {
       });
   };
 
-  // deleteInhabitantByUserIdHouseholdId = (userId, householdId) => {
+  // deleteInhabitantByUserIdHouseholdId = (userId, household_id) => {
   //   console.log("Bewohner erfolgreich gelöscht");
-  //   console.log(userId, householdId);
+  //   console.log(userId, household_id);
   //   console.log(
   //     "Das sind die Inhabitants die gelöscht wurden",
   //     this.state.householdData.inhabitants
   //   );
-  //   SmartFridgeAPI.api
-  //     .deleteInhabitant(userId, householdId)
+  //   SmartFridgeAPI.getAPI()
+  //     .deleteInhabitant(userId, household_id)
   //     .then(() => {
   //       this.setState((prevState) => ({
   //         householdData: {
@@ -215,19 +202,21 @@ class HouseholdDialog extends Component {
     const user = this.context;
     console.log(user);
 
-    SmartFridgeAPI.api.getHouseholdsByUserId(user.id).then((households) => {
-      console.log(households);
-      this.setState({
-        households: households,
+    SmartFridgeAPI.getAPI()
+      .getHouseholdsByUserId(user.id)
+      .then((households) => {
+        console.log(households);
+        this.setState({
+          households: households,
+        });
       });
-    });
   };
 
   render() {
     const { closePopup, isEditMode } = this.props;
 
     const {
-      householdData: { householdName, inhabitants, householdId },
+      householdData: { household_name, inhabitants, household_id },
       showAlert,
     } = this.state;
 
@@ -279,18 +268,18 @@ class HouseholdDialog extends Component {
             >
               <TextField
                 required
-                value={householdName}
+                value={household_name}
                 onChange={(e) =>
                   this.setState({
                     householdData: {
                       ...this.state.householdData,
-                      householdName: e.target.value,
+                      household_name: e.target.value,
                     },
                   })
                 }
                 onInput={() => this.setState({ showAlert: false })}
                 id="outlined-required"
-                name="householdName"
+                name="household_name"
                 label="Haushaltsname"
                 placeholder="Haushaltsname"
                 InputLabelProps={{ style: { fontSize: "15px" } }}
@@ -337,7 +326,7 @@ class HouseholdDialog extends Component {
                       onClick={() =>
                         this.deleteInhabitantByUserIdHouseholdId(
                           inhabitant.id,
-                          householdId
+                          household_id
                         )
                       }
                       sx={{ color: "error.main" }}

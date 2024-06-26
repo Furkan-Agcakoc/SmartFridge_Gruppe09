@@ -8,12 +8,15 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 // import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import PersonAdd from "@mui/icons-material/PersonAdd";
-import Settings from "@mui/icons-material/Settings";
-import Logout from "@mui/icons-material/Logout";
+// import PersonAdd from "@mui/icons-material/PersonAdd";
+// import Settings from "@mui/icons-material/Settings";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+// import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import { Link } from "react-router-dom";
+import HolidayVillageRoundedIcon from "@mui/icons-material/HolidayVillageRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 
-export default function AccountMenu() {
+export default function AccountMenu({ user, onSignIn, onSignOut }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -34,7 +37,22 @@ export default function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar sx={{ 
+              width: 38, 
+              height: 38,
+              p: "0", 
+              color: "primary.dark",
+              fontWeight: "bold",
+              backgroundColor:"background.paper", 
+              cursor: "pointer",
+              transition: "0.3s ease",
+              "&:hover": {
+                background: "rgba(255, 255, 255, 0.8)",
+              }
+              }}
+              >
+                M
+              </Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -73,33 +91,34 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <Link to="/profile" style={{textDecoration: "None", color: "rgba(20,19,19,0.87)"}}>
-        <MenuItem>
-          <Avatar />
-          Profile
-        </MenuItem>
+        <Link
+          to="/profile"
+          style={{ textDecoration: "none", color: "rgba(20,19,19,0.87)" }}
+        >
+          <MenuItem>
+            <Avatar sx={{ color: "primary.dark", bgcolor: "primary.light" }}>
+              <PersonRoundedIcon />
+            </Avatar>
+            Mein Profil
+          </MenuItem>
         </Link>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> My account
-        </MenuItem>
+        <Link
+          to="/household"
+          style={{ textDecoration: "none", color: "rgba(20,19,19,0.87)" }}
+        >
+          <MenuItem onClick={handleClose}>
+            <Avatar sx={{ color: "primary.dark", bgcolor: "primary.light" }}>
+              <HolidayVillageRoundedIcon />
+            </Avatar>
+            Alle Haushalte
+          </MenuItem>
+        </Link>
         <Divider />
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={user ? onSignOut : onSignIn}>
           <ListItemIcon>
-            <PersonAdd fontSize="small" />
+            <LogoutRoundedIcon fontSize="small" sx={{ color: "rgba(20,19,19,0.87)" }} />
           </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
+          {user ? "Logout" : "Login"}
         </MenuItem>
       </Menu>
     </React.Fragment>

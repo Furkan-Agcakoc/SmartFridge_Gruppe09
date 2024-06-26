@@ -5,18 +5,9 @@ import BusinessObject from './BusinessObject';
  */
 export default class FridgeBO extends BusinessObject {
 
-    constructor(aFridge_name, aHousehold_id) {
+    constructor(aHousehold_id) {
         super();
-        this.fridge_name = aFridge_name;
         this.household_id = aHousehold_id;
-    }
-
-    setFridgeName(aFridge_name) {
-        this.fridge_name = aFridge_name;
-    }
-
-    getFridgeName() {
-        return this.fridge_name;
     }
 
     getHouseholdId() {

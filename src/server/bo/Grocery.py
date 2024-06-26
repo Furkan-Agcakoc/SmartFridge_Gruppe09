@@ -23,7 +23,7 @@ class Grocery (bo.BusinessObject):
     def from_dict(dictionary=dict()):
         """Umwandeln eines Python dict() in ein Grocery()."""
         obj = Grocery()
-        'obj.set_id(dictionary["id"])'
+        obj.set_id(dictionary["id"])
         obj.set_grocery_name(dictionary["grocery_name"])
         obj.set_fridge_id(dictionary["fridge_id"])
 

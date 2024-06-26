@@ -22,7 +22,7 @@ class Measure (bo.BusinessObject):
     @staticmethod
     def from_dict(dictionary=dict()):
         obj = Measure()
-        'obj.set_id(dictionary["id"])'
+        obj.set_id(dictionary["id"])
         obj.set_unit(dictionary["unit"])
         obj.set_fridge_id(dictionary["fridge_id"])
         return obj
