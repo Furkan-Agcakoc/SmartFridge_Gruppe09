@@ -9,7 +9,7 @@ import {
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
-  signInWithRedirect,
+  signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged,
   signOut,
@@ -48,7 +48,7 @@ class App extends Component {
     const auth = getAuth(initializeApp(firebaseConfig));
     const provider = new GoogleAuthProvider();
     auth.languageCode = "en";
-    signInWithRedirect(auth, provider);
+    signInWithPopup(auth, provider);
   };
 
   handleSignOut = () => {
