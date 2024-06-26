@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Paper, Tooltip, Tab, Box, Link, Container } from "@mui/material";
+import {
+  Paper,
+  Tooltip,
+  Tab,
+  Box,
+  Link,
+  Container,
+  Chip,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
@@ -31,6 +39,7 @@ class FridgePage extends Component {
       recipes: [],
       recipeIdToDelete: null,
       dialogopen: false,
+      chipColor: null,
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -38,8 +47,6 @@ class FridgePage extends Component {
     this.handleConfirmDelete = this.handleConfirmDelete.bind(this);
     this.handleAnchorDelete = this.handleAnchorDelete.bind(this);
   }
-
-
 
   handleTabChange(event, newValue) {
     console.log("Tab changed:", newValue);
@@ -291,7 +298,6 @@ class FridgePage extends Component {
     });
   };
 
-
   handleCreateRecipes = (recipeData) => {
     console.log("Recipe-Popup closed recipe recipe");
     const { currentlyEditing, recipes } = this.state;
@@ -350,6 +356,16 @@ class FridgePage extends Component {
     return updatedRecipes;
   }
 
+  handleAvailableRecipes = () => {
+    this.setState({ chipColor: "primary.dark" });
+    console.info("Available recipes clicked.");
+  };
+
+  handleAllRecipes = () => {
+    this.setState({ chipColor: null });
+    console.info("All recipes deleted.");
+  };
+
   render() {
     const {
       value,
@@ -361,6 +377,7 @@ class FridgePage extends Component {
       currentlyEditing,
       recipes,
       isEditMode,
+      chipColor,
     } = this.state;
 
     const { dialogOpen, dialogType } = this.props;
@@ -552,6 +569,28 @@ class FridgePage extends Component {
                       top: "-18px",
                     }}
                   >
+                    <Container sx={{ m: "0", p: "0" }}>
+                      <Chip
+                        label="VERFÜGBARE REZEPTE"
+                        sx={{
+                          width: "200px",
+                          position: "relative",
+                          left: "-25px",
+                          top: "-10px",
+                          m: "0",
+                          boxShadow: "10px",
+                          bgcolor: chipColor,
+                          color: "background.card",
+                          fontWeight: "bold",
+                          "&:hover": {
+                            color: "success.dark",
+                            backgroundColor: "success.gwhite",
+                          },
+                        }}
+                        onClick={this.handleAvailableRecipes}
+                        onDelete={this.handleAllRecipes}
+                      />
+                    </Container>
                     <Link onClick={() => this.handlePopupRecipeOpen(false)}>
                       <Tooltip
                         title="Neues Rezept hinzufügen"
