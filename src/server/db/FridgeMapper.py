@@ -85,13 +85,9 @@ class FridgeMapper (Mapper):
 
         default_measures = [
             ('g', fridge.get_id()),
-            ('Gramm', fridge.get_id()),
             ('kg', fridge.get_id()),
-            ('Kilogramm', fridge.get_id()),
             ('ml', fridge.get_id()),
-            ('Milliliter', fridge.get_id()),
             ('l', fridge.get_id()),
-            ('Liter', fridge.get_id()),
             ('Teelöffel', fridge.get_id()),
             ('Esslöffel', fridge.get_id()),
             ('Prise', fridge.get_id()),
