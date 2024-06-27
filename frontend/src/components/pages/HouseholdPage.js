@@ -32,10 +32,10 @@ class HouseholdPage extends Component {
 
   componentDidMount() {
     console.log(this.context);
-    // this.checkContext();
+    this.checkContext();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) { 
     console.log(this.state.context);
     if (prevState.households !== this.state.households) {
       console.log("Households updated", this.state.households);
@@ -63,6 +63,22 @@ class HouseholdPage extends Component {
       })
       .catch((error) => {
         console.error("Error fetching households:", error);
+      });
+  };
+
+  getInhabitantsByHouseholdId = (household_id) => {
+    SmartFridgeAPI.getAPI()
+      .getInhabitantsByHouseholdId(household_id)
+      .then((inhabitants) => {
+        console.log(inhabitants);
+        this.setState((prevState) => {
+          return {
+            inhabitants: {
+              ...prevState.inhabitants,
+              [household_id]: inhabitants,
+            },
+          };
+        });
       });
   };
 
