@@ -4,11 +4,12 @@ import BusinessObject from "./BusinessObject";
  * Represents a Grocerystatement object.
  */
 export default class GroceryStatementBO extends BusinessObject {
-  constructor(aGrocery_name, aUnit, aQuantity) {
+  constructor(aGrocery_name, aUnit, aQuantity, aFridge_id) {
     super();
     this.grocery_name = aGrocery_name;
     this.unit = aUnit;
     this.quantity = aQuantity;
+    this.fridge_id = aFridge_id
   }
 
   setGroceryName(aGrocery_name) {
@@ -34,6 +35,15 @@ export default class GroceryStatementBO extends BusinessObject {
   getQuantity() {
     return this.quantity;
   }
+
+  getFridgeId() {
+    return this.fridge_id;
+  }
+
+  setFridgeId(fridge_id) {
+      this.fridge_id = fridge_id;
+  }
+
 
   static fromJSON(grocerystatement) {
     let result = [];

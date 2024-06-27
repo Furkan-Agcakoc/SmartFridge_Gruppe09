@@ -14,6 +14,7 @@ import { createFilterOptions } from "@mui/material/Autocomplete";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import GroceryBO from "../../api/GroceryBO";
 import MeasureBO from "../../api/MeasureBO";
+import GroceryStatementBO from "../../api/GroceryStatementBO";
 import FridgeContext from "../contexts/FridgeContext";
 
 const filter = createFilterOptions();
@@ -73,6 +74,7 @@ class GroceryDialog extends Component {
       this.addGrocery(newGrocery);
       console.log("Form is valid, measurementInputValue:", newMeasurement);
       this.addMeasure(newMeasurement);
+      this.addGroceryStatement(groceryData);
     } else {
       this.setState({ showAlert: true });
     }
@@ -135,8 +137,23 @@ class GroceryDialog extends Component {
         });
       });
   };
-  
 
+  addGroceryStatement = (groceryData) => {
+    const { fridgeId } = this.context;
+    console.log('WTF IS THIS DATA?!!?', groceryData)
+    const groceryStatementBO = new GroceryStatementBO(groceryData.name, groceryData.unit, groceryData.quantity, fridgeId);
+    console.log('groceryStatementBO ===>', groceryStatementBO)
+    SmartFridgeAPI.getAPI()
+      .addGroceryStatement(groceryStatementBO)
+      .then((responseGroceryStatementBO) => {
+        console.log("Grocery Statement added successfully", responseGroceryStatementBO);
+      })
+      .catch((error) => {
+        console.error("Error adding grocery statement", error);
+      });
+  };
+  
+  
   render() {
     const { handlePopupGroceryClose, isEditMode } = this.props;
     const {
