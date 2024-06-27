@@ -46,6 +46,7 @@ class GroceryDialog extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    console.log('previous props ===>', prevProps)
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.groceryName !== this.props.groceryName ||
@@ -66,13 +67,16 @@ class GroceryDialog extends Component {
   }
 
   handleClick = (e) => {
-    const { groceryData, newGrocery, newMeasurement } = this.state;
+    const { groceryData, newGrocery, newMeasurement, foodOptions } = this.state;
     const form = e.target.closest("form");
     if (form.checkValidity()) {
       this.props.handleCreateGroceries(groceryData);
-      console.log("Form is valid, groceryInputValue:", newGrocery);
-      this.addGrocery(newGrocery);
-      console.log("Form is valid, measurementInputValue:", newMeasurement);
+
+      // // Check if newGrocery is already in foodOptions before adding it
+      // if (!foodOptions.includes(newGrocery)) {
+        this.addGrocery(newGrocery);
+      // }
+
       this.addMeasure(newMeasurement);
       this.addGroceryStatement(groceryData);
     } else {
@@ -102,7 +106,6 @@ class GroceryDialog extends Component {
 
   addGrocery = (groceryName) => {
     const { fridgeId } = this.context;
-    console.log('FRIDGE ID?!! ==>', fridgeId);
     const groceryBO = new GroceryBO(groceryName, fridgeId);
     SmartFridgeAPI.getAPI()
       .addGrocery(groceryBO)
@@ -141,7 +144,14 @@ class GroceryDialog extends Component {
   addGroceryStatement = (groceryData) => {
     const { fridgeId } = this.context;
     console.log('WTF IS THIS DATA?!!?', groceryData)
-    const groceryStatementBO = new GroceryStatementBO(groceryData.name, groceryData.unit, groceryData.quantity, fridgeId);
+    const testignThis =  {
+      "id": 0,
+      "grocery_name": 5, 
+      "unit": 5,
+      "quantity": 20
+    }
+    // const groceryStatementBO = new GroceryStatementBO(groceryData.name, groceryData.unit, groceryData.quantity);
+    const groceryStatementBO = new GroceryStatementBO(testignThis.grocery_name, testignThis.unit, testignThis.quantity);
     console.log('groceryStatementBO ===>', groceryStatementBO)
     SmartFridgeAPI.getAPI()
       .addGroceryStatement(groceryStatementBO)

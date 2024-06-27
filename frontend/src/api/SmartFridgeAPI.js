@@ -46,15 +46,15 @@ export default class SmartFridgeAPI {
 
   // groceryStatement related
   #getGroceryStatementURL = () =>
-    `${this.#SmartFridgeBaseURL}/groceryStatement/`;
+    `${this.#SmartFridgeBaseURL}/grocerystatement/`;
   #getGroceryStatementByIdURL = (id) =>
-    `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
+    `${this.#SmartFridgeBaseURL}/grocerystatement/${id}`;
   #addGroceryStatementURL = () =>
-    `${this.#SmartFridgeBaseURL}/groceryStatement`;
+    `${this.#SmartFridgeBaseURL}/grocerystatement`;
   #deleteGroceryStatementURL = (id) =>
-    `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
+    `${this.#SmartFridgeBaseURL}/grocerystatement/${id}`;
   #updateGroceryStatementURL = (id) =>
-    `${this.#SmartFridgeBaseURL}/groceryStatement/${id}`;
+    `${this.#SmartFridgeBaseURL}/grocerystatement/${id}`;
 
   // household related
   #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household/`;
