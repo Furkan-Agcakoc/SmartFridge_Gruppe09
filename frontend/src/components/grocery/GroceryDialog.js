@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import {
   Box,
   Paper,
@@ -12,10 +12,15 @@ import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import AlertComponent from "../dialogs/AlertComponent";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import GroceryBO from "../../api/GroceryBO";
+import FridgeContext from "../contexts/FridgeContext";
 
 const filter = createFilterOptions();
 
 class GroceryDialog extends Component {
+
+  static contextType = FridgeContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -73,36 +78,53 @@ class GroceryDialog extends Component {
   };
 
   getGrocery = () => {
-    SmartFridgeAPI.api.getGrocery().then((groceries) => {
-      this.setState({
-        foodOptions: groceries.map((grocery) => grocery.getGroceryName()),
+    SmartFridgeAPI.getAPI()
+      .getGrocery()
+      .then((groceries) => {
+        this.setState({
+          foodOptions: groceries.map((grocery) => grocery.getGroceryName()),
+        });
       });
-    });
+  };
+
+  getFridge = () => {
+    SmartFridgeAPI.getAPI()
+      .getFridge()
+      .then((fridges) => {
+        this.setState({
+          fridgeOptions: fridges.map((fridge) => fridge.getFridgeName()),
+        });
+      });
   };
 
   addGrocery = (groceryName) => {
-    SmartFridgeAPI.api
-      .addGrocery({
-        grocery_name: groceryName,
-        fridge_id: 1,
-      })
-      .then((grocery) => {
+    const { fridgeId } = this.context;
+    console.log('FRIDGE ID?!! ==>', fridgeId);
+    const groceryBO = new GroceryBO(groceryName, fridgeId);
+    SmartFridgeAPI.getAPI()
+      .addGrocery(groceryBO)
+      .then((responseGroceryBO) => {
         this.setState({
-          foodOptions: [...this.state.foodOptions, grocery.getGroceryName()],
+          foodOptions: [
+            ...this.state.foodOptions,
+            responseGroceryBO.getGroceryName(),
+          ],
         });
       });
   };
 
   getMeasure = () => {
-    SmartFridgeAPI.api.getMeasure().then((measures) => {
-      this.setState({
-        groceryUnit: measures.map((measure) => measure.getUnit()),
+    SmartFridgeAPI.getAPI()
+      .getMeasure()
+      .then((measures) => {
+        this.setState({
+          groceryUnit: measures.map((measure) => measure.getUnit()),
+        });
       });
-    });
   };
 
   addMeasure = (measureName) => {
-    SmartFridgeAPI.api
+    SmartFridgeAPI.getAPI()
       .addMeasure({
         unit: measureName,
         fridge_id: 1,
@@ -112,7 +134,6 @@ class GroceryDialog extends Component {
           groceryUnit: [...this.state.groceryUnit, measure.getUnit()],
         });
       });
-
   };
 
   render() {
@@ -129,7 +150,6 @@ class GroceryDialog extends Component {
     const sortedMeasureOptions = measureOptions.sort((a, b) =>
       a.localeCompare(b)
     );
-
     return (
       <>
         <Box

@@ -58,19 +58,20 @@ class GroceryMapper(Mapper):
         return result
 
     def find_by_fridge_id(self, fridge_id):
-        result = None
+        result = []
         cursor = self._cnx.cursor()
         command = "SELECT id, grocery_name, fridge_id FROM grocery WHERE fridge_id=%s"
         cursor.execute(command, (fridge_id,))
         tuples = cursor.fetchall()
 
-        if tuples:
-            (id, grocery_name, fridge_id) = tuples[0]
+        for (id, grocery_name, fridge_id) in tuples:
             grocery = Grocery()
             grocery.set_id(id)
             grocery.set_grocery_name(grocery_name)
             grocery.set_fridge_id(fridge_id)
-            result = grocery
+            result.append(grocery)
+
+        return result
 
     def checkGroceryInFridge(self, grocerystatement_id, fridge_id):
         try:

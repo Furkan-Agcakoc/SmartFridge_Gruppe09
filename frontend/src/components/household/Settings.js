@@ -34,7 +34,7 @@ class Settings extends Component {
   }
 
   componentDidMount() {
-    SmartFridgeAPI.api
+    SmartFridgeAPI.getAPI()
       .getGrocery()
       .then((groceryBOs) => {
         this.setState({ groceries: groceryBOs });
@@ -42,7 +42,7 @@ class Settings extends Component {
       .catch((error) => {
         console.error("Error fetching groceries:", error);
       });
-    SmartFridgeAPI.api
+    SmartFridgeAPI.getAPI()
       .getMeasure()
       .then((measureBOs) => {
         this.setState({ measures: measureBOs });
@@ -53,7 +53,7 @@ class Settings extends Component {
   }
 
   deleteGrocery = (grocery) => {
-    SmartFridgeAPI.api
+    SmartFridgeAPI.getAPI()
       .deleteGrocery(grocery.id)
       .then(() => {
         const { groceries } = this.state;
@@ -66,7 +66,7 @@ class Settings extends Component {
   };
 
   deleteMeasure = (measure) => {
-    SmartFridgeAPI.api
+    SmartFridgeAPI.getAPI()
       .deleteMeasure(measure.id)
       .then(() => {
         const { measures } = this.state;
@@ -87,7 +87,11 @@ class Settings extends Component {
   };
 
   handleCloseModal = () => {
-    this.setState({ modalOpen: false, selectedGrocery: null, editedGroceryName: "" });
+    this.setState({
+      modalOpen: false,
+      selectedGrocery: null,
+      editedGroceryName: "",
+    });
   };
 
   handleEditChange = (event) => {
@@ -98,7 +102,7 @@ class Settings extends Component {
     const { selectedGrocery, editedGroceryName, groceries } = this.state;
 
     if (selectedGrocery !== null) {
-      SmartFridgeAPI.api
+      SmartFridgeAPI.getAPI()
         .updateGrocery({
           id: selectedGrocery.id,
           grocery_name: editedGroceryName,
@@ -195,11 +199,7 @@ class Settings extends Component {
                       <ListItemText primary={measure.unit} />
                       <Container sx={{ display: "flex", gap: "10px" }}>
                         <ListItemSecondaryAction>
-                          <IconButton
-                            edge="end"
-                            aria-label="edit"
-                           
-                          >
+                          <IconButton edge="end" aria-label="edit">
                             <EditIcon />
                           </IconButton>
                           <IconButton
