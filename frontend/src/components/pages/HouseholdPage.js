@@ -33,7 +33,6 @@ class HouseholdPage extends Component {
 
   componentDidMount() {
     this.checkContext();
-    this.props.householdList(this.state.households);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -92,38 +91,22 @@ class HouseholdPage extends Component {
     }
   };
 
-  // getFridgeByHouseholdId = (householdID) => {
-  //   SmartFridgeAPI.getAPI().getFridgeHouseholdById(householdID);
-  //   console
-  //     .log("HouseholdID", householdID)
-  //     .then((responseFridgeBO) => {
-  //       this.setState(
-  //         {
-  //           fridgeDetails: responseFridgeBO,
-  //         },
-  //         () => {
-  //           console.log("FridgeId", responseFridgeBO);
-  //         }
-  //       );
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching fridge details:", error);
-  //     });
-  // };
 
-  // getInhabitantsByHouseholdId = (household_id) => {
-  //   SmartFridgeAPI.getAPI()
-  //     .getInhabitantsByHouseholdId(household_id)
-  //     .then((inhabitants) => {
-  //       console.log("Aus der Methode", inhabitants);
-  //       this.setState((prevState) => ({
-  //         inhabitants: {
-  //           ...prevState.inhabitants,
-  //           [household_id]: inhabitants,
-  //         },
-  //       }));
-  //     });
-  // };
+  getInhabitantsByHouseholdId = (household_id) => {
+    SmartFridgeAPI.getAPI()
+      .getInhabitantsByHouseholdId(household_id)
+      .then((inhabitants) => {
+        console.log(inhabitants);
+        this.setState((prevState) => {
+          return {
+            inhabitants: {
+              ...prevState.inhabitants,
+              [household_id]: inhabitants,
+            },
+          };
+        });
+      });
+  };
 
   updateHouseholdId = (newId) => {
     this.setState({ householdIdToDelete: newId });

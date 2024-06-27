@@ -26,6 +26,8 @@ import SmartFridgeAPI from "./api/SmartFridgeAPI"; // Import the API class
 import FridgePage from "./components/pages/FridgePage";
 import UserContext from "./components/contexts/UserContext";
 import { FridgeProvider } from "./components/contexts/FridgeContext";
+import { UserBO } from "./api";
+
 
 // import { Config } from "./config";
 
@@ -41,7 +43,6 @@ class App extends Component {
       showAlert: false,
       dialogOpen: false,
       dialogType: "",
-      households: [],
     };
   }
 
@@ -59,11 +60,6 @@ class App extends Component {
   //     });
   // };
 
-  householdList = (households) => {
-    this.setState({
-      households: households,
-    });
-  };
 
   handleSignIn = () => {
     this.setState({ authLoading: true });
@@ -82,17 +78,58 @@ class App extends Component {
     }
   };
 
+  getUsers = () => {
+    return SmartFridgeAPI.getAPI()
+      .getUser()
+      .then((userBOs) => {
+        this.setState({
+          user: userBOs,
+        });
+        return userBOs;
+      })
+      .catch((e) => {
+        console.error("Error loading users: ", e);
+        throw e;
+      });
+  };
+
+  addUsers = () => {
+    const { currentUser } = this.state;
+    const [firstName, lastName] = currentUser.displayName.split(" ");
+    const nickname = currentUser.email.split("@");
+    const email = currentUser.email;
+    const google_user_id = currentUser.uid;
+
+
+    const newUser = new UserBO(
+      firstName, // firstname
+      lastName, // lastname
+      nickname[0], // nickname
+      email, // email
+      google_user_id // google_user_id
+    );
+    return SmartFridgeAPI.getAPI()
+      .addUser(newUser)
+      .then((addedUser) => {
+        this.setState({
+          user: addedUser,
+        });
+        return addedUser;
+      })
+      .catch((e) => {
+        console.error("Error adding user: ", e);
+        throw e;
+      });
+  };
+
   componentDidMount() {
-    console.log("App", this.state.households);
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
     auth.languageCode = "en";
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        this.setState({
-          authLoading: true,
-        });
+        this.setState({ authLoading: true });
 
         user
           .getIdToken()
@@ -104,41 +141,36 @@ class App extends Component {
               authLoading: false,
             });
 
-            // Benutzer hinzufügen, wenn er nicht existiert
-            SmartFridgeAPI.getAPI()
-              .getUser()
+            // Print user information
+            console.log("User information:");
+            console.log("Display Name:", user.displayName);
+            console.log("Email:", user.email);
+            console.log("UID:", user.uid);
+            console.log("Nickname:", user.nickname);
+
+            // Split email and print the part before '@'
+            const emailLocalPart = user.email.split("@")[0];
+            console.log("Email Local Part:", emailLocalPart);
+
+            this.getUsers()
               .then((userBOs) => {
                 const existingUser = userBOs.find(
                   (u) => u.google_user_id === user.uid || u.email === user.email
                 );
 
-                this.setState({
-                  user: existingUser,
-                });
-
                 if (!existingUser) {
                   console.log("User does not exist in the database");
-                  SmartFridgeAPI.getAPI()
-                    .addUser({
-                      firstname: "",
-                      lastname: "",
-                      nickname: "",
-                      email: user.email,
-                      google_user_id: user.uid,
-                    })
-                    .catch((e) => {
-                      if (e.response && e.response.status === 409) {
-                        // Konfliktfehler
-                        console.log("User already exists in the database");
-                      } else {
-                        console.error("Error adding user to the database", e);
-                      }
-                    });
+                  this.addUsers().catch((e) => {
+                    if (e.response && e.response.status === 409) {
+                      console.log("User already exists in the database");
+                    } else {
+                      console.error("Error adding user to the database", e);
+                    }
+                  });
                 } else {
                   console.log("User already exists in the database");
-                  this.setState({
-                    user: existingUser,
-                  });
+                  this.setState({ user: existingUser });
+                  console.log(existingUser);
                 }
               })
               .catch((e) => {
@@ -164,14 +196,6 @@ class App extends Component {
     });
   }
 
-  handleChange = (event) => {
-    const { name, value } = event.target;
-    this.setState({
-      [name]: value,
-      showAlert: false,
-    });
-  };
-
   handleOpenDialog = (Id, type) => {
     // console.log(Id, type)
     console.log("App.js => Dialog opened");
@@ -187,25 +211,6 @@ class App extends Component {
     console.log("App.js => Dialog closed");
     this.setState({ dialogOpen: false, dialogType: "" });
   };
-
-  // handleConfirmDelete = (id) => {
-  //   console.log("App => Confirm delete");
-  //   console.log(id);
-  //   if (id !== null) {
-  //     this.handleAnchorDelete(id);
-  //   }
-  //   this.handleCloseDialog();
-  // };
-
-  // handleConfirmDelete = () => {
-  //   console.log("HouseholdPage => Confirm delete");
-  //   const { householdIdToDelete } = this.state;
-  //   console.log(householdIdToDelete);
-  //   if (householdIdToDelete !== null) {
-  //     this.handleAnchorDelete(householdIdToDelete);
-  //   }
-  //   this.props.handleCloseDialog();
-  // };
 
   render() {
     const { currentUser, dialogOpen, dialogType, user } = this.state;
@@ -252,12 +257,10 @@ class App extends Component {
                   element={
                     <Secured user={currentUser}>
                       <HouseholdPage
-                        householdList={this.householdList}
                         dialogOpen={dialogOpen}
                         dialogType={dialogType}
                         handleOpenDialog={this.handleOpenDialog}
                         handleCloseDialog={this.handleCloseDialog}
-                        handleConfirmDelete={this.handleConfirmDelete}
                       />
                     </Secured>
                   }
@@ -267,27 +270,10 @@ class App extends Component {
                   element={
                     <Secured user={currentUser}>
                       <FridgePage
-                        getFridgeByHouseholdId={this.getFridgeByHouseholdId}
-                        households={this.state.households}
                         dialogOpen={dialogOpen}
                         dialogType={dialogType}
                         handleOpenDialog={this.handleOpenDialog}
                         handleCloseDialog={this.handleCloseDialog}
-                        handleConfirmDelete={this.handleConfirmDelete}
-                      />
-                    </Secured>
-                  }
-                />
-                <Route
-                  path="/home"
-                  element={
-                    <Secured user={currentUser}>
-                      <FridgePage
-                        dialogOpen={dialogOpen}
-                        dialogType={dialogType}
-                        handleOpenDialog={this.handleOpenDialog}
-                        handleCloseDialog={this.handleCloseDialog}
-                        handleConfirmDelete={this.handleConfirmDelete}
                       />
                     </Secured>
                   }

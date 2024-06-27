@@ -91,6 +91,7 @@ export default class SmartFridgeAPI {
   #addUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
   #deleteUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
   #updateUserURL = (id) => `${this.#SmartFridgeBaseURL}/user/${id}`;
+  
   // measure related
   #getMeasureURL = () => `${this.#SmartFridgeBaseURL}/measure`;
   #addMeasureURL = () => `${this.#SmartFridgeBaseURL}/measure`;
