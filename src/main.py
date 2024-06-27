@@ -465,6 +465,20 @@ class GroceryNameOperations(Resource):
         return grocery
 
 
+@smartfridge.route('/grocery/fridge_id/<int:fridge_id>')
+@smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
+@smartfridge.param('fridge_id', 'fridge_id')
+class GroceryInFridgeOperations(Resource):
+    @smartfridge.marshal_list_with(grocery)
+    #@secured
+    def get(self, fridge_id):
+
+        'Wiedergabe von Grocerys durch Fridge ID'
+
+        adm = Administration()
+        grocery = adm.get_grocery_by_fridge_id(fridge_id)
+        return grocery
+
 
 
 '''
@@ -841,6 +855,22 @@ class MeasureOperations(Resource):
             return '', 200
         else:
             return '', 500
+
+
+
+@smartfridge.route('/measure/fridge_id/<int:fridge_id>')
+@smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
+@smartfridge.param('fridge_id', 'fridge_id')
+class GroceryInFridgeOperations(Resource):
+    @smartfridge.marshal_list_with(measure)
+    #@secured
+    def get(self, fridge_id):
+
+        'Wiedergabe von Grocerys durch Fridge ID'
+
+        adm = Administration()
+        measure = adm.get_measure_by_fridge_id(fridge_id)
+        return measure
 
 """
 @smartfridge.route('/convert')
