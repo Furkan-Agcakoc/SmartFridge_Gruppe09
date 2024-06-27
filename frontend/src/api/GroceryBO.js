@@ -4,10 +4,10 @@ import BusinessObject from "./BusinessObject";
  * Represents a Grocery object.
  */
 export default class GroceryBO extends BusinessObject {
-  constructor(aGrocery_name) {
+  constructor(aGrocery_name, aFridge_id) {
     super();
     this.grocery_name = aGrocery_name;
-    this.fridge_id = null;
+    this.fridge_id = aFridge_id;
   }
 
   setGroceryName(aGrocery_name) {
@@ -23,6 +23,14 @@ export default class GroceryBO extends BusinessObject {
   }
 
   getHouseholdId() {
+    return this.fridge_id;
+  }
+
+  setFridgeId(aFridge_id) {
+    this.fridge_id = aFridge_id;
+  }
+
+  getFridgeId() {
     return this.fridge_id;
   }
 

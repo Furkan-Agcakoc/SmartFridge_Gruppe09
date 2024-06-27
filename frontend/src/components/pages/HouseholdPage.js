@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import TitleHH from "../household/TitleHousehold";
 import Typography from "@mui/material/Typography";
 import { Box, Paper } from "@mui/material";
@@ -9,6 +9,7 @@ import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import HouseholdAnchor from "../household/Household";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import UserContext from "../contexts/UserContext";
+import FridgeContext from "../contexts/FridgeContext";
 import HouseholdBO from "../../api/HouseholdBO";
 
 class HouseholdPage extends Component {
@@ -65,6 +66,29 @@ class HouseholdPage extends Component {
         console.error("Error fetching households:", error);
       });
   };
+
+  getFridgeByHouseholdId = async (householdID) => {
+    try {
+      const response = await SmartFridgeAPI.getAPI().getFridgeHouseholdById(
+        householdID
+      );
+      console.log("HouseholdID", householdID);
+
+      // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
+      const fridge_id = response.id;
+
+      // Logge die fridge_id zur Überprüfung
+      console.log("Fridge ID", fridge_id);
+      this.props.setFridgeId(fridge_id);
+
+      // Hier kannst du die fridge_id weiter verarbeiten oder speichern
+      // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
+      return fridge_id;
+    } catch (error) {
+      console.error("Error fetching fridge by household ID:", error);
+    }
+  };
+
 
   getInhabitantsByHouseholdId = (household_id) => {
     SmartFridgeAPI.getAPI()
@@ -428,4 +452,9 @@ class HouseholdPage extends Component {
   }
 }
 
-export default HouseholdPage;
+const HouseholdPageWithFridgeContext = (props) => {
+  const { setFridgeId } = useContext(FridgeContext);
+  return <HouseholdPage {...props} setFridgeId={setFridgeId} />;
+};
+
+export default HouseholdPageWithFridgeContext;

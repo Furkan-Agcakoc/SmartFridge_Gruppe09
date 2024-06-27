@@ -25,7 +25,10 @@ import EditProfilePage from "./components/pages/EditProfilePage";
 import SmartFridgeAPI from "./api/SmartFridgeAPI"; // Import the API class
 import FridgePage from "./components/pages/FridgePage";
 import UserContext from "./components/contexts/UserContext";
+import { FridgeProvider } from "./components/contexts/FridgeContext";
 import { UserBO } from "./api";
+
+
 // import { Config } from "./config";
 
 class App extends Component {
@@ -42,6 +45,21 @@ class App extends Component {
       dialogType: "",
     };
   }
+
+  // getHouseholdsByUserId = (userId) => {
+  //   const user = this.context;
+  //   console.log(user);
+
+  //   SmartFridgeAPI.getAPI()
+  //     .getHouseholdsByUserId(userId)
+  //     .then((households) => {
+  //       console.log(households);
+  //       this.setState({
+  //         households: households,
+  //       });
+  //     });
+  // };
+
 
   handleSignIn = () => {
     this.setState({ authLoading: true });
@@ -199,6 +217,7 @@ class App extends Component {
     return (
       <>
         <UserContext.Provider value={user}>
+          <FridgeProvider>
           <ThemeProvider theme={Theme}>
             <Router>
               <Header
@@ -263,6 +282,7 @@ class App extends Component {
               <Footer />
             </Router>
           </ThemeProvider>
+          </FridgeProvider>
         </UserContext.Provider>
       </>
     );
