@@ -28,7 +28,7 @@ class GroceryDialog extends Component {
     this.state = {
       popupOpen: false,
       groceryData: {
-        name: props.isEditMode ? props.groceryName : "",
+        name: props.isEditMode ? props.groceryName  : "",
         quantity: props.isEditMode ? props.groceryQuantity : "",
         unit: props.isEditMode ? props.groceryUnit : "",
         groceryUnit: [],
@@ -123,9 +123,16 @@ class GroceryDialog extends Component {
     SmartFridgeAPI.getAPI()
       .getMeasure()
       .then((measures) => {
+        const groceryUnit = measures.map((measure) => ({
+          unit: measure.getUnit(),
+          id: measure.getUnitId()
+        }));
+        
         this.setState({
-          groceryUnit: measures.map((measure) => measure.getUnit()),
+          groceryUnit
         });
+  
+        console.log('groceryUnit:', groceryUnit);
       });
   };
 
@@ -145,12 +152,13 @@ class GroceryDialog extends Component {
 
   addGroceryStatement = (groceryData) => {
     const testThis =  {
-      "grocery_id": 5, 
+      "grocery_id": 2,
       "unit_id": 5,
       "quantity": 20
     }
-    // const groceryStatementBO = new GroceryStatementBO(groceryData.name, groceryData.unit, groceryData.quantity);
-    const groceryStatementBO = new GroceryStatementBO(testThis.grocery_id, testThis.unit_id, testThis.quantity);
+    // müssen ids noch hinzufügen 
+    //const groceryStatementBO = new GroceryStatementBO(groceryData.name, groceryData.unit, groceryData.quantity);
+    const groceryStatementBO = new GroceryStatementBO(testThis.grocery_id, groceryData.unit_id, groceryData.quantity);
     console.log('groceryStatementBO ===>', groceryStatementBO)
     SmartFridgeAPI.getAPI()
       .addGroceryStatement(groceryStatementBO)
@@ -174,9 +182,12 @@ class GroceryDialog extends Component {
 
     // Sort food options alphabetically
     const sortedFoodOptions = foodOptions.sort((a, b) => a.localeCompare(b));
+
     const sortedMeasureOptions = measureOptions.sort((a, b) =>
-      a.localeCompare(b)
+      a.unit.localeCompare(b.unit)
     );
+
+
     return (
       <>
         <Box
@@ -337,27 +348,37 @@ class GroceryDialog extends Component {
                 <Autocomplete
                   id="measurements-box"
                   options={sortedMeasureOptions.map((option) => ({
-                    title: option,
+                    title: option.unit,
+                    id: option.id
                   }))} // Hier sind die Mengeneinheiten
                   value={unit}
                   freeSolo
                   onChange={(event, newValue) => {
                     let updatedUnit = "";
+                    let updatedUnitId = null;
                     if (newValue === null) {
                       updatedUnit = "";
+                      updatedUnitId = null;
                     } else if (typeof newValue === "string") {
                       updatedUnit = newValue;
+                      const foundUnit = sortedMeasureOptions.find(opt => opt.unit === newValue);
+                      updatedUnitId = foundUnit ? foundUnit.id : null;
                     } else if (newValue && newValue.inputValue) {
                       updatedUnit = newValue.inputValue;
+                      const foundUnit = sortedMeasureOptions.find(opt => opt.unit === newValue.inputValue);
+                      updatedUnitId = foundUnit ? foundUnit.id : null;                      
                     } else {
                       updatedUnit = newValue.title;
+                      updatedUnitId = newValue.id;
                     }
+                    console.log('MEASUREMENTS NEW VALUE ===>', newValue)
                     this.setState({
                       groceryData: {
                         ...this.state.groceryData,
                         unit: updatedUnit,
+                        unit_id: updatedUnitId 
                       },
-                      newMeasurement: updatedUnit, // Update state with newGrocery
+                      newMeasurement: updatedUnit,
                     });
                   }}
                   filterOptions={(options, params) => {
