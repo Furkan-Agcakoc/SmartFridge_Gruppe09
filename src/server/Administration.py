@@ -222,6 +222,10 @@ class Administration():
         with GroceryMapper() as mapper:
             return mapper.find_by_key(number)
 
+    def get_grocery_by_fridge_id(self, fridge_id):
+        with GroceryMapper() as mapper:
+            return mapper.find_by_fridge_id(fridge_id)
+
     def get_all_grocery(self):
         with GroceryMapper() as mapper:
             return mapper.find_all()
