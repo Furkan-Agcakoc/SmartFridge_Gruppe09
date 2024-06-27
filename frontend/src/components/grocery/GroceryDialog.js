@@ -13,6 +13,7 @@ import AlertComponent from "../dialogs/AlertComponent";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import GroceryBO from "../../api/GroceryBO";
+import MeasureBO from "../../api/MeasureBO";
 import FridgeContext from "../contexts/FridgeContext";
 
 const filter = createFilterOptions();
@@ -124,17 +125,17 @@ class GroceryDialog extends Component {
   };
 
   addMeasure = (measureName) => {
+    const { fridgeId } = this.context;
+    const measureBO = new MeasureBO(measureName, fridgeId);
     SmartFridgeAPI.getAPI()
-      .addMeasure({
-        unit: measureName,
-        fridge_id: 1,
-      })
+      .addMeasure(measureBO)
       .then((measure) => {
         this.setState({
           groceryUnit: [...this.state.groceryUnit, measure.getUnit()],
         });
       });
   };
+  
 
   render() {
     const { handlePopupGroceryClose, isEditMode } = this.props;

@@ -5,10 +5,10 @@ import BusinessObject from './BusinessObject';
  */
 export default class MeasureBO extends BusinessObject {
 
-    constructor(unit) {
+    constructor(unit, fridge_id) {
         super();
         this.unit = unit;
-        this.fridge_id = null;
+        this.fridge_id = fridge_id;
     }
 
     getUnit() {
