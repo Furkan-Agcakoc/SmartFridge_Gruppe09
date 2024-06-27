@@ -141,17 +141,17 @@ class GroceryDialog extends Component {
       });
   };
 
+
+
   addGroceryStatement = (groceryData) => {
     const { fridgeId } = this.context;
-    console.log('WTF IS THIS DATA?!!?', groceryData)
     const testignThis =  {
-      "id": 0,
-      "grocery_name": 5, 
-      "unit": 5,
+      "grocery_id": 5, 
+      "unit_id": 5,
       "quantity": 20
     }
     // const groceryStatementBO = new GroceryStatementBO(groceryData.name, groceryData.unit, groceryData.quantity);
-    const groceryStatementBO = new GroceryStatementBO(testignThis.grocery_name, testignThis.unit, testignThis.quantity);
+    const groceryStatementBO = new GroceryStatementBO(testignThis.grocery_id, testignThis.unit_id, testignThis.quantity);
     console.log('groceryStatementBO ===>', groceryStatementBO)
     SmartFridgeAPI.getAPI()
       .addGroceryStatement(groceryStatementBO)

@@ -4,27 +4,27 @@ import BusinessObject from "./BusinessObject";
  * Represents a Grocerystatement object.
  */
 export default class GroceryStatementBO extends BusinessObject {
-  constructor(aGrocery_name, aUnit, aQuantity) {
+  constructor(aGrocery_id, aUnit_id, aQuantity) {
     super();
-    this.grocery_name = aGrocery_name;
-    this.unit = aUnit;
+    this.grocery_id = aGrocery_id;
+    this.unit_id = aUnit_id;
     this.quantity = aQuantity;
   }
 
-  setGroceryName(aGrocery_name) {
-    this.grocery_name = aGrocery_name;
+  setGroceryName(aGrocery_id) {
+    this.grocery_id = aGrocery_id;
   }
 
   getGroceryName() {
-    return this.grocery_name;
+    return this.grocery_id;
   }
 
-  setUnit(aUnit) {
-    this.unit = aUnit;
+  setUnit(aUnit_id) {
+    this.unit_id = aUnit_id;
   }
 
   getUnit() {
-    return this.unit;
+    return this.unit_id;
   }
 
   setQuantity(aQuantity) {
@@ -34,15 +34,6 @@ export default class GroceryStatementBO extends BusinessObject {
   getQuantity() {
     return this.quantity;
   }
-
-  getFridgeId() {
-    return this.fridge_id;
-  }
-
-  setFridgeId(fridge_id) {
-      this.fridge_id = fridge_id;
-  }
-
 
   static fromJSON(grocerystatement) {
     let result = [];
