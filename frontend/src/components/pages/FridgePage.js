@@ -59,11 +59,11 @@ class FridgePage extends Component {
   componentDidMount() {
     const { householdId } = this.props.params; // HouseholdId aus den Props ziehen
     this.setState({ householdId });
-    console.log("HouseholdId", householdId);  
+    console.log("HouseholdId von FridgePage", householdId);
   }
 
   componentDidUpdate() {
-    console.log("HouseholdId", this.state.householdId);
+    console.log("HouseholdId von FridgePage Update", this.state.householdId);
     console.log("UserId", this.context.id);
     console.log("Households aus App", this.state.households);
     // this.getFridgeByHouseholdId(this.state.households.id)
@@ -83,6 +83,27 @@ class FridgePage extends Component {
           households: households,
         });
       });
+  };
+
+  getFridgeByHouseholdId = async (householdID) => {
+    try {
+      const response = await SmartFridgeAPI.getAPI().getFridgeHouseholdById(
+        householdID
+      );
+      console.log("HouseholdID", householdID);
+
+      // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
+      const fridge_id = response.id;
+
+      // Logge die fridge_id zur Überprüfung
+      console.log("Fridge ID", fridge_id);
+
+      // Hier kannst du die fridge_id weiter verarbeiten oder speichern
+      // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
+      return fridge_id;
+    } catch (error) {
+      console.error("Error fetching fridge by household ID:", error);
+    }
   };
 
   handleTabChange(event, newValue) {

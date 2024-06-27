@@ -31,11 +31,12 @@ class HouseholdPage extends Component {
   }
 
   componentDidMount() {
-    this.checkContext();
-    this.props.householdList(this.state.households);
+    console.log(this.context);
+    // this.checkContext();
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log(this.state.context);
     if (prevState.households !== this.state.households) {
       console.log("Households updated", this.state.households);
     }
@@ -44,84 +45,26 @@ class HouseholdPage extends Component {
   checkContext = () => {
     if (this.context) {
       this.getHouseholdsByUserId();
-      const householdID = this.state.householdID;
-      if (householdID) {
-        this.getFridgeByHouseholdId(householdID);
-      } else {
-        console.log("Household ID is not set.");
-      }
     } else {
-      setTimeout(this.checkContext, 100); // wait 100ms then re-check
+      console.error("User context is not initialized.");
+      setTimeout(this.checkContext, 100);
     }
   };
 
   getHouseholdsByUserId = () => {
-    const user = this.context;
-    console.log(user);
-
+    const userId = this.context.id;
     SmartFridgeAPI.getAPI()
-      .getHouseholdsByUserId(user.id)
+      .getHouseholdsByUserId(userId)
       .then((households) => {
         console.log(households);
         this.setState({
           households: households,
         });
+      })
+      .catch((error) => {
+        console.error("Error fetching households:", error);
       });
   };
-
-  getFridgeByHouseholdId = async (householdID) => {
-    try {
-      const response = await SmartFridgeAPI.getAPI().getFridgeHouseholdById(
-        householdID
-      );
-      console.log("HouseholdID", householdID);
-
-      // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
-      const fridge_id = response.id;
-
-      // Logge die fridge_id zur Überprüfung
-      console.log("Fridge ID", fridge_id);
-
-      // Hier kannst du die fridge_id weiter verarbeiten oder speichern
-      // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
-      return fridge_id;
-    } catch (error) {
-      console.error("Error fetching fridge by household ID:", error);
-    }
-  };
-
-  // getFridgeByHouseholdId = (householdID) => {
-  //   SmartFridgeAPI.getAPI().getFridgeHouseholdById(householdID);
-  //   console
-  //     .log("HouseholdID", householdID)
-  //     .then((responseFridgeBO) => {
-  //       this.setState(
-  //         {
-  //           fridgeDetails: responseFridgeBO,
-  //         },
-  //         () => {
-  //           console.log("FridgeId", responseFridgeBO);
-  //         }
-  //       );
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching fridge details:", error);
-  //     });
-  // };
-
-  // getInhabitantsByHouseholdId = (household_id) => {
-  //   SmartFridgeAPI.getAPI()
-  //     .getInhabitantsByHouseholdId(household_id)
-  //     .then((inhabitants) => {
-  //       console.log("Aus der Methode", inhabitants);
-  //       this.setState((prevState) => ({
-  //         inhabitants: {
-  //           ...prevState.inhabitants,
-  //           [household_id]: inhabitants,
-  //         },
-  //       }));
-  //     });
-  // };
 
   updateHouseholdId = (newId) => {
     this.setState({ householdIdToDelete: newId });
@@ -439,7 +382,6 @@ class HouseholdPage extends Component {
                 handleOpenDialog={handleOpenDialog}
                 householdIdToDelete={this.state.householdIdToDelete}
                 setHouseholdIdToDelete={this.setHouseholdIdToDelete}
-                getFridgeByHouseholdId={this.getFridgeByHouseholdId}
               />
             </Box>
             {popupOpen && (
