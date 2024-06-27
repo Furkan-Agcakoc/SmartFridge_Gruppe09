@@ -144,14 +144,13 @@ class GroceryDialog extends Component {
 
 
   addGroceryStatement = (groceryData) => {
-    const { fridgeId } = this.context;
-    const testignThis =  {
+    const testThis =  {
       "grocery_id": 5, 
       "unit_id": 5,
       "quantity": 20
     }
     // const groceryStatementBO = new GroceryStatementBO(groceryData.name, groceryData.unit, groceryData.quantity);
-    const groceryStatementBO = new GroceryStatementBO(testignThis.grocery_id, testignThis.unit_id, testignThis.quantity);
+    const groceryStatementBO = new GroceryStatementBO(testThis.grocery_id, testThis.unit_id, testThis.quantity);
     console.log('groceryStatementBO ===>', groceryStatementBO)
     SmartFridgeAPI.getAPI()
       .addGroceryStatement(groceryStatementBO)
