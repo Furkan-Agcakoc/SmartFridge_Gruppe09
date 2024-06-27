@@ -76,6 +76,23 @@ class MeasureMapper(Mapper):
         return result
 
 
+    def find_measure_by_fridge_id(self, fridge_id):
+        result = []
+        cursor = self._cnx.cursor()
+        command = "SELECT id, unit, fridge_id FROM measure WHERE fridge_id=%s"
+        cursor.execute(command, (fridge_id,))
+        tuples = cursor.fetchall()
+
+        for (id, unit, fridge_id) in tuples:
+            measure = Measure()
+            measure.set_id(id)
+            measure.set_unit(unit)
+            measure.set_fridge_id(fridge_id)
+            result.append(measure)
+
+        return result
+
+
     def insert(self, measure):
         cursor = self._cnx.cursor()
         

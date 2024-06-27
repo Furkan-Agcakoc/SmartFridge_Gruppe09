@@ -471,6 +471,10 @@ class Administration():
         with MeasureMapper() as mapper:
             return mapper.find_by_unit_name(unit)
 
+    def get_measure_by_fridge_id(self,fridge_id):
+        with MeasureMapper() as mapper:
+            return mapper.find_measure_by_fridge_id(fridge_id)
+
     def update_measure(self, measure):
         with MeasureMapper() as mapper:
             mapper.update(measure)
