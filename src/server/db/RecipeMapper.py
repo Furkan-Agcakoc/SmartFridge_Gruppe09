@@ -186,10 +186,10 @@ class RecipeMapper (Mapper):
 
             return result
 
-    def find_by_fridge_id(self,fridge_id):
+    def find_by_fridge_id(self, fridge_id):
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT id, recipe_name, duration, portion, instruction, user_id, fridge_id FROM recipe WHERE user_id={}".format(fridge_id)
+        command = "SELECT * FROM recipe WHERE fridge_id={}".format(fridge_id)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
@@ -204,11 +204,10 @@ class RecipeMapper (Mapper):
             recipe.set_fridge_id(fridge_id)
             result.append(recipe)
 
+        self._cnx.commit()
+        cursor.close()
 
-            self._cnx.commit()
-            cursor.close()
-
-            return result
+        return result
 
     def find_recipe_by_user_id_and_fridge_id(self, user_id, fridge_id):
         result = []

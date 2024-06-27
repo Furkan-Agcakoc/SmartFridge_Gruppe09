@@ -21,23 +21,6 @@ class MeasureMapper(Mapper):
         cursor.close()
         return result
 
-    def find_by_unit_id(self, unit_id):
-        result = []
-        cursor = self._cnx.cursor()
-        command = "SELECT id, unit, fridge_id FROM measure WHERE measure=%s ORDER BY id"
-        cursor.execute(command, (unit_id,))
-        tuples = cursor.fetchall()
-
-        for (id, unit, fridge_id) in tuples:
-            measure = Measure()
-            measure.set_id(id)
-            measure.set_unit(unit)
-            measure.set_fridge_id(fridge_id)
-            result.append(measure)
-
-        cursor.close()
-        return result
-
     def find_by_key(self, key):
         result = None
         cursor = self._cnx.cursor()
@@ -75,10 +58,18 @@ class MeasureMapper(Mapper):
 
         return result
 
-
     def insert(self, measure):
-
         cursor = self._cnx.cursor()
+
+        check_command = "SELECT * FROM measure WHERE unit=%s AND fridge_id=%s"
+        check_data = (measure.get_unit(), measure.get_fridge_id())
+        cursor.execute(check_command, check_data)
+        existing_measure = cursor.fetchone()
+
+        if existing_measure is not None:
+            cursor.close()
+            return
+
         cursor.execute("SELECT MAX(id) AS maxid FROM measure")
         tuples = cursor.fetchall()
 
@@ -96,7 +87,6 @@ class MeasureMapper(Mapper):
         cursor.close()
 
         return measure
-
     def update(self, measure):
         cursor = self._cnx.cursor()
         command = "UPDATE measure SET unit=%s, fridge_id=%s WHERE id=%s"

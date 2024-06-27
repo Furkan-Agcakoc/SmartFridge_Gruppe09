@@ -97,14 +97,14 @@ ADD CONSTRAINT `fk_measure_fridge` FOREIGN KEY (`fridge_id`) REFERENCES `fridge`
 DROP TABLE IF EXISTS `grocerystatement`;
 CREATE TABLE IF NOT EXISTS `grocerystatement` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `grocery_name` INT NOT NULL DEFAULT '0',
-  `unit` INT NOT NULL DEFAULT '0',
+  `grocery_id` INT NOT NULL DEFAULT '0',
+  `unit_id` INT NOT NULL DEFAULT '0',
   `quantity` FLOAT NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`id`),
-  KEY `grocery_name` (`grocery_name`),
-  KEY `unit` (`unit`),
-  CONSTRAINT `grocerystatement_fk1` FOREIGN KEY (`grocery_name`) REFERENCES `grocery` (`id`),
-  CONSTRAINT `grocerystatement_fk2` FOREIGN KEY (`unit`) REFERENCES `measure` (`id`)
+  KEY `grocery_id` (`grocery_id`),
+  KEY `unit_id` (`unit_id`),
+  CONSTRAINT `grocerystatement_fk1` FOREIGN KEY (`grocery_id`) REFERENCES `grocery` (`id`),
+  CONSTRAINT `grocerystatement_fk2` FOREIGN KEY (`unit_id`) REFERENCES `measure` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

@@ -71,8 +71,8 @@ household = api.inherit('Household', bo, {
 })
 
 grocerystatement = api.inherit('GroceryStatement', bo, {
-    'grocery_name': fields.Integer(attribute='_grocery_name', description='Name eines Lebensmittels'),
-    'unit': fields.Integer(attribute='_unit', description='Die Maßeinheit eines Lebensmittel'),
+    'grocery_id': fields.Integer(attribute='_grocery_id', description='ID eines Lebensmittels'),
+    'unit_id': fields.Integer(attribute='_unit_id', description='ID Maßeinheit eines Lebensmittel'),
     'quantity': fields.Float(attribut='_quantity', description='Die Mengeneinheit eines Lebensmittel'),
 })
 
@@ -726,7 +726,7 @@ class GrocerystatementListOperations(Resource):
         proposal = GroceryStatement.from_dict(api.payload)
         if proposal is not None:
             gs = adm.create_grocerystatement(
-                proposal.get_grocery_name(), proposal.get_unit(),proposal.get_quantity())
+                proposal.get_grocery_id(), proposal.get_unit_id(),proposal.get_quantity())
             return gs, 200
         else:
             # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
