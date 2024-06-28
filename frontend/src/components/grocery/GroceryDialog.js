@@ -163,13 +163,14 @@ class GroceryDialog extends Component {
     }
   };
 
-  addGroceryStatement = async (groceryId, measureId, quantity) => {
+  addGroceryStatement = async (groceryId, measureId) => {
+    const {groceryData} = this.state
     // this.useQuantityValue(quantity);
     // const { quantity } = this.state;
     const newGroceryStatement = new GroceryStatementBO(
       groceryId,
       measureId,
-      quantity
+      groceryData.quantity
     );
 
     try {
@@ -185,19 +186,17 @@ class GroceryDialog extends Component {
     try {
       const groceryId = await this.getGroceryByName();
       const measureId = await this.getMeasureByName();
-      const quantity = this.useQuantityValue();
-      await this.addGroceryStatement(groceryId, measureId, quantity);
+      // const { quantity } = this.state; // Get quantity from state
+      await this.addGroceryStatement(groceryId, measureId);
     } catch (error) {
       console.error("Error in handleAddGrocery:", error);
     }
   };
 
-  useQuantityValue = () => {
-    const { quantity } = this.state;
+  useQuantityValue = (quantity) => {
     console.log("Current Quantity:", quantity);
-    return quantity;
+    // You can add more logic here to use the quantity value
   };
-
 
   getGrocery = () => {
     const { fridgeId } = this.state;

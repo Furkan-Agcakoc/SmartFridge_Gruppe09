@@ -58,19 +58,27 @@ class MeasureMapper(Mapper):
 
         return result
 
+
+    def find_measure_by_fridge_id(self, fridge_id):
+        result = []
+        cursor = self._cnx.cursor()
+        command = "SELECT id, unit, fridge_id FROM measure WHERE fridge_id=%s"
+        cursor.execute(command, (fridge_id,))
+        tuples = cursor.fetchall()
+
+        for (id, unit, fridge_id) in tuples:
+            measure = Measure()
+            measure.set_id(id)
+            measure.set_unit(unit)
+            measure.set_fridge_id(fridge_id)
+            result.append(measure)
+
+        return result
+
+
     def insert(self, measure):
         cursor = self._cnx.cursor()
-
-        check_command = "SELECT * FROM measure WHERE unit=%s AND fridge_id=%s"
-        check_data = (measure.get_unit(), measure.get_fridge_id())
-        cursor.execute(check_command, check_data)
-        existing_measure = cursor.fetchone()
-
-        if existing_measure is not None:
-            cursor.close()
-            return
-
-        cursor.execute("SELECT MAX(id) AS maxid FROM measure")
+        cursor.execute("SELECT MAX(id) AS maxid FROM mesaure")
         tuples = cursor.fetchall()
 
         for (maxid) in tuples:
@@ -79,10 +87,9 @@ class MeasureMapper(Mapper):
             else:
                 measure.set_id(1)
 
-        
-        insert_command = "INSERT INTO measure (id, unit, fridge_id) VALUES (%s,%s,%s)"
-        insert_data = (measure.get_id(), measure.get_unit(), measure.get_fridge_id())
-        cursor.execute(insert_command, insert_data)
+        command = "INSERT INTO recipe (id, unit_name, fridge_id) VALUES (%s,%s,%s)"
+        data = (measure.get_id(), measure.get_unit(), measure.get_fridge_id())
+        cursor.execute(command, data)
 
         self._cnx.commit()
         cursor.close()
