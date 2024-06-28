@@ -122,6 +122,9 @@ class GroceryStatementMapper (Mapper):
         cursor.close()
 
         return result
+    
+    
+   
 
 
     def checkGroceryInFridge(self, grocerysatement_id, fridge_id):  #anschauen

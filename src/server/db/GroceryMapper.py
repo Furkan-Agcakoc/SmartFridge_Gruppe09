@@ -92,14 +92,6 @@ class GroceryMapper(Mapper):
 
     def insert(self, grocery):
         cursor = self._cnx.cursor()
-
-        check_command = "SELECT * FROM grocery WHERE LOWER(grocery_name) = LOWER(%s) AND fridge_id = %s"
-        cursor.execute(check_command, (grocery.get_grocery_name(), grocery.get_fridge_id()))
-        existing_grocery = cursor.fetchone()
-
-        if existing_grocery is not None:
-            cursor.close()
-
         cursor.execute("SELECT MAX(id) AS maxid FROM grocery")
         tuples = cursor.fetchall()
 
@@ -109,7 +101,7 @@ class GroceryMapper(Mapper):
             else:
                 grocery.set_id(1)
 
-        command = "INSERT INTO grocery (id, grocery_name, fridge_id) VALUES (%s,%s,%s)"
+        command = "INSERT INTO grocery (id, grocery_name,fridge_id) VALUES (%s,%s,%s)"
         data = (grocery.get_id(), grocery.get_grocery_name(), grocery.get_fridge_id())
         cursor.execute(command, data)
 

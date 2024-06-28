@@ -7,6 +7,10 @@ class GroceryStatement(BusinessObject):
         self._unit_id = 0
         self.quantity = 0.0
 
+
+
+
+
     def get_grocery_id(self):
         return self._grocery_id
 
@@ -24,6 +28,7 @@ class GroceryStatement(BusinessObject):
 
     def set_unit_id(self, new_unit_id):
         self._unit_id = new_unit_id
+
 
     @staticmethod
     def from_dict (dictionary=dict()):

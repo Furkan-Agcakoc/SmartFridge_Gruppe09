@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Typography,
@@ -12,9 +12,9 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 const Grocery = ({
-  groceries,
   handleAnchorClick,
   handleAnchorClose,
   handleAnchorEdit,
@@ -23,15 +23,33 @@ const Grocery = ({
   handleOpenDialog,
   setIdToDelete,
 }) => {
+  const [groceryStatements, setGroceryStatements] = useState([]);
+
   const handleDeleteClick = (groceryId) => {
     setIdToDelete(groceryId);
     handleOpenDialog(groceryId, "grocery");
     handleAnchorClose(groceryId);
   };
 
-  return groceries.map((grocery) => (
+  useEffect(() => {
+    const fetchGroceryStatements = async () => {
+      try {
+        const groceryStatements =
+          await SmartFridgeAPI.getAPI().getGroceryStatement();
+        setGroceryStatements(groceryStatements);
+      } catch (error) {
+        console.error("Error fetching grocery statements:", error);
+      }
+    };
+
+    fetchGroceryStatements();
+  }, []);
+
+  console.log("groceryStatements", groceryStatements);
+
+  return groceryStatements.map((grocery) => (
     <Paper
-      key={grocery.groceryId}
+      key={grocery.id}
       sx={{
         position: "relative",
         display: "flex",
@@ -50,10 +68,10 @@ const Grocery = ({
       <IconButton
         aria-label="more"
         id="long-button"
-        aria-controls={openMenus[grocery.groceryId] ? "long-menu" : undefined}
-        aria-expanded={openMenus[grocery.groceryId] ? "true" : undefined}
+        aria-controls={openMenus[grocery.id] ? "long-menu" : undefined}
+        aria-expanded={openMenus[grocery.id] ? "true" : undefined}
         aria-haspopup="true"
-        onClick={(event) => handleAnchorClick(grocery.groceryId, event)}
+        onClick={(event) => handleAnchorClick(grocery.id, event)}
         style={{
           position: "absolute",
           top: "2px",
@@ -67,12 +85,12 @@ const Grocery = ({
 
       <Menu
         MenuListProps={{ "aria-labelledby": "long-button" }}
-        anchorEl={anchorEls[grocery.groceryId]}
-        open={openMenus[grocery.groceryId]}
-        onClose={() => handleAnchorClose(grocery.groceryId)}
+        anchorEl={anchorEls[grocery.id]}
+        open={openMenus[grocery.id]}
+        onClose={() => handleAnchorClose(grocery.id)}
       >
         <MenuItem
-          onClick={() => handleAnchorEdit(grocery.groceryId)}
+          onClick={() => handleAnchorEdit(grocery.id)}
           className="menu-item"
           disableRipple
         >
@@ -83,7 +101,7 @@ const Grocery = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleDeleteClick(grocery.groceryId)}
+          onClick={() => handleDeleteClick(grocery.id)}
           className="menu-item"
           disableRipple
         >
@@ -111,7 +129,7 @@ const Grocery = ({
             maxWidth: "200px",
           }}
         >
-          {grocery.groceryName}
+          {grocery.grocery_id}
         </Typography>
         <Typography
           variant="body1"
@@ -123,7 +141,7 @@ const Grocery = ({
             // border: "2px solid red",
           }}
         >
-           {grocery.groceryQuantity} {grocery.groceryUnit}
+          {grocery.groceryQuantity} {grocery.quantity}
         </Typography>
       </Container>
     </Paper>

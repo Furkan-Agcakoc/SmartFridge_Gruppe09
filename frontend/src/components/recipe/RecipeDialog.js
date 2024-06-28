@@ -13,9 +13,13 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import { createFilterOptions } from "@mui/material/Autocomplete";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutlineRounded";
 import AlertComponent from "../dialogs/AlertComponent";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+
+const filter = createFilterOptions();
 
 class RecipeDialog extends Component {
   constructor(props) {
@@ -33,7 +37,10 @@ class RecipeDialog extends Component {
         servings: props.isEditMode ? props.recipeServings : "",
         instructions: props.isEditMode ? props.recipeInstructions : "",
         groceryUnit: ["g", "kg", "ml", "l", "Stück"],
-        ingredients: props.isEditMode && props.recipeIngredients ? props.recipeIngredients : [],
+        ingredients:
+          props.isEditMode && props.recipeIngredients
+            ? props.recipeIngredients
+            : [],
       },
     };
   }
@@ -54,7 +61,9 @@ class RecipeDialog extends Component {
           servings: this.props.recipeServings,
           instructions: this.props.recipeInstructions,
           groceryUnit: ["g", "kg", "ml", "l", "Stück"],
-          ingredients: Array.isArray(this.props.recipeIngredients) ? this.props.recipeIngredients : [],
+          ingredients: Array.isArray(this.props.recipeIngredients)
+            ? this.props.recipeIngredients
+            : [],
         },
       });
     }
@@ -100,6 +109,24 @@ class RecipeDialog extends Component {
     }
     console.log("Hier sieht man recipeData", recipeData.ingredients);
   };
+
+  handleUnitInput = (event) => {
+    this.setState({ showAlert: false });
+    const value = event.target.value;
+    event.target.value = value.replace(/[^a-zA-ZäöüÄÖÜß]/g, ""); // Regex to allow only letters including German umlauts
+  };
+
+  getGrocery = () => {
+    const { fridgeId } = this.state;
+    SmartFridgeAPI.getAPI()
+      .getGroceryByFridgeId(fridgeId)
+      .then((groceries) => {
+        this.setState({
+          foodOptions: groceries.map((grocery) => grocery.getGroceryName()),
+        });
+      });
+  };
+
 
   render() {
     const { handlePopupRecipeClose, isEditMode } = this.props;
@@ -278,33 +305,66 @@ class RecipeDialog extends Component {
                   inputProps={{ min: "1" }}
                   sx={{ width: "150px" }}
                 />
-                <Autocomplete // Einheit
-                  options={groceryUnit}
+                <Autocomplete
+                  id="measurements-box"
+                  options={groceryUnit.map((option) => ({
+                    title: option,
+                  }))}
                   value={unit}
                   freeSolo
-                  onChange={(event, value) => {
+                  onChange={(event, newValue) => {
+                    let updatedUnit = "";
+                    if (newValue === null) {
+                      updatedUnit = "";
+                    } else if (typeof newValue === "string") {
+                      updatedUnit = newValue;
+                    } else if (newValue && newValue.inputValue) {
+                      updatedUnit = newValue.inputValue;
+                    } else {
+                      updatedUnit = newValue.title;
+                    }
                     this.setState((prevState) => ({
                       ingredientData: {
                         ...prevState.ingredientData,
-                        unit: value,
+                        unit: updatedUnit,
                       },
                     }));
                   }}
                   onInputChange={() => this.setState({ showAlert: false })}
+                  filterOptions={(options, params) => {
+                    const filtered = filter(options, params);
+                    const { inputValue } = params;
+                    const isExisting = options.some(
+                      (option) => inputValue === option.title
+                    );
+                    if (inputValue !== "" && !isExisting) {
+                      filtered.push({
+                        inputValue,
+                        title: `"${inputValue}" neu hinzufügen`,
+                      });
+                    }
+                    return filtered;
+                  }}
+                  selectOnFocus
+                  clearOnBlur
+                  handleHomeEndKeys
+                  getOptionLabel={(option) => {
+                    if (typeof option === "string") {
+                      return option;
+                    }
+                    if (option.inputValue) {
+                      return option.inputValue;
+                    }
+                    return option.title;
+                  }}
+                  renderOption={(props, option) => (
+                    <li {...props}>{option.title}</li>
+                  )}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      value={unit}
-                      onChange={(event) => {
-                        const { name, value } = event.target;
-                        this.setState((prevState) => ({
-                          ingredientData: {
-                            ...prevState.ingredientData,
-                            [name]: value,
-                          },
-                        }));
-                      }}
-                      onInput={() => this.setState({ showAlert: false })}
+                      required
+                      onInput={this.handleUnitInput}
                       name="unit"
                       label="Einheit"
                       placeholder="Einheit"
@@ -387,7 +447,7 @@ class RecipeDialog extends Component {
                 {ingredients.map((ingredient, index) => (
                   <ListItem
                     key={index}
-                    sx={{ marginBottom: "-18px", marginTop: "-15px", }}
+                    sx={{ marginBottom: "-18px", marginTop: "-15px" }}
                     secondaryAction={
                       <IconButton
                         edge="end"
@@ -438,7 +498,7 @@ class RecipeDialog extends Component {
                   })
                 }
                 onInput={() => this.setState({ showAlert: false })}
-                sx={{height:"auto", maxHeight:"200px"}}
+                sx={{ height: "auto", maxHeight: "200px" }}
               />
             </Box>
             <Box
