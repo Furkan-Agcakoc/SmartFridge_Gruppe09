@@ -102,6 +102,7 @@ export default class SmartFridgeAPI {
   // measure related
   #getMeasureURL = () => `${this.#SmartFridgeBaseURL}/measure`;
   #addMeasureURL = () => `${this.#SmartFridgeBaseURL}/measure`;
+  #getMeasureByIdURL = (id) => `${this.#SmartFridgeBaseURL}/measure/${id}`;
   #deleteMeasureURL = (id) => `${this.#SmartFridgeBaseURL}/measure/${id}`;
   #getMeasureByFridgeIdURL = (id) =>
     `${this.#SmartFridgeBaseURL}/measure/fridge_id/${id}`;
@@ -123,17 +124,6 @@ export default class SmartFridgeAPI {
     });
 
   // ###########Grocery_in_Fridge
-
-  getGroceryByFridgeId(fridgeId) {
-    return this.#fetchAdvanced(this.#getGroceryInFridgeByIdURL(fridgeId)).then(
-      (responseJSON) => {
-        let groceryStatementBOs = responseJSON;
-        return new Promise(function (resolve) {
-          resolve(groceryStatementBOs);
-        });
-      }
-    );
-  }
 
   addGroceryinFridge(grocerystatementId, fridgeId) {
     console.log(
@@ -235,6 +225,16 @@ export default class SmartFridgeAPI {
         let responseGroceryBOs = GroceryBO.fromJSON(responseJSON);
         return new Promise(function (resolve) {
           resolve(responseGroceryBOs);
+        });
+      }
+    );
+  }
+  getGroceryInFridgeId(fridgeId) {
+    return this.#fetchAdvanced(this.#getGroceryInFridgeByIdURL(fridgeId)).then(
+      (responseJSON) => {
+        let groceryStatementBOs = responseJSON;
+        return new Promise(function (resolve) {
+          resolve(groceryStatementBOs);
         });
       }
     );
@@ -792,6 +792,17 @@ export default class SmartFridgeAPI {
     return this.#fetchAdvanced(this.#getMeasureByNameURL(measureName)).then(
       (responseJSON) => {
         let responseMeasureBO = MeasureBO.fromJSON(responseJSON)[0];
+        return new Promise(function (resolve) {
+          resolve(responseMeasureBO);
+        });
+      }
+    );
+  }
+
+  getMeasureById(measureID) {
+    return this.#fetchAdvanced(this.#getMeasureByIdURL(measureID)).then(
+      (responseJSON) => {
+        let responseMeasureBO = GroceryBO.fromJSON(responseJSON);
         return new Promise(function (resolve) {
           resolve(responseMeasureBO);
         });

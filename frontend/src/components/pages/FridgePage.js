@@ -50,6 +50,7 @@ class FridgePage extends Component {
       householdId: null,
       fridgeId: null,
       householdName: "",
+      groceryStatements: [],
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -64,12 +65,26 @@ class FridgePage extends Component {
     console.log("HouseholdId von FridgePage", householdId);
     this.getFridgeByHouseholdId(householdId);
     this.getHouseholdNameById(householdId); // Den Haushaltsnamen laden
+    // this.getGroceries(); // Lebensmittel laden
   }
-  
 
   componentDidUpdate() {
     console.log("Geändert", this.state.fridgeId);
   }
+
+  // getGroceryById = (groceryId) => {
+  //   SmartFridgeAPI.getAPI()
+
+  getGroceryInFridgeId = async (fridgeId) => {
+    try {
+      const groceryStatements =
+        await SmartFridgeAPI.getAPI().getGroceryInFridgeId(fridgeId);
+      return groceryStatements;
+    } catch (error) {
+      console.error("Error fetching grocery statements:", error);
+      return [];
+    }
+  };
 
   getHouseholdNameById = (householdId) => {
     SmartFridgeAPI.getAPI()
@@ -80,7 +95,7 @@ class FridgePage extends Component {
       .catch((error) => {
         console.error("Error fetching household name:", error);
       });
-  }
+  };
 
   getFridgeByHouseholdId = (householdID) => {
     SmartFridgeAPI.getAPI()
@@ -422,7 +437,6 @@ class FridgePage extends Component {
     this.setState({ chipColor: null });
     console.info("All recipes deleted.");
   };
-  
 
   render() {
     const {
@@ -436,7 +450,7 @@ class FridgePage extends Component {
       recipes,
       isEditMode,
       chipColor,
-      householdName
+      householdName,
     } = this.state;
 
     const { dialogOpen, dialogType } = this.props;
@@ -569,6 +583,8 @@ class FridgePage extends Component {
                       </Tooltip>
                     </Link>
                     <Grocery
+                      getGroceryInFridgeId={this.getGroceryInFridgeId} // Neue Prop hinzufügen
+                      fridgeId={this.state.fridgeId}
                       groceries={groceries}
                       handleAnchorClick={this.handleAnchorClick}
                       handleAnchorClose={this.handleAnchorClose}
