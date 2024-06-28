@@ -422,6 +422,7 @@ class FridgePage extends Component {
     this.setState({ chipColor: null });
     console.info("All recipes deleted.");
   };
+  
 
   render() {
     const {
