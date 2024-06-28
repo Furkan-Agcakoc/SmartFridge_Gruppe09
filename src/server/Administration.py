@@ -173,9 +173,9 @@ class Administration():
             return mapper.find_by_user_id(user_id)
 
     def get_recipe_by_fridge_id(self, fridge_id):
-        """  Wiedergabe deines Rezepts mit der Fridge_Id """
+        """  Wiedergabe des Rezepts mit der Fridge_Id """
         with RecipeMapper() as mapper:
-            return mapper.find_by_household_id(fridge_id)
+            return mapper.find_by_fridge_id(fridge_id)
     def get_recipe_by_user_id_and_household_id(self, user_id, fridge_id):
         with RecipeMapper() as mapper:
             return mapper.find_recipe_by_user_id_and_fridge_id(user_id, fridge_id)
@@ -248,8 +248,8 @@ class Administration():
 
     def create_grocerystatement(self, grocery_name, unit, quantity):
         grocerystatement = GroceryStatement()  # anschauen
-        grocerystatement.set_grocery_name(grocery_name)
-        grocerystatement.set_unit(unit)
+        grocerystatement.set_grocery_id(grocery_name)
+        grocerystatement.set_unit_id(unit)
         grocerystatement.set_quantity(quantity)
 
         with GroceryStatementMapper() as mapper:
