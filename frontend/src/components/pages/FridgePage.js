@@ -48,6 +48,8 @@ class FridgePage extends Component {
       chipColor: null,
       households: [],
       householdId: null,
+      fridgeId: null,
+      householdName: "",
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -60,50 +62,47 @@ class FridgePage extends Component {
     const { householdId } = this.props.params; // HouseholdId aus den Props ziehen
     this.setState({ householdId });
     console.log("HouseholdId von FridgePage", householdId);
+    this.getFridgeByHouseholdId(householdId);
+    this.getHouseholdNameById(householdId); // Den Haushaltsnamen laden
   }
+  
 
   componentDidUpdate() {
-    console.log("HouseholdId von FridgePage Update", this.state.householdId);
-    console.log("UserId", this.context.id);
-    console.log("Households aus App", this.state.households);
-    // this.getFridgeByHouseholdId(this.state.households.id)
-
-    console.log("FridgePage updated");
+    console.log("Geändert", this.state.fridgeId);
   }
 
-  getHouseholdsByUserId = (userId) => {
-    const user = this.context;
-    console.log(user);
-
+  getHouseholdNameById = (householdId) => {
     SmartFridgeAPI.getAPI()
-      .getHouseholdsByUserId(userId)
-      .then((households) => {
-        console.log(households);
-        this.setState({
-          households: households,
-        });
+      .getHouseholdById(householdId)
+      .then((household) => {
+        this.setState({ householdName: household.household_name });
+      })
+      .catch((error) => {
+        console.error("Error fetching household name:", error);
       });
-  };
+  }
 
-  getFridgeByHouseholdId = async (householdID) => {
-    try {
-      const response = await SmartFridgeAPI.getAPI().getFridgeHouseholdById(
-        householdID
-      );
-      console.log("HouseholdID", householdID);
+  getFridgeByHouseholdId = (householdID) => {
+    SmartFridgeAPI.getAPI()
+      .getFridgeByHouseholdId(householdID)
+      .then((response) => {
+        console.log("HouseholdID", householdID);
 
-      // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
-      const fridge_id = response.id;
+        // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
+        const fridgeId = response.id;
 
-      // Logge die fridge_id zur Überprüfung
-      console.log("Fridge ID", fridge_id);
+        // Logge die fridge_id zur Überprüfung
+        console.log("Fridge ID", fridgeId);
 
-      // Hier kannst du die fridge_id weiter verarbeiten oder speichern
-      // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
-      return fridge_id;
-    } catch (error) {
-      console.error("Error fetching fridge by household ID:", error);
-    }
+        // Aktualisiere den Zustand mit der fridge_id
+        this.setState({ fridgeId: fridgeId });
+        console.log("Fridge ID in State", fridgeId);
+
+        return fridgeId;
+      })
+      .catch((error) => {
+        console.error("Error fetching fridge by household ID:", error);
+      });
   };
 
   handleTabChange(event, newValue) {
@@ -436,6 +435,7 @@ class FridgePage extends Component {
       recipes,
       isEditMode,
       chipColor,
+      householdName
     } = this.state;
 
     const { dialogOpen, dialogType } = this.props;
@@ -477,7 +477,7 @@ class FridgePage extends Component {
                 backgroundColor: "background.default",
               }}
             >
-              <FridgeSearchBar />
+              <FridgeSearchBar householdName={householdName} />
               <TabContext
                 value={value}
                 sx={{
@@ -580,6 +580,7 @@ class FridgePage extends Component {
                   </TabPanel>
                   {popupGroceryOpen && (
                     <GroceryDialog
+                      fridgeId={this.state.fridgeId}
                       isEditMode={isEditMode}
                       groceryName={
                         editingGrocery ? editingGrocery.groceryName : ""

@@ -43,6 +43,7 @@ class HouseholdPage extends Component {
     }
   }
 
+
   checkContext = () => {
     if (this.context) {
       this.getHouseholdsByUserId();
@@ -67,27 +68,27 @@ class HouseholdPage extends Component {
       });
   };
 
-  getFridgeByHouseholdId = async (householdID) => {
-    try {
-      const response = await SmartFridgeAPI.getAPI().getFridgeHouseholdById(
-        householdID
-      );
-      console.log("HouseholdID", householdID);
+  // getFridgeByHouseholdId = async (householdID) => {
+  //   try {
+  //     const response = await SmartFridgeAPI.getAPI().getFridgeByHouseholdId(
+  //       householdID
+  //     );
+  //     console.log("HouseholdID", householdID);
 
-      // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
-      const fridge_id = response.id;
+  //     // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
+  //     const fridge_id = response.id;
 
-      // Logge die fridge_id zur Überprüfung
-      console.log("Fridge ID", fridge_id);
-      this.props.setFridgeId(fridge_id);
+  //     // Logge die fridge_id zur Überprüfung
+  //     console.log("Fridge ID", fridge_id);
+  //     this.props.setFridgeId(fridge_id);
 
-      // Hier kannst du die fridge_id weiter verarbeiten oder speichern
-      // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
-      return fridge_id;
-    } catch (error) {
-      console.error("Error fetching fridge by household ID:", error);
-    }
-  };
+  //     // Hier kannst du die fridge_id weiter verarbeiten oder speichern
+  //     // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
+  //     return fridge_id;
+  //   } catch (error) {
+  //     console.error("Error fetching fridge by household ID:", error);
+  //   }
+  // };
 
 
   getInhabitantsByHouseholdId = (household_id) => {

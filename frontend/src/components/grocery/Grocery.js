@@ -29,6 +29,10 @@ const Grocery = ({
     handleAnchorClose(groceryId);
   };
 
+  
+
+
+
   return groceries.map((grocery) => (
     <Paper
       key={grocery.groceryId}

@@ -255,7 +255,7 @@ class HouseholdDialog extends Component {
               variant="h4"
               sx={{ marginBottom: "20px", marginTop: "20px", fontWeight: 600 }}
             >
-              {isEditMode ? "Haushalt bearbeiten" : "Neuen Haushalt hinzufügen"}
+              {isEditMode ? "Haushalt bearbeiten" : "Haushalt hinzufügen"}
             </Typography>
             <AlertComponent showAlert={showAlert} alertType="household" />
             <Box

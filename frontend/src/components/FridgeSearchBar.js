@@ -8,7 +8,6 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import {IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
-
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 
 const Search = styled("div")(({ theme }) => ({
@@ -39,6 +38,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   width: "100%",
+
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
@@ -53,7 +53,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function FridgeSearchBar() {
+export default function FridgeSearchBar({ householdName }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -65,10 +65,9 @@ export default function FridgeSearchBar() {
         }}
       >
         <Toolbar>
-          <Link
-            to="/household"
-          > <IconButton>
-              <ArrowBackIosNewRoundedIcon fontSize="small" sx={{ color: "background.paper" }}/>
+          <Link to="/household">
+            <IconButton>
+              <ArrowBackIosNewRoundedIcon fontSize="small" sx={{ color: "background.paper" }} />
             </IconButton>
           </Link>
           <Typography
@@ -77,9 +76,9 @@ export default function FridgeSearchBar() {
             component="div"
             fontStyle={"italic"}
             fontWeight={"bold"}
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" }, pl:"10px" }}
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" }, pl: "10px", }}
           >
-            ~Haushaltsname~
+            {householdName}
           </Typography>
           <Search>
             <SearchIconWrapper>
