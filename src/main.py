@@ -465,6 +465,20 @@ class GroceryNameOperations(Resource):
         return grocery
 
 
+@smartfridge.route('/grocery/fridge_id/<int:fridge_id>')
+@smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
+@smartfridge.param('fridge_id', 'fridge_id')
+class GroceryInFridgeOperations(Resource):
+    @smartfridge.marshal_list_with(grocery)
+    #@secured
+    def get(self, fridge_id):
+
+        'Wiedergabe von Grocerys durch Fridge ID'
+
+        adm = Administration()
+        grocery = adm.get_grocery_by_fridge_id(fridge_id)
+        return grocery
+
 
 
 '''
@@ -852,6 +866,22 @@ class MeasureOperations(Resource):
         else:
             return '', 500
 
+
+
+@smartfridge.route('/measure/fridge_id/<int:fridge_id>')
+@smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
+@smartfridge.param('fridge_id', 'fridge_id')
+class GroceryInFridgeOperations(Resource):
+    @smartfridge.marshal_list_with(measure)
+    #@secured
+    def get(self, fridge_id):
+
+        'Wiedergabe von Grocerys durch Fridge ID'
+
+        adm = Administration()
+        measure = adm.get_measure_by_fridge_id(fridge_id)
+        return measure
+
 """
 @smartfridge.route('/convert')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
@@ -877,7 +907,7 @@ class UnitConversion(Resource):
 """
 
 
-@smartfridge.route('/calculate_recipe_fridge/<int:recipe_id>/<int:fridge_id>')
+@smartfridge.route('/recipe/<int:recipe_id>/<int:fridge_id>')
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class CalculateRecipeFridge(Resource):
     def post(self, recipe_id, fridge_id):
@@ -887,22 +917,22 @@ class CalculateRecipeFridge(Resource):
         adm = Administration()
 
         # Methode calculate_recipe_fridge aufrufen
-        result = adm.calculate_recipe_fridge(recipe_id, fridge_id)
+        result = adm.cook_recipe(recipe_id, fridge_id)
 
         # Rückgabe des Ergebnisses
         return result, 200
 
-@smartfridge.route('/household/<int:household_id>/recipes')
+@smartfridge.route('/fridge/<int:fridge_id>/recipes')
 @smartfridge.response(500, 'Server Error')
-@smartfridge.param('household_id', 'The ID of the household')
-class RecipesByFridgeContents(Resource):
-    def get(self, household_id):
+@smartfridge.param('fridge_id', 'The ID of the Fridge')
+class CheckRecipesContents(Resource):
+    def get(self, fridge_id):
         """
         Methode zur Erfassung der kochbaren Rezepte und eventuelle Zutaten, welche fehlen
         """
         adm = Administration()
         try:
-            results = adm.find_recipes_by_fridge_contents(household_id)
+            results = adm.check_recipes(fridge_id)
             if not results:
                 return {'message': 'No recipes could be fully or partially made with the current fridge contents.'}, 404
             return results, 200

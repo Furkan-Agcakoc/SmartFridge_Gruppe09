@@ -222,6 +222,10 @@ class Administration():
         with GroceryMapper() as mapper:
             return mapper.find_by_key(number)
 
+    def get_grocery_by_fridge_id(self, fridge_id):
+        with GroceryMapper() as mapper:
+            return mapper.find_by_fridge_id(fridge_id)
+
     def get_all_grocery(self):
         with GroceryMapper() as mapper:
             return mapper.find_all()
@@ -467,6 +471,10 @@ class Administration():
         with MeasureMapper() as mapper:
             return mapper.find_by_unit_name(unit)
 
+    def get_measure_by_fridge_id(self,fridge_id):
+        with MeasureMapper() as mapper:
+            return mapper.find_measure_by_fridge_id(fridge_id)
+
     def update_measure(self, measure):
         with MeasureMapper() as mapper:
             mapper.update(measure)
@@ -483,60 +491,60 @@ class Administration():
             mapper.update_grocerystatement_quantity(gs)
 
     def convert_unit(self, value, unit_from_id, unit_to_id):
-        unit_from = self.get_measure_by_id(unit_from_id).get_unit()
-        unit_to = self.get_measure_by_id(unit_to_id).get_unit()
+        unit_from = self.get_measure_by_id(unit_from_id).get_unit().lower()
+        unit_to = self.get_measure_by_id(unit_to_id).get_unit().lower()
 
-        if (unit_from == "g" and unit_to == "kg"):
+        if (unit_from in ["g", "gramm"] and unit_to in ["kg", "kilogramm"]):
             return value / 1000
-        elif (unit_from == "kg" and unit_to == "g"):
+        elif (unit_from in ["kg", "kilogramm"] and unit_to in ["g", "gramm"]):
             return value * 1000
-        elif (unit_from == "ml" and unit_to == "l"):
+        elif (unit_from in ["ml", "milliliter"] and unit_to in ["l", "liter"]):
             return value / 1000
-        elif (unit_from == "l" and unit_to == "ml"):
+        elif (unit_from in ["l", "liter"] and unit_to in ["ml", "milliliter"]):
             return value * 1000
         else:
             return value
 
     def are_units_compatible(self, unit_from_id, unit_to_id):
-        unit_from = self.get_measure_by_id(unit_from_id).get_unit()
-        unit_to = self.get_measure_by_id(unit_to_id).get_unit()
+        unit_from = self.get_measure_by_id(unit_from_id).get_unit().lower()
+        unit_to = self.get_measure_by_id(unit_to_id).get_unit().lower()
 
         compatible_units = {
-            'g': ['g', 'kg'],
-            'kg': ['g', 'kg'],
-            'ml': ['ml', 'l'],
-            'l': ['ml', 'l']
+            'g': ['g', 'kg', 'kilogramm', 'gramm'],
+            'kg': ['g', 'kg', 'kilogramm', 'gramm'],
+            'kilogramm': ['g', 'kg', 'kilogramm', 'gramm'],
+            'gramm': ['g', 'kg', 'kilogramm', 'gramm'],
+            'ml': ['ml', 'l', 'liter', 'milliliter'],
+            'l': ['ml', 'l', 'liter', 'milliliter'],
+            'liter': ['ml', 'l', 'liter', 'milliliter'],
+            'milliliter': ['ml', 'l', 'liter', 'milliliter']
         }
 
         if unit_from == unit_to:
             return True
 
-
         return unit_to in compatible_units.get(unit_from, [])
 
-    def calculate_recipe_fridge(self, recipe_id, fridge_id):
+    def cook_recipe(self, recipe_id, fridge_id):
         recipe_content = self.get_grocerystatement_by_recipe(recipe_id)
         fridge_content = self.get_grocerystatement_by_fridge(fridge_id)
-
-        if not recipe_content or not fridge_content:
-            return "Rezept- oder Kühlschrankinhalt nicht gefunden"
-
         response_messages = []
 
         for recipe_grocery in recipe_content:
-            recipe_qty, recipe_unit_id = recipe_grocery.get_quantity(), recipe_grocery.get_unit()
+            recipe_qty, recipe_unit_id = recipe_grocery.get_quantity(), recipe_grocery.get_unit_id()
+            recipe_unit = self.get_measure_by_id(recipe_unit_id).get_unit()
             item_matched = False
 
             for fridge_grocery in fridge_content:
-                if fridge_grocery.get_grocery_name() == recipe_grocery.get_grocery_name():
-                    fridge_unit_id = fridge_grocery.get_unit()
-                    if recipe_unit_id == 7:
+                if fridge_grocery.get_grocery_id() == recipe_grocery.get_grocery_id():
+                    fridge_unit_id = fridge_grocery.get_unit_id()
+                    if recipe_unit.lower() == "prise":
                         if fridge_grocery.get_quantity() > 0:
                             item_matched = True
                             break
                         else:
                             response_messages.append(
-                                f"{recipe_grocery.get_grocery_name()} ist nicht vorhanden oder leer.")
+                                f"{recipe_grocery.get_grocery_id()} ist nicht vorhanden oder leer.")
                             break
                     elif self.are_units_compatible(recipe_unit_id, fridge_unit_id):
                         fridge_qty = self.convert_unit(fridge_grocery.get_quantity(), fridge_unit_id, recipe_unit_id)
@@ -553,50 +561,73 @@ class Administration():
                         if fridge_unit_id == recipe_unit_id:
                             continue
 
-            if not item_matched and recipe_unit_id != 7:
+            if not item_matched and recipe_unit.lower() != "prise":
                 response_messages.append(
-                    f"Keine kompatible Maßeinheit gefunden für '{recipe_grocery.get_grocery_name()}'.")
+                    f"Keine kompatible Maßeinheit gefunden für '{recipe_grocery.get_grocery_id()}'.")
 
         if response_messages:
             return " ".join(response_messages)
         return "Kühlschrankinhalt erfolgreich aktualisiert"
 
-    def find_recipes_by_fridge_contents(self, household_id):
-        recipes = self.get_recipe_by_household_id(household_id)
+    def check_recipes(self, fridge_id):
+        recipes = self.get_recipe_by_fridge_id(fridge_id)
+        fridge_content = self.get_grocery_in_fridge(fridge_id)
 
-        fridge = self.get_fridge_of_household(household_id)
-        if not fridge:
-            return "Kein Fridge in diesem Haushalt."
+        if not recipes or not fridge_content:
+            return "Rezepte oder Kühlschrankinhalt nicht gefunden"
 
-        fridge_contents = self.get_grocerystatement_by_fridge(fridge[0].get_id())
-        fridge_dict = {item.get_grocery_name(): (item.get_quantity(), item.get_unit()) for item in fridge_contents}
+        response_messages = []
 
-        feasible_recipes = []
         for recipe in recipes:
-            recipe_ingredients = self.get_grocerystatement_by_recipe(recipe.get_id())
-            can_make = True
+            recipe_content = self.get_grocerystatement_by_recipe(recipe.get_id())
             missing_ingredients = []
+            can_cook = True
 
-            for ingredient in recipe_ingredients:
-                required_amount = ingredient.get_quantity()
-                required_unit_id = ingredient.get_unit()
-                required_unit = self.get_measure_by_id(required_unit_id).get_unit()
+            for recipe_grocery in recipe_content:
+                recipe_qty, recipe_unit_id = recipe_grocery.get_quantity(), recipe_grocery.get_unit_id()
+                recipe_unit = self.get_measure_by_id(recipe_unit_id).get_unit()
+                item_matched = False
+                not_enough = False
 
-                available_amount, available_unit_id = fridge_dict.get(ingredient.get_grocery_name(), (0, None))
-                if available_unit_id:
-                    available_unit = self.get_measure_by_id(available_unit_id).get_unit()
-                else:
-                    available_unit = None
+                for fridge_grocery in fridge_content:
+                    if fridge_grocery.get_grocery_id() == recipe_grocery.get_grocery_id():
+                        fridge_unit_id = fridge_grocery.get_unit_id()
+                        if recipe_unit.lower() == "prise":
+                            fridge_qty = fridge_grocery.get_quantity()
+                            if fridge_qty < recipe_qty:
+                                not_enough = True
+                                continue
+                            else:
+                                item_matched = True
+                                break
+                        elif self.are_units_compatible(recipe_unit_id, fridge_unit_id):
+                            fridge_qty = self.convert_unit(fridge_grocery.get_quantity(), fridge_unit_id,
+                                                           recipe_unit_id)
+                            if fridge_qty < recipe_qty:
+                                not_enough = True
+                                continue
+                            else:
+                                item_matched = True
+                                break
+                        else:
+                            if fridge_unit_id == recipe_unit_id:
+                                continue
 
-                if required_amount > available_amount or required_unit != available_unit:
-                    can_make = False
-                    missing_qty = required_amount - available_amount if available_amount else required_amount
-                    missing_ingredients.append((ingredient.get_grocery_name(), f"{missing_qty} {required_unit} benötigt"))
+                if not item_matched and recipe_unit.lower() != "prise":
+                    grocery_name = self.get_grocery_by_id(recipe_grocery.get_grocery_id()).get_grocery_name()
+                    unit_name = self.get_measure_by_id(recipe_unit_id).get_unit()
+                    if not_enough:
+                        missing_ingredients.append(f"Es fehlen {recipe_qty} {unit_name} von '{grocery_name}'")
+                    else:
+                        missing_ingredients.append(f"Keine kompatible Maßeinheit gefunden für '{grocery_name}'")
+                    can_cook = False
 
-            if can_make:
-                feasible_recipes.append((recipe.get_recipe_name(), "Alle Zutaten verfügbar, Rezept kann zubereitet werden."))
+            if can_cook:
+                response_message = f"{recipe.get_recipe_name()} kann gekocht werden."
             else:
-                feasible_recipes.append((recipe.get_recipe_name(), "Fehlende Zutat/en: " + ", ".join(
-                    [f"{name}: {qty}" for name, qty in missing_ingredients])))
+                response_message = f"{recipe.get_recipe_name()} kann nicht gekocht werden. " + ", ".join(
+                    missing_ingredients)
 
-        return feasible_recipes
+            response_messages.append(response_message)
+
+        return response_messages
