@@ -88,7 +88,7 @@ class App extends Component {
         return userBOs;
       })
       .catch((e) => {
-        console.error("Error loading users: ", e);
+        // console.error("Error loading users: ", e);
         throw e;
       });
   };
@@ -117,7 +117,7 @@ class App extends Component {
         return addedUser;
       })
       .catch((e) => {
-        console.error("Error adding user: ", e);
+        // console.error("Error adding user: ", e);
         throw e;
       });
   };
@@ -142,15 +142,15 @@ class App extends Component {
             });
 
             // Print user information
-            console.log("User information:");
-            console.log("Display Name:", user.displayName);
-            console.log("Email:", user.email);
-            console.log("UID:", user.uid);
-            console.log("Nickname:", user.nickname);
+            // console.log("User information:");
+            // console.log("Display Name:", user.displayName);
+            // console.log("Email:", user.email);
+            // console.log("UID:", user.uid);
+            // console.log("Nickname:", user.nickname);
 
             // Split email and print the part before '@'
             const emailLocalPart = user.email.split("@")[0];
-            console.log("Email Local Part:", emailLocalPart);
+            // console.log("Email Local Part:", emailLocalPart);
 
             this.getUsers()
               .then((userBOs) => {
@@ -159,7 +159,7 @@ class App extends Component {
                 );
 
                 if (!existingUser) {
-                  console.log("User does not exist in the database");
+                  // console.log("User does not exist in the database");
                   this.addUsers().catch((e) => {
                     if (e.response && e.response.status === 409) {
                       console.log("User already exists in the database");
@@ -170,7 +170,7 @@ class App extends Component {
                 } else {
                   console.log("User already exists in the database");
                   this.setState({ user: existingUser });
-                  console.log(existingUser);
+                  // console.log(existingUser);
                 }
               })
               .catch((e) => {
@@ -198,7 +198,7 @@ class App extends Component {
 
   handleOpenDialog = (Id, type) => {
     // console.log(Id, type)
-    console.log("App.js => Dialog opened");
+    // console.log("App.js => Dialog opened");
     // console.log(deleteId);
     this.setState({
       dialogType: type,
@@ -208,7 +208,7 @@ class App extends Component {
   };
 
   handleCloseDialog = () => {
-    console.log("App.js => Dialog closed");
+    // console.log("App.js => Dialog closed");
     this.setState({ dialogOpen: false, dialogType: "" });
   };
 
