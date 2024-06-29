@@ -36,9 +36,6 @@ const Grocery = ({
     return <div>Loading...</div>;
   }
 
-  // console.log("measureNames in Grocery.js", measureNames);
-  // console.log("groceryNames in Grocery.js", groceryNames);
-
   return groceryStatements.map((grocery) => (
     <Paper
       key={grocery.id}
@@ -76,8 +73,8 @@ const Grocery = ({
 
       <Menu
         MenuListProps={{ "aria-labelledby": "long-button" }}
-        anchorEl={anchorEls[grocery.id]}
-        open={openMenus[grocery.id]}
+        anchorEl={anchorEls[grocery.id] || null}
+        open={openMenus[grocery.id] || false}
         onClose={() => handleAnchorClose(grocery.id)}
       >
         <MenuItem

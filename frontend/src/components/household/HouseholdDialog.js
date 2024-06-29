@@ -80,8 +80,8 @@ class HouseholdDialog extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("Householddata aus State", this.state.householdData);
-    console.log("Inhabitants aus Dialog", this.props.inhabitants);
+    // console.log("Householddata aus State", this.state.householdData);
+    // console.log("Inhabitants aus Dialog", this.props.inhabitants);
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.household_name !== this.props.household_name ||
@@ -106,7 +106,7 @@ class HouseholdDialog extends Component {
     const form = e.target.closest("form");
     if (form.checkValidity()) {
       this.props.handleCreateObject(householdData);
-      console.log("Form is valid");
+      // console.log("Form is valid");
     } else {
       this.setState({ showAlert: true });
     }
@@ -132,12 +132,12 @@ class HouseholdDialog extends Component {
   };
 
   deleteInhabitantByUserIdHouseholdId = (userId, household_id) => {
-    console.log("Bewohner erfolgreich gelöscht");
-    console.log(userId, household_id);
-    console.log(
-      "Das sind die Inhabitants die gelöscht wurden",
-      this.state.householdData.inhabitants
-    );
+    // console.log("Bewohner erfolgreich gelöscht");
+    // console.log(userId, household_id);
+    // console.log(
+    //   "Das sind die Inhabitants die gelöscht wurden",
+    //   this.state.householdData.inhabitants
+    // );
 
     SmartFridgeAPI.getAPI()
       .deleteInhabitant(userId, household_id)
@@ -186,7 +186,7 @@ class HouseholdDialog extends Component {
   // };
 
   handleDeleteInhabitant = (inhabitant) => {
-    console.log(inhabitant);
+    // console.log(inhabitant);
 
     this.setState((prevState) => ({
       householdData: {
@@ -200,12 +200,12 @@ class HouseholdDialog extends Component {
 
   getHouseholdsByUserId = () => {
     const user = this.context;
-    console.log(user);
+    // console.log(user);
 
     SmartFridgeAPI.getAPI()
       .getHouseholdsByUserId(user.id)
       .then((households) => {
-        console.log(households);
+        // console.log(households);
         this.setState({
           households: households,
         });
