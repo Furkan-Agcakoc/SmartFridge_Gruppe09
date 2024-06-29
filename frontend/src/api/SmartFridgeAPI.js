@@ -63,6 +63,11 @@ export default class SmartFridgeAPI {
   #getGroceryInFridgeByIdURL = (fridge_id) =>
     `${this.#SmartFridgeBaseURL}/grocery_in_fridge/${fridge_id}`;
 
+  #addGroceryinRecipeURL = () =>
+    `${this.#SmartFridgeBaseURL}/grocery_in_recipe`;
+  #getGroceryInRecipeByIdURL = (recipe_id) =>
+    `${this.#SmartFridgeBaseURL}/grocery_in_recipe/${recipe_id}`;
+
   // household related
   #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household/`;
   #getHouseholdByIdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
@@ -395,6 +400,33 @@ export default class SmartFridgeAPI {
       return new Promise(function (resolve) {
         resolve(responseGroceryStatementBO);
       });
+    });
+  }
+
+  getGroceryInRecipeId(recipeId) {
+    return this.#fetchAdvanced(this.#getGroceryInRecipeByIdURL(recipeId)).then(
+      (responseJSON) => {
+        let groceryStatementBOs = responseJSON;
+        return new Promise(function (resolve) {
+          resolve(groceryStatementBOs);
+        });
+      }
+    );
+  }
+
+  addGroceryinRecipe(grocerystatementId, recipeId) {
+    console.log(
+      JSON.stringify("Das ist die GrocerystatementID", grocerystatementId)
+    );
+    return this.#fetchAdvanced(this.#addGroceryinRecipeURL(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        grocerystatement_id: grocerystatementId,
+        recipe_id: recipeId,
+      }),
     });
   }
 
