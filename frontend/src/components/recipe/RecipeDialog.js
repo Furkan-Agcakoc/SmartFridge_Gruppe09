@@ -32,10 +32,10 @@ class RecipeDialog extends Component {
         name: "",
       },
       recipeData: {
-        title: props.isEditMode ? props.recipeTitle : "",
+        recipe_name: props.isEditMode ? props.recipe_name : "",
         duration: props.isEditMode ? props.recipeDuration : "",
-        servings: props.isEditMode ? props.recipeServings : "",
-        instructions: props.isEditMode ? props.recipeInstructions : "",
+        portion: props.isEditMode ? props.portion : "",
+        instruction: props.isEditMode ? props.instruction : "",
         groceryUnit: ["g", "kg", "ml", "l", "Stück"],
         ingredients:
           props.isEditMode && props.recipeIngredients
@@ -48,18 +48,18 @@ class RecipeDialog extends Component {
   componentDidUpdate(prevProps) {
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
-      prevProps.recipeTitle !== this.props.recipeTitle ||
+      prevProps.recipe_name !== this.props.recipe_name ||
       prevProps.recipeDuration !== this.props.recipeDuration ||
-      prevProps.recipeServings !== this.props.recipeServings ||
-      prevProps.recipeInstructions !== this.props.recipeInstructions ||
+      prevProps.portion !== this.props.portion ||
+      prevProps.instruction !== this.props.instruction ||
       prevProps.recipeIngredients !== this.props.recipeIngredients
     ) {
       this.setState({
         recipeData: {
-          title: this.props.recipeTitle,
+          recipe_name: this.props.recipe_name,
           duration: this.props.recipeDuration,
-          servings: this.props.recipeServings,
-          instructions: this.props.recipeInstructions,
+          portion: this.props.portion,
+          instruction: this.props.instruction,
           groceryUnit: ["g", "kg", "ml", "l", "Stück"],
           ingredients: Array.isArray(this.props.recipeIngredients)
             ? this.props.recipeIngredients
@@ -127,16 +127,18 @@ class RecipeDialog extends Component {
       });
   };
 
+  
+
 
   render() {
     const { handlePopupRecipeClose, isEditMode } = this.props;
     const {
       showAlert,
       recipeData: {
-        title,
+        recipe_name,
         duration,
-        servings,
-        instructions,
+        portion,
+        instruction,
         groceryUnit,
         ingredients,
       },
@@ -213,18 +215,18 @@ class RecipeDialog extends Component {
             >
               <TextField
                 required
-                value={title}
+                value={recipe_name}
                 onChange={(e) =>
                   this.setState({
                     recipeData: {
                       ...this.state.recipeData,
-                      title: e.target.value,
+                      recipe_name: e.target.value,
                     },
                   })
                 }
                 onInput={() => this.setState({ showAlert: false })}
                 id="outlined-required"
-                name="title"
+                name="recipe_name"
                 label="Rezepttitel"
                 placeholder="Rezepttitel"
                 InputLabelProps={{ style: { fontSize: "15px" } }}
@@ -259,18 +261,20 @@ class RecipeDialog extends Component {
                 />
                 <TextField
                   required
-                  value={servings}
-                  onChange={(e) =>
+                  value={portion}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value)
                     this.setState({
                       recipeData: {
                         ...this.state.recipeData,
-                        servings: e.target.value,
+                        portion: value,
                       },
                     })
                   }
+                  }
                   onInput={() => this.setState({ showAlert: false })}
                   id="outlined-required"
-                  name="servings"
+                  name="portion"
                   label="Portionen"
                   placeholder="Portionen"
                   InputLabelProps={{ style: { fontSize: "15px" } }}
@@ -487,13 +491,13 @@ class RecipeDialog extends Component {
                 InputLabelProps={{ style: { fontSize: "15px" } }}
                 multiline
                 rows={5}
-                name="instructions"
-                value={instructions}
+                name="instruction"
+                value={instruction}
                 onChange={(e) =>
                   this.setState({
                     recipeData: {
                       ...this.state.recipeData,
-                      instructions: e.target.value,
+                      instruction: e.target.value,
                     },
                   })
                 }

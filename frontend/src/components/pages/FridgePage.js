@@ -185,12 +185,9 @@ class FridgePage extends Component {
         const fridgeId = response.id;
 
         // Logge die fridge_id zur Überprüfung
-        console.log("Fridge ID", fridgeId);
 
         // Aktualisiere den Zustand mit der fridge_id
         this.setState({ fridgeId: fridgeId });
-        console.log("Fridge ID in State", fridgeId);
-
         return fridgeId;
       })
       .catch((error) => {
@@ -448,9 +445,48 @@ class FridgePage extends Component {
     });
   };
 
-  handleCreateRecipes = (recipeData) => {
-    console.log("Recipe-Popup closed recipe recipe");
-    const { currentlyEditing, recipes } = this.state;
+  // handleAddGrocery = async () => {
+  //   try {
+  //     const groceryId = await this.getGroceryByName();
+  //     const measureId = await this.getMeasureByName();
+  //     await this.addGroceryStatement(groceryId, measureId);
+  //   } catch (error) {
+  //     console.error("Error in handleAddGrocery:", error);
+  //   }
+  // };
+
+  // addGrocery = (newGroceryName) => {
+  //   const { fridgeId } = this.state;
+  //   const newGrocery = new GroceryBO(newGroceryName, fridgeId);
+
+  //   SmartFridgeAPI.getAPI()
+  //     .addGrocery(newGrocery)
+  //     .then((grocery) => {
+  //       this.setState((prevState) => ({
+  //         foodOptions: [...prevState.foodOptions, grocery.getGroceryName()],
+  //       }));
+  //     });
+  // };
+
+
+  handleCreateRecipes = async (recipeData) => {
+    console.log('Recipe Data after filling in FridgePage ===>', recipeData);
+    const { currentlyEditing, recipes, fridgeId } = this.state;
+    const userId = this.context.id;
+
+    const {ingredients, groceryUnit, ...rest} = recipeData
+
+    const newRecipeData = {
+      ...rest,
+      fridge_id: fridgeId,
+      user_id: userId,
+      id: 0
+    }
+
+    console.log('newRecipeData after filling in FridgePage ===>', newRecipeData);
+
+
+    await SmartFridgeAPI.getAPI().addRecipe(newRecipeData)
 
     if (currentlyEditing !== null) {
       const updatedRecipes = this.updateRecipe({

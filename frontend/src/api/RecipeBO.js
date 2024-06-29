@@ -5,7 +5,7 @@ import BusinessObject from './BusinessObject';
  */
 export default class RecipeBO extends BusinessObject {
 
-    constructor(aRecipe_name, aDuration, aPortion, aInstruction, aUser_id, aFridge_id) {
+    constructor(aRecipe_name, aDuration, aPortion, aInstruction, aUser_id, aFridge_id, aId) {
         super();
         this.recipe_name = aRecipe_name;
         this.duration = aDuration;

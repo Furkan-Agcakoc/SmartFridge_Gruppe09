@@ -86,7 +86,7 @@ export default class SmartFridgeAPI {
   #getRecipeByNameURL = (recipe_name) =>
     `${this.#SmartFridgeBaseURL}/recipe/${recipe_name}}`;
   #getRecipeByIdURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
-  #addRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe`;
+  #addRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/`;
   #deleteRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
   #updateRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
 
@@ -662,6 +662,8 @@ export default class SmartFridgeAPI {
   }
 
   addRecipe(recipeBO) {
+
+    console.log('RECIPE BO ====>', recipeBO)
     return this.#fetchAdvanced(this.#addRecipeURL(), {
       method: "POST",
       headers: {
