@@ -64,7 +64,7 @@ class FridgePage extends Component {
   componentDidMount() {
     const { householdId } = this.props.params; // HouseholdId aus den Props ziehen
     this.setState({ householdId });
-    console.log("HouseholdId von FridgePage", householdId);
+    // console.log("HouseholdId von FridgePage", householdId);
     this.getFridgeByHouseholdId(householdId);
     this.getHouseholdNameById(householdId); // Den Haushaltsnamen laden
     // this.getGroceries(); // Lebensmittel laden
@@ -72,7 +72,7 @@ class FridgePage extends Component {
   }
 
   componentDidUpdate() {
-    console.log("Geändert", this.state.fridgeId);
+    // console.log("Geändert", this.state.fridgeId);
   }
   // #####################APIS###########################
 
@@ -98,14 +98,12 @@ class FridgePage extends Component {
               ? measureResponse[0]
               : measureResponse;
 
-            return {
-              ...statement,
-              grocery_name:
-                grocery && grocery.grocery_name
-                  ? grocery.grocery_name
-                  : "Unknown",
-              unit_name: measure && measure.unit ? measure.unit : "Unknown",
-            };
+              return {
+                ...statement,
+                grocery_name: grocery?.grocery_name ?? "Unknown",
+                unit_name: measure?.unit ?? "Unknown",
+              };
+              
           } catch (error) {
             console.error("Error processing statement:", statement, error);
             return {
@@ -119,7 +117,7 @@ class FridgePage extends Component {
       console.log("updatedGroceryStatements ===>", updatedGroceryStatements);
       this.setState({ updatedGroceryStatements });
     } catch (error) {
-      console.error("Error fetching grocery statements:", error);
+      // console.error("Error fetching grocery statements:", error);
     }
   };
 
@@ -133,7 +131,6 @@ class FridgePage extends Component {
   };
 
   getMeasureById = async (measureId) => {
-    console.log("unit_id von getMeasureById =====>", measureId);
     try {
       const measure = await SmartFridgeAPI.getAPI().getMeasureById(measureId);
       return measure;
