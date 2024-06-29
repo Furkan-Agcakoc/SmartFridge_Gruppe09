@@ -697,7 +697,7 @@ export default class SmartFridgeAPI {
 
   getUser() {
     const url = this.#getUserURL();
-    console.log("Fetching URL:", url); // Debugging-Zweck
+    // console.log("Fetching URL:", url); // Debugging-Zweck
     return this.#fetchAdvanced(url)
       .then((responseJSON) => {
         let userBOs = UserBO.fromJSON(responseJSON);
