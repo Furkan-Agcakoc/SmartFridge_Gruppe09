@@ -28,7 +28,7 @@ class GroceryDialog extends Component {
     this.state = {
       popupOpen: false,
       groceryData: {
-        name: props.isEditMode ? props.groceryName  : "",
+        name: props.isEditMode ? props.groceryName : "",
         quantity: props.isEditMode ? props.groceryQuantity : "",
         unit: props.isEditMode ? props.groceryUnit : "",
       },
@@ -157,9 +157,15 @@ class GroceryDialog extends Component {
       this.setState({ groceryStatement: groceryStatement });
       const groceryStatementId = groceryStatement.id;
       console.log("groceryStatementId:", groceryStatementId);
-      const groceryStatementAddedInFridge = await SmartFridgeAPI.getAPI().addGroceryinFridge(groceryStatementId, fridgeId)
-      console.log("groceryStatementAddedInFridge:", groceryStatementAddedInFridge);
-
+      const groceryStatementAddedInFridge =
+        await SmartFridgeAPI.getAPI().addGroceryinFridge(
+          groceryStatementId,
+          fridgeId
+        );
+      console.log(
+        "groceryStatementAddedInFridge:",
+        groceryStatementAddedInFridge
+      );
     } catch (error) {
       console.error("Error adding grocery statement:", error);
     }
@@ -204,14 +210,11 @@ class GroceryDialog extends Component {
     }
   };
 
-
-
   // handleAddGroceryStatement = async () => {
   //   try {
   //     const groceryStatementId = await this.addGroceryStatement();
   //     console.log("Grocery statement added:", groceryStatementId);
   //     await this.addGroceryStatement
-
 
   handleAddGrocery = async () => {
     try {
@@ -222,7 +225,6 @@ class GroceryDialog extends Component {
       console.error("Error in handleAddGrocery:", error);
     }
   };
-
 
   // const { quantity } = this.state;
   // useQuantityValue = (quantity) => {
