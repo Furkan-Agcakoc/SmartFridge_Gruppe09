@@ -139,12 +139,15 @@ class FridgePage extends Component {
     }
   };
 
+  refreshGroceryList = async () => {
+    const { fridgeId } = this.state;
+    await this.getGroceryInFridgeId(fridgeId);
+  };
+
   // #######################NO APIS###############################
 
-  refreshGroceryList(grocery) {
-    console.log("Grocery in Fridge", grocery);
-    this.setState({ groceries: grocery });
-  }
+
+
 
   groceryStatement(statement) {
     console.log("Statement von Fridgepage", statement);
@@ -690,6 +693,7 @@ class FridgePage extends Component {
                       handlePopupGroceryClose={this.handlePopupGroceryClose}
                       handleCreateGroceries={this.handleCreateGroceries}
                       foodOptions={groceries.map((g) => g.groceryName)} // pass foodOptions to GroceryDialog
+                      refreshGroceryList={this.refreshGroceryList}
                     />
                   )}
                   <DeleteConfirmationDialog

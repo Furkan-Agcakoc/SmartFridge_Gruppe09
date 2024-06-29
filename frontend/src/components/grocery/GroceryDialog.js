@@ -51,7 +51,6 @@ class GroceryDialog extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log('previous props ===>', prevProps)
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.groceryName !== this.props.groceryName ||
@@ -136,6 +135,7 @@ class GroceryDialog extends Component {
         this.state.groceryStatement.groceryId
       );
 
+      this.props.refreshGroceryList();
       this.props.handlePopupGroceryClose();
     } else {
       console.log("Form is not valid, showing alert.");
@@ -259,16 +259,9 @@ class GroceryDialog extends Component {
     SmartFridgeAPI.getAPI()
       .getMeasureByFridgeId(fridgeId)
       .then((measures) => {
-        const groceryUnit = measures.map((measure) => ({
-          unit: measure.getUnit(),
-          id: measure.getUnitId()
-        }));
-        
         this.setState({
           measureOptions: measures.map((measure) => measure.getUnit()),
         });
-  
-        console.log('groceryUnit:', groceryUnit);
       });
   };
 
@@ -302,12 +295,9 @@ class GroceryDialog extends Component {
     } = this.state;
 
     const sortedFoodOptions = foodOptions.sort((a, b) => a.localeCompare(b));
-
     const sortedMeasureOptions = measureOptions.sort((a, b) =>
-      a.unit.localeCompare(b.unit)
+      a.localeCompare(b)
     );
-
-
     return (
       <>
         <Box
@@ -473,28 +463,19 @@ class GroceryDialog extends Component {
                   freeSolo
                   onChange={(event, newValue) => {
                     let updatedUnit = "";
-                    let updatedUnitId = null;
                     if (newValue === null) {
                       updatedUnit = "";
-                      updatedUnitId = null;
                     } else if (typeof newValue === "string") {
                       updatedUnit = newValue;
-                      const foundUnit = sortedMeasureOptions.find(opt => opt.unit === newValue);
-                      updatedUnitId = foundUnit ? foundUnit.id : null;
                     } else if (newValue && newValue.inputValue) {
                       updatedUnit = newValue.inputValue;
-                      const foundUnit = sortedMeasureOptions.find(opt => opt.unit === newValue.inputValue);
-                      updatedUnitId = foundUnit ? foundUnit.id : null;                      
                     } else {
                       updatedUnit = newValue.title;
-                      updatedUnitId = newValue.id;
                     }
-                    console.log('MEASUREMENTS NEW VALUE ===>', newValue)
                     this.setState({
                       groceryData: {
                         ...this.state.groceryData,
                         unit: updatedUnit,
-                        unit_id: updatedUnitId 
                       },
                       newMeasurement: updatedUnit,
                     });
