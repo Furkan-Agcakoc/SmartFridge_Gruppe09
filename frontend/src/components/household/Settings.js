@@ -27,9 +27,12 @@ class Settings extends Component {
     this.state = {
       groceries: [],
       measures: [],
-      modalOpen: false,
+      modalOpenGrocery: false,
+      modalOpenMeasure: false,
       selectedGrocery: null,
+      selectedMeasure: null,
       editedGroceryName: "",
+      editedMeasureName: "",
     };
   }
 
@@ -78,24 +81,44 @@ class Settings extends Component {
       });
   };
 
-  handleOpenModal = (grocery) => {
+  handleOpenGroceryModal = (grocery) => {
     this.setState({
-      modalOpen: true,
+      modalOpenGrocery: true,
       selectedGrocery: grocery,
       editedGroceryName: grocery.grocery_name,
     });
   };
 
-  handleCloseModal = () => {
+  handleCloseGroceryModal = () => {
     this.setState({
-      modalOpen: false,
+      modalOpenGrocery: false,
       selectedGrocery: null,
       editedGroceryName: "",
     });
   };
 
-  handleEditChange = (event) => {
+  handleOpenMeasureModal = (measure) => {
+    this.setState({
+      modalOpenMeasure: true,
+      selectedMeasure: measure,
+      editedMeasureName: measure.unit,
+    });
+  };
+
+  handleCloseMeasureModal = () => {
+    this.setState({
+      modalOpenMeasure: false,
+      selectedMeasure: null,
+      editedMeasureName: "",
+    });
+  };
+
+  handleEditGroceryChange = (event) => {
     this.setState({ editedGroceryName: event.target.value });
+  };
+
+  handleEditMeasureChange = (event) => {
+    this.setState({ editedMeasureName: event.target.value });
   };
 
   handleUpdateGrocery = () => {
@@ -116,7 +139,7 @@ class Settings extends Component {
 
           this.setState({
             groceries: updatedGroceries,
-            modalOpen: false,
+            modalOpenGrocery: false,
             selectedGrocery: null,
             editedGroceryName: "",
           });
@@ -127,8 +150,44 @@ class Settings extends Component {
     }
   };
 
+  handleUpdateMeasure = () => {
+    const { selectedMeasure, editedMeasureName, measures } = this.state;
+
+    if (selectedMeasure !== null) {
+      SmartFridgeAPI.getAPI()
+        .updateMeasure({
+          id: selectedMeasure.id,
+          unit: editedMeasureName,
+        })
+        .then((updatedMeasure) => {
+          const updatedMeasures = measures.map((measure) =>
+            measure.id === selectedMeasure.id
+              ? { ...measure, unit: editedMeasureName }
+              : measure
+          );
+
+          this.setState({
+            measures: updatedMeasures,
+            modalOpenMeasure: false,
+            selectedMeasure: null,
+            editedMeasureName: "",
+          });
+        })
+        .catch((error) => {
+          console.error("Error updating measure:", error);
+        });
+    }
+  };
+
   render() {
-    const { groceries, measures, modalOpen, editedGroceryName } = this.state;
+    const {
+      groceries,
+      measures,
+      modalOpenGrocery,
+      modalOpenMeasure,
+      editedGroceryName,
+      editedMeasureName,
+    } = this.state;
 
     return (
       <>
@@ -141,7 +200,7 @@ class Settings extends Component {
           }}
         >
           <Paper>
-            <Typography variant="h5" sx={{ p: 2, fontWeight: "bold" }}>
+            <Typography variant="h5" sx={{ ml: 1, p: 2, fontWeight: "bold" }}>
               Haushalt verwalten
             </Typography>
             <Accordion sx={{ minWidth: "850px" }}>
@@ -150,30 +209,60 @@ class Settings extends Component {
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
-                <Typography sx={{ fontWeight: "bold" }}>
+                <Typography sx={{ ml: 1, fontWeight: "bold" }}>
                   Lebensmittel bearbeiten
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
-                <List>
+              <AccordionDetails
+                sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
+              >
+                <List sx={{ width: "600px" }}>
                   {groceries.map((grocery) => (
-                    <ListItem key={grocery.id}>
+                    <ListItem
+                      key={grocery.id}
+                      sx={{
+                        m: "5px",
+                        boxShadow: 2,
+                        borderRadius: "10px",
+                      }}
+                    >
+                      <IconButton
+                        edge="end"
+                        aria-label="edit"
+                        onClick={() => this.handleOpenGroceryModal(grocery)}
+                        sx={{
+                          m: "5px",
+                          boxShadow: 2,
+                          bgcolor: "background.white",
+                          "&:hover": {
+                            bgcolor: "primary.main",
+                            color: "background.default",
+                          },
+                        }}
+                      >
+                        <EditIcon sx={{ width: "18px", height: "auto" }} />
+                      </IconButton>
                       <ListItemText primary={grocery.grocery_name} />
-                      <Container sx={{ gap: "10px" }}>
+                      <Container sx={{ display: "flex", gap: "10px" }}>
                         <ListItemSecondaryAction>
-                          <IconButton
-                            edge="end"
-                            aria-label="edit"
-                            onClick={() => this.handleOpenModal(grocery)}
-                          >
-                            <EditIcon />
-                          </IconButton>
                           <IconButton
                             edge="end"
                             aria-label="delete"
                             onClick={() => this.deleteGrocery(grocery)}
+                            sx={{
+                              m: "5px",
+                              color: "error.main",
+                              boxShadow: 2,
+
+                              "&:hover": {
+                                bgcolor: "error.main",
+                                color: "background.default",
+                              },
+                            }}
                           >
-                            <DeleteIcon />
+                            <DeleteIcon
+                              sx={{ width: "18px", height: "auto" }}
+                            />
                           </IconButton>
                         </ListItemSecondaryAction>
                       </Container>
@@ -188,26 +277,60 @@ class Settings extends Component {
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
-                <Typography sx={{ fontWeight: "bold" }}>
+                <Typography sx={{ ml: 1, fontWeight: "bold" }}>
                   Einheit bearbeiten
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
-                <List>
+              <AccordionDetails
+                sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
+              >
+                <List sx={{ width: "600px" }}>
                   {measures.map((measure) => (
-                    <ListItem key={measure.id}>
+                    <ListItem
+                      key={measure.id}
+                      sx={{
+                        m: "5px",
+                        boxShadow: 2,
+                        borderRadius: "10px",
+                      }}
+                    >
+                      <IconButton
+                        edge="end"
+                        aria-label="edit"
+                        onClick={() => this.handleOpenMeasureModal(measure)}
+                        sx={{
+                          m: "5px",
+                          boxShadow: 2,
+                          bgcolor: "background.white",
+                          "&:hover": {
+                            bgcolor: "primary.main",
+                            color: "background.default",
+                          },
+                        }}
+                      >
+                        <EditIcon sx={{ width: "18px", height: "auto" }} />
+                      </IconButton>
                       <ListItemText primary={measure.unit} />
                       <Container sx={{ display: "flex", gap: "10px" }}>
                         <ListItemSecondaryAction>
-                          <IconButton edge="end" aria-label="edit">
-                            <EditIcon />
-                          </IconButton>
                           <IconButton
                             edge="end"
                             aria-label="delete"
                             onClick={() => this.deleteMeasure(measure)}
+                            sx={{
+                              m: "5px",
+                              color: "error.main",
+                              boxShadow: 2,
+
+                              "&:hover": {
+                                bgcolor: "error.main",
+                                color: "background.default",
+                              },
+                            }}
                           >
-                            <DeleteIcon />
+                            <DeleteIcon
+                              sx={{ width: "18px", height: "auto" }}
+                            />
                           </IconButton>
                         </ListItemSecondaryAction>
                       </Container>
@@ -218,48 +341,133 @@ class Settings extends Component {
             </Accordion>
           </Paper>
         </Container>
-        <Modal open={modalOpen} onClose={this.handleCloseModal}>
-          <Box
+         {/* Modal für Lebensmittel */}
+    <Modal open={modalOpenGrocery} onClose={this.handleCloseGroceryModal}>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: 4,
+          borderRadius: "20px",
+        }}
+      >
+        <Typography variant="h6" component="h2" fontWeight={"bold"}>
+          Lebensmittel bearbeiten
+        </Typography>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Name"
+          value={editedGroceryName}
+          onChange={this.handleEditGroceryChange}
+        />
+        <Container
+          sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleUpdateGrocery}
             sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "background.paper",
-              border: "2px solid #000",
-              boxShadow: 24,
-              p: 4,
+              mt: 2,
+              width: "125px",
+              "&:hover": {
+                bgcolor: "primary.dark",
+                color: "background.default",
+              },
             }}
           >
-            <Typography variant="h6" component="h2">
-              Lebensmittel bearbeiten
-            </Typography>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Name"
-              value={editedGroceryName}
-              onChange={this.handleEditChange}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleUpdateGrocery}
-              sx={{ mt: 2 }}
-            >
-              Speichern
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={this.handleCloseModal}
-              sx={{ mt: 2, ml: 2 }}
-            >
-              Abbrechen
-            </Button>
-          </Box>
-        </Modal>
+            Speichern
+          </Button>
+          <Button
+            variant="contained"
+            onClick={this.handleCloseGroceryModal}
+            sx={{
+              mt: 2,
+              ml: 2,
+              width: "125px",
+              color: "primary.dark",
+              bgcolor: "rgba(0, 50, 0, 0.1)",
+              "&:hover": {
+                bgcolor: "grey",
+                color: "background.default",
+              },
+            }}
+          >
+            Abbrechen
+          </Button>
+        </Container>
+      </Box>
+    </Modal>
+
+    {/* Modal für Einheiten */}
+    <Modal open={modalOpenMeasure} onClose={this.handleCloseMeasureModal}>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: 4,
+          borderRadius: "20px",
+        }}
+      >
+        <Typography variant="h6" component="h2" fontWeight={"bold"}>
+          Einheit bearbeiten
+        </Typography>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Einheit"
+          value={editedMeasureName}
+          onChange={this.handleEditMeasureChange}
+        />
+        <Container
+          sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleUpdateMeasure}
+            sx={{
+              mt: 2,
+              width: "125px",
+              "&:hover": {
+                bgcolor: "primary.dark",
+                color: "background.default",
+              },
+            }}
+          >
+            Speichern
+          </Button>
+          <Button
+            variant="contained"
+            onClick={this.handleCloseMeasureModal}
+            sx={{
+              mt: 2,
+              ml: 2,
+              width: "125px",
+              color: "primary.dark",
+              bgcolor: "rgba(0, 50, 0, 0.1)",
+              "&:hover": {
+                bgcolor: "grey",
+                color: "background.default",
+              },
+            }}
+          >
+            Abbrechen
+          </Button>
+        </Container>
+      </Box>
+    </Modal>
       </>
     );
   }
