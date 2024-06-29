@@ -50,7 +50,9 @@ class FridgePage extends Component {
       householdId: null,
       fridgeId: null,
       householdName: "",
-      groceryStatements: [],
+      groceryStatements: {},
+      groceryName: {},
+      measureName: {},
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -66,25 +68,101 @@ class FridgePage extends Component {
     this.getFridgeByHouseholdId(householdId);
     this.getHouseholdNameById(householdId); // Den Haushaltsnamen laden
     // this.getGroceries(); // Lebensmittel laden
+    this.getGroceryInFridgeId(householdId);
   }
 
   componentDidUpdate() {
     console.log("Geändert", this.state.fridgeId);
   }
-
-  // getGroceryById = (groceryId) => {
-  //   SmartFridgeAPI.getAPI()
+  // #####################APIS###########################
 
   getGroceryInFridgeId = async (fridgeId) => {
     try {
       const groceryStatements =
         await SmartFridgeAPI.getAPI().getGroceryInFridgeId(fridgeId);
-      return groceryStatements;
+
+      const updatedGroceryStatements = await Promise.all(
+        groceryStatements.map(async (statement) => {
+          try {
+            const groceryResponse = await this.getGroceryById(
+              statement.grocery_id
+            );
+            const measureResponse = await this.getMeasureById(
+              statement.unit_id
+            );
+
+            const grocery = Array.isArray(groceryResponse)
+              ? groceryResponse[0]
+              : groceryResponse;
+            const measure = Array.isArray(measureResponse)
+              ? measureResponse[0]
+              : measureResponse;
+
+            return {
+              ...statement,
+              grocery_name:
+                grocery && grocery.grocery_name
+                  ? grocery.grocery_name
+                  : "Unknown",
+              unit_name: measure && measure.unit ? measure.unit : "Unknown",
+            };
+          } catch (error) {
+            console.error("Error processing statement:", statement, error);
+            return {
+              ...statement,
+              grocery_name: "Unknown",
+              unit_name: "Unknown",
+            };
+          }
+        })
+      );
+      console.log("updatedGroceryStatements ===>", updatedGroceryStatements);
+      this.setState({ updatedGroceryStatements });
     } catch (error) {
       console.error("Error fetching grocery statements:", error);
-      return [];
     }
   };
+
+  getGroceryById = async (groceryId) => {
+    try {
+      const grocery = await SmartFridgeAPI.getAPI().getGroceryById(groceryId);
+      return grocery;
+    } catch (error) {
+      console.error("Error fetching grocery:", error);
+    }
+  };
+
+  getMeasureById = async (measureId) => {
+    console.log("unit_id von getMeasureById =====>", measureId);
+    try {
+      const measure = await SmartFridgeAPI.getAPI().getMeasureById(measureId);
+      return measure;
+    } catch (error) {
+      console.error("Error fetching measure:", error);
+    }
+  };
+
+  // #######################NO APIS###############################
+
+  refreshGroceryList(grocery) {
+    console.log("Grocery in Fridge", grocery);
+    this.setState({ groceries: grocery });
+  }
+
+  groceryStatement(statement) {
+    console.log("Statement von Fridgepage", statement);
+    const quantity = statement.map((statement) => statement.quantity);
+    console.log("Quantity", quantity);
+  }
+
+  groceryName(groceryName) {
+    console.log("GroceryName von Fridgepage", groceryName);
+    // console.log(groceryName.grocery.grocery_name);
+  }
+
+  measureName(measureName) {
+    console.log("MeasureName von Fridgepage", measureName);
+  }
 
   getHouseholdNameById = (householdId) => {
     SmartFridgeAPI.getAPI()
@@ -583,6 +661,9 @@ class FridgePage extends Component {
                       </Tooltip>
                     </Link>
                     <Grocery
+                      measureName={this.measureName}
+                      groceryName={this.groceryName}
+                      groceryStatement={this.groceryStatement}
                       getGroceryInFridgeId={this.getGroceryInFridgeId} // Neue Prop hinzufügen
                       fridgeId={this.state.fridgeId}
                       groceries={groceries}
@@ -593,6 +674,7 @@ class FridgePage extends Component {
                       openMenus={openMenus}
                       setIdToDelete={this.setIdToDelete}
                       handleOpenDialog={this.props.handleOpenDialog}
+                      groceryStatements={this.state.updatedGroceryStatements}
                     />
                   </TabPanel>
                   {popupGroceryOpen && (
