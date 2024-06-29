@@ -222,6 +222,8 @@ class GroceryDialog extends Component {
     }
   };
 
+
+  // const { quantity } = this.state;
   // useQuantityValue = (quantity) => {
   //   console.log("Current Quantity:", quantity);
   //   // You can add more logic here to use the quantity value
