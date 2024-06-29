@@ -13,9 +13,16 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import { createFilterOptions } from "@mui/material/Autocomplete";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutlineRounded";
 import AlertComponent from "../dialogs/AlertComponent";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import GroceryStatementBO from "../../api/GroceryStatementBO";
+import MeasureBO from "../../api/MeasureBO";
+import GroceryBO from "../../api/GroceryBO";
+
+const filter = createFilterOptions();
 
 class RecipeDialog extends Component {
   constructor(props) {
@@ -28,33 +35,44 @@ class RecipeDialog extends Component {
         name: "",
       },
       recipeData: {
-        title: props.isEditMode ? props.recipeTitle : "",
+        recipe_name: props.isEditMode ? props.recipe_name : "",
         duration: props.isEditMode ? props.recipeDuration : "",
-        servings: props.isEditMode ? props.recipeServings : "",
-        instructions: props.isEditMode ? props.recipeInstructions : "",
+        portion: props.isEditMode ? props.portion : "",
+        instruction: props.isEditMode ? props.instruction : "",
         groceryUnit: ["g", "kg", "ml", "l", "Stück"],
-        ingredients: props.isEditMode && props.recipeIngredients ? props.recipeIngredients : [],
+        ingredients:
+          props.isEditMode && props.recipeIngredients
+            ? props.recipeIngredients
+            : [],
       },
+      foodOptions: props.foodOptions || [],
+      measureOptions: props.measureOptions || [],
     };
+  }
+  componentDidMount() {
+    this.getGrocery();
+    this.getMeasure();
   }
 
   componentDidUpdate(prevProps) {
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
-      prevProps.recipeTitle !== this.props.recipeTitle ||
+      prevProps.recipe_name !== this.props.recipe_name ||
       prevProps.recipeDuration !== this.props.recipeDuration ||
-      prevProps.recipeServings !== this.props.recipeServings ||
-      prevProps.recipeInstructions !== this.props.recipeInstructions ||
+      prevProps.portion !== this.props.portion ||
+      prevProps.instruction !== this.props.instruction ||
       prevProps.recipeIngredients !== this.props.recipeIngredients
     ) {
       this.setState({
         recipeData: {
-          title: this.props.recipeTitle,
+          recipe_name: this.props.recipe_name,
           duration: this.props.recipeDuration,
-          servings: this.props.recipeServings,
-          instructions: this.props.recipeInstructions,
+          portion: this.props.portion,
+          instruction: this.props.instruction,
           groceryUnit: ["g", "kg", "ml", "l", "Stück"],
-          ingredients: Array.isArray(this.props.recipeIngredients) ? this.props.recipeIngredients : [],
+          ingredients: Array.isArray(this.props.recipeIngredients)
+            ? this.props.recipeIngredients
+            : [],
         },
       });
     }
@@ -89,32 +107,168 @@ class RecipeDialog extends Component {
     }));
   };
 
-  handleClick = (e) => {
-    const { recipeData } = this.state;
+  handleClick = async (e) => {
+    const {
+      recipeData,
+      newGrocery,
+      newMeasurement,
+      foodOptions,
+      measureOptions,
+    } = this.state;
     const form = e.target.closest("form");
     if (form.checkValidity() && recipeData.ingredients.length > 0) {
       console.log("Form submitted: ", recipeData);
       this.props.handleCreateRecipes(recipeData);
+
+      if (!foodOptions.includes(newGrocery)) {
+        console.log("New grocery item detected, adding to options...");
+        try {
+          await this.addGrocery(newGrocery);
+          console.log("Grocery added successfully.");
+          // await this.getGroceryByName();
+        } catch (error) {
+          console.error("Error adding grocery:", error);
+        }
+      } else {
+        console.log("Grocery item already exists, fetching details...");
+        // await this.getGroceryByName();
+        console.log(
+          "Grocery retrieved by name:",
+          this.state.groceryStatement.groceryId
+        );
+      }
+
+      // Check and handle newMeasurement
+      if (!measureOptions.includes(newMeasurement)) {
+        console.log("New measurement detected, adding to options...");
+        try {
+          await this.addMeasure(newMeasurement);
+          console.log("Measurement added successfully.");
+        } catch (error) {
+          console.error("Error adding measurement:", error);
+        }
+      } else {
+        console.log("Measurement already exists, fetching details...");
+        // await this.getMeasureByName();
+        console.log(
+          "Measurement retrieved by name:",
+          this.state.measurementStatement.measureId
+        );
+      }
     } else {
       this.setState({ showAlert: true });
     }
     console.log("Hier sieht man recipeData", recipeData.ingredients);
   };
 
+  handleUnitInput = (event) => {
+    this.setState({ showAlert: false });
+    const value = event.target.value;
+    event.target.value = value.replace(/[^a-zA-ZäöüÄÖÜß]/g, ""); // Regex to allow only letters including German umlauts
+  };
+
+  // handleAddGrocery = async () => {
+  //   try {
+  //     const groceryId = await this.getGroceryByName();
+  //     const measureId = await this.getMeasureByName();
+  //     await this.addGroceryStatement(groceryId, measureId);
+  //   } catch (error) {
+  //     console.error("Error in handleAddGrocery:", error);
+  //   }
+  // };
+
+  // addGroceryStatement = async (groceryId, measureId) => {
+  //   const { groceryData, fridgeId } = this.state;
+  //   const newGroceryStatement = new GroceryStatementBO(
+  //     groceryId,
+  //     measureId,
+  //     groceryData.quantity
+  //   );
+
+  //   try {
+  //     const groceryStatement =
+  //       await SmartFridgeAPI.getAPI().addGroceryStatement(newGroceryStatement);
+  //     this.setState({ groceryStatement: groceryStatement });
+  //     const groceryStatementId = groceryStatement.id;
+  //     console.log("groceryStatementId:", groceryStatementId);
+  //     const groceryStatementAddedInFridge =
+  //       await SmartFridgeAPI.getAPI().addGroceryinFridge(
+  //         groceryStatementId,
+  //         fridgeId
+  //       );
+  //     console.log(
+  //       "groceryStatementAddedInFridge:",
+  //       groceryStatementAddedInFridge
+  //     );
+  //   } catch (error) {
+  //     console.error("Error adding grocery statement:", error);
+  //   }
+  // };
+
+  getGrocery = () => {
+    const { fridgeId } = this.state;
+    console.log("FridgeId:", fridgeId);
+    SmartFridgeAPI.getAPI()
+      .getGroceryByFridgeId(1)
+      .then((groceries) => {
+        this.setState({
+          foodOptions: groceries.map((grocery) => grocery.getGroceryName()),
+        });
+      });
+  };
+
+  getMeasure = () => {
+    const { fridgeId } = this.state;
+    SmartFridgeAPI.getAPI()
+      .getMeasureByFridgeId(1)
+      .then((measures) => {
+        this.setState({
+          measureOptions: measures.map((measure) => measure.getUnit()),
+        });
+      });
+  };
+
+  addGrocery = (newGroceryName) => {
+    // const { fridgeId } = this.state;
+    const newGrocery = new GroceryBO(newGroceryName, 1);
+
+    SmartFridgeAPI.getAPI()
+      .addGrocery(newGrocery)
+      .then((grocery) => {
+        this.setState((prevState) => ({
+          foodOptions: [...prevState.foodOptions, grocery.getGroceryName()],
+        }));
+      });
+  };
+
+  addMeasure = (newMeasurement) => {
+    // const { fridgeId } = this.state;
+    const newMeasure = new MeasureBO(newMeasurement);
+    newMeasure.setFridgeId(1);
+
+    SmartFridgeAPI.getAPI()
+      .addMeasure(newMeasure)
+      .then((measure) => {
+        this.setState((prevState) => ({
+          measureOptions: [...prevState.measureOptions, measure.getUnit()],
+        }));
+      });
+  };
+
   render() {
     const { handlePopupRecipeClose, isEditMode } = this.props;
     const {
       showAlert,
-      recipeData: {
-        title,
-        duration,
-        servings,
-        instructions,
-        groceryUnit,
-        ingredients,
-      },
+      recipeData: { recipe_name, duration, portion, instruction, ingredients },
       ingredientData: { amount, unit, name },
+      foodOptions,
+      measureOptions,
     } = this.state;
+
+    const sortedFoodOptions = foodOptions.sort((a, b) => a.localeCompare(b));
+    const sortedMeasureOptions = measureOptions.sort((a, b) =>
+      a.localeCompare(b)
+    );
 
     return (
       <>
@@ -186,18 +340,18 @@ class RecipeDialog extends Component {
             >
               <TextField
                 required
-                value={title}
+                value={recipe_name}
                 onChange={(e) =>
                   this.setState({
                     recipeData: {
                       ...this.state.recipeData,
-                      title: e.target.value,
+                      recipe_name: e.target.value,
                     },
                   })
                 }
                 onInput={() => this.setState({ showAlert: false })}
                 id="outlined-required"
-                name="title"
+                name="recipe_name"
                 label="Rezepttitel"
                 placeholder="Rezepttitel"
                 InputLabelProps={{ style: { fontSize: "15px" } }}
@@ -232,18 +386,19 @@ class RecipeDialog extends Component {
                 />
                 <TextField
                   required
-                  value={servings}
-                  onChange={(e) =>
+                  value={portion}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
                     this.setState({
                       recipeData: {
                         ...this.state.recipeData,
-                        servings: e.target.value,
+                        portion: value,
                       },
-                    })
-                  }
+                    });
+                  }}
                   onInput={() => this.setState({ showAlert: false })}
                   id="outlined-required"
-                  name="servings"
+                  name="portion"
                   label="Portionen"
                   placeholder="Portionen"
                   InputLabelProps={{ style: { fontSize: "15px" } }}
@@ -278,33 +433,65 @@ class RecipeDialog extends Component {
                   inputProps={{ min: "1" }}
                   sx={{ width: "150px" }}
                 />
-                <Autocomplete // Einheit
-                  options={groceryUnit}
+                <Autocomplete
+                  id="measurements-box"
+                  options={sortedMeasureOptions.map((option) => ({
+                    title: option,
+                  }))}
                   value={unit}
                   freeSolo
-                  onChange={(event, value) => {
+                  onChange={(event, newValue) => {
+                    let updatedUnit = "";
+                    if (newValue === null) {
+                      updatedUnit = "";
+                    } else if (typeof newValue === "string") {
+                      updatedUnit = newValue;
+                    } else if (newValue && newValue.inputValue) {
+                      updatedUnit = newValue.inputValue;
+                    } else {
+                      updatedUnit = newValue.title;
+                    }
                     this.setState((prevState) => ({
                       ingredientData: {
                         ...prevState.ingredientData,
-                        unit: value,
+                        unit: updatedUnit,
                       },
                     }));
                   }}
                   onInputChange={() => this.setState({ showAlert: false })}
+                  filterOptions={(options, params) => {
+                    const filtered = filter(options, params);
+                    const { inputValue } = params;
+                    const isExisting = options.some(
+                      (option) => inputValue === option.title
+                    );
+                    if (inputValue !== "" && !isExisting) {
+                      filtered.push({
+                        inputValue,
+                        title: `"${inputValue}" neu hinzufügen`,
+                      });
+                    }
+                    return filtered;
+                  }}
+                  selectOnFocus
+                  clearOnBlur
+                  handleHomeEndKeys
+                  getOptionLabel={(option) => {
+                    if (typeof option === "string") {
+                      return option;
+                    }
+                    if (option.inputValue) {
+                      return option.inputValue;
+                    }
+                    return option.title;
+                  }}
+                  renderOption={(props, option) => (
+                    <li {...props}>{option.title}</li>
+                  )}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      value={unit}
-                      onChange={(event) => {
-                        const { name, value } = event.target;
-                        this.setState((prevState) => ({
-                          ingredientData: {
-                            ...prevState.ingredientData,
-                            [name]: value,
-                          },
-                        }));
-                      }}
-                      onInput={() => this.setState({ showAlert: false })}
+                      onInput={this.handleUnitInput}
                       name="unit"
                       label="Einheit"
                       placeholder="Einheit"
@@ -312,22 +499,73 @@ class RecipeDialog extends Component {
                     />
                   )}
                 />
-                <TextField // Zutat
-                  label="Zutat"
-                  placeholder="Zutat"
-                  name="name"
+
+                <Autocomplete
+                  id="ingredient-box"
+                  options={sortedFoodOptions.map((option) => ({
+                    title: option,
+                  }))}
                   value={name}
-                  onChange={(event) => {
-                    const { name, value } = event.target;
+                  freeSolo
+                  onChange={(event, newValue) => {
+                    let updatedName = "";
+                    if (newValue === null) {
+                      updatedName = "";
+                    } else if (typeof newValue === "string") {
+                      updatedName = newValue;
+                    } else if (newValue && newValue.inputValue) {
+                      updatedName = newValue.inputValue;
+                    } else {
+                      updatedName = newValue.title;
+                    }
                     this.setState((prevState) => ({
                       ingredientData: {
                         ...prevState.ingredientData,
-                        [name]: value,
+                        name: updatedName,
                       },
                     }));
                   }}
-                  onInput={() => this.setState({ showAlert: false })}
-                  sx={{ flex: 1 }}
+                  onInputChange={() => this.setState({ showAlert: false })}
+                  filterOptions={(options, params) => {
+                    const filtered = filter(options, params);
+                    const { inputValue } = params;
+                    const isExisting = options.some(
+                      (option) => inputValue === option.title
+                    );
+                    if (inputValue !== "" && !isExisting) {
+                      filtered.push({
+                        inputValue,
+                        title: `"${inputValue}" neu hinzufügen`,
+                      });
+                    }
+                    return filtered;
+                  }}
+                  selectOnFocus
+                  clearOnBlur
+                  handleHomeEndKeys
+                  getOptionLabel={(option) => {
+                    if (typeof option === "string") {
+                      return option;
+                    }
+                    if (option.inputValue) {
+                      return option.inputValue;
+                    }
+                    return option.title;
+                  }}
+                  renderOption={(props, option) => (
+                    <li {...props}>{option.title}</li>
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      onInput={this.handleNameInput}
+                      name="name"
+                      label="Zutat"
+                      placeholder="Zutat"
+                      sx={{ flex: 1 }}
+                    />
+                  )}
+                  sx={{ width: "100%" }}
                 />
                 <IconButton disableRipple onClick={this.handleAddIngredient}>
                   <AddCircleOutlineRoundedIcon
@@ -387,7 +625,7 @@ class RecipeDialog extends Component {
                 {ingredients.map((ingredient, index) => (
                   <ListItem
                     key={index}
-                    sx={{ marginBottom: "-18px", marginTop: "-15px", }}
+                    sx={{ marginBottom: "-18px", marginTop: "-15px" }}
                     secondaryAction={
                       <IconButton
                         edge="end"
@@ -427,18 +665,18 @@ class RecipeDialog extends Component {
                 InputLabelProps={{ style: { fontSize: "15px" } }}
                 multiline
                 rows={5}
-                name="instructions"
-                value={instructions}
+                name="instruction"
+                value={instruction}
                 onChange={(e) =>
                   this.setState({
                     recipeData: {
                       ...this.state.recipeData,
-                      instructions: e.target.value,
+                      instruction: e.target.value,
                     },
                   })
                 }
                 onInput={() => this.setState({ showAlert: false })}
-                sx={{height:"auto", maxHeight:"200px"}}
+                sx={{ height: "auto", maxHeight: "200px" }}
               />
             </Box>
             <Box

@@ -48,6 +48,11 @@ class FridgePage extends Component {
       chipColor: null,
       households: [],
       householdId: null,
+      fridgeId: null,
+      householdName: "",
+      groceryStatements: {},
+      groceryName: {},
+      measureName: {},
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -59,29 +64,134 @@ class FridgePage extends Component {
   componentDidMount() {
     const { householdId } = this.props.params; // HouseholdId aus den Props ziehen
     this.setState({ householdId });
-    console.log("HouseholdId", householdId);  
+    // console.log("HouseholdId von FridgePage", householdId);
+    this.getFridgeByHouseholdId(householdId);
+    this.getHouseholdNameById(householdId); // Den Haushaltsnamen laden
+    // this.getGroceries(); // Lebensmittel laden
+    this.getGroceryInFridgeId(householdId);
   }
 
   componentDidUpdate() {
-    console.log("HouseholdId", this.state.householdId);
-    console.log("UserId", this.context.id);
-    console.log("Households aus App", this.state.households);
-    // this.getFridgeByHouseholdId(this.state.households.id)
+    // console.log("Geändert", this.state.fridgeId);
+  }
+  // #####################APIS###########################
 
-    console.log("FridgePage updated");
+  getGroceryInFridgeId = async (fridgeId) => {
+    try {
+      const groceryStatements =
+        await SmartFridgeAPI.getAPI().getGroceryInFridgeId(fridgeId);
+
+      const updatedGroceryStatements = await Promise.all(
+        groceryStatements.map(async (statement) => {
+          try {
+            const groceryResponse = await this.getGroceryById(
+              statement.grocery_id
+            );
+            const measureResponse = await this.getMeasureById(
+              statement.unit_id
+            );
+
+            const grocery = Array.isArray(groceryResponse)
+              ? groceryResponse[0]
+              : groceryResponse;
+            const measure = Array.isArray(measureResponse)
+              ? measureResponse[0]
+              : measureResponse;
+
+              return {
+                ...statement,
+                grocery_name: grocery?.grocery_name ?? "Unknown",
+                unit_name: measure?.unit ?? "Unknown",
+              };
+              
+          } catch (error) {
+            console.error("Error processing statement:", statement, error);
+            return {
+              ...statement,
+              grocery_name: "Unknown",
+              unit_name: "Unknown",
+            };
+          }
+        })
+      );
+      console.log("updatedGroceryStatements ===>", updatedGroceryStatements);
+      this.setState({ updatedGroceryStatements });
+    } catch (error) {
+      // console.error("Error fetching grocery statements:", error);
+    }
+  };
+
+  getGroceryById = async (groceryId) => {
+    try {
+      const grocery = await SmartFridgeAPI.getAPI().getGroceryById(groceryId);
+      return grocery;
+    } catch (error) {
+      console.error("Error fetching grocery:", error);
+    }
+  };
+
+  getMeasureById = async (measureId) => {
+    try {
+      const measure = await SmartFridgeAPI.getAPI().getMeasureById(measureId);
+      return measure;
+    } catch (error) {
+      console.error("Error fetching measure:", error);
+    }
+  };
+
+  refreshGroceryList = async () => {
+    const { fridgeId } = this.state;
+    await this.getGroceryInFridgeId(fridgeId);
+  };
+
+  // #######################NO APIS###############################
+
+
+
+
+  groceryStatement(statement) {
+    console.log("Statement von Fridgepage", statement);
+    const quantity = statement.map((statement) => statement.quantity);
+    console.log("Quantity", quantity);
   }
 
-  getHouseholdsByUserId = (userId) => {
-    const user = this.context;
-    console.log(user);
+  groceryName(groceryName) {
+    console.log("GroceryName von Fridgepage", groceryName);
+    // console.log(groceryName.grocery.grocery_name);
+  }
 
+  measureName(measureName) {
+    console.log("MeasureName von Fridgepage", measureName);
+  }
+
+  getHouseholdNameById = (householdId) => {
     SmartFridgeAPI.getAPI()
-      .getHouseholdsByUserId(userId)
-      .then((households) => {
-        console.log(households);
-        this.setState({
-          households: households,
-        });
+      .getHouseholdById(householdId)
+      .then((household) => {
+        this.setState({ householdName: household.household_name });
+      })
+      .catch((error) => {
+        console.error("Error fetching household name:", error);
+      });
+  };
+
+  getFridgeByHouseholdId = (householdID) => {
+    SmartFridgeAPI.getAPI()
+      .getFridgeByHouseholdId(householdID)
+      .then((response) => {
+        console.log("HouseholdID", householdID);
+
+        // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
+        const fridgeId = response.id;
+
+        // Logge die fridge_id zur Überprüfung
+
+        // Aktualisiere den Zustand mit der fridge_id
+        this.setState({ fridgeId: fridgeId });
+        return fridgeId;
+      })
+      .catch((error) => {
+        console.error("Error fetching fridge by household ID:", error);
       });
   };
 
@@ -335,9 +445,48 @@ class FridgePage extends Component {
     });
   };
 
-  handleCreateRecipes = (recipeData) => {
-    console.log("Recipe-Popup closed recipe recipe");
-    const { currentlyEditing, recipes } = this.state;
+  // handleAddGrocery = async () => {
+  //   try {
+  //     const groceryId = await this.getGroceryByName();
+  //     const measureId = await this.getMeasureByName();
+  //     await this.addGroceryStatement(groceryId, measureId);
+  //   } catch (error) {
+  //     console.error("Error in handleAddGrocery:", error);
+  //   }
+  // };
+
+  // addGrocery = (newGroceryName) => {
+  //   const { fridgeId } = this.state;
+  //   const newGrocery = new GroceryBO(newGroceryName, fridgeId);
+
+  //   SmartFridgeAPI.getAPI()
+  //     .addGrocery(newGrocery)
+  //     .then((grocery) => {
+  //       this.setState((prevState) => ({
+  //         foodOptions: [...prevState.foodOptions, grocery.getGroceryName()],
+  //       }));
+  //     });
+  // };
+
+
+  handleCreateRecipes = async (recipeData) => {
+    console.log('Recipe Data after filling in FridgePage ===>', recipeData);
+    const { currentlyEditing, recipes, fridgeId } = this.state;
+    const userId = this.context.id;
+
+    const {ingredients, groceryUnit, ...rest} = recipeData
+
+    const newRecipeData = {
+      ...rest,
+      fridge_id: fridgeId,
+      user_id: userId,
+      id: 0
+    }
+
+    console.log('newRecipeData after filling in FridgePage ===>', newRecipeData);
+
+
+    await SmartFridgeAPI.getAPI().addRecipe(newRecipeData)
 
     if (currentlyEditing !== null) {
       const updatedRecipes = this.updateRecipe({
@@ -415,6 +564,7 @@ class FridgePage extends Component {
       recipes,
       isEditMode,
       chipColor,
+      householdName,
     } = this.state;
 
     const { dialogOpen, dialogType } = this.props;
@@ -456,7 +606,7 @@ class FridgePage extends Component {
                 backgroundColor: "background.default",
               }}
             >
-              <FridgeSearchBar />
+              <FridgeSearchBar householdName={householdName} />
               <TabContext
                 value={value}
                 sx={{
@@ -547,6 +697,11 @@ class FridgePage extends Component {
                       </Tooltip>
                     </Link>
                     <Grocery
+                      measureName={this.measureName}
+                      groceryName={this.groceryName}
+                      groceryStatement={this.groceryStatement}
+                      getGroceryInFridgeId={this.getGroceryInFridgeId} // Neue Prop hinzufügen
+                      fridgeId={this.state.fridgeId}
                       groceries={groceries}
                       handleAnchorClick={this.handleAnchorClick}
                       handleAnchorClose={this.handleAnchorClose}
@@ -555,10 +710,12 @@ class FridgePage extends Component {
                       openMenus={openMenus}
                       setIdToDelete={this.setIdToDelete}
                       handleOpenDialog={this.props.handleOpenDialog}
+                      groceryStatements={this.state.updatedGroceryStatements}
                     />
                   </TabPanel>
                   {popupGroceryOpen && (
                     <GroceryDialog
+                      fridgeId={this.state.fridgeId}
                       isEditMode={isEditMode}
                       groceryName={
                         editingGrocery ? editingGrocery.groceryName : ""
@@ -572,6 +729,7 @@ class FridgePage extends Component {
                       handlePopupGroceryClose={this.handlePopupGroceryClose}
                       handleCreateGroceries={this.handleCreateGroceries}
                       foodOptions={groceries.map((g) => g.groceryName)} // pass foodOptions to GroceryDialog
+                      refreshGroceryList={this.refreshGroceryList}
                     />
                   )}
                   <DeleteConfirmationDialog

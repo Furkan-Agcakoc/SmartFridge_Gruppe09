@@ -32,71 +32,70 @@ class HouseholdPage extends Component {
   }
 
   componentDidMount() {
+    // console.log(this.context);
     this.checkContext();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) { 
+    // console.log(this.state.context);
     if (prevState.households !== this.state.households) {
-      console.log("Households updated", this.state.households);
+      // console.log("Households updated", this.state.households);
     }
   }
+
 
   checkContext = () => {
     if (this.context) {
       this.getHouseholdsByUserId();
-      const householdID = this.state.householdID;
-      if (householdID) {
-        this.getFridgeByHouseholdId(householdID);
-      } else {
-        console.log("Household ID is not set.");
-      }
     } else {
-      setTimeout(this.checkContext, 100); // wait 100ms then re-check
+      // console.error("User context is not initialized.");
+      setTimeout(this.checkContext, 100);
     }
   };
 
   getHouseholdsByUserId = () => {
-    const user = this.context;
-    console.log(user);
-
+    const userId = this.context.id;
     SmartFridgeAPI.getAPI()
-      .getHouseholdsByUserId(user.id)
+      .getHouseholdsByUserId(userId)
       .then((households) => {
-        console.log(households);
+        // console.log(households);
         this.setState({
           households: households,
         });
+      })
+      .catch((error) => {
+        // console.error("Error fetching households:", error);
       });
   };
 
-  getFridgeByHouseholdId = async (householdID) => {
-    try {
-      const response = await SmartFridgeAPI.getAPI().getFridgeHouseholdById(
-        householdID
-      );
-      console.log("HouseholdID", householdID);
+  // getFridgeByHouseholdId = async (householdID) => {
+  //   try {
+  //     const response = await SmartFridgeAPI.getAPI().getFridgeByHouseholdId(
+  //       householdID
+  //     );
+  //     console.log("HouseholdID", householdID);
 
-      // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
-      const fridge_id = response.id;
+  //     // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
+  //     const fridge_id = response.id;
 
-      // Logge die fridge_id zur Überprüfung
-      console.log("Fridge ID", fridge_id);
-      this.props.setFridgeId(fridge_id);
+  //     // Logge die fridge_id zur Überprüfung
+  //     console.log("Fridge ID", fridge_id);
+  //     this.props.setFridgeId(fridge_id);
 
-      // Hier kannst du die fridge_id weiter verarbeiten oder speichern
-      // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
-      return fridge_id;
-    } catch (error) {
-      console.error("Error fetching fridge by household ID:", error);
-    }
-  };
+  //     // Hier kannst du die fridge_id weiter verarbeiten oder speichern
+  //     // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
+  //     return fridge_id;
+  //   } catch (error) {
+  //     console.error("Error fetching fridge by household ID:", error);
+  //   }
+  // };
 
 
   getInhabitantsByHouseholdId = (household_id) => {
     SmartFridgeAPI.getAPI()
       .getInhabitantsByHouseholdId(household_id)
       .then((inhabitants) => {
-        console.log(inhabitants);
+        // console.log(inhabitants);
         this.setState((prevState) => {
           return {
             inhabitants: {
@@ -118,11 +117,11 @@ class HouseholdPage extends Component {
       isEditMode,
       currentlyEditing: household,
     });
-    console.log("HouseholdPage => Popup opened");
+    // console.log("HouseholdPage => Popup opened");
   };
 
   closePopup = () => {
-    console.log("HouseholdPage => Popup closed");
+    // console.log("HouseholdPage => Popup closed");
     this.setState({
       popupOpen: false,
       currentlyEditing: null,
@@ -134,7 +133,7 @@ class HouseholdPage extends Component {
 
     // Sicherstellen, dass der Kontext initialisiert ist
     if (!this.context || !this.context.id) {
-      console.error("User context is not initialized.");
+      // console.error("User context is not initialized.");
       return;
     }
 
@@ -232,7 +231,7 @@ class HouseholdPage extends Component {
 
   handleAnchorClick = (household_id, event) => {
     const { householdIdToDelete, households, anchorEls } = this.state;
-    console.log(household_id);
+    // console.log(household_id);
     this.setState((prevState) => {
       const newOpenMenus = { ...prevState.openMenus, [household_id]: true };
       const newAnchorEls = {
@@ -245,9 +244,9 @@ class HouseholdPage extends Component {
         // householdIdToDelete: household_id,
       };
     });
-    console.log(households);
-    console.log(anchorEls);
-    console.log(householdIdToDelete);
+    // console.log(households);
+    // console.log(anchorEls);
+    // console.log(householdIdToDelete);
   };
 
   handleAnchorClose = (household_id) => {
@@ -260,8 +259,8 @@ class HouseholdPage extends Component {
   };
 
   handleAnchorEdit = (household_id) => {
-    console.log(this.state.inhabitants[household_id]);
-    console.log(this.state.inhabitants);
+    // console.log(this.state.inhabitants[household_id]);
+    // console.log(this.state.inhabitants);
     this.getInhabitantsByHouseholdId(household_id);
 
     this.setState(
@@ -288,7 +287,7 @@ class HouseholdPage extends Component {
       .then(() => {
         this.setState(
           (prevState) => {
-            console.log("HouseholdPage => Household deleted", household_id);
+            // console.log("HouseholdPage => Household deleted", household_id);
 
             const newOpenMenus = {
               ...prevState.openMenus,
@@ -305,18 +304,18 @@ class HouseholdPage extends Component {
           },
           () => {
             // Callback after setState to ensure state is updated before logging
-            console.log("Updated households list:", this.state.households);
+            // console.log("Updated households list:", this.state.households);
           }
         );
       })
       .catch((error) => {
-        console.error("Error deleting household:", error);
+        // console.error("Error deleting household:", error);
       });
   };
 
   handleConfirmDelete = () => {
     const { householdIdToDelete } = this.state;
-    console.log("Household => Confirm delete");
+    // console.log("Household => Confirm delete");
     if (householdIdToDelete !== null) {
       this.handleAnchorDelete(householdIdToDelete);
     }
@@ -424,7 +423,6 @@ class HouseholdPage extends Component {
                 handleOpenDialog={handleOpenDialog}
                 householdIdToDelete={this.state.householdIdToDelete}
                 setHouseholdIdToDelete={this.setHouseholdIdToDelete}
-                getFridgeByHouseholdId={this.getFridgeByHouseholdId}
               />
             </Box>
             {popupOpen && (

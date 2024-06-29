@@ -101,7 +101,7 @@ class GroceryMapper(Mapper):
             else:
                 grocery.set_id(1)
 
-        command = "INSERT INTO grocery (id, grocery_name, fridge_id) VALUES (%s,%s,%s)"
+        command = "INSERT INTO grocery (id, grocery_name,fridge_id) VALUES (%s,%s,%s)"
         data = (grocery.get_id(), grocery.get_grocery_name(), grocery.get_fridge_id())
         cursor.execute(command, data)
 

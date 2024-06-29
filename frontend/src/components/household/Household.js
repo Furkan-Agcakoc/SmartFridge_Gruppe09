@@ -23,8 +23,6 @@ const Household = ({
   openMenus,
   setHouseholdIdToDelete,
   handleOpenDialog,
-  getFridgeByHouseholdId
-
 }) => {
   const userContext = useContext(UserContext);
   const navigate = useNavigate();
@@ -43,7 +41,6 @@ const Household = ({
 
   const handleBoxClick = (householdId) => {
     navigate(`/home/${householdId}`);
-    getFridgeByHouseholdId(householdId);   
   };
 
   return households.map((household) => (

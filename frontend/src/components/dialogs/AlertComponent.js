@@ -6,7 +6,12 @@ import Alert from "@mui/material/Alert";
 const alertMessages = {
   household: "Bitte geben Sie einen Haushaltsnamen ein!",
   grocery: "Bitte füllen Sie alle Felder aus!",
-  recipe: "Zugriff verweigert.",
+  recipe: (
+    <div>
+      Bitte füllen Sie aller Felder aus! <br />
+      Beachten Sie, dass mindestens eine Zutat in der Zutatenliste enthalten ist!
+    </div>
+  ),
   profile: "Bitte füllen Sie alle Felder aus!",
   // Weitere Nachrichten hier hinzufügen
 };

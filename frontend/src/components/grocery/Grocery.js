@@ -14,7 +14,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const Grocery = ({
-  groceries,
   handleAnchorClick,
   handleAnchorClose,
   handleAnchorEdit,
@@ -22,6 +21,10 @@ const Grocery = ({
   openMenus,
   handleOpenDialog,
   setIdToDelete,
+  grocery,
+  groceryStatements,
+  measureNames,
+  groceryNames,
 }) => {
   const handleDeleteClick = (groceryId) => {
     setIdToDelete(groceryId);
@@ -29,9 +32,13 @@ const Grocery = ({
     handleAnchorClose(groceryId);
   };
 
-  return groceries.map((grocery) => (
+  if (!groceryStatements || Object.keys(groceryStatements).length === 0) {
+    return <div>Loading...</div>;
+  }
+
+  return groceryStatements.map((grocery) => (
     <Paper
-      key={grocery.groceryId}
+      key={grocery.id}
       sx={{
         position: "relative",
         display: "flex",
@@ -43,17 +50,16 @@ const Grocery = ({
         maxWidth: "200px",
         height: "125px",
         borderRadius: "10px",
-        // boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
         "&:hover": { boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)" },
       }}
     >
       <IconButton
         aria-label="more"
         id="long-button"
-        aria-controls={openMenus[grocery.groceryId] ? "long-menu" : undefined}
-        aria-expanded={openMenus[grocery.groceryId] ? "true" : undefined}
+        aria-controls={openMenus[grocery.id] ? "long-menu" : undefined}
+        aria-expanded={openMenus[grocery.id] ? "true" : undefined}
         aria-haspopup="true"
-        onClick={(event) => handleAnchorClick(grocery.groceryId, event)}
+        onClick={(event) => handleAnchorClick(grocery.id, event)}
         style={{
           position: "absolute",
           top: "2px",
@@ -67,12 +73,12 @@ const Grocery = ({
 
       <Menu
         MenuListProps={{ "aria-labelledby": "long-button" }}
-        anchorEl={anchorEls[grocery.groceryId]}
-        open={openMenus[grocery.groceryId]}
-        onClose={() => handleAnchorClose(grocery.groceryId)}
+        anchorEl={anchorEls[grocery.id] || null}
+        open={openMenus[grocery.id] || false}
+        onClose={() => handleAnchorClose(grocery.id)}
       >
         <MenuItem
-          onClick={() => handleAnchorEdit(grocery.groceryId)}
+          onClick={() => handleAnchorEdit(grocery.id)}
           className="menu-item"
           disableRipple
         >
@@ -83,7 +89,7 @@ const Grocery = ({
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={() => handleDeleteClick(grocery.groceryId)}
+          onClick={() => handleDeleteClick(grocery.id)}
           className="menu-item"
           disableRipple
         >
@@ -98,7 +104,6 @@ const Grocery = ({
           display: "flex",
           justifyContent: "center",
           flexDirection: "column",
-          // border: "2px solid black",
         }}
       >
         <Typography
@@ -107,11 +112,10 @@ const Grocery = ({
             display: "flex",
             justifyContent: "center",
             color: "background.default",
-            // border: "2px solid blue",
             maxWidth: "200px",
           }}
         >
-          {grocery.groceryName}
+          {grocery.grocery_name}
         </Typography>
         <Typography
           variant="body1"
@@ -120,10 +124,9 @@ const Grocery = ({
             justifyContent: "center",
             color: "background.default",
             maxWidth: "200px",
-            // border: "2px solid red",
           }}
         >
-           {grocery.groceryQuantity} {grocery.groceryUnit}
+          {grocery.quantity} {grocery.unit_name}
         </Typography>
       </Container>
     </Paper>
