@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Paper,
   Typography,
@@ -12,7 +12,6 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 const Grocery = ({
   handleAnchorClick,
@@ -22,30 +21,23 @@ const Grocery = ({
   openMenus,
   handleOpenDialog,
   setIdToDelete,
+  grocery,
+  groceryStatements,
+  measureNames,
+  groceryNames,
 }) => {
-  const [groceryStatements, setGroceryStatements] = useState([]);
-
   const handleDeleteClick = (groceryId) => {
     setIdToDelete(groceryId);
     handleOpenDialog(groceryId, "grocery");
     handleAnchorClose(groceryId);
   };
 
-  useEffect(() => {
-    const fetchGroceryStatements = async () => {
-      try {
-        const groceryStatements =
-          await SmartFridgeAPI.getAPI().getGroceryStatement();
-        setGroceryStatements(groceryStatements);
-      } catch (error) {
-        console.error("Error fetching grocery statements:", error);
-      }
-    };
+  if (!groceryStatements || Object.keys(groceryStatements).length === 0) {
+    return <div>Loading...</div>;
+  }
 
-    fetchGroceryStatements();
-  }, []);
-
-  console.log("groceryStatements", groceryStatements);
+  // console.log("measureNames in Grocery.js", measureNames);
+  // console.log("groceryNames in Grocery.js", groceryNames);
 
   return groceryStatements.map((grocery) => (
     <Paper
@@ -61,7 +53,6 @@ const Grocery = ({
         maxWidth: "200px",
         height: "125px",
         borderRadius: "10px",
-        // boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
         "&:hover": { boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)" },
       }}
     >
@@ -116,7 +107,6 @@ const Grocery = ({
           display: "flex",
           justifyContent: "center",
           flexDirection: "column",
-          // border: "2px solid black",
         }}
       >
         <Typography
@@ -125,11 +115,10 @@ const Grocery = ({
             display: "flex",
             justifyContent: "center",
             color: "background.default",
-            // border: "2px solid blue",
             maxWidth: "200px",
           }}
         >
-          {grocery.grocery_id}
+          {grocery.grocery_name}
         </Typography>
         <Typography
           variant="body1"
@@ -138,10 +127,9 @@ const Grocery = ({
             justifyContent: "center",
             color: "background.default",
             maxWidth: "200px",
-            // border: "2px solid red",
           }}
         >
-          {grocery.groceryQuantity} {grocery.quantity}
+          {grocery.quantity} {grocery.unit_name}
         </Typography>
       </Container>
     </Paper>
