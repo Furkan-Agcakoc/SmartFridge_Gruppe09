@@ -108,6 +108,12 @@ export default class SmartFridgeAPI {
     `${this.#SmartFridgeBaseURL}/measure/fridge_id/${id}`;
   #getMeasureByNameURL = (unit) =>
     `${this.#SmartFridgeBaseURL}/measure/unit/${unit}`;
+  #updateMeasureURL = (id) => `${this.#SmartFridgeBaseURL}/measure/${id}`;
+
+
+  
+
+
 
   /**
    *  Returns a Promise which resolves to a json object.
@@ -845,4 +851,23 @@ export default class SmartFridgeAPI {
       });
     });
   }
+  
+    updateMeasure(measureBO) {
+    return this.#fetchAdvanced(this.#updateMeasureURL(measureBO.id), {
+      method: "PUT",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(measureBO),
+    }).then((responseJSON) => {
+      let responseMeasureBO = MeasureBO.fromJSON(responseJSON)[0];
+      return new Promise(function (resolve) {
+        resolve(responseMeasureBO);
+      });
+    });
+  }
+
 }
+
+
