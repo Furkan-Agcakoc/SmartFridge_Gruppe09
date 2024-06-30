@@ -6,17 +6,16 @@ const FontLogin = () => {
     <>
       <Typography
         variant="h5"
-        // className="caveat-logfont-home"
         color="third.main"
         sx={{
-          fontSize: "35px",
+          fontSize: { xs: "25px", sm: "30px", md: "35px" },
           fontWeight: 600,
           color: "#162938",
           display: "flex",
           justifyContent: "center",
           position: "relative",
-          top: "140px",
-          marginbottom: "0px",
+          top: { xs: "100px", sm: "120px", md: "140px" },
+          marginBottom: "0px",
         }}
       >
         Willkommen bei Smart Fridge!

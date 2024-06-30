@@ -21,6 +21,7 @@ import Header from "./components/layout/Header";
 import { ThemeProvider } from "@emotion/react";
 import Theme from "./Theme";
 import Footer from "./components/layout/Footer";
+import AboutPage from "./components/pages/AboutPage";
 import EditProfilePage from "./components/pages/EditProfilePage";
 import SmartFridgeAPI from "./api/SmartFridgeAPI"; // Import the API class
 import FridgePage from "./components/pages/FridgePage";
@@ -252,6 +253,7 @@ class App extends Component {
                       </Secured>
                     }
                   />
+                  <Route path="/about" element={<AboutPage />}></Route>
                 </Routes>
                 <Footer />
               </Router>
