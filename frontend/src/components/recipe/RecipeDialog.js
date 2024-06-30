@@ -21,18 +21,22 @@ import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import GroceryStatementBO from "../../api/GroceryStatementBO";
 import MeasureBO from "../../api/MeasureBO";
 import GroceryBO from "../../api/GroceryBO";
+import FridgeContext from "../contexts/FridgeContext";
 
 const filter = createFilterOptions();
 
 class RecipeDialog extends Component {
+  static contextType = FridgeContext;
+
   constructor(props) {
     super(props);
     this.state = {
       showAlert: false,
+      fridgeId: this.props.fridgeId,
       ingredientData: {
         amount: "",
-        unit: "",
-        name: "",
+        unit_name: "",
+        grocery_name: "",
       },
       recipeData: {
         recipe_name: props.isEditMode ? props.recipe_name : "",
@@ -49,6 +53,7 @@ class RecipeDialog extends Component {
       measureOptions: props.measureOptions || [],
     };
   }
+
   componentDidMount() {
     this.getGrocery();
     this.getMeasure();
@@ -80,13 +85,13 @@ class RecipeDialog extends Component {
 
   handleAddIngredient = () => {
     const { ingredientData, recipeData } = this.state;
-    if (ingredientData.amount && ingredientData.unit && ingredientData.name) {
+    if (ingredientData.amount && ingredientData.unit_name && ingredientData.grocery_name) {
       this.setState({
         recipeData: {
           ...recipeData,
           ingredients: [...recipeData.ingredients, ingredientData],
         },
-        ingredientData: { amount: "", unit: "", name: "" },
+        ingredientData: { amount: "", unit_name: "", grocery_name: "" },
         showAlert: false,
       });
     } else {
@@ -107,59 +112,72 @@ class RecipeDialog extends Component {
     }));
   };
 
-  handleClick = async (e) => {
-    const {
-      recipeData,
-      newGrocery,
-      newMeasurement,
-      foodOptions,
-      measureOptions,
-    } = this.state;
+  handleClick = (e) => {
+    e.preventDefault();
     const form = e.target.closest("form");
-    if (form.checkValidity() && recipeData.ingredients.length > 0) {
-      console.log("Form submitted: ", recipeData);
-      this.props.handleCreateRecipes(recipeData);
-
-      if (!foodOptions.includes(newGrocery)) {
-        console.log("New grocery item detected, adding to options...");
-        try {
-          await this.addGrocery(newGrocery);
-          console.log("Grocery added successfully.");
-          // await this.getGroceryByName();
-        } catch (error) {
-          console.error("Error adding grocery:", error);
-        }
-      } else {
-        console.log("Grocery item already exists, fetching details...");
-        // await this.getGroceryByName();
-        console.log(
-          "Grocery retrieved by name:",
-          this.state.groceryStatement.groceryId
-        );
-      }
-
-      // Check and handle newMeasurement
-      if (!measureOptions.includes(newMeasurement)) {
-        console.log("New measurement detected, adding to options...");
-        try {
-          await this.addMeasure(newMeasurement);
-          console.log("Measurement added successfully.");
-        } catch (error) {
-          console.error("Error adding measurement:", error);
-        }
-      } else {
-        console.log("Measurement already exists, fetching details...");
-        // await this.getMeasureByName();
-        console.log(
-          "Measurement retrieved by name:",
-          this.state.measurementStatement.measureId
-        );
-      }
+    if (form.checkValidity()) {
+      this.updateStateAndSubmit();
     } else {
       this.setState({ showAlert: true });
     }
+  };
+
+  updateStateAndSubmit = async () => {
+    const {
+      recipeData,
+      foodOptions,
+      measureOptions,
+    } = this.state;
+  
+    console.log("Form submitted: ", recipeData);
+  
+    this.props.handleCreateRecipes(recipeData);
+  
+    console.log("recipeData ==>", recipeData.ingredients);
+  
+    recipeData.ingredients.forEach((ingredient, index) => {
+      console.log(`Ingredient ${index + 1} unit_name ==>`, ingredient.unit_name);
+      console.log(`Ingredient ${index + 1} grocery_name ==>`, ingredient.grocery_name);
+    });
+  
+    // Use a Set to keep track of new grocery names and measurement units to be added
+    const newGroceries = new Set();
+    const newMeasurements = new Set();
+  
+    for (const ingredient of recipeData.ingredients) {
+      if (!foodOptions.includes(ingredient.grocery_name)) {
+        newGroceries.add(ingredient.grocery_name);
+      }
+      if (!measureOptions.includes(ingredient.unit_name)) {
+        newMeasurements.add(ingredient.unit_name);
+      }
+    }
+  
+    // Add new groceries
+    for (const grocery of newGroceries) {
+      console.log("New grocery item detected, adding to options...");
+      try {
+        await this.addGrocery(grocery);
+        console.log("Grocery added successfully.", grocery);
+      } catch (error) {
+        console.error("Error adding grocery:", error);
+      }
+    }
+  
+    // Add new measurements
+    for (const measurement of newMeasurements) {
+      console.log("New measurement detected, adding to options...", measurement);
+      try {
+        await this.addMeasure(measurement);
+        console.log("Measurement added successfully.");
+      } catch (error) {
+        console.error("Error adding measurement:", error);
+      }
+    }
+  
     console.log("Hier sieht man recipeData", recipeData.ingredients);
   };
+  
 
   handleUnitInput = (event) => {
     this.setState({ showAlert: false });
@@ -167,47 +185,7 @@ class RecipeDialog extends Component {
     event.target.value = value.replace(/[^a-zA-ZäöüÄÖÜß]/g, ""); // Regex to allow only letters including German umlauts
   };
 
-  // handleAddGrocery = async () => {
-  //   try {
-  //     const groceryId = await this.getGroceryByName();
-  //     const measureId = await this.getMeasureByName();
-  //     await this.addGroceryStatement(groceryId, measureId);
-  //   } catch (error) {
-  //     console.error("Error in handleAddGrocery:", error);
-  //   }
-  // };
-
-  // addGroceryStatement = async (groceryId, measureId) => {
-  //   const { groceryData, fridgeId } = this.state;
-  //   const newGroceryStatement = new GroceryStatementBO(
-  //     groceryId,
-  //     measureId,
-  //     groceryData.quantity
-  //   );
-
-  //   try {
-  //     const groceryStatement =
-  //       await SmartFridgeAPI.getAPI().addGroceryStatement(newGroceryStatement);
-  //     this.setState({ groceryStatement: groceryStatement });
-  //     const groceryStatementId = groceryStatement.id;
-  //     console.log("groceryStatementId:", groceryStatementId);
-  //     const groceryStatementAddedInFridge =
-  //       await SmartFridgeAPI.getAPI().addGroceryinFridge(
-  //         groceryStatementId,
-  //         fridgeId
-  //       );
-  //     console.log(
-  //       "groceryStatementAddedInFridge:",
-  //       groceryStatementAddedInFridge
-  //     );
-  //   } catch (error) {
-  //     console.error("Error adding grocery statement:", error);
-  //   }
-  // };
-
   getGrocery = () => {
-    const { fridgeId } = this.state;
-    console.log("FridgeId:", fridgeId);
     SmartFridgeAPI.getAPI()
       .getGroceryByFridgeId(1)
       .then((groceries) => {
@@ -220,7 +198,7 @@ class RecipeDialog extends Component {
   getMeasure = () => {
     const { fridgeId } = this.state;
     SmartFridgeAPI.getAPI()
-      .getMeasureByFridgeId(1)
+      .getMeasureByFridgeId(fridgeId)
       .then((measures) => {
         this.setState({
           measureOptions: measures.map((measure) => measure.getUnit()),
@@ -229,9 +207,12 @@ class RecipeDialog extends Component {
   };
 
   addGrocery = (newGroceryName) => {
-    // const { fridgeId } = this.state;
-    const newGrocery = new GroceryBO(newGroceryName, 1);
+    const { fridgeId } = this.state;
+    console.log('newGroceryName in Recipe Dialog', newGroceryName);
 
+    const newGrocery = new GroceryBO(newGroceryName, fridgeId);
+
+    console.log('newGrocery in Recipe Dialog', newGrocery);
     SmartFridgeAPI.getAPI()
       .addGrocery(newGrocery)
       .then((grocery) => {
@@ -242,9 +223,11 @@ class RecipeDialog extends Component {
   };
 
   addMeasure = (newMeasurement) => {
-    // const { fridgeId } = this.state;
-    const newMeasure = new MeasureBO(newMeasurement);
-    newMeasure.setFridgeId(1);
+    const { fridgeId } = this.state;
+    console.log('newMeasurement in Recipe Dialog', newMeasurement);
+
+    const newMeasure = new MeasureBO(newMeasurement, fridgeId);
+    console.log('newMeasure in Recipe Dialog', newMeasure);
 
     SmartFridgeAPI.getAPI()
       .addMeasure(newMeasure)
@@ -260,7 +243,7 @@ class RecipeDialog extends Component {
     const {
       showAlert,
       recipeData: { recipe_name, duration, portion, instruction, ingredients },
-      ingredientData: { amount, unit, name },
+      ingredientData: { amount, unit_name, grocery_name },
       foodOptions,
       measureOptions,
     } = this.state;
@@ -425,7 +408,7 @@ class RecipeDialog extends Component {
                     this.setState((prevState) => ({
                       ingredientData: {
                         ...prevState.ingredientData,
-                        [name]: value,
+                        [name]: parseInt(value),
                       },
                     }));
                   }}
@@ -438,7 +421,7 @@ class RecipeDialog extends Component {
                   options={sortedMeasureOptions.map((option) => ({
                     title: option,
                   }))}
-                  value={unit}
+                  value={unit_name}
                   freeSolo
                   onChange={(event, newValue) => {
                     let updatedUnit = "";
@@ -454,7 +437,7 @@ class RecipeDialog extends Component {
                     this.setState((prevState) => ({
                       ingredientData: {
                         ...prevState.ingredientData,
-                        unit: updatedUnit,
+                        unit_name: updatedUnit,
                       },
                     }));
                   }}
@@ -505,7 +488,7 @@ class RecipeDialog extends Component {
                   options={sortedFoodOptions.map((option) => ({
                     title: option,
                   }))}
-                  value={name}
+                  value={grocery_name}
                   freeSolo
                   onChange={(event, newValue) => {
                     let updatedName = "";
@@ -521,7 +504,7 @@ class RecipeDialog extends Component {
                     this.setState((prevState) => ({
                       ingredientData: {
                         ...prevState.ingredientData,
-                        name: updatedName,
+                        grocery_name: updatedName,
                       },
                     }));
                   }}
@@ -649,7 +632,7 @@ class RecipeDialog extends Component {
                     }
                   >
                     <ListItemText
-                      primary={`⪧ ${ingredient.amount} ${ingredient.unit} / ${ingredient.name}`}
+                      primary={`⪧ ${ingredient.amount} ${ingredient.unit_name} / ${ingredient.grocery_name}`}
                       sx={{
                         color: "text.primary",
                       }}

@@ -183,11 +183,8 @@ class FridgePage extends Component {
 
         // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
         const fridgeId = response.id;
-
-        // Logge die fridge_id zur Überprüfung
-
-        // Aktualisiere den Zustand mit der fridge_id
         this.setState({ fridgeId: fridgeId });
+        
         return fridgeId;
       })
       .catch((error) => {
@@ -851,6 +848,7 @@ class FridgePage extends Component {
                   </TabPanel>
                   {popupRecipeOpen && (
                     <RecipeDialog
+                      fridgeId={this.state.fridgeId}
                       isEditMode={isEditMode}
                       recipeTitle={
                         editingRecipe ? editingRecipe.recipeTitle : ""
