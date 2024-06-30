@@ -57,12 +57,10 @@ export default class SmartFridgeAPI {
     `${this.#SmartFridgeBaseURL}/grocerystatement/${id}`;
   #updateGroceryStatementURL = (id) =>
     `${this.#SmartFridgeBaseURL}/grocerystatement/${id}`;
-
   #addGroceryinFridgeURL = () =>
     `${this.#SmartFridgeBaseURL}/grocery_in_fridge`;
   #getGroceryInFridgeByIdURL = (fridge_id) =>
     `${this.#SmartFridgeBaseURL}/grocery_in_fridge/${fridge_id}`;
-
   #addGroceryinRecipeURL = () =>
     `${this.#SmartFridgeBaseURL}/grocery_in_recipe`;
   #getGroceryInRecipeByIdURL = (recipe_id) =>
@@ -657,14 +655,16 @@ export default class SmartFridgeAPI {
 
   /**  recipe related **/
 
-  getRecipe() {
-    return this.#fetchAdvanced(this.#getRecipeURL()).then((responseJSON) => {
-      let recipeBOs = GroceryBO.fromJSON(responseJSON);
+  getRecipe(fridgeId, userId) {
+    const url = `${this.#getRecipeURL()}?fridge_id=${fridgeId}&user_id=${userId}`;
+    return this.#fetchAdvanced(url).then((responseJSON) => {
+      let recipeBOs = RecipeBO.fromJSON(responseJSON);
       return new Promise(function (resolve) {
         resolve(recipeBOs);
       });
     });
   }
+    
 
   getRecipeById(recipeID) {
     return this.#fetchAdvanced(this.#getRecipeByIdURL(recipeID)).then(

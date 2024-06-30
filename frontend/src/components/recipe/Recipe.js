@@ -27,6 +27,9 @@ const Recipe = ({
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
 
+  console.log("Recipes in recipe component", recipes)
+
+
   const handleRecipeClick = (recipe) => {
     setSelectedRecipe(recipe);
     setDetailDialogOpen(true);
@@ -47,7 +50,7 @@ const Recipe = ({
     <>
       {recipes.map((recipe) => (
         <Paper
-          key={recipe.recipeId}
+          key={recipe.id}
           sx={{
             position: 'relative',
             display: 'flex',
@@ -66,10 +69,10 @@ const Recipe = ({
           <IconButton
             aria-label="more"
             id="long-button"
-            aria-controls={openMenus[recipe.recipeId] ? 'long-menu' : undefined}
-            aria-expanded={openMenus[recipe.recipeId] ? 'true' : undefined}
+            aria-controls={openMenus[recipe.id] ? 'long-menu' : undefined}
+            aria-expanded={openMenus[recipe.id] ? 'true' : undefined}
             aria-haspopup="true"
-            onClick={(event) => handleAnchorClick(recipe.recipeId, event)}
+            onClick={(event) => handleAnchorClick(recipe.id, event)}
             style={{
               position: 'absolute',
               top: '2px',
@@ -83,12 +86,12 @@ const Recipe = ({
 
           <Menu
             MenuListProps={{ 'aria-labelledby': 'long-button' }}
-            anchorEl={anchorEls[recipe.recipeId]}
-            open={openMenus[recipe.recipeId]}
-            onClose={() => handleAnchorClose(recipe.recipeId)}
+            anchorEl={anchorEls[recipe.id]}
+            open={openMenus[recipe.id]}
+            onClose={() => handleAnchorClose(recipe.id)}
           >
             <MenuItem
-              onClick={() => handleAnchorEdit(recipe.recipeId)}
+              onClick={() => handleAnchorEdit(recipe.id)}
               className="menu-item"
               disableRipple
             >
@@ -99,7 +102,7 @@ const Recipe = ({
             </MenuItem>
             <Divider sx={{ my: 0.5 }} />
             <MenuItem
-              onClick={() => handleDeleteClick(recipe.recipeId)}
+              onClick={() => handleDeleteClick(recipe.id)}
               className="menu-item"
               disableRipple
             >
@@ -129,7 +132,7 @@ const Recipe = ({
                 maxWidth: '200px',
               }}
             >
-              {recipe.recipeTitle}
+              {recipe.recipe_name}
             </Typography>
             <Typography
               variant="body1"
@@ -140,7 +143,7 @@ const Recipe = ({
                 maxWidth: '200px',
               }}
             >
-              Dauer: {recipe.recipeDuration} Minuten
+              Dauer: {recipe.duration} Minuten
             </Typography>
           </Container>
         </Paper>

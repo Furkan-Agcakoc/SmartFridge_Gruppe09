@@ -71,10 +71,28 @@ class FridgePage extends Component {
     this.getGroceryInFridgeId(householdId);
   }
 
-  componentDidUpdate() {
-    // console.log("Geändert", this.state.fridgeId);
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.fridgeId !== this.state.fridgeId) {
+      this.loadRecipeList();
+    }
   }
   // #####################APIS###########################
+
+
+  loadRecipeList = async () => {
+    const { fridgeId } = this.state;
+    const userId = this.context.id;
+
+    console.log ('fridgeId', fridgeId)
+    console.log ('userId', userId)
+    try {
+      const recipes = await SmartFridgeAPI.getAPI().getRecipe(fridgeId, userId);
+      this.setState({ recipes });
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    }
+  }
+
 
   getGroceryInFridgeId = async (fridgeId) => {
     try {
@@ -179,18 +197,16 @@ class FridgePage extends Component {
     SmartFridgeAPI.getAPI()
       .getFridgeByHouseholdId(householdID)
       .then((response) => {
-        console.log("HouseholdID", householdID);
-
-        // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
         const fridgeId = response.id;
-        this.setState({ fridgeId: fridgeId });
-        
-        return fridgeId;
+        this.setState({ fridgeId }, () => {
+          this.loadRecipeList();
+        });
       })
       .catch((error) => {
         console.error("Error fetching fridge by household ID:", error);
       });
   };
+  
 
   handleTabChange(event, newValue) {
     console.log("Tab changed:", newValue);
@@ -442,29 +458,6 @@ class FridgePage extends Component {
     });
   };
 
-  // handleAddGrocery = async () => {
-  //   try {
-  //     const groceryId = await this.getGroceryByName();
-  //     const measureId = await this.getMeasureByName();
-  //     await this.addGroceryStatement(groceryId, measureId);
-  //   } catch (error) {
-  //     console.error("Error in handleAddGrocery:", error);
-  //   }
-  // };
-
-  // addGrocery = (newGroceryName) => {
-  //   const { fridgeId } = this.state;
-  //   const newGrocery = new GroceryBO(newGroceryName, fridgeId);
-
-  //   SmartFridgeAPI.getAPI()
-  //     .addGrocery(newGrocery)
-  //     .then((grocery) => {
-  //       this.setState((prevState) => ({
-  //         foodOptions: [...prevState.foodOptions, grocery.getGroceryName()],
-  //       }));
-  //     });
-  // };
-
 
   handleCreateRecipes = async (recipeData) => {
     console.log('Recipe Data after filling in FridgePage ===>', recipeData);
@@ -488,10 +481,10 @@ class FridgePage extends Component {
     if (currentlyEditing !== null) {
       const updatedRecipes = this.updateRecipe({
         recipeId: currentlyEditing,
-        recipeTitle: recipeData.title,
+        recipeTitle: recipeData.recipe_name,
         recipeDuration: recipeData.duration,
-        recipeServings: recipeData.servings,
-        recipeInstructions: recipeData.instructions,
+        recipeServings: recipeData.portion,
+        recipeInstructions: recipeData.instruction,
         recipeIngredients: recipeData.ingredients,
       });
 
@@ -508,10 +501,10 @@ class FridgePage extends Component {
           ...prevState.recipes,
           {
             recipeId: id,
-            recipeTitle: recipeData.title,
+            recipeTitle: recipeData.recipe_name,
             recipeDuration: recipeData.duration,
-            recipeServings: recipeData.servings,
-            recipeInstructions: recipeData.instructions,
+            recipeServings: recipeData.portion,
+            recipeInstructions: recipeData.instruction,
             recipeIngredients: recipeData.ingredients,
           },
         ];

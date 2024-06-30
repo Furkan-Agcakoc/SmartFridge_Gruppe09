@@ -115,6 +115,7 @@ class RecipeDialog extends Component {
   handleClick = (e) => {
     e.preventDefault();
     const form = e.target.closest("form");
+    
     if (form.checkValidity()) {
       this.updateStateAndSubmit();
     } else {
@@ -123,11 +124,7 @@ class RecipeDialog extends Component {
   };
 
   updateStateAndSubmit = async () => {
-    const {
-      recipeData,
-      foodOptions,
-      measureOptions,
-    } = this.state;
+    const { recipeData, foodOptions, measureOptions } = this.state;
   
     console.log("Form submitted: ", recipeData);
   
@@ -138,11 +135,15 @@ class RecipeDialog extends Component {
     recipeData.ingredients.forEach((ingredient, index) => {
       console.log(`Ingredient ${index + 1} unit_name ==>`, ingredient.unit_name);
       console.log(`Ingredient ${index + 1} grocery_name ==>`, ingredient.grocery_name);
+      console.log(`Ingredient ${index + 1} amount ==>`, ingredient.amount);
     });
   
     // Use a Set to keep track of new grocery names and measurement units to be added
     const newGroceries = new Set();
     const newMeasurements = new Set();
+  
+    console.log('newGroceries in array', newGroceries);
+    console.log('newMeasurements in array', newMeasurements);
   
     for (const ingredient of recipeData.ingredients) {
       if (!foodOptions.includes(ingredient.grocery_name)) {
@@ -155,10 +156,9 @@ class RecipeDialog extends Component {
   
     // Add new groceries
     for (const grocery of newGroceries) {
-      console.log("New grocery item detected, adding to options...");
       try {
         await this.addGrocery(grocery);
-        console.log("Grocery added successfully.", grocery);
+        console.log("Grocery added successfully.");
       } catch (error) {
         console.error("Error adding grocery:", error);
       }
@@ -166,12 +166,29 @@ class RecipeDialog extends Component {
   
     // Add new measurements
     for (const measurement of newMeasurements) {
-      console.log("New measurement detected, adding to options...", measurement);
       try {
         await this.addMeasure(measurement);
         console.log("Measurement added successfully.");
       } catch (error) {
         console.error("Error adding measurement:", error);
+      }
+    }
+
+    for (const ingredient of recipeData.ingredients) {
+      try {
+        const grocery_id = await SmartFridgeAPI.getAPI().getGroceryByName(ingredient.grocery_name);
+        const measure_id = await SmartFridgeAPI.getAPI().getMeasureByName(ingredient.unit_name);
+        const amount = ingredient.amount
+  
+        const groceryId = grocery_id.id;
+        const measureId = measure_id.id;
+  
+        // Call the addRecipeInFridge method for each ingredient
+        await this.addRecipeInFridge(groceryId, measureId, amount);
+  
+        console.log(`Added ingredient ${ingredient.grocery_name} with measure ${ingredient.unit_name} to fridge.`);
+      } catch (error) {
+        console.error("Error adding ingredient to fridge:", error);
       }
     }
   
@@ -186,14 +203,16 @@ class RecipeDialog extends Component {
   };
 
   getGrocery = () => {
+    const { fridgeId } = this.state;
     SmartFridgeAPI.getAPI()
-      .getGroceryByFridgeId(1)
+      .getGroceryByFridgeId(fridgeId)
       .then((groceries) => {
         this.setState({
           foodOptions: groceries.map((grocery) => grocery.getGroceryName()),
         });
       });
   };
+
 
   getMeasure = () => {
     const { fridgeId } = this.state;
@@ -206,37 +225,61 @@ class RecipeDialog extends Component {
       });
   };
 
-  addGrocery = (newGroceryName) => {
+  addGrocery = async (newGroceryName) => {
     const { fridgeId } = this.state;
-    console.log('newGroceryName in Recipe Dialog', newGroceryName);
-
     const newGrocery = new GroceryBO(newGroceryName, fridgeId);
-
-    console.log('newGrocery in Recipe Dialog', newGrocery);
-    SmartFridgeAPI.getAPI()
-      .addGrocery(newGrocery)
-      .then((grocery) => {
-        this.setState((prevState) => ({
-          foodOptions: [...prevState.foodOptions, grocery.getGroceryName()],
-        }));
-      });
+  
+    try {
+      const grocery = await SmartFridgeAPI.getAPI().addGrocery(newGrocery);
+      this.setState((prevState) => ({
+        foodOptions: [...prevState.foodOptions, grocery.getGroceryName()],
+      }));
+    } catch (error) {
+      console.error("Error adding grocery:", error);
+    }
   };
-
-  addMeasure = (newMeasurement) => {
+  
+  addMeasure = async (newMeasurement) => {
     const { fridgeId } = this.state;
-    console.log('newMeasurement in Recipe Dialog', newMeasurement);
-
     const newMeasure = new MeasureBO(newMeasurement, fridgeId);
-    console.log('newMeasure in Recipe Dialog', newMeasure);
-
-    SmartFridgeAPI.getAPI()
-      .addMeasure(newMeasure)
-      .then((measure) => {
-        this.setState((prevState) => ({
-          measureOptions: [...prevState.measureOptions, measure.getUnit()],
-        }));
-      });
+  
+    try {
+      const measure = await SmartFridgeAPI.getAPI().addMeasure(newMeasure);
+      this.setState((prevState) => ({
+        measureOptions: [...prevState.measureOptions, measure.getUnit()],
+      }));
+    } catch (error) {
+      console.error("Error adding measurement:", error);
+    }
   };
+
+  addRecipeInFridge = async (groceryId, measureId, amount) => {
+    const { groceryData, fridgeId } = this.state;
+    const newGroceryStatement = new GroceryStatementBO(
+      groceryId,
+      measureId,
+      amount
+    );
+
+    try {
+      const groceryStatement =
+        await SmartFridgeAPI.getAPI().addGroceryStatement(newGroceryStatement);
+      const groceryStatementId = groceryStatement.id;
+      console.log("groceryStatementId:", groceryStatementId);
+      const groceryStatementAddedInFridge =
+        await SmartFridgeAPI.getAPI().addGroceryinRecipe(
+          groceryStatementId,
+          fridgeId
+        );
+      console.log(
+        "groceryStatementAddedInFridge:",
+        groceryStatementAddedInFridge
+      );
+    } catch (error) {
+      console.error("Error adding grocery statement:", error);
+    }
+  };
+  
 
   render() {
     const { handlePopupRecipeClose, isEditMode } = this.props;
