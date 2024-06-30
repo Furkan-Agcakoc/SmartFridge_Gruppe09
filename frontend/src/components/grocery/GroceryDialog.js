@@ -43,6 +43,7 @@ class GroceryDialog extends Component {
       measureOptions: props.measureOptions || [],
       fridgeId: this.props.fridgeId,
     };
+    console.log("Constructor - Fridge ID:", this.state.fridgeId);
   }
 
   componentDidMount() {
@@ -70,6 +71,7 @@ class GroceryDialog extends Component {
       });
     }
   }
+
 
   handleClick = async (e) => {
     const {
