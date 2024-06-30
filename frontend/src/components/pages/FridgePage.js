@@ -81,12 +81,10 @@ class FridgePage extends Component {
 
   loadRecipeList = async () => {
     const { fridgeId } = this.state;
-    const userId = this.context.id;
 
     console.log ('fridgeId', fridgeId)
-    console.log ('userId', userId)
     try {
-      const recipes = await SmartFridgeAPI.getAPI().getRecipe(fridgeId, userId);
+      const recipes = await SmartFridgeAPI.getAPI().getRecipe(fridgeId);
       this.setState({ recipes });
     } catch (error) {
       console.error("Error fetching recipes:", error);
@@ -460,7 +458,6 @@ class FridgePage extends Component {
 
 
   handleCreateRecipes = async (recipeData) => {
-    console.log('Recipe Data after filling in FridgePage ===>', recipeData);
     const { currentlyEditing, recipes, fridgeId } = this.state;
     const userId = this.context.id;
 
@@ -470,22 +467,21 @@ class FridgePage extends Component {
       ...rest,
       fridge_id: fridgeId,
       user_id: userId,
-      id: 0
+      id: 0,
+      ingredients: ingredients
     }
 
-    console.log('newRecipeData after filling in FridgePage ===>', newRecipeData);
 
-
-    await SmartFridgeAPI.getAPI().addRecipe(newRecipeData)
+    const createdRecipe = await SmartFridgeAPI.getAPI().addRecipe(newRecipeData);
 
     if (currentlyEditing !== null) {
       const updatedRecipes = this.updateRecipe({
-        recipeId: currentlyEditing,
-        recipeTitle: recipeData.recipe_name,
-        recipeDuration: recipeData.duration,
-        recipeServings: recipeData.portion,
-        recipeInstructions: recipeData.instruction,
-        recipeIngredients: recipeData.ingredients,
+        recipe_id: currentlyEditing,
+        recipe_name: recipeData.recipe_name,
+        duration: recipeData.duration,
+        portion: recipeData.portion,
+        instruction: recipeData.instruction,
+        ingredients: recipeData.ingredients,
       });
 
       this.setState({
@@ -501,11 +497,11 @@ class FridgePage extends Component {
           ...prevState.recipes,
           {
             recipeId: id,
-            recipeTitle: recipeData.recipe_name,
-            recipeDuration: recipeData.duration,
-            recipeServings: recipeData.portion,
-            recipeInstructions: recipeData.instruction,
-            recipeIngredients: recipeData.ingredients,
+            recipe_name: recipeData.recipe_name,
+            duration: recipeData.duration,
+            portion: recipeData.portion,
+            instruction: recipeData.instruction,
+            ingredients: recipeData.ingredients,
           },
         ];
         const newOpenMenus = { ...prevState.openMenus, [id]: false };
@@ -517,6 +513,8 @@ class FridgePage extends Component {
           openMenus: newOpenMenus,
         };
       });
+
+      return createdRecipe;
       console.log("Hier sind alle Rezepte ", recipes);
     }
   };

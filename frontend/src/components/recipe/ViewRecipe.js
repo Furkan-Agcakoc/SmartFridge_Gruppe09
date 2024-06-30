@@ -13,8 +13,11 @@ import {
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
-const ViewRecipe = ({ open, handleClose, recipe }) => {
+const ViewRecipe = ({ open, handleClose, recipe, ingredients }) => {
   if (!recipe) return null;
+
+  console.log('ViewRecipe ===>', recipe);
+  console.log('Detailed ingredients ===>', ingredients);
 
   return (
     <Paper sx={{}}>
@@ -24,8 +27,8 @@ const ViewRecipe = ({ open, handleClose, recipe }) => {
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: "100%", // Feste Breite
-            height: "auto", // Feste Höhe
+            width: "100%", 
+            height: "auto", 
             position: "absolute",
             transform: "translate(0%, 0%)",
           },
@@ -38,43 +41,35 @@ const ViewRecipe = ({ open, handleClose, recipe }) => {
             alignItems: "center",
           }}
         >
-          {recipe.recipeTitle}
+          {recipe.recipe_name}
           <DialogActions>
-            <Button
-              onClick={handleClose}
-            >
+            <Button onClick={handleClose}>
               <CloseRoundedIcon />
             </Button>
           </DialogActions>
         </DialogTitle>
-        <DialogContent
-          sx={
-            {
-              // border: "5px solid blue",
-            }
-          }
-        >
+        <DialogContent>
           <Typography variant="body1">
-            <strong>Dauer:</strong> {recipe.recipeDuration} Minuten
+            <strong>Dauer:</strong> {recipe.duration} Minuten
           </Typography>
           <Typography variant="body1">
-            <strong>Portionen:</strong> {recipe.recipeServings}
+            <strong>Portionen:</strong> {recipe.portion}
           </Typography>
           <Typography variant="body1">
             <strong>Zubereitung:</strong>
           </Typography>
           <Typography variant="body2" paragraph>
-            {recipe.recipeInstructions}
+            {recipe.instruction}
           </Typography>
           <Typography variant="body1">
             <strong>Zutaten:</strong>
           </Typography>
           <List>
-            {recipe.recipeIngredients.map((ingredient, index) => (
+            {ingredients.map((ingredient, index) => (
               <ListItem key={index}>
                 <ListItemText
                   style={{ lineHeight: 1, margin: 0 }}
-                  primary={`⪧  ${ingredient.amount} ${ingredient.unit} / ${ingredient.name}`}
+                  primary={`⪧  ${ingredient.quantity} ${ingredient.unit} / ${ingredient.grocery_name}`}
                 />
               </ListItem>
             ))}

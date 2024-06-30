@@ -66,6 +66,7 @@ export default class SmartFridgeAPI {
   #getGroceryInRecipeByIdURL = (recipe_id) =>
     `${this.#SmartFridgeBaseURL}/grocery_in_recipe/${recipe_id}`;
 
+
   // household related
   #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household/`;
   #getHouseholdByIdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
@@ -92,6 +93,7 @@ export default class SmartFridgeAPI {
   #addRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/`;
   #deleteRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
   #updateRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
+  // #cookRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/${recipe_id}/${fridge_id}`;
 
   // user related
   #getUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
@@ -655,8 +657,8 @@ export default class SmartFridgeAPI {
 
   /**  recipe related **/
 
-  getRecipe(fridgeId, userId) {
-    const url = `${this.#getRecipeURL()}?fridge_id=${fridgeId}&user_id=${userId}`;
+  getRecipe(fridgeId) {
+    const url = `${this.#getRecipeURL()}?fridge_id=${fridgeId}`;
     return this.#fetchAdvanced(url).then((responseJSON) => {
       let recipeBOs = RecipeBO.fromJSON(responseJSON);
       return new Promise(function (resolve) {
@@ -732,6 +734,23 @@ export default class SmartFridgeAPI {
       });
     });
   }
+
+  // cookRecipe(recipeId, fridgeId) {
+
+  //   return this.#fetchAdvanced(this.#cookRecipeURL(recipeId, frideId), {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json, text/plain",
+  //       "Content-type": "application/json",
+  //     },
+  //     body: JSON.stringify(recipeBO),
+  //   }).then((responseJSON) => {
+  //     let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
+  //     return new Promise(function (resolve) {
+  //       resolve(responseRecipeBO);
+  //     });
+  //   });
+  // }'
 
   /**  user related  **/
 

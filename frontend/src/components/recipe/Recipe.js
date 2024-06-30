@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Paper,
   Typography,
@@ -13,6 +13,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ViewRecipe from './ViewRecipe';
+import SmartFridgeAPI from '../../api/SmartFridgeAPI';
 
 const Recipe = ({
   recipes,
@@ -26,18 +27,18 @@ const Recipe = ({
 }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [detailedIngredients, setDetailedIngredients] = useState([]);
 
-  console.log("Recipes in recipe component", recipes)
-
-
-  const handleRecipeClick = (recipe) => {
+  const handleRecipeClick = async (recipe) => {
+    console.log("Recipes in handleRecipeClick component", recipe);
     setSelectedRecipe(recipe);
-    setDetailDialogOpen(true);
+    await fetchIngredients(recipe.recipeId);
   };
 
   const handleDetailDialogClose = () => {
     setDetailDialogOpen(false);
     setSelectedRecipe(null);
+    setDetailedIngredients([]);
   };
 
   const handleDeleteClick = (recipeId) => {
@@ -45,6 +46,37 @@ const Recipe = ({
     handleOpenDialog(recipeId, 'recipe');
     handleAnchorClose(recipeId);
   };
+
+  const fetchIngredients = useCallback(async (recipeId) => {
+    if (recipeId) {
+      const api = SmartFridgeAPI.getAPI();
+      try {
+        const groceryStatementBOs = await api.getGroceryInRecipeId(recipeId);
+        const detailedIngredientsPromises = groceryStatementBOs.map(async (ingredient) => {
+          const [grocery] = await api.getGroceryById(ingredient.grocery_id);
+          const [measure] = await api.getMeasureById(ingredient.unit_id);
+          return {
+            ...ingredient,
+            grocery_name: grocery.grocery_name,
+            unit: measure.unit,
+          };
+        });
+        const detailedIngredientsResults = await Promise.all(detailedIngredientsPromises);
+        setDetailedIngredients(detailedIngredientsResults);
+        setDetailDialogOpen(true);
+      } catch (error) {
+        console.error("Error fetching ingredients:", error);
+      }
+    } else {
+      console.error("Recipe or recipe ID is undefined");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedRecipe) {
+      fetchIngredients(selectedRecipe.id);
+    }
+  }, [selectedRecipe, fetchIngredients]);
 
   return (
     <>
@@ -64,7 +96,7 @@ const Recipe = ({
             borderRadius: '10px',
             '&:hover': { boxShadow: '3px 3px 6px 2px rgba(0, 0, 0, 0.25)' },
           }}
-          
+          onClick={() => handleRecipeClick(recipe)}
         >
           <IconButton
             aria-label="more"
@@ -148,14 +180,16 @@ const Recipe = ({
           </Container>
         </Paper>
       ))}
-      <ViewRecipe
-        open={detailDialogOpen} 
-        handleClose={handleDetailDialogClose} 
-        recipe={selectedRecipe}
-      />
+      {detailDialogOpen && (
+        <ViewRecipe
+          open={detailDialogOpen}
+          handleClose={handleDetailDialogClose}
+          recipe={selectedRecipe}
+          ingredients={detailedIngredients}
+        />
+      )}
     </>
   );
 };
 
 export default Recipe;
-//Wo steht dass wenn handleRecipeClick ausgeführt wird und setdetaildialog auf true wird, dass ViewRecipe angezeigt wird?

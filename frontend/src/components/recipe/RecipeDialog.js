@@ -40,13 +40,13 @@ class RecipeDialog extends Component {
       },
       recipeData: {
         recipe_name: props.isEditMode ? props.recipe_name : "",
-        duration: props.isEditMode ? props.recipeDuration : "",
+        duration: props.isEditMode ? props.duration : "",
         portion: props.isEditMode ? props.portion : "",
         instruction: props.isEditMode ? props.instruction : "",
         groceryUnit: ["g", "kg", "ml", "l", "Stück"],
         ingredients:
-          props.isEditMode && props.recipeIngredients
-            ? props.recipeIngredients
+          props.isEditMode && props.ingredients
+            ? props.ingredients
             : [],
       },
       foodOptions: props.foodOptions || [],
@@ -63,20 +63,20 @@ class RecipeDialog extends Component {
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.recipe_name !== this.props.recipe_name ||
-      prevProps.recipeDuration !== this.props.recipeDuration ||
+      prevProps.duration !== this.props.duration ||
       prevProps.portion !== this.props.portion ||
       prevProps.instruction !== this.props.instruction ||
-      prevProps.recipeIngredients !== this.props.recipeIngredients
+      prevProps.ingredients !== this.props.ingredients
     ) {
       this.setState({
         recipeData: {
           recipe_name: this.props.recipe_name,
-          duration: this.props.recipeDuration,
+          duration: this.props.duration,
           portion: this.props.portion,
           instruction: this.props.instruction,
           groceryUnit: ["g", "kg", "ml", "l", "Stück"],
-          ingredients: Array.isArray(this.props.recipeIngredients)
-            ? this.props.recipeIngredients
+          ingredients: Array.isArray(this.props.ingredients)
+            ? this.props.ingredients
             : [],
         },
       });
@@ -128,9 +128,13 @@ class RecipeDialog extends Component {
   
     console.log("Form submitted: ", recipeData);
   
-    this.props.handleCreateRecipes(recipeData);
-  
-    console.log("recipeData ==>", recipeData.ingredients);
+    const createdRecipe = await this.props.handleCreateRecipes(recipeData);
+    const recipeId = createdRecipe.id;
+
+    console.log("Created Recipe ============>", createdRecipe);
+
+    console.log("Created Recipe ID ============>", recipeId);
+
   
     recipeData.ingredients.forEach((ingredient, index) => {
       console.log(`Ingredient ${index + 1} unit_name ==>`, ingredient.unit_name);
@@ -184,7 +188,7 @@ class RecipeDialog extends Component {
         const measureId = measure_id.id;
   
         // Call the addRecipeInFridge method for each ingredient
-        await this.addRecipeInFridge(groceryId, measureId, amount);
+        await this.addRecipeInFridge(groceryId, measureId, amount, recipeId);
   
         console.log(`Added ingredient ${ingredient.grocery_name} with measure ${ingredient.unit_name} to fridge.`);
       } catch (error) {
@@ -253,7 +257,7 @@ class RecipeDialog extends Component {
     }
   };
 
-  addRecipeInFridge = async (groceryId, measureId, amount) => {
+  addRecipeInFridge = async (groceryId, measureId, amount, recipeId) => {
     const { groceryData, fridgeId } = this.state;
     const newGroceryStatement = new GroceryStatementBO(
       groceryId,
@@ -266,10 +270,13 @@ class RecipeDialog extends Component {
         await SmartFridgeAPI.getAPI().addGroceryStatement(newGroceryStatement);
       const groceryStatementId = groceryStatement.id;
       console.log("groceryStatementId:", groceryStatementId);
+
+
+      //Change fridgeId
       const groceryStatementAddedInFridge =
         await SmartFridgeAPI.getAPI().addGroceryinRecipe(
           groceryStatementId,
-          fridgeId
+          recipeId
         );
       console.log(
         "groceryStatementAddedInFridge:",
