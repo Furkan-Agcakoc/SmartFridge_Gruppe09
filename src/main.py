@@ -489,16 +489,12 @@ recipe
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class RecipeOperations(Resource):
     @smartfridge.marshal_list_with(recipe)
-    @smartfridge.param('user_id', 'ID des Users, der das Rezept erstellt hat')
-    @smartfridge.param('fridge_id', 'ID des Fridge, zu dem das Rezept gehört')
     def get(self):
         """
-        Wiedergabe von Rezepten basierend auf User- und Haushalts-ID.
+        Wiedergabe von Rezepten
         """
-        user_id = request.args.get('user_id')
-        fridge_id = request.args.get('fridge_id')
         adm = Administration()
-        return adm.get_recipe_by_user_id(user_id) and adm.get_recipe_by_fridge_id(fridge_id)
+        return adm.get_all_recipe()
 
 
     @smartfridge.marshal_with(recipe, code=200)
@@ -561,6 +557,19 @@ class RecipeNameOperations(Resource):
         """Wiedergabe eines Recipe Objekts durch Name"""
         adm = Administration()
         recipe = adm.get_recipe_by_name(recipe_name)
+        return recipe
+
+
+@smartfridge.route('/recipe/fridge_id/<int:fridge_id>')
+@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
+@smartfridge.param('fridge_id', 'Die FridgeID des Recipe-Objekts')
+class RecipeFridgeOperations(Resource):
+
+    @smartfridge.marshal_with(recipe)
+    def get(self,fridge_id):
+        """Wiedergabe eines Recipe Objekts durch FridgeID"""
+        adm = Administration()
+        recipe = adm.get_recipe_by_fridge_id(fridge_id)
         return recipe
 
 """
@@ -901,6 +910,7 @@ class UnitConversion(Resource):
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class CalculateRecipeFridge(Resource):
     def post(self, recipe_id, fridge_id):
+        """ Rezepte Kochen"""
         # Instanz der Administrationsklasse erstellen
         adm = Administration()
 
