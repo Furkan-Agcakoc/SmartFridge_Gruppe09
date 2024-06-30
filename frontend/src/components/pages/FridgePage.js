@@ -71,10 +71,28 @@ class FridgePage extends Component {
     this.getGroceryInFridgeId(householdId);
   }
 
-  componentDidUpdate() {
-    // console.log("Geändert", this.state.fridgeId);
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.fridgeId !== this.state.fridgeId) {
+      this.loadRecipeList();
+    }
   }
   // #####################APIS###########################
+
+
+  loadRecipeList = async () => {
+    const { fridgeId } = this.state;
+    const userId = this.context.id;
+
+    console.log ('fridgeId', fridgeId)
+    console.log ('userId', userId)
+    try {
+      const recipes = await SmartFridgeAPI.getAPI().getRecipe(fridgeId, userId);
+      this.setState({ recipes });
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    }
+  }
+
 
   getGroceryInFridgeId = async (fridgeId) => {
     try {
@@ -139,12 +157,15 @@ class FridgePage extends Component {
     }
   };
 
+  refreshGroceryList = async () => {
+    const { fridgeId } = this.state;
+    await this.getGroceryInFridgeId(fridgeId);
+  };
+
   // #######################NO APIS###############################
 
-  refreshGroceryList(grocery) {
-    console.log("Grocery in Fridge", grocery);
-    this.setState({ groceries: grocery });
-  }
+
+
 
   groceryStatement(statement) {
     console.log("Statement von Fridgepage", statement);
@@ -176,24 +197,16 @@ class FridgePage extends Component {
     SmartFridgeAPI.getAPI()
       .getFridgeByHouseholdId(householdID)
       .then((response) => {
-        console.log("HouseholdID", householdID);
-
-        // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
         const fridgeId = response.id;
-
-        // Logge die fridge_id zur Überprüfung
-        console.log("Fridge ID", fridgeId);
-
-        // Aktualisiere den Zustand mit der fridge_id
-        this.setState({ fridgeId: fridgeId });
-        console.log("Fridge ID in State", fridgeId);
-
-        return fridgeId;
+        this.setState({ fridgeId }, () => {
+          this.loadRecipeList();
+        });
       })
       .catch((error) => {
         console.error("Error fetching fridge by household ID:", error);
       });
   };
+  
 
   handleTabChange(event, newValue) {
     console.log("Tab changed:", newValue);
@@ -445,17 +458,33 @@ class FridgePage extends Component {
     });
   };
 
-  handleCreateRecipes = (recipeData) => {
-    console.log("Recipe-Popup closed recipe recipe");
-    const { currentlyEditing, recipes } = this.state;
+
+  handleCreateRecipes = async (recipeData) => {
+    console.log('Recipe Data after filling in FridgePage ===>', recipeData);
+    const { currentlyEditing, recipes, fridgeId } = this.state;
+    const userId = this.context.id;
+
+    const {ingredients, groceryUnit, ...rest} = recipeData
+
+    const newRecipeData = {
+      ...rest,
+      fridge_id: fridgeId,
+      user_id: userId,
+      id: 0
+    }
+
+    console.log('newRecipeData after filling in FridgePage ===>', newRecipeData);
+
+
+    await SmartFridgeAPI.getAPI().addRecipe(newRecipeData)
 
     if (currentlyEditing !== null) {
       const updatedRecipes = this.updateRecipe({
         recipeId: currentlyEditing,
-        recipeTitle: recipeData.title,
+        recipeTitle: recipeData.recipe_name,
         recipeDuration: recipeData.duration,
-        recipeServings: recipeData.servings,
-        recipeInstructions: recipeData.instructions,
+        recipeServings: recipeData.portion,
+        recipeInstructions: recipeData.instruction,
         recipeIngredients: recipeData.ingredients,
       });
 
@@ -472,10 +501,10 @@ class FridgePage extends Component {
           ...prevState.recipes,
           {
             recipeId: id,
-            recipeTitle: recipeData.title,
+            recipeTitle: recipeData.recipe_name,
             recipeDuration: recipeData.duration,
-            recipeServings: recipeData.servings,
-            recipeInstructions: recipeData.instructions,
+            recipeServings: recipeData.portion,
+            recipeInstructions: recipeData.instruction,
             recipeIngredients: recipeData.ingredients,
           },
         ];
@@ -690,6 +719,7 @@ class FridgePage extends Component {
                       handlePopupGroceryClose={this.handlePopupGroceryClose}
                       handleCreateGroceries={this.handleCreateGroceries}
                       foodOptions={groceries.map((g) => g.groceryName)} // pass foodOptions to GroceryDialog
+                      refreshGroceryList={this.refreshGroceryList}
                     />
                   )}
                   <DeleteConfirmationDialog
@@ -811,6 +841,7 @@ class FridgePage extends Component {
                   </TabPanel>
                   {popupRecipeOpen && (
                     <RecipeDialog
+                      fridgeId={this.state.fridgeId}
                       isEditMode={isEditMode}
                       recipeTitle={
                         editingRecipe ? editingRecipe.recipeTitle : ""
