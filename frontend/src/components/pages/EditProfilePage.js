@@ -6,11 +6,12 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 import Typography from "@mui/material/Typography";
-// import Container from "@mui/material/Container";
 import { Paper } from "@mui/material";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import Alert from "@mui/material/Alert";
 import { useNavigate } from "react-router-dom";
+import UserBO from "../../api/SmartFridgeAPI";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
 // Funktionskomponente, um `useNavigate` zu verwenden und als Prop weiterzugeben
 const withNavigation = (Component) => {
@@ -26,30 +27,56 @@ class EditProfilePage extends Component {
     this.state = {
       firstName: "",
       lastName: "",
-      nickname: "",
+      nickName: "",
       showAlertSignin: false,
     };
   }
 
-  handleButtonClick = () => {
-    const { firstName, lastName, nickname } = this.state;
-    if (
-      firstName.trim() === "" ||
-      lastName.trim() === "" ||
-      nickname.trim() === ""
-    ) {
-      this.setState({ showAlertSignin: true });
-    } else {
+  componentDidMount() {
+    this.getUserById(1);
+    console.log(this.state.firstName);
+  }
+
+  componentDidUpdate() {
+    console.log(this.state.firstName);
+  }
+
+  handleSaveClick = async (e) => {
+    const form = e.target.closest("form");
+    if (form.checkValidity()) {
+      console.log("Form is valid, proceeding to update user");
+      await this.updateUser(1);
       this.props.navigate("/household");
+    } else {
+      console.log("Form is invalid");
+      this.setState({ showAlertSignin: true });
     }
   };
 
-  handleChange = (event) => {
-    const { name, value } = event.target;
+  getUserById = async (userId) => {
+    const users = await SmartFridgeAPI.getAPI().getUserById(userId);
+    const user = users[0];
+
     this.setState({
-      [name]: value,
-      showAlertSignin: false,
+      firstName: user.firstname,
+      lastName: user.lastname,
+      nickName: user.nickname,
     });
+  };
+
+  updateUser = async (userId) => {
+    const { firstName, lastName, nickName } = this.state;
+    const userToUpdate = new UserBO(firstName, lastName, nickName);
+    userToUpdate.setID(userId); // Use setID to set the ID
+
+    await SmartFridgeAPI.getAPI()
+      .updateUser(userToUpdate)
+      .then((updatedUser) => {
+        console.log("User updated:", updatedUser);
+      })
+      .catch((error) => {
+        console.error("Error updating user:", error);
+      });
   };
 
   handleCloseAlert = () => {
@@ -57,17 +84,17 @@ class EditProfilePage extends Component {
   };
 
   render() {
-    const { firstName, lastName, nickname, showAlertSignin } = this.state;
+    const { firstName, lastName, nickName, showAlertSignin } = this.state;
 
     const showAlertSigninComp = showAlertSignin && (
       <Alert severity="error" sx={{ marginBottom: "20px" }}>
-        Bitte füllen Sie alle Felder aus !
+        Bitte füllen Sie alle Felder aus!
       </Alert>
     );
     return (
       <>
         <Paper
-          component="main"
+          component="form"
           sx={{
             maxWidth: "xs",
             display: "flex",
@@ -129,7 +156,12 @@ class EditProfilePage extends Component {
                     placeholder="Ihr Vorname..."
                     autoFocus
                     value={firstName}
-                    onChange={this.handleChange}
+                    onChange={(e) =>
+                      this.setState({
+                        firstName: e.target.value,
+                      })
+                    }
+                    onInput={() => this.setState({ showAlertSignin: false })}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -142,20 +174,30 @@ class EditProfilePage extends Component {
                     autoComplete="family-name"
                     placeholder="Ihr Nachname..."
                     value={lastName}
-                    onChange={this.handleChange}
+                    onChange={(e) =>
+                      this.setState({
+                        lastName: e.target.value,
+                      })
+                    }
+                    onInput={() => this.setState({ showAlertSignin: false })}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     required
                     fullWidth
-                    id="nickname"
+                    id="nickName"
                     label="Nickname"
-                    name="nickname"
-                    autoComplete="nickname"
+                    name="nickName"
+                    autoComplete="nickName"
                     placeholder="Ihr Nickname..."
-                    value={nickname}
-                    onChange={this.handleChange}
+                    value={nickName}
+                    onChange={(e) =>
+                      this.setState({
+                        nickName: e.target.value,
+                      })
+                    }
+                    onInput={() => this.setState({ showAlertSignin: false })}
                   />
                 </Grid>
                 <Grid
@@ -164,8 +206,7 @@ class EditProfilePage extends Component {
                   sx={{ display: "flex", flexDirection: "column" }}
                 >
                   <Button
-                    // type="submit"
-                    onClick={this.handleButtonClick}
+                    onClick={this.handleSaveClick}
                     variant="contained"
                     endIcon={<CheckCircleOutlineRoundedIcon />}
                     sx={{

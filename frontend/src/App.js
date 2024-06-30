@@ -28,7 +28,6 @@ import UserContext from "./components/contexts/UserContext";
 import { FridgeProvider } from "./components/contexts/FridgeContext";
 import { UserBO } from "./api";
 
-
 // import { Config } from "./config";
 
 class App extends Component {
@@ -45,21 +44,6 @@ class App extends Component {
       dialogType: "",
     };
   }
-
-  // getHouseholdsByUserId = (userId) => {
-  //   const user = this.context;
-  //   console.log(user);
-
-  //   SmartFridgeAPI.getAPI()
-  //     .getHouseholdsByUserId(userId)
-  //     .then((households) => {
-  //       console.log(households);
-  //       this.setState({
-  //         households: households,
-  //       });
-  //     });
-  // };
-
 
   handleSignIn = () => {
     this.setState({ authLoading: true });
@@ -78,7 +62,7 @@ class App extends Component {
     }
   };
 
-  getUsers = () => {
+  getUser = () => {
     return SmartFridgeAPI.getAPI()
       .getUser()
       .then((userBOs) => {
@@ -100,7 +84,6 @@ class App extends Component {
     const email = currentUser.email;
     const google_user_id = currentUser.uid;
 
-
     const newUser = new UserBO(
       firstName, // firstname
       lastName, // lastname
@@ -108,6 +91,8 @@ class App extends Component {
       email, // email
       google_user_id // google_user_id
     );
+    console.log("New User:", newUser);
+
     return SmartFridgeAPI.getAPI()
       .addUser(newUser)
       .then((addedUser) => {
@@ -117,7 +102,7 @@ class App extends Component {
         return addedUser;
       })
       .catch((e) => {
-        // console.error("Error adding user: ", e);
+        console.error("Error adding user: ", e); // Unkommentiert um Fehler zu protokollieren
         throw e;
       });
   };
@@ -141,18 +126,7 @@ class App extends Component {
               authLoading: false,
             });
 
-            // Print user information
-            // console.log("User information:");
-            // console.log("Display Name:", user.displayName);
-            // console.log("Email:", user.email);
-            // console.log("UID:", user.uid);
-            // console.log("Nickname:", user.nickname);
-
-            // Split email and print the part before '@'
-            const emailLocalPart = user.email.split("@")[0];
-            // console.log("Email Local Part:", emailLocalPart);
-
-            this.getUsers()
+            this.getUser()
               .then((userBOs) => {
                 const existingUser = userBOs.find(
                   (u) => u.google_user_id === user.uid || u.email === user.email
@@ -218,70 +192,70 @@ class App extends Component {
       <>
         <UserContext.Provider value={user}>
           <FridgeProvider>
-          <ThemeProvider theme={Theme}>
-            <Router>
-              <Header
-                user={currentUser}
-                onSignIn={this.handleSignIn}
-                onSignOut={this.handleSignOut}
-              />
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    currentUser ? (
-                      <Navigate replace to={"/household"} />
-                    ) : (
-                      <LoginPage onSignIn={this.handleSignIn} />
-                    )
-                  }
+            <ThemeProvider theme={Theme}>
+              <Router>
+                <Header
+                  user={currentUser}
+                  onSignIn={this.handleSignIn}
+                  onSignOut={this.handleSignOut}
                 />
-                <Route
-                  path="/login"
-                  element={
-                    <Secured user={currentUser}>
-                      <LoginPage />
-                    </Secured>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <Secured user={currentUser}>
-                      <EditProfilePage />
-                    </Secured>
-                  }
-                />
-                <Route
-                  path="/household"
-                  element={
-                    <Secured user={currentUser}>
-                      <HouseholdPage
-                        dialogOpen={dialogOpen}
-                        dialogType={dialogType}
-                        handleOpenDialog={this.handleOpenDialog}
-                        handleCloseDialog={this.handleCloseDialog}
-                      />
-                    </Secured>
-                  }
-                />
-                <Route
-                  path="/home/:householdId"
-                  element={
-                    <Secured user={currentUser}>
-                      <FridgePage
-                        dialogOpen={dialogOpen}
-                        dialogType={dialogType}
-                        handleOpenDialog={this.handleOpenDialog}
-                        handleCloseDialog={this.handleCloseDialog}
-                      />
-                    </Secured>
-                  }
-                />
-              </Routes>
-              <Footer />
-            </Router>
-          </ThemeProvider>
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      currentUser ? (
+                        <Navigate replace to={"/household"} />
+                      ) : (
+                        <LoginPage onSignIn={this.handleSignIn} />
+                      )
+                    }
+                  />
+                  <Route
+                    path="/login"
+                    element={
+                      <Secured user={currentUser}>
+                        <LoginPage />
+                      </Secured>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <Secured user={currentUser}>
+                        <EditProfilePage />
+                      </Secured>
+                    }
+                  />
+                  <Route
+                    path="/household"
+                    element={
+                      <Secured user={currentUser}>
+                        <HouseholdPage
+                          dialogOpen={dialogOpen}
+                          dialogType={dialogType}
+                          handleOpenDialog={this.handleOpenDialog}
+                          handleCloseDialog={this.handleCloseDialog}
+                        />
+                      </Secured>
+                    }
+                  />
+                  <Route
+                    path="/home/:householdId"
+                    element={
+                      <Secured user={currentUser}>
+                        <FridgePage
+                          dialogOpen={dialogOpen}
+                          dialogType={dialogType}
+                          handleOpenDialog={this.handleOpenDialog}
+                          handleCloseDialog={this.handleCloseDialog}
+                        />
+                      </Secured>
+                    }
+                  />
+                </Routes>
+                <Footer />
+              </Router>
+            </ThemeProvider>
           </FridgeProvider>
         </UserContext.Provider>
       </>
