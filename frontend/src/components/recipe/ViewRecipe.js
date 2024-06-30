@@ -38,7 +38,7 @@ const ViewRecipe = ({ open, handleClose, recipe }) => {
             alignItems: "center",
           }}
         >
-          {recipe.recipe_name}
+          {recipe.recipeTitle}
           <DialogActions>
             <Button
               onClick={handleClose}
@@ -55,33 +55,30 @@ const ViewRecipe = ({ open, handleClose, recipe }) => {
           }
         >
           <Typography variant="body1">
-            <strong>Dauer:</strong> {recipe.duration} Minuten
+            <strong>Dauer:</strong> {recipe.recipeDuration} Minuten
           </Typography>
           <Typography variant="body1">
-            <strong>Portionen:</strong> {recipe.portion}
+            <strong>Portionen:</strong> {recipe.recipeServings}
           </Typography>
           <Typography variant="body1">
             <strong>Zubereitung:</strong>
           </Typography>
           <Typography variant="body2" paragraph>
-            {recipe.insturction}
+            {recipe.recipeInstructions}
           </Typography>
           <Typography variant="body1">
             <strong>Zutaten:</strong>
           </Typography>
-
-        
-
-          {/* <List>
+          <List>
             {recipe.recipeIngredients.map((ingredient, index) => (
               <ListItem key={index}>
                 <ListItemText
                   style={{ lineHeight: 1, margin: 0 }}
-                  primary={`⪧  ${ingredient.amount} ${ingredient.unit_name} / ${ingredient.grocery_name}`}
+                  primary={`⪧  ${ingredient.amount} ${ingredient.unit} / ${ingredient.name}`}
                 />
               </ListItem>
             ))}
-          </List> */}
+          </List>
         </DialogContent>
         <DialogActions
           sx={{
