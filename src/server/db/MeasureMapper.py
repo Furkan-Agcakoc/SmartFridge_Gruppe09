@@ -78,19 +78,6 @@ class MeasureMapper(Mapper):
 
     def insert(self, measure):
         cursor = self._cnx.cursor()
-        
-        
-        check_command = "SELECT id FROM measure WHERE unit = %s AND fridge_id = %s"
-        check_data = (measure.get_unit(), measure.get_fridge_id())
-        cursor.execute(check_command, check_data)
-        result = cursor.fetchone()
-
-        if result is not None:
-            
-            cursor.close()
-            return measure
-
-        
         cursor.execute("SELECT MAX(id) AS maxid FROM measure")
         tuples = cursor.fetchall()
 
@@ -108,7 +95,7 @@ class MeasureMapper(Mapper):
         cursor.close()
 
         return measure
-    
+
     def update(self, measure):
         cursor = self._cnx.cursor()
         command = "UPDATE measure SET unit=%s, fridge_id=%s WHERE id=%s"

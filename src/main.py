@@ -897,7 +897,7 @@ class UnitConversion(Resource):
 """
 
 
-@smartfridge.route('/calculate_recipe_fridge/<int:recipe_id>/<int:fridge_id>')
+@smartfridge.route('/recipe/<int:recipe_id>/<int:fridge_id>')
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class CalculateRecipeFridge(Resource):
     def post(self, recipe_id, fridge_id):
@@ -905,23 +905,23 @@ class CalculateRecipeFridge(Resource):
         adm = Administration()
 
         # Methode calculate_recipe_fridge aufrufen
-        result = adm.calculate_recipe_fridge(recipe_id, fridge_id)
+        result = adm.cook_recipe(recipe_id, fridge_id)
 
         # Rückgabe des Ergebnisses
         return result, 200
 
-@smartfridge.route('/household/<int:household_id>/recipes')
+@smartfridge.route('/fridge/<int:fridge_id>/recipes')
 @smartfridge.response(500, 'Server Error')
-@smartfridge.param('household_id', 'The ID of the household')
-class RecipesByFridgeContents(Resource):
-    def get(self, household_id):
+@smartfridge.param('fridge_id', 'The ID of the Fridge')
+class CheckRecipesContents(Resource):
+    def get(self, fridge_id):
         """
         Retrieve recipes that can be made with the contents of the fridge within the specified household.
         It also lists ingredients that are missing to complete each recipe.
         """
         adm = Administration()
         try:
-            results = adm.find_recipes_by_fridge_contents(household_id)
+            results = adm.check_recipes(fridge_id)
             if not results:
                 return {'message': 'No recipes could be fully or partially made with the current fridge contents.'}, 404
             return results, 200
