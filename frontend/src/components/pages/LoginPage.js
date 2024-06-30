@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import FontLogin from "../dialogs/FontLogin";
 import Logo from "../../images/Fridge_Logo.png";
-import { Typography } from "@mui/material";
-import Card from "@mui/material/Card";
-import Button from "@mui/material/Button";
-import { Box } from "@mui/material";
+import { Typography, Card, Button, Box } from "@mui/material";
 
 class LoginPage extends Component {
   render() {
@@ -12,13 +9,22 @@ class LoginPage extends Component {
 
     return (
       <>
-        <FontLogin />
         <Box
           sx={{
             display: "flex",
             justifyContent: "center",
-            position: "relative",
-            top: "175px",
+            alignItems: "center",
+          }}
+        >
+          <FontLogin />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            px: 2,
           }}
         >
           <Card
@@ -27,76 +33,52 @@ class LoginPage extends Component {
               border: "2px solid rgba(255, 255, 255, 0.5)",
               boxShadow: "0 0 30px rgba(0, 0, 0, 0.25)",
               backdropFilter: "blur(20px)",
-              width: " 500px",
-              height: "500px",
+              width: { xs: "100%", sm: "400px", md: "450px" },
+              height: { xs: "auto", sm: "auto", md: "450px" },
+              p: 2,
               display: "flex",
-              justifyContent: "center",
-              alignItems: "space-evenly",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
+            <Typography
+              fontSize={{ xs: "20px", sm: "25px", md: "30px" }}
+              fontWeight={600}
+              color={"#162938"}
+              mt={2}
+              mb={3}
+              textAlign="center"
+            >
+              Anmeldung bei Smart Fridge!
+            </Typography>
             <Box
+              component="img"
+              src={Logo}
+              alt="fridge-logo"
+              sx={{ width: "100px", mb: 3, zIndex: 1000 }}
+            />
+            <Button
+              onClick={onSignIn}
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-start",
+                width: "100%",
+                maxWidth: "250px",
+                height: "40px",
+                boxShadow: 1,
+                cursor: "pointer",
+                transition: "0.2s ease ",
+                backgroundColor: "primary.main",
+                color: "#fbfbfb",
+                mt: "20px",
+                "&:hover": {
+                  bgcolor: "primary.dark",
+                  boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                },
               }}
             >
-              <Typography
-                fontSize={"30px"}
-                fontWeight={600}
-                color={"#162938"}
-                position={"relative"}
-                top={"40px"}
-              >
-                Anmeldung bei Smart Fridge!
+              <Typography fontSize={"18px"} fontWeight={600}>
+                Login
               </Typography>
-              <Box
-                component={"img"}
-                src={Logo}
-                alt="fridge-logo"
-                sx={{
-                  width: "100px",
-                  position: "relative",
-                  top: "90px",
-                  margin: "0 auto",
-                }}
-              />
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  position: "relative",
-                  top: "150px",
-                }}
-              >
-                <Button
-                  onClick={onSignIn}
-                  sx={{
-                    width: "250px",
-                    height: "40px",
-                    cursor: "pointer",
-                    transition: "0.2s ease ",
-                    background: "rgba(255, 255, 255, 0.4)",
-                    backgroundColor: "primary.main",
-                    color: "#fbfbfb",
-                    "&:hover": {
-                      color: "rgba(29, 151, 35, 0.8)",
-                      border: "2px solid #8dc4af",
-                      background: "rgba(29, 151, 35, 0.2)",
-                    },
-                  }}
-                >
-                  <Typography
-                    fontSize={"18px"}
-                    fontWeight={600}
-                    top={"50px"}
-                    
-                  >
-                    Login
-                  </Typography>
-                </Button>
-              </Box>
-            </Box>
+            </Button>
           </Card>
         </Box>
       </>
