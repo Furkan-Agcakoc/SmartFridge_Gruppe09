@@ -132,7 +132,6 @@ class FridgePage extends Component {
           }
         })
       );
-      console.log("updatedGroceryStatements ===>", updatedGroceryStatements);
       this.setState({ updatedGroceryStatements });
     } catch (error) {
       // console.error("Error fetching grocery statements:", error);
@@ -229,59 +228,36 @@ class FridgePage extends Component {
   };
 
   handleCreateGroceries = (groceryData) => {
-    const { currentlyEditing, groceries } = this.state;
+    const { currentlyEditing, groceries, updatedGroceryStatements } = this.state;
 
     if (currentlyEditing !== null) {
-      const currentGrocery = groceries.find(
-        (grocery) => grocery.groceryId === currentlyEditing
-      );
+      const updatedGroceries = updatedGroceryStatements.map((grocery) => {
 
-      // Überprüfen, ob sich der Name oder die Menge geändert haben
-      if (
-        currentGrocery.groceryName === groceryData.name &&
-        currentGrocery.groceryQuantity === groceryData.quantity &&
-        currentGrocery.groceryUnit === groceryData.unit
-      ) {
-        this.setState({
+        if (grocery.id === currentlyEditing) {
+          return {
+            ...grocery,
+            grocery_name: groceryData.name,
+            quantity: groceryData.quantity,
+            unit_name: groceryData.unit,
+          };
+        }
+        return grocery;
+      });
+  
+
+      this.setState(
+        {
+          groceries: updatedGroceries,
           popupGroceryOpen: false,
           currentlyEditing: null,
-        });
-        return;
-      }
-
-      // Finden des Indexes eines existierenden Lebensmittels mit dem neuen Namen
-      const existingGroceryIndex = groceries.findIndex(
-        (grocery) => grocery.groceryName === groceryData.name
+        },
+        () => {
+          console.log('Updated groceries:', this.state.groceries);
+        }
       );
 
-      const updatedGroceries = groceries
-        .map((grocery, index) => {
-          if (grocery.groceryId === currentlyEditing) {
-            if (existingGroceryIndex !== -1 && existingGroceryIndex !== index) {
-              // Menge zum existierenden Lebensmittel addieren
-              groceries[existingGroceryIndex].groceryQuantity =
-                parseFloat(groceries[existingGroceryIndex].groceryQuantity) +
-                parseFloat(groceryData.quantity);
-              return null; // Mark for deletion
-            } else {
-              // Aktualisieren des bearbeiteten Lebensmittels
-              return {
-                ...grocery,
-                groceryName: groceryData.name,
-                groceryQuantity: groceryData.quantity,
-                groceryUnit: groceryData.unit,
-              };
-            }
-          }
-          return grocery;
-        })
-        .filter((grocery) => grocery !== null); // Entfernen des markierten Lebensmittels
+      console.log('Updated grocery ===>', updatedGroceries)
 
-      this.setState({
-        groceries: updatedGroceries,
-        popupGroceryOpen: false,
-        currentlyEditing: null,
-      });
     } else {
       // Hinzufügen eines neuen Lebensmittels, wenn es im Bearbeitungsmodus nicht existiert
       const existingGrocery = groceries.find(
@@ -450,30 +426,6 @@ class FridgePage extends Component {
     }
   };
 
-  // handleAnchorDelete(Id) {
-  //   console.log("Deleting ID:", Id);
-  //   this.setState((prevState) => {
-  //     const newOpenMenus = { ...prevState.openMenus, [Id]: false };
-
-  //     if (prevState.value === "1") {
-  //       const newGroceries = prevState.groceries.filter(
-  //         (g) => g.groceryId !== Id
-  //       );
-  //       return {
-  //         groceries: newGroceries,
-  //         openMenus: newOpenMenus,
-  //       };
-  //     } else if (prevState.value === "2") {
-  //       const newRecipes = prevState.recipes.filter((r) => r.recipeId !== Id);
-  //       return {
-  //         recipes: newRecipes,
-  //         openMenus: newOpenMenus,
-  //       };
-  //     }
-
-  //     return { openMenus: newOpenMenus };
-  //   });
-  // }
 
   handleConfirmDelete() {
     const { groceryIdToDelete, recipeIdToDelete, value } = this.state;
@@ -530,6 +482,8 @@ class FridgePage extends Component {
     );
 
     if (currentlyEditing !== null) {
+      console.log('currentlyEditing in currentlyEditing ======>', currentlyEditing)
+
       const updatedRecipes = this.updateRecipe({
         recipe_id: currentlyEditing,
         recipe_name: recipeData.recipe_name,
@@ -538,6 +492,8 @@ class FridgePage extends Component {
         instruction: recipeData.instruction,
         ingredients: recipeData.ingredients,
       });
+
+      console.log('Updated Recipes ======>', updatedRecipes)
 
       this.setState({
         recipes: updatedRecipes,
@@ -766,6 +722,8 @@ class FridgePage extends Component {
                       handleCreateGroceries={this.handleCreateGroceries}
                       foodOptions={groceries.map((g) => g.groceryName)}
                       refreshGroceryList={this.refreshGroceryList}
+                      groceries={this.groceries}
+                      curentGroceryId={this.state.currentlyEditing}
                     />
                   )}
                   <DeleteConfirmationDialog
