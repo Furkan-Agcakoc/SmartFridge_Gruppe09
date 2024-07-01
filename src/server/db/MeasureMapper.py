@@ -99,7 +99,7 @@ class MeasureMapper(Mapper):
     def update(self, measure):
         cursor = self._cnx.cursor()
         command = "UPDATE measure SET unit=%s, fridge_id=%s WHERE id=%s"
-        data = (measure.get_unit(), measure.get_id(), measure.get_fridge_id())
+        data = (measure.get_unit(), measure.get_fridge_id(), measure.get_id())
         cursor.execute(command, data)
 
         self._cnx.commit()

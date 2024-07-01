@@ -113,7 +113,7 @@ class GroceryMapper(Mapper):
     def update(self, grocery):
         cursor = self._cnx.cursor()
         command = "UPDATE grocery SET grocery_name=%s, fridge_id=%s WHERE id=%s"
-        data = (grocery.get_grocery_name(), grocery.get_id(), grocery.get_fridge_id())
+        data = (grocery.get_grocery_name(), grocery.get_fridge_id(), grocery.get_id())
         cursor.execute(command, data)
 
         self._cnx.commit()
