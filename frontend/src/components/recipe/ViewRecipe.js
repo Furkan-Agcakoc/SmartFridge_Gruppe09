@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Paper,
   Dialog,
@@ -21,6 +21,26 @@ const ViewRecipe = ({
   ingredients,
   refreshGroceryList,
 }) => {
+  const [nickname, setNickname] = useState("");
+
+  useEffect(() => {
+    const getUserNickname = async () => {
+      if (recipe?.user_id) {
+        try {
+          const users = await SmartFridgeAPI.getAPI().getUserById(
+            recipe.user_id
+          );
+          const user = users[0];
+          setNickname(user.nickname);
+        } catch (error) {
+          console.error("Error fetching user nickname:", error);
+        }
+      }
+    };
+
+    getUserNickname();
+  }, [recipe?.user_id]);
+
   if (!recipe) return null;
 
   const handleOnCookRecipe = async () => {
@@ -38,7 +58,7 @@ const ViewRecipe = ({
   };
 
   return (
-    <Paper sx={{}}>
+    <Paper sx={{  }}>
       <Dialog
         scroll="paper"
         open={open}
@@ -60,27 +80,27 @@ const ViewRecipe = ({
             fontWeight: "bold",
           }}
         >
-          {recipe.recipe_name}
+          {recipe.recipe_name} von {nickname}
           <DialogActions>
             <Button onClick={handleClose}>
               <CloseRoundedIcon />
             </Button>
           </DialogActions>
         </DialogTitle>
-        <DialogContent>
-          <Typography variant="body1">
+        <DialogContent >
+          <Typography>
             <strong>Dauer:</strong> {recipe.duration} Minuten
           </Typography>
-          <Typography variant="body1">
+          <Typography>
             <strong>Portionen:</strong> {recipe.portion}
           </Typography>
-          <Typography variant="body1">
+          <Typography >
             <strong>Zubereitung:</strong>
           </Typography>
-          <Typography variant="body2" paragraph>
+          <Typography paragraph >
             {recipe.instruction}
           </Typography>
-          <Typography variant="body1">
+          <Typography>
             <strong>Zutaten:</strong>
           </Typography>
           <List>
