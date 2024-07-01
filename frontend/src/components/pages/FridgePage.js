@@ -89,9 +89,7 @@ class FridgePage extends Component {
   loadRecipeList = async () => {
     try {
       const recipes = await SmartFridgeAPI.getAPI().getRecipe();
-      this.setState({ recipes }, () => {
-        console.log("Fetched and set recipes in state:", this.state.recipes);
-      });
+      this.setState({ recipes });
     } catch (error) {
       console.error("Error fetching recipes:", error);
     }
@@ -371,6 +369,11 @@ class FridgePage extends Component {
     });
   };
 
+
+  updateGroceryStatement = async (id) => {
+
+  }
+
   handleAnchorEdit = (Id) => {
     console.log("Editing:", Id);
     this.setState(
@@ -397,34 +400,86 @@ class FridgePage extends Component {
     );
   };
 
-  handleAnchorDelete(Id) {
-    console.log("Deleting ID:", Id);
-    this.setState((prevState) => {
-      const newOpenMenus = { ...prevState.openMenus, [Id]: false };
+  deleteGroceryStatement = async (groceryStatementID) => {
+    try {
+      await SmartFridgeAPI.getAPI().deleteGroceryStatement(groceryStatementID);
+      this.setState((prevState) => ({
+        updatedGroceryStatements: prevState.updatedGroceryStatements.filter(
+          (statement) => statement.id !== groceryStatementID
+        ),
+      }));
+    } catch (error) {
+      console.error("Error deleting grocery statement:", error);
+    }
+  };
 
-      if (prevState.value === "1") {
-        const newGroceries = prevState.groceries.filter(
-          (g) => g.groceryId !== Id
-        );
-        return {
-          groceries: newGroceries,
-          openMenus: newOpenMenus,
-        };
-      } else if (prevState.value === "2") {
-        const newRecipes = prevState.recipes.filter((r) => r.recipeId !== Id);
-        return {
-          recipes: newRecipes,
-          openMenus: newOpenMenus,
-        };
+  deleteRecipe = async (recipeID) => {
+    try {
+      const groceryStatementsPromise = await SmartFridgeAPI.getAPI().getGroceryInRecipeId(recipeID);
+      const groceryStatements = await groceryStatementsPromise;
+      
+      console.log('groceryStatements =>', groceryStatements)
+      
+      const deletePromises = groceryStatements.map((statement) =>
+        SmartFridgeAPI.getAPI().deleteGroceryStatement(statement.id)
+    );
+      await Promise.all(deletePromises);
+    
+      await SmartFridgeAPI.getAPI().getGroceryInRecipeId(recipeID)
+      await SmartFridgeAPI.getAPI().deleteRecipe(recipeID);
+
+      this.setState((prevState) => ({
+        recipes: prevState.recipes.filter((recipe) => recipe.id !== recipeID),
+      }));
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+    }
+  };
+  
+
+  
+  handleAnchorDelete = async (Id) => {
+    try {
+      if (this.state.value === "1") {
+        await this.deleteGroceryStatement(Id);
+      } else if (this.state.value === '2') {
+        await this.deleteRecipe(Id)
       }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
+  };
 
-      return { openMenus: newOpenMenus };
-    });
-  }
+  // handleAnchorDelete(Id) {
+  //   console.log("Deleting ID:", Id);
+  //   this.setState((prevState) => {
+  //     const newOpenMenus = { ...prevState.openMenus, [Id]: false };
+
+  //     if (prevState.value === "1") {
+  //       const newGroceries = prevState.groceries.filter(
+  //         (g) => g.groceryId !== Id
+  //       );
+  //       return {
+  //         groceries: newGroceries,
+  //         openMenus: newOpenMenus,
+  //       };
+  //     } else if (prevState.value === "2") {
+  //       const newRecipes = prevState.recipes.filter((r) => r.recipeId !== Id);
+  //       return {
+  //         recipes: newRecipes,
+  //         openMenus: newOpenMenus,
+  //       };
+  //     }
+
+  //     return { openMenus: newOpenMenus };
+  //   });
+  // }
 
   handleConfirmDelete() {
     const { groceryIdToDelete, recipeIdToDelete, value } = this.state;
     console.log("App => Confirm delete");
+
+    console.log('groceryIdToDelete', groceryIdToDelete)
     if (value === "1" && groceryIdToDelete !== null) {
       this.handleAnchorDelete(groceryIdToDelete);
     } else if (value === "2" && recipeIdToDelete !== null) {
@@ -709,7 +764,7 @@ class FridgePage extends Component {
                       }
                       handlePopupGroceryClose={this.handlePopupGroceryClose}
                       handleCreateGroceries={this.handleCreateGroceries}
-                      foodOptions={groceries.map((g) => g.groceryName)} // pass foodOptions to GroceryDialog
+                      foodOptions={groceries.map((g) => g.groceryName)}
                       refreshGroceryList={this.refreshGroceryList}
                     />
                   )}
