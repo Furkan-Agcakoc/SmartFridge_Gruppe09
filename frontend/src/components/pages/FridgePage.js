@@ -887,7 +887,7 @@ class FridgePage extends Component {
                       top: "-100px",
                     }}
                   >
-                    <Settings />
+                    <Settings fridgeId={this.state.fridgeId} />
                   </TabPanel>
                 </Container>
               </TabContext>

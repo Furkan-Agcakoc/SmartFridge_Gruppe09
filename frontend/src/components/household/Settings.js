@@ -1,192 +1,210 @@
 import React, { Component } from "react";
-import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import {
   Paper,
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
   Typography,
   Container,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Modal,
+  IconButton,
   Box,
   TextField,
   Button,
 } from "@mui/material";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
+import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import FridgeContext from "../contexts/FridgeContext";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import AlertComponent from "../dialogs/AlertComponent";
 
 class Settings extends Component {
+  static contextType = FridgeContext;
+
   constructor(props) {
     super(props);
     this.state = {
       groceries: [],
       measures: [],
-      modalOpenGrocery: false,
-      modalOpenMeasure: false,
+      fridgeId: this.props.fridgeId,
+      showAlertGroceryDelete: false,
+      showAlertMeasureDelete: false,
+      showAlertEdit: false,
+      popupGroceryOpen: false,
+      popupMeasureOpen: false,
       selectedGrocery: null,
       selectedMeasure: null,
-      editedGroceryName: "",
-      editedMeasureName: "",
     };
+    console.log("Constructor - Fridge ID:", this.state.fridgeId);
   }
 
   componentDidMount() {
-    SmartFridgeAPI.getAPI()
-      .getGrocery()
-      .then((groceryBOs) => {
-        this.setState({ groceries: groceryBOs });
-      })
-      .catch((error) => {
-        console.error("Error fetching groceries:", error);
-      });
-    SmartFridgeAPI.getAPI()
-      .getMeasure()
-      .then((measureBOs) => {
-        this.setState({ measures: measureBOs });
-      })
-      .catch((error) => {
-        console.error("Error fetching measures:", error);
-      });
+    const { fridgeId } = this.state;
+    this.getGroceryByFridgeId(fridgeId);
+    this.getMeausresByFridgeId(fridgeId);
+
+    // Event listener to hide alerts on document click
+    document.addEventListener("click", this.handleDocumentClick);
+    console.log("Groceries", this.state.groceries);
   }
 
-  deleteGrocery = (grocery) => {
-    SmartFridgeAPI.getAPI()
-      .deleteGrocery(grocery.id)
-      .then(() => {
-        const { groceries } = this.state;
-        const updatedGroceries = groceries.filter((g) => g.id !== grocery.id);
-        this.setState({ groceries: updatedGroceries });
-      })
-      .catch((error) => {
-        console.error("Fehler beim Löschen:", error);
+  componentWillUnmount() {
+    // Clean up the event listener
+    document.removeEventListener("click", this.handleDocumentClick);
+  }
+
+  componentDidUpdate() {}
+
+  handleDocumentClick = () => {
+    this.setState({
+      showAlertGroceryDelete: false,
+      showAlertMeasureDelete: false,
+    });
+  };
+
+  handleClick = (e) => {
+    const form = e.target.closest("form");
+    if (form.checkValidity()) {
+      console.log("Form is valid, proceeding to update user");
+      this.setState({
+        popupGroceryOpen: false,
+        popupMeasureOpen: false,
+        selectedGrocery: null,
+        selectedMeasure: null,
       });
-  };
-
-  deleteMeasure = (measure) => {
-    SmartFridgeAPI.getAPI()
-      .deleteMeasure(measure.id)
-      .then(() => {
-        const { measures } = this.state;
-        const updatedMeasures = measures.filter((m) => m.id !== measure.id);
-        this.setState({ measures: updatedMeasures });
-      })
-      .catch((error) => {
-        console.error("Fehler beim Löschen:", error);
-      });
-  };
-
-  handleOpenGroceryModal = (grocery) => {
-    this.setState({
-      modalOpenGrocery: true,
-      selectedGrocery: grocery,
-      editedGroceryName: grocery.grocery_name,
-    });
-  };
-
-  handleCloseGroceryModal = () => {
-    this.setState({
-      modalOpenGrocery: false,
-      selectedGrocery: null,
-      editedGroceryName: "",
-    });
-  };
-
-  handleOpenMeasureModal = (measure) => {
-    this.setState({
-      modalOpenMeasure: true,
-      selectedMeasure: measure,
-      editedMeasureName: measure.unit,
-    });
-  };
-
-  handleCloseMeasureModal = () => {
-    this.setState({
-      modalOpenMeasure: false,
-      selectedMeasure: null,
-      editedMeasureName: "",
-    });
-  };
-
-  handleEditGroceryChange = (event) => {
-    this.setState({ editedGroceryName: event.target.value });
-  };
-
-  handleEditMeasureChange = (event) => {
-    this.setState({ editedMeasureName: event.target.value });
-  };
-
-  handleUpdateGrocery = () => {
-    const { selectedGrocery, editedGroceryName, groceries } = this.state;
-
-    if (selectedGrocery !== null) {
-      SmartFridgeAPI.getAPI()
-        .updateGrocery({
-          id: selectedGrocery.id,
-          grocery_name: editedGroceryName,
-        })
-        .then((updatedGrocery) => {
-          const updatedGroceries = groceries.map((grocery) =>
-            grocery.id === selectedGrocery.id
-              ? { ...grocery, grocery_name: editedGroceryName }
-              : grocery
-          );
-
-          this.setState({
-            groceries: updatedGroceries,
-            modalOpenGrocery: false,
-            selectedGrocery: null,
-            editedGroceryName: "",
-          });
-        })
-        .catch((error) => {
-          console.error("Error updating grocery:", error);
-        });
+    } else {
+      this.setState({ showAlertEdit: true });
     }
   };
 
-  handleUpdateMeasure = () => {
-    const { selectedMeasure, editedMeasureName, measures } = this.state;
+  getGroceryByFridgeId = async (fridgeId) => {
+    const groceries = await SmartFridgeAPI.getAPI().getGroceryByFridgeId(
+      fridgeId
+    );
+    console.log(groceries);
+    this.setState({
+      groceries: groceries,
+    });
+  };
 
-    if (selectedMeasure !== null) {
-      SmartFridgeAPI.getAPI()
-        .updateMeasure({
-          id: selectedMeasure.id,
-          unit: editedMeasureName,
-        })
-        .then((updatedMeasure) => {
-          const updatedMeasures = measures.map((measure) =>
-            measure.id === selectedMeasure.id
-              ? { ...measure, unit: editedMeasureName }
-              : measure
-          );
+  getMeausresByFridgeId = async (fridgeId) => {
+    const measures = await SmartFridgeAPI.getAPI().getMeasureByFridgeId(
+      fridgeId
+    );
+    console.log(measures);
+    this.setState({
+      measures: measures,
+    });
+  };
 
-          this.setState({
-            measures: updatedMeasures,
-            modalOpenMeasure: false,
-            selectedMeasure: null,
-            editedMeasureName: "",
-          });
-        })
-        .catch((error) => {
-          console.error("Error updating measure:", error);
-        });
-    }
+  deleteGrocery = async (groceryId) => {
+    await SmartFridgeAPI.getAPI()
+      .deleteGrocery(groceryId)
+      .then(() => {
+        this.setState((prevState) => ({
+          groceries: prevState.groceries.filter(
+            (grocery) => grocery.id !== groceryId
+          ),
+        }));
+      })
+      .catch((error) => {
+        // Fehlerbehandlung
+        if (error.response && error.response.status === 403) {
+          // Spezifische Fehlermeldung anzeigen, wenn das Löschen verboten ist
+          alert("Dieses Lebensmittel kann nicht gelöscht werden.");
+        } else {
+          // Allgemeine Fehlermeldung anzeigen
+          this.setState({ showAlertGroceryDelete: true });
+        }
+      });
+  };
+
+  deleteMeasure = async (measureId) => {
+    await SmartFridgeAPI.getAPI()
+      .deleteMeasure(measureId)
+      .then(() => {
+        this.setState((prevState) => ({
+          measures: prevState.measures.filter(
+            (measure) => measure.id !== measureId
+          ),
+        }));
+      })
+      .catch((error) => {
+        // Fehlerbehandlung
+        if (error.response && error.response.status === 403) {
+          // Spezifische Fehlermeldung anzeigen, wenn das Löschen verboten ist
+          alert("Diese Maßnahme kann nicht gelöscht werden.");
+        } else {
+          // Allgemeine Fehlermeldung anzeigen
+          this.setState({ showAlertMeasure: true });
+        }
+      });
+  };
+
+  editGrocery = (groceryId) => {
+    const selectedGrocery = this.state.groceries.find(
+      (grocery) => grocery.id === groceryId
+    );
+    this.setState({
+      popupGroceryOpen: true,
+      selectedGrocery,
+    });
+  };
+
+  editMeasure = (measureId) => {
+    const selectedMeasure = this.state.measures.find(
+      (measure) => measure.id === measureId
+    );
+    this.setState({
+      popupMeasureOpen: true,
+      selectedMeasure,
+    });
+  };
+
+  handleDeleteGrocery = (groceryId) => (e) => {
+    e.stopPropagation(); // Prevent triggering document click
+    this.deleteGrocery(groceryId);
+  };
+
+  handleDeleteMeasure = (measureId) => (e) => {
+    e.stopPropagation(); // Prevent triggering document click
+    this.deleteMeasure(measureId);
+  };
+
+  handleEditGrocery = (groceryId) => (e) => {
+    e.stopPropagation(); // Prevent triggering document click
+    this.editGrocery(groceryId);
+  };
+
+  handleEditMeasure = (measureId) => (e) => {
+    e.stopPropagation(); // Prevent triggering document click
+    this.editMeasure(measureId);
+  };
+
+  handlePopupGroceryClose = () => {
+    this.setState({ popupGroceryOpen: false, selectedGrocery: null });
+  };
+
+  handlePopupMeasureClose = () => {
+    this.setState({ popupMeasureOpen: false, selectedMeasure: null });
   };
 
   render() {
     const {
       groceries,
       measures,
-      modalOpenGrocery,
-      modalOpenMeasure,
-      editedGroceryName,
-      editedMeasureName,
+      showAlertGroceryDelete,
+      showAlertMeasureDelete,
+      popupGroceryOpen,
+      popupMeasureOpen,
+      selectedGrocery,
+      selectedMeasure,
     } = this.state;
 
     return (
@@ -213,10 +231,14 @@ class Settings extends Component {
                   Lebensmittel bearbeiten
                 </Typography>
               </AccordionSummary>
+              <AlertComponent
+                showAlert={showAlertGroceryDelete}
+                alertType="SettingsGroceryDelete"
+              />
               <AccordionDetails
                 sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
               >
-                <List sx={{ width: "600px" }}>
+                <List sx={{ width: "600px", marginBottom: "30px" }}>
                   {groceries.map((grocery) => (
                     <ListItem
                       key={grocery.id}
@@ -229,7 +251,7 @@ class Settings extends Component {
                       <IconButton
                         edge="end"
                         aria-label="edit"
-                        onClick={() => this.handleOpenGroceryModal(grocery)}
+                        onClick={this.handleEditGrocery(grocery.id)}
                         sx={{
                           m: "5px",
                           boxShadow: 2,
@@ -248,12 +270,11 @@ class Settings extends Component {
                           <IconButton
                             edge="end"
                             aria-label="delete"
-                            onClick={() => this.deleteGrocery(grocery)}
+                            onClick={this.handleDeleteGrocery(grocery.id)}
                             sx={{
                               m: "5px",
                               color: "error.main",
                               boxShadow: 2,
-
                               "&:hover": {
                                 bgcolor: "error.main",
                                 color: "background.default",
@@ -281,10 +302,14 @@ class Settings extends Component {
                   Einheit bearbeiten
                 </Typography>
               </AccordionSummary>
+              <AlertComponent
+                showAlert={showAlertMeasureDelete}
+                alertType="SettingsMeasureDelete"
+              />
               <AccordionDetails
                 sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
               >
-                <List sx={{ width: "600px" }}>
+                <List sx={{ width: "600px", marginBottom: "30px" }}>
                   {measures.map((measure) => (
                     <ListItem
                       key={measure.id}
@@ -297,7 +322,7 @@ class Settings extends Component {
                       <IconButton
                         edge="end"
                         aria-label="edit"
-                        onClick={() => this.handleOpenMeasureModal(measure)}
+                        onClick={this.handleEditMeasure(measure.id)}
                         sx={{
                           m: "5px",
                           boxShadow: 2,
@@ -316,12 +341,11 @@ class Settings extends Component {
                           <IconButton
                             edge="end"
                             aria-label="delete"
-                            onClick={() => this.deleteMeasure(measure)}
+                            onClick={this.handleDeleteMeasure(measure.id)}
                             sx={{
                               m: "5px",
                               color: "error.main",
                               boxShadow: 2,
-
                               "&:hover": {
                                 bgcolor: "error.main",
                                 color: "background.default",
@@ -341,133 +365,150 @@ class Settings extends Component {
             </Accordion>
           </Paper>
         </Container>
-         {/* Modal für Lebensmittel */}
-    <Modal open={modalOpenGrocery} onClose={this.handleCloseGroceryModal}>
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 400,
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-          borderRadius: "20px",
-        }}
-      >
-        <Typography variant="h6" component="h2" fontWeight={"bold"}>
-          Lebensmittel bearbeiten
-        </Typography>
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Name"
-          value={editedGroceryName}
-          onChange={this.handleEditGroceryChange}
-        />
-        <Container
-          sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleUpdateGrocery}
+        {(popupGroceryOpen || popupMeasureOpen) && (
+          <Box
             sx={{
-              mt: 2,
-              width: "125px",
-              "&:hover": {
-                bgcolor: "primary.dark",
-                color: "background.default",
-              },
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backdropFilter: "blur(10px)",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 1,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            Speichern
-          </Button>
-          <Button
-            variant="contained"
-            onClick={this.handleCloseGroceryModal}
-            sx={{
-              mt: 2,
-              ml: 2,
-              width: "125px",
-              color: "primary.dark",
-              bgcolor: "rgba(0, 50, 0, 0.1)",
-              "&:hover": {
-                bgcolor: "grey",
-                color: "background.default",
-              },
-            }}
-          >
-            Abbrechen
-          </Button>
-        </Container>
-      </Box>
-    </Modal>
-
-    {/* Modal für Einheiten */}
-    <Modal open={modalOpenMeasure} onClose={this.handleCloseMeasureModal}>
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 400,
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-          borderRadius: "20px",
-        }}
-      >
-        <Typography variant="h6" component="h2" fontWeight={"bold"}>
-          Einheit bearbeiten
-        </Typography>
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Einheit"
-          value={editedMeasureName}
-          onChange={this.handleEditMeasureChange}
-        />
-        <Container
-          sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleUpdateMeasure}
-            sx={{
-              mt: 2,
-              width: "125px",
-              "&:hover": {
-                bgcolor: "primary.dark",
-                color: "background.default",
-              },
-            }}
-          >
-            Speichern
-          </Button>
-          <Button
-            variant="contained"
-            onClick={this.handleCloseMeasureModal}
-            sx={{
-              mt: 2,
-              ml: 2,
-              width: "125px",
-              color: "primary.dark",
-              bgcolor: "rgba(0, 50, 0, 0.1)",
-              "&:hover": {
-                bgcolor: "grey",
-                color: "background.default",
-              },
-            }}
-          >
-            Abbrechen
-          </Button>
-        </Container>
-      </Box>
-    </Modal>
+            <Box
+              component="form"
+              noValidate
+              sx={{
+                width: "1100px",
+                height: "auto",
+                position: "fixed",
+                top: "35%",
+                zIndex: 2,
+              }}
+            >
+              <Paper
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: "0 30px 50px 30px",
+                  borderRadius: "40px",
+                  fontSize: "17px",
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  sx={{
+                    marginBottom: "20px",
+                    marginTop: "20px",
+                    fontWeight: 600,
+                    color: "text.primary",
+                  }}
+                >
+                  {popupGroceryOpen
+                    ? "Lebensmittel bearbeiten"
+                    : "Einheit bearbeiten"}
+                </Typography>
+                <AlertComponent
+                  showAlert={this.state.showAlertEdit}
+                  alertType="SettingsEdit"
+                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                    fontSize: "10px",
+                  }}
+                >
+                  <TextField
+                    required
+                    onInput={() => this.setState({ showAlertEdit: false })}
+                    id="outlined-required"
+                    name={popupGroceryOpen ? "groceryName" : "measureName"}
+                    label={
+                      popupGroceryOpen
+                        ? "Lebensmittelname angeben"
+                        : "Einheitname angeben"
+                    }
+                    placeholder={
+                      popupGroceryOpen ? "Lebensmittelname" : "Einheitname"
+                    }
+                    InputLabelProps={{ style: { fontSize: "15px" } }}
+                    defaultValue={
+                      popupGroceryOpen
+                        ? selectedGrocery
+                          ? selectedGrocery.grocery_name
+                          : ""
+                        : selectedMeasure
+                        ? selectedMeasure.unit
+                        : ""
+                    }
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    position: "relative",
+                    top: "25px",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <Button
+                      type="button"
+                      variant="contained"
+                      endIcon={<CheckCircleOutlineRoundedIcon />}
+                      onClick={this.handleClick}
+                      sx={{
+                        color: "success.dark",
+                        bgcolor: "rgba(29, 151, 35, 0.2)",
+                        border: "2px solid #06871d",
+                        "&:hover": {
+                          bgcolor: "success.dark",
+                          color: "background.default",
+                        },
+                      }}
+                    >
+                      Speichern
+                    </Button>
+                    <Button
+                      variant="contained"
+                      endIcon={<HighlightOffRoundedIcon />}
+                      onClick={
+                        popupGroceryOpen
+                          ? this.handlePopupGroceryClose
+                          : this.handlePopupMeasureClose
+                      }
+                      sx={{
+                        bgcolor: "rgba(197, 0, 0, 0.1)",
+                        color: "error.main",
+                        border: "2px solid #c50000 ",
+                        "&:hover": {
+                          bgcolor: "error.main",
+                          color: "background.default",
+                        },
+                      }}
+                    >
+                      Abbrechen
+                    </Button>
+                  </Box>
+                </Box>
+              </Paper>
+            </Box>
+          </Box>
+        )}
       </>
     );
   }

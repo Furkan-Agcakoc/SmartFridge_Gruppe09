@@ -13,6 +13,10 @@ const alertMessages = {
     </div>
   ),
   profile: "Bitte füllen Sie alle Felder aus!",
+  SettingsGroceryDelete: "Lebensmittel kann nicht gelöscht werden, da es im Kühlschrank vorhanden ist!",
+  SettingsMeasureDelete: "Einheit kann nicht gelöscht werden, da es im Kühlschrank vorhanden ist!",
+  SettingsEdit: "Füllen Sie das feld aus!",
+
   // Weitere Nachrichten hier hinzufügen
 };
 

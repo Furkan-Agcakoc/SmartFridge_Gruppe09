@@ -14,23 +14,28 @@ import {
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
-const ViewRecipe = ({ open, handleClose, recipe, ingredients, refreshGroceryList }) => {
+const ViewRecipe = ({
+  open,
+  handleClose,
+  recipe,
+  ingredients,
+  refreshGroceryList,
+}) => {
   if (!recipe) return null;
-  
+
   const handleOnCookRecipe = async () => {
     if (recipe.id && recipe.fridge_id) {
       try {
         await SmartFridgeAPI.getAPI().cookRecipe(recipe.id, recipe.fridge_id);
         refreshGroceryList();
-        console.log('Recipe cooked successfully!');
+        console.log("Recipe cooked successfully!");
       } catch (error) {
-        console.error('Error cooking recipe:', error);
+        console.error("Error cooking recipe:", error);
       }
     } else {
-      console.error('Recipe ID or Fridge ID is undefined');
+      console.error("Recipe ID or Fridge ID is undefined");
     }
   };
-
 
   return (
     <Paper sx={{}}>
@@ -40,8 +45,8 @@ const ViewRecipe = ({ open, handleClose, recipe, ingredients, refreshGroceryList
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: "100%", 
-            height: "auto", 
+            width: "100%",
+            height: "auto",
             position: "absolute",
             transform: "translate(0%, 0%)",
           },
@@ -52,6 +57,7 @@ const ViewRecipe = ({ open, handleClose, recipe, ingredients, refreshGroceryList
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            fontWeight: "bold",
           }}
         >
           {recipe.recipe_name}
@@ -97,7 +103,21 @@ const ViewRecipe = ({ open, handleClose, recipe, ingredients, refreshGroceryList
             marginBottom: "10px",
           }}
         >
-          <Button color="primary" onClick={handleOnCookRecipe}>Let him cook</Button>
+          <Button
+            sx={{
+              bgcolor: "primary.main",
+              color: "background.paper",
+              boxShadow: 1,
+              "&:hover": {
+                color: "success.dark",
+                boxShadow: 3,
+                backgroundColor: "success.gwhite",
+              },
+            }}
+            onClick={handleOnCookRecipe}
+          >
+            Zubereiten
+          </Button>
         </DialogActions>
       </Dialog>
     </Paper>
