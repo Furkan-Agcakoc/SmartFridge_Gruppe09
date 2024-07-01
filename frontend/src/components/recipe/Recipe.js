@@ -24,13 +24,14 @@ const Recipe = ({
   openMenus,
   handleOpenDialog,
   setIdToDelete,
+  refreshGroceryList
 }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [detailedIngredients, setDetailedIngredients] = useState([]);
 
+
   const handleRecipeClick = async (recipe) => {
-    console.log("Recipes in handleRecipeClick component", recipe);
     setSelectedRecipe(recipe);
     await fetchIngredients(recipe.recipeId);
   };
@@ -82,7 +83,7 @@ const Recipe = ({
     <>
       {recipes.map((recipe) => (
         <Paper
-          key={recipe.id}
+          key={recipe.recipeId}
           sx={{
             position: 'relative',
             display: 'flex',
@@ -186,6 +187,7 @@ const Recipe = ({
           handleClose={handleDetailDialogClose}
           recipe={selectedRecipe}
           ingredients={detailedIngredients}
+          refreshGroceryList={refreshGroceryList}
         />
       )}
     </>

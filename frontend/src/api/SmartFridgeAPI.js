@@ -93,7 +93,7 @@ export default class SmartFridgeAPI {
   #addRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/`;
   #deleteRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
   #updateRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
-  // #cookRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/${recipe_id}/${fridge_id}`;
+  #cookRecipeURL = (recipeId, fridgeId) => `${this.#SmartFridgeBaseURL}/recipe/${recipeId}/${fridgeId}`;
 
   // user related
   #getUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
@@ -657,8 +657,8 @@ export default class SmartFridgeAPI {
 
   /**  recipe related **/
 
-  getRecipe(fridgeId) {
-    const url = `${this.#getRecipeURL()}?fridge_id=${fridgeId}`;
+  getRecipe() {
+    const url = `${this.#getRecipeURL()}`;
     return this.#fetchAdvanced(url).then((responseJSON) => {
       let recipeBOs = RecipeBO.fromJSON(responseJSON);
       return new Promise(function (resolve) {
@@ -735,23 +735,21 @@ export default class SmartFridgeAPI {
     });
   }
 
-  // cookRecipe(recipeId, fridgeId) {
-
-  //   return this.#fetchAdvanced(this.#cookRecipeURL(recipeId, frideId), {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json, text/plain",
-  //       "Content-type": "application/json",
-  //     },
-  //     body: JSON.stringify(recipeBO),
-  //   }).then((responseJSON) => {
-  //     let responseRecipeBO = RecipeBO.fromJSON(responseJSON)[0];
-  //     return new Promise(function (resolve) {
-  //       resolve(responseRecipeBO);
-  //     });
-  //   });
-  // }'
-
+  cookRecipe(recipeId, fridgeId) {
+    return this.#fetchAdvanced(this.#cookRecipeURL(recipeId, fridgeId), {
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({}),
+    }).then((responseJSON) => {
+      return new Promise(function (resolve) {
+        resolve(responseJSON);
+      });
+    });
+  };
+  
   /**  user related  **/
 
   getUser() {

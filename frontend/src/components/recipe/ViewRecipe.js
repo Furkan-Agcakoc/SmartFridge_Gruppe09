@@ -12,12 +12,25 @@ import {
   ListItemText,
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 
-const ViewRecipe = ({ open, handleClose, recipe, ingredients }) => {
+const ViewRecipe = ({ open, handleClose, recipe, ingredients, refreshGroceryList }) => {
   if (!recipe) return null;
+  
+  const handleOnCookRecipe = async () => {
+    if (recipe.id && recipe.fridge_id) {
+      try {
+        await SmartFridgeAPI.getAPI().cookRecipe(recipe.id, recipe.fridge_id);
+        refreshGroceryList();
+        console.log('Recipe cooked successfully!');
+      } catch (error) {
+        console.error('Error cooking recipe:', error);
+      }
+    } else {
+      console.error('Recipe ID or Fridge ID is undefined');
+    }
+  };
 
-  console.log('ViewRecipe ===>', recipe);
-  console.log('Detailed ingredients ===>', ingredients);
 
   return (
     <Paper sx={{}}>
@@ -84,7 +97,7 @@ const ViewRecipe = ({ open, handleClose, recipe, ingredients }) => {
             marginBottom: "10px",
           }}
         >
-          <Button color="primary">Let him cook</Button>
+          <Button color="primary" onClick={handleOnCookRecipe}>Let him cook</Button>
         </DialogActions>
       </Dialog>
     </Paper>

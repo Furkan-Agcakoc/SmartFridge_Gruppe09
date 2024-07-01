@@ -69,6 +69,7 @@ class FridgePage extends Component {
     this.getHouseholdNameById(householdId); // Den Haushaltsnamen laden
     // this.getGroceries(); // Lebensmittel laden
     this.getGroceryInFridgeId(householdId);
+    this.loadRecipeList();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -80,12 +81,11 @@ class FridgePage extends Component {
 
 
   loadRecipeList = async () => {
-    const { fridgeId } = this.state;
-
-    console.log ('fridgeId', fridgeId)
-    try {
-      const recipes = await SmartFridgeAPI.getAPI().getRecipe(fridgeId);
-      this.setState({ recipes });
+     try {
+      const recipes = await SmartFridgeAPI.getAPI().getRecipe();
+      this.setState({ recipes }, () => {
+        console.log('Fetched and set recipes in state:', this.state.recipes);
+      });
     } catch (error) {
       console.error("Error fetching recipes:", error);
     }
@@ -513,7 +513,7 @@ class FridgePage extends Component {
           openMenus: newOpenMenus,
         };
       });
-
+      this.loadRecipeList();
       return createdRecipe;
       console.log("Hier sind alle Rezepte ", recipes);
     }
@@ -835,6 +835,7 @@ class FridgePage extends Component {
                       setIdToDelete={this.setIdToDelete}
                       anchorEls={anchorEls}
                       openMenus={openMenus}
+                      refreshGroceryList={this.refreshGroceryList}
                     />
                   </TabPanel>
                   {popupRecipeOpen && (

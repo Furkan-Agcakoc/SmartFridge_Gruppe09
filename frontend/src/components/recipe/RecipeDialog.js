@@ -96,7 +96,6 @@ class RecipeDialog extends Component {
       });
     } else {
       this.setState({ showAlert: true });
-      console.log("Zutat nicht vollständig");
     }
   };
 
@@ -131,24 +130,10 @@ class RecipeDialog extends Component {
     const createdRecipe = await this.props.handleCreateRecipes(recipeData);
     const recipeId = createdRecipe.id;
 
-    console.log("Created Recipe ============>", createdRecipe);
-
-    console.log("Created Recipe ID ============>", recipeId);
-
-  
-    recipeData.ingredients.forEach((ingredient, index) => {
-      console.log(`Ingredient ${index + 1} unit_name ==>`, ingredient.unit_name);
-      console.log(`Ingredient ${index + 1} grocery_name ==>`, ingredient.grocery_name);
-      console.log(`Ingredient ${index + 1} amount ==>`, ingredient.amount);
-    });
-  
     // Use a Set to keep track of new grocery names and measurement units to be added
     const newGroceries = new Set();
     const newMeasurements = new Set();
-  
-    console.log('newGroceries in array', newGroceries);
-    console.log('newMeasurements in array', newMeasurements);
-  
+   
     for (const ingredient of recipeData.ingredients) {
       if (!foodOptions.includes(ingredient.grocery_name)) {
         newGroceries.add(ingredient.grocery_name);
@@ -189,7 +174,6 @@ class RecipeDialog extends Component {
   
         // Call the addRecipeInFridge method for each ingredient
         await this.addRecipeInFridge(groceryId, measureId, amount, recipeId);
-  
         console.log(`Added ingredient ${ingredient.grocery_name} with measure ${ingredient.unit_name} to fridge.`);
       } catch (error) {
         console.error("Error adding ingredient to fridge:", error);
@@ -302,6 +286,7 @@ class RecipeDialog extends Component {
     const sortedMeasureOptions = measureOptions.sort((a, b) =>
       a.localeCompare(b)
     );
+    
 
     return (
       <>
