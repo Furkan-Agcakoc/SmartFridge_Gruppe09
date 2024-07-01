@@ -93,12 +93,12 @@ class GroceryDialog extends Component {
         if (!foodOptions.includes(newGrocery)) {
           try {
             await this.addGrocery(newGrocery);
-            await this.getGroceryByName();
+            await this.getGroceryByName(newGrocery);
           } catch (error) {
             console.error("Error adding grocery:", error);
           }
         } else {
-          await this.getGroceryByName();
+          await this.getGroceryByName(newGrocery);
         }
 
         // Check and handle newMeasurement
@@ -109,7 +109,7 @@ class GroceryDialog extends Component {
             console.error("Error adding measurement:", error);
           }
         } else {
-          await this.getMeasureByName();
+          await this.getMeasureByName(newMeasurement);
         }
 
         await this.handleAddGrocery();
@@ -154,6 +154,9 @@ class GroceryDialog extends Component {
   getGroceryByName = async (name) => {
     try {
       const groceryBO = await SmartFridgeAPI.getAPI().getGroceryByName(name);
+      if (!groceryBO || !groceryBO.id) {
+        throw new Error(`No grocery found with name: ${name}`);
+      }
       console.log("API response:", groceryBO);
       const groceryId = groceryBO.id;
       console.log("Grocery ID:", groceryId);
@@ -167,6 +170,9 @@ class GroceryDialog extends Component {
   getMeasureByName = async (unit) => {
     try {
       const measureBO = await SmartFridgeAPI.getAPI().getMeasureByName(unit);
+      if (!measureBO || !measureBO.id) {
+        throw new Error(`No measure found with unit: ${unit}`);
+      }
       console.log("API response:", measureBO);
       const measureId = measureBO.id;
       console.log("Measure ID:", measureId);
