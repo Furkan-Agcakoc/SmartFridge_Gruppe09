@@ -272,7 +272,7 @@ class UserOperations(Resource):
         if u is not None:
             u.set_id(id)
             adm.update_user(u)
-            return '', 200
+            return u, 200
         else:
             return '', 500
 

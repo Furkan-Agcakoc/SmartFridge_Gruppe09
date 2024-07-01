@@ -71,15 +71,22 @@ class Settings extends Component {
   handleClick = (e) => {
     const form = e.target.closest("form");
     if (form.checkValidity()) {
-      console.log("Form is valid, proceeding to update user");
-      this.setState({
-        popupGroceryOpen: false,
-        popupMeasureOpen: false,
-        selectedGrocery: null,
-        selectedMeasure: null,
-      });
+      this.handleSave();
     } else {
       this.setState({ showAlertEdit: true });
+    }
+  };
+
+  handleSave = () => {
+    const { selectedGrocery, selectedMeasure, popupGroceryOpen } = this.state;
+    const name = document.getElementById("outlined-required").value;
+
+    if (popupGroceryOpen) {
+      const updatedGrocery = { ...selectedGrocery, grocery_name: name };
+      this.updateGrocery(updatedGrocery);
+    } else {
+      const updatedMeasure = { ...selectedMeasure, unit: name };
+      this.updateMeasure(updatedMeasure);
     }
   };
 
@@ -138,7 +145,6 @@ class Settings extends Component {
       .catch((error) => {
         // Fehlerbehandlung
         if (error.response && error.response.status === 403) {
-
           // Spezifische Fehlermeldung anzeigen, wenn das Löschen verboten ist
           alert("Diese Maßnahme kann nicht gelöscht werden.");
         } else {
@@ -166,6 +172,46 @@ class Settings extends Component {
       popupMeasureOpen: true,
       selectedMeasure,
     });
+  };
+
+  updateGrocery = async (grocery) => {
+    try {
+      const updatedGrocery = await SmartFridgeAPI.getAPI().updateGrocery(grocery);
+      this.setState((prevState) => ({
+        groceries: prevState.groceries.map((g) =>
+          g.id === updatedGrocery.id ? updatedGrocery : g
+        ),
+        popupGroceryOpen: false,
+        selectedGrocery: null,
+      }));
+    } catch (error) {
+      this.setState({ showAlertEdit: true });
+    }
+  };
+
+
+  // {
+  //   "id": 0,
+  //   "firstname": "string",
+  //   "lastname": "string",
+  //   "nickname": "string",
+  //   "email": "string",
+  //   "google_user_id": "string"
+  // }
+
+  updateMeasure = async (measure) => {
+    try {
+      const updatedMeasure = await SmartFridgeAPI.getAPI().updateMeasure(measure);
+      this.setState((prevState) => ({
+        measures: prevState.measures.map((m) =>
+          m.id === updatedMeasure.id ? updatedMeasure : m
+        ),
+        popupMeasureOpen: false,
+        selectedMeasure: null,
+      }));
+    } catch (error) {
+      this.setState({ showAlertEdit: true });
+    }
   };
 
   handleDeleteGrocery = (groceryId) => (e) => {

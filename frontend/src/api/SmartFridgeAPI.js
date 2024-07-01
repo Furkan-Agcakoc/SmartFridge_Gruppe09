@@ -903,7 +903,7 @@ export default class SmartFridgeAPI {
     });
   }
   
-    updateMeasure(measureBO) {
+  updateMeasure(measureBO) {
     return this.#fetchAdvanced(this.#updateMeasureURL(measureBO.id), {
       method: "PUT",
       headers: {
