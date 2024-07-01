@@ -395,14 +395,13 @@ export default class SmartFridgeAPI {
         body: JSON.stringify(groceryStatementBO),
       }
     ).then((responseJSON) => {
-      let responseGroceryStatementBO =
-        GroceryStatementBO.fromJSON(responseJSON)[0];
+      let responseGroceryStatementBO = GroceryStatementBO.fromJSON(responseJSON)[0];
       return new Promise(function (resolve) {
         resolve(responseGroceryStatementBO);
       });
     });
   }
-
+  
   getGroceryInRecipeId(recipeId) {
     return this.#fetchAdvanced(this.#getGroceryInRecipeByIdURL(recipeId)).then(
       (responseJSON) => {

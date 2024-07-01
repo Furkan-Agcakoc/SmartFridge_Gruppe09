@@ -84,59 +84,33 @@ class GroceryDialog extends Component {
     const form = e.target.closest("form");
 
     if (form.checkValidity()) {
-      console.log("Form is valid, proceeding with grocery handling...");
 
       this.props.handleCreateGroceries(groceryData);
 
       // Check and handle newGrocery
       if (!foodOptions.includes(newGrocery)) {
-        console.log("New grocery item detected, adding to options...");
         try {
           await this.addGrocery(newGrocery);
-          console.log("Grocery added successfully.");
           await this.getGroceryByName();
-          console.log(
-            "Grocery retrieved by name:",
-            this.state.groceryStatement.groceryId
-          );
         } catch (error) {
           console.error("Error adding grocery:", error);
         }
       } else {
-        console.log("Grocery item already exists, fetching details...");
         await this.getGroceryByName();
-        console.log(
-          "Grocery retrieved by name:",
-          this.state.groceryStatement.groceryId
-        );
       }
 
       // Check and handle newMeasurement
       if (!measureOptions.includes(newMeasurement)) {
-        console.log("New measurement detected, adding to options...");
         try {
           await this.addMeasure(newMeasurement);
-          console.log("Measurement added successfully.");
         } catch (error) {
           console.error("Error adding measurement:", error);
         }
       } else {
-        console.log("Measurement already exists, fetching details...");
         await this.getMeasureByName();
-        console.log(
-          "Measurement retrieved by name:",
-          this.state.measurementStatement.measureId
-        );
       }
 
-      // Perform final actions
-      console.log("Performing final actions...");
       await this.handleAddGrocery();
-      console.log(
-        "Grocery statement added:",
-        this.state.groceryStatement.groceryId
-      );
-
       this.props.refreshGroceryList();
       this.props.handlePopupGroceryClose();
     } else {
