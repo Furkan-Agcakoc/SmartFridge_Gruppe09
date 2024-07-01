@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -6,9 +6,10 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import {IconButton } from "@mui/material";
-import { Link } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import { Link, useParams } from "react-router-dom";
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
+import SmartFridgeAPI from "../api/SmartFridgeAPI";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -38,7 +39,6 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   width: "100%",
-
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
@@ -53,7 +53,28 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function FridgeSearchBar({ householdName }) {
+export default function FridgeSearchBar() {
+  const { householdId } = useParams(); // HouseholdId aus den Params ziehen
+  const [householdName, setHouseholdName] = useState("");
+
+  useEffect(() => {
+    const getHouseholdNameById = (householdId) => {
+      SmartFridgeAPI.getAPI()
+        .getHouseholdById(householdId)
+        .then((response) => {
+          const household = response[0];
+          setHouseholdName(household.household_name);
+        })
+        .catch((error) => {
+          console.error("Error fetching household name:", error);
+        });
+    };
+
+    if (householdId) {
+      getHouseholdNameById(householdId);
+    }
+  }, [householdId]);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar

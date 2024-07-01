@@ -138,11 +138,12 @@ class Settings extends Component {
       .catch((error) => {
         // Fehlerbehandlung
         if (error.response && error.response.status === 403) {
+
           // Spezifische Fehlermeldung anzeigen, wenn das Löschen verboten ist
           alert("Diese Maßnahme kann nicht gelöscht werden.");
         } else {
           // Allgemeine Fehlermeldung anzeigen
-          this.setState({ showAlertMeasure: true });
+          this.setState({ showAlertMeasureDelete: true });
         }
       });
   };
@@ -168,22 +169,22 @@ class Settings extends Component {
   };
 
   handleDeleteGrocery = (groceryId) => (e) => {
-    e.stopPropagation(); // Prevent triggering document click
+    e.stopPropagation();
     this.deleteGrocery(groceryId);
   };
 
   handleDeleteMeasure = (measureId) => (e) => {
-    e.stopPropagation(); // Prevent triggering document click
+    e.stopPropagation();
     this.deleteMeasure(measureId);
   };
 
   handleEditGrocery = (groceryId) => (e) => {
-    e.stopPropagation(); // Prevent triggering document click
+    e.stopPropagation();
     this.editGrocery(groceryId);
   };
 
   handleEditMeasure = (measureId) => (e) => {
-    e.stopPropagation(); // Prevent triggering document click
+    e.stopPropagation();
     this.editMeasure(measureId);
   };
 
@@ -228,17 +229,18 @@ class Settings extends Component {
                 id="panel1-header"
               >
                 <Typography sx={{ ml: 1, fontWeight: "bold" }}>
-                  Lebensmittel bearbeiten
+                  Lebensmittel bearbeiten{" "}
                 </Typography>
               </AccordionSummary>
-              <AlertComponent
-                showAlert={showAlertGroceryDelete}
-                alertType="SettingsGroceryDelete"
-              />
+
               <AccordionDetails
                 sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
               >
                 <List sx={{ width: "600px", marginBottom: "30px" }}>
+                  <AlertComponent
+                    showAlert={showAlertGroceryDelete}
+                    alertType="SettingsGroceryDelete"
+                  />
                   {groceries.map((grocery) => (
                     <ListItem
                       key={grocery.id}
@@ -302,14 +304,15 @@ class Settings extends Component {
                   Einheit bearbeiten
                 </Typography>
               </AccordionSummary>
-              <AlertComponent
-                showAlert={showAlertMeasureDelete}
-                alertType="SettingsMeasureDelete"
-              />
+
               <AccordionDetails
                 sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
               >
                 <List sx={{ width: "600px", marginBottom: "30px" }}>
+                  <AlertComponent
+                    showAlert={showAlertMeasureDelete}
+                    alertType="SettingsMeasureDelete"
+                  />
                   {measures.map((measure) => (
                     <ListItem
                       key={measure.id}

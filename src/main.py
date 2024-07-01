@@ -450,7 +450,7 @@ class GroceryOperations(Resource):
         if g is not None:
             g.set_id(id)
             adm.update_grocery(g)
-            return '', 200
+            return g, 200
         else:
             return '', 500
 
@@ -544,7 +544,7 @@ class RecipeOperations(Resource):
         if r is not None:
             r.set_id(id)
             adm.update_recipe(r)
-            return '', 200
+            return r, 200
         else:
             return '', 500
 
@@ -777,7 +777,7 @@ class FridgeOperations(Resource):
         if gst is not None:
             gst.set_id(id)
             adm.update_grocerystatement(gst)
-            return '', 200
+            return gst, 200
         else:
             return '', 500
 
@@ -833,12 +833,12 @@ class MeasureNameOperations(Resource):
 
 @smartfridge.route('/measure/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
-@smartfridge.param('id', 'Die ID des Grocery-Objekts')
+@smartfridge.param('id', 'Die ID des Measure-Objekts')
 class MeasureOperations(Resource):
     @smartfridge.marshal_with(measure)
     #@secured
     def get(self, id):
-        """Wiedergabe eines Grocery Objekts durch ID"""
+        """Wiedergabe eines Measure Objekts durch ID"""
         adm = Administration()
         measure = adm.get_measure_by_id(id)
         return measure
@@ -847,8 +847,12 @@ class MeasureOperations(Resource):
     def delete(self, id):
         """Löschen eines Measure Objekts"""
         adm = Administration()
-        measure = adm.get_measure_by_id(id)
-        adm.delete_measure(measure)
+        try:
+            measure = adm.get_measure_by_id(id)
+            adm.delete_measure(measure)
+        except Exception:
+            # Rückgabe einer Fehlermeldung, wenn während des Löschens ein Fehler auftritt
+            return "Maßeinheit wird im Kühlschrank/Rezept verwendet, erst dort löschen.", 400
         return '', 200
 
     @smartfridge.marshal_with(measure)
@@ -861,7 +865,7 @@ class MeasureOperations(Resource):
         if m is not None:
             m.set_id(id)
             adm.update_measure(m)
-            return '', 200
+            return m, 200
         else:
             return '', 500
 
