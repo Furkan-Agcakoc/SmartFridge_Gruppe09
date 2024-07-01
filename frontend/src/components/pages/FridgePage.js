@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Paper, Tooltip, Tab, Box, Link, Container, Chip } from "@mui/material";
+import {
+  Paper,
+  Tooltip,
+  Tab,
+  Box,
+  Link,
+  Container,
+  Button,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import FlatwareRoundedIcon from "@mui/icons-material/FlatwareRounded";
@@ -45,7 +53,6 @@ class FridgePage extends Component {
       recipes: [],
       recipeIdToDelete: null,
       dialogopen: false,
-      chipColor: null,
       households: [],
       householdId: null,
       fridgeId: null,
@@ -79,18 +86,16 @@ class FridgePage extends Component {
   }
   // #####################APIS###########################
 
-
   loadRecipeList = async () => {
-     try {
+    try {
       const recipes = await SmartFridgeAPI.getAPI().getRecipe();
       this.setState({ recipes }, () => {
-        console.log('Fetched and set recipes in state:', this.state.recipes);
+        console.log("Fetched and set recipes in state:", this.state.recipes);
       });
     } catch (error) {
       console.error("Error fetching recipes:", error);
     }
-  }
-
+  };
 
   getGroceryInFridgeId = async (fridgeId) => {
     try {
@@ -114,12 +119,11 @@ class FridgePage extends Component {
               ? measureResponse[0]
               : measureResponse;
 
-              return {
-                ...statement,
-                grocery_name: grocery?.grocery_name ?? "Unknown",
-                unit_name: measure?.unit ?? "Unknown",
-              };
-              
+            return {
+              ...statement,
+              grocery_name: grocery?.grocery_name ?? "Unknown",
+              unit_name: measure?.unit ?? "Unknown",
+            };
           } catch (error) {
             console.error("Error processing statement:", statement, error);
             return {
@@ -162,9 +166,6 @@ class FridgePage extends Component {
 
   // #######################NO APIS###############################
 
-
-
-
   groceryStatement(statement) {
     console.log("Statement von Fridgepage", statement);
     const quantity = statement.map((statement) => statement.quantity);
@@ -204,7 +205,6 @@ class FridgePage extends Component {
         console.error("Error fetching fridge by household ID:", error);
       });
   };
-  
 
   handleTabChange(event, newValue) {
     console.log("Tab changed:", newValue);
@@ -456,23 +456,23 @@ class FridgePage extends Component {
     });
   };
 
-
   handleCreateRecipes = async (recipeData) => {
     const { currentlyEditing, recipes, fridgeId } = this.state;
     const userId = this.context.id;
 
-    const {ingredients, groceryUnit, ...rest} = recipeData
+    const { ingredients, groceryUnit, ...rest } = recipeData;
 
     const newRecipeData = {
       ...rest,
       fridge_id: fridgeId,
       user_id: userId,
       id: 0,
-      ingredients: ingredients
-    }
+      ingredients: ingredients,
+    };
 
-
-    const createdRecipe = await SmartFridgeAPI.getAPI().addRecipe(newRecipeData);
+    const createdRecipe = await SmartFridgeAPI.getAPI().addRecipe(
+      newRecipeData
+    );
 
     if (currentlyEditing !== null) {
       const updatedRecipes = this.updateRecipe({
@@ -530,15 +530,9 @@ class FridgePage extends Component {
     return updatedRecipes;
   }
 
-  handleAvailableRecipes = () => {
-    this.setState({ chipColor: "primary.dark" });
-    console.info("Available recipes clicked.");
-  };
-
-  handleAllRecipes = () => {
-    this.setState({ chipColor: null });
-    console.info("All recipes deleted.");
-  };
+  // handleAvailableRecipes = () => {
+  //   console.info("Available recipes clicked.");
+  // };
 
   render() {
     const {
@@ -551,7 +545,6 @@ class FridgePage extends Component {
       currentlyEditing,
       recipes,
       isEditMode,
-      chipColor,
       householdName,
     } = this.state;
 
@@ -753,8 +746,8 @@ class FridgePage extends Component {
                     }}
                   >
                     <Container sx={{ m: "0", p: "0" }}>
-                      <Chip
-                        label="VERFÜGBARE REZEPTE"
+                      <Button
+                        variant="text"
                         sx={{
                           width: "200px",
                           position: "relative",
@@ -762,7 +755,7 @@ class FridgePage extends Component {
                           top: "-10px",
                           m: "0",
                           boxShadow: "10px",
-                          bgcolor: chipColor,
+                          bgcolor: "primary.main",
                           color: "background.card",
                           fontWeight: "bold",
                           "&:hover": {
@@ -770,9 +763,10 @@ class FridgePage extends Component {
                             backgroundColor: "success.gwhite",
                           },
                         }}
-                        onClick={this.handleAvailableRecipes}
-                        onDelete={this.handleAllRecipes}
-                      />
+                        // onClick={this.handleAvailableRecipes}
+                      >
+                        Verfügbare Rezepte
+                      </Button>
                     </Container>
                     <Link onClick={() => this.handlePopupRecipeOpen(false)}>
                       <Tooltip
