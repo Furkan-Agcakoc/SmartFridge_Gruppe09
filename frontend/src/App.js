@@ -223,7 +223,7 @@ class App extends Component {
                     path="/profile"
                     element={
                       <Secured user={currentUser}>
-                        <EditProfilePage />
+                        <EditProfilePage handleSignOut={this.handleSignOut} />
                       </Secured>
                     }
                   />

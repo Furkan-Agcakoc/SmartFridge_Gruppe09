@@ -816,21 +816,26 @@ export default class SmartFridgeAPI {
     });
   }
 
+
   updateUser(userBO) {
     return this.#fetchAdvanced(this.#updateUserURL(userBO.getID()), {
-      method: "PUT",
-      headers: {
-        Accept: "application/json, text/plain",
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(userBO),
-    }).then((responseJSON) => {
-      let responseUserBO = UserBO.fromJSON(responseJSON)[0];
-      return new Promise(function (resolve) {
-        resolve(responseUserBO);
-      });
+        method: "PUT",
+        headers: {
+            Accept: "application/json, text/plain",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userBO),
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+        }
+        return response.json();
+    }).then(responseJSON => {
+        let responseUserBO = UserBO.fromJSON(responseJSON)[0];
+        return new Promise(resolve => resolve(responseUserBO));
     });
-  }
+}
+
 
   /**  Measure related  **/
 

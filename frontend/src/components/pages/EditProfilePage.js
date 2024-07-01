@@ -1,17 +1,23 @@
 import React, { Component } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
-import Typography from "@mui/material/Typography";
-import { Paper } from "@mui/material";
-import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
-import Alert from "@mui/material/Alert";
 import { useNavigate } from "react-router-dom";
-import UserBO from "../../api/SmartFridgeAPI";
+import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
+import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Grid,
+  Paper,
+  Typography,
+  IconButton,
+  TextField,
+} from "@mui/material";
+import UserBO from "../../api/UserBO";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import UserContext from "../contexts/UserContext";
 
 // Funktionskomponente, um `useNavigate` zu verwenden und als Prop weiterzugeben
 const withNavigation = (Component) => {
@@ -22,6 +28,8 @@ const withNavigation = (Component) => {
 };
 
 class EditProfilePage extends Component {
+  static contextType = UserContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -32,20 +40,22 @@ class EditProfilePage extends Component {
     };
   }
 
-  componentDidMount() {
-    this.getUserById(1);
-    console.log(this.state.firstName);
-  }
+  handleBackClick = () => {
+    this.props.navigate(-1);
+  };
 
-  componentDidUpdate() {
-    console.log(this.state.firstName);
+  componentDidMount() {
+    const userId = this.context.id;
+    this.getUserById(userId);
   }
 
   handleSaveClick = async (e) => {
+    const userId = this.context.id;
     const form = e.target.closest("form");
+
     if (form.checkValidity()) {
       console.log("Form is valid, proceeding to update user");
-      await this.updateUser(1);
+      await this.updateUser(userId);
       this.props.navigate("/household");
     } else {
       console.log("Form is invalid");
@@ -66,17 +76,37 @@ class EditProfilePage extends Component {
 
   updateUser = async (userId) => {
     const { firstName, lastName, nickName } = this.state;
-    const userToUpdate = new UserBO(firstName, lastName, nickName);
-    userToUpdate.setID(userId); // Use setID to set the ID
 
-    await SmartFridgeAPI.getAPI()
-      .updateUser(userToUpdate)
-      .then((updatedUser) => {
-        console.log("User updated:", updatedUser);
-      })
-      .catch((error) => {
-        console.error("Error updating user:", error);
-      });
+    try {
+      const [user] = await SmartFridgeAPI.getAPI().getUserById(userId);
+      const updatedUser = new UserBO(
+        firstName,
+        lastName,
+        nickName,
+        user.email,
+        user.google_user_id
+      );
+      updatedUser.setID(userId);
+
+      await SmartFridgeAPI.getAPI().updateUser(updatedUser);
+    } catch (error) {
+      this.setState({ showAlertSignin: true });
+    }
+  };
+
+  handleClickDelete = () => {
+    const userId = this.context.id;
+    console.log(userId)
+    this.deleteUser(userId);
+    this.props.handleSignOut();
+  }
+
+  deleteUser = async (userId) => {
+    try {
+      await SmartFridgeAPI.getAPI().deleteUser(userId);
+    } catch (error) {
+      this.setState({ showAlertDelete: true });
+    }
   };
 
   handleCloseAlert = () => {
@@ -126,16 +156,32 @@ class EditProfilePage extends Component {
                 justifyContent: "center",
               }}
             >
+              <IconButton
+                onClick={this.handleBackClick}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "transparent",
+                  },
+                }}
+              >
+                <ArrowBackIosNewRoundedIcon
+                  sx={{
+                    color: "primary.dark",
+                    width: "30px",
+                    height: "auto",
+                  }}
+                />
+              </IconButton>
               <Typography
                 variant="h4"
-                sx={{ margin: "5px", fontWeight: "bold" }}
+                sx={{ color: "third.main", margin: "5px", fontWeight: "bold" }}
               >
                 Profildaten
               </Typography>
               <Avatar sx={{ margin: "5px", bgcolor: "background.white" }}>
                 <CreateRoundedIcon
                   sx={{
-                    color: "secondary.dark",
+                    color: "third.main",
                     width: "30px",
                     height: "auto",
                   }}
@@ -221,7 +267,31 @@ class EditProfilePage extends Component {
                       },
                     }}
                   >
-                    Speichern
+                    Änderungen Speichern
+                  </Button>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{ display: "flex", flexDirection: "column" }}
+                >
+                  <Button
+                    onClick={this.handleClickDelete}
+                    variant="contained"
+                    endIcon={<DeleteForeverRoundedIcon />}
+                    sx={{
+                      marginBottom: "15px",
+                      width: "100%",
+                      bgcolor: "rgba(197, 0, 0, 0.1)",
+                      color: "error.main",
+                      border: "2px solid #c50000 ",
+                      "&:hover": {
+                        bgcolor: "error.main",
+                        color: "background.default",
+                      },
+                    }}
+                  >
+                    Profil löschen
                   </Button>
                 </Grid>
               </Grid>
@@ -238,7 +308,7 @@ class EditProfilePage extends Component {
                     variant="h7"
                     sx={{ fontSize: "9pt", color: "grey" }}
                   >
-                    Zur weiteren Nutzung bitte Formular ausfüllen.
+                    Zur weiteren Nutzung bitte Formular nicht leer lassen.
                   </Typography>
                 </Grid>
               </Grid>
