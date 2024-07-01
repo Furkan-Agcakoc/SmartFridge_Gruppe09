@@ -14,7 +14,6 @@ import { createFilterOptions } from "@mui/material/Autocomplete";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import GroceryBO from "../../api/GroceryBO";
 import MeasureBO from "../../api/MeasureBO";
-// import GroceryStatementBO from "../../api/GroceryStatementBO";
 import FridgeContext from "../contexts/FridgeContext";
 import GroceryStatementBO from "../../api/GroceryStatementBO";
 
@@ -36,14 +35,13 @@ class GroceryDialog extends Component {
       measurementStatement: {
         measureId: null,
       },
-      newGrocery: "",
-      newMeasurement: "",
+      newGrocery: props.isEditMode ? props.groceryName : "",
+      newMeasurement: props.isEditMode ? props.groceryUnit : "",
       showAlert: false,
       foodOptions: props.foodOptions || [],
       measureOptions: props.measureOptions || [],
       fridgeId: this.props.fridgeId,
     };
-    console.log("Constructor - Fridge ID:", this.state.fridgeId);
   }
 
   componentDidMount() {
@@ -58,7 +56,8 @@ class GroceryDialog extends Component {
       prevProps.groceryQuantity !== this.props.groceryQuantity ||
       prevProps.groceryUnit !== this.props.groceryUnit ||
       prevProps.foodOptions !== this.props.foodOptions ||
-      prevProps.measureOptions !== this.props.measureOptions
+      prevProps.measureOptions !== this.props.measureOptions ||
+      prevProps.curentGroceryId !== this.props.curentGroceryId
     ) {
       this.setState({
         groceryData: {
@@ -66,12 +65,13 @@ class GroceryDialog extends Component {
           quantity: this.props.groceryQuantity,
           unit: this.props.groceryUnit,
         },
+        newGrocery: this.props.groceryName,
+        newMeasurement: this.props.groceryUnit,
         foodOptions: this.props.foodOptions || [],
         measureOptions: this.props.measureOptions || [],
       });
     }
   }
-
 
   handleClick = async (e) => {
     const {
@@ -84,33 +84,37 @@ class GroceryDialog extends Component {
     const form = e.target.closest("form");
 
     if (form.checkValidity()) {
-
-      this.props.handleCreateGroceries(groceryData);
-
-      // Check and handle newGrocery
-      if (!foodOptions.includes(newGrocery)) {
-        try {
-          await this.addGrocery(newGrocery);
-          await this.getGroceryByName();
-        } catch (error) {
-          console.error("Error adding grocery:", error);
-        }
+      if (this.props.isEditMode) {
+        await this.handleUpdateGrocery(groceryData);
       } else {
-        await this.getGroceryByName();
+        this.props.handleCreateGroceries(groceryData);
+
+        // Check and handle newGrocery
+        if (!foodOptions.includes(newGrocery)) {
+          try {
+            await this.addGrocery(newGrocery);
+            await this.getGroceryByName(newGrocery);
+          } catch (error) {
+            console.error("Error adding grocery:", error);
+          }
+        } else {
+          await this.getGroceryByName(newGrocery);
+        }
+
+        // Check and handle newMeasurement
+        if (!measureOptions.includes(newMeasurement)) {
+          try {
+            await this.addMeasure(newMeasurement);
+          } catch (error) {
+            console.error("Error adding measurement:", error);
+          }
+        } else {
+          await this.getMeasureByName(newMeasurement);
+        }
+
+        await this.handleAddGrocery();
       }
 
-      // Check and handle newMeasurement
-      if (!measureOptions.includes(newMeasurement)) {
-        try {
-          await this.addMeasure(newMeasurement);
-        } catch (error) {
-          console.error("Error adding measurement:", error);
-        }
-      } else {
-        await this.getMeasureByName();
-      }
-
-      await this.handleAddGrocery();
       this.props.refreshGroceryList();
       this.props.handlePopupGroceryClose();
     } else {
@@ -147,14 +151,12 @@ class GroceryDialog extends Component {
     }
   };
 
-  getGroceryByName = async () => {
-    const { newGrocery } = this.state;
-    if (!newGrocery) return console.error("newGrocery is empty or undefined");
-
+  getGroceryByName = async (name) => {
     try {
-      const groceryBO = await SmartFridgeAPI.getAPI().getGroceryByName(
-        newGrocery
-      );
+      const groceryBO = await SmartFridgeAPI.getAPI().getGroceryByName(name);
+      if (!groceryBO || !groceryBO.id) {
+        throw new Error(`No grocery found with name: ${name}`);
+      }
       console.log("API response:", groceryBO);
       const groceryId = groceryBO.id;
       console.log("Grocery ID:", groceryId);
@@ -165,17 +167,12 @@ class GroceryDialog extends Component {
     }
   };
 
-  getMeasureByName = async () => {
-    const { newMeasurement } = this.state;
-    console.log("getMeasureByName called", newMeasurement);
-
-    if (!newMeasurement)
-      return console.error("newMeasurement is empty or undefined");
-
+  getMeasureByName = async (unit) => {
     try {
-      const measureBO = await SmartFridgeAPI.getAPI().getMeasureByName(
-        newMeasurement
-      );
+      const measureBO = await SmartFridgeAPI.getAPI().getMeasureByName(unit);
+      if (!measureBO || !measureBO.id) {
+        throw new Error(`No measure found with unit: ${unit}`);
+      }
       console.log("API response:", measureBO);
       const measureId = measureBO.id;
       console.log("Measure ID:", measureId);
@@ -186,27 +183,35 @@ class GroceryDialog extends Component {
     }
   };
 
-  // handleAddGroceryStatement = async () => {
-  //   try {
-  //     const groceryStatementId = await this.addGroceryStatement();
-  //     console.log("Grocery statement added:", groceryStatementId);
-  //     await this.addGroceryStatement
-
   handleAddGrocery = async () => {
     try {
-      const groceryId = await this.getGroceryByName();
-      const measureId = await this.getMeasureByName();
+      const groceryId = await this.getGroceryByName(this.state.newGrocery);
+      const measureId = await this.getMeasureByName(this.state.newMeasurement);
       await this.addGroceryStatement(groceryId, measureId);
     } catch (error) {
       console.error("Error in handleAddGrocery:", error);
     }
   };
 
-  // const { quantity } = this.state;
-  // useQuantityValue = (quantity) => {
-  //   console.log("Current Quantity:", quantity);
-  //   // You can add more logic here to use the quantity value
-  // };
+  handleUpdateGrocery = async (groceryData) => {
+    try {
+      const groceryId = await this.getGroceryByName(groceryData.name);
+      const measureId = await this.getMeasureByName(groceryData.unit);
+
+      const updatedGroceryStatement = new GroceryStatementBO(
+        groceryId,
+        measureId,
+        groceryData.quantity
+      );
+
+      updatedGroceryStatement.setID(this.props.curentGroceryId); 
+      await SmartFridgeAPI.getAPI().updateGroceryStatement(updatedGroceryStatement);
+      
+      console.log('Updated grocery statement:', updatedGroceryStatement);
+    } catch (error) {
+      console.error("Error in handleUpdateGrocery:", error);
+    }
+  }
 
   getGrocery = () => {
     const { fridgeId } = this.state;
@@ -339,6 +344,7 @@ class GroceryDialog extends Component {
             >
               <Autocomplete
                 value={name}
+                disabled={isEditMode}
                 onChange={(event, newValue) => {
                   let updatedValue = "";
                   if (newValue === null) {
@@ -419,7 +425,7 @@ class GroceryDialog extends Component {
                     this.setState({
                       groceryData: {
                         ...this.state.groceryData,
-                        quantity: e.target.value,
+                        quantity: parseInt(e.target.value),
                       },
                     })
                   }
