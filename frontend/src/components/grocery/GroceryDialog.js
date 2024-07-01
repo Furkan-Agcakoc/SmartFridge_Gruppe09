@@ -43,7 +43,6 @@ class GroceryDialog extends Component {
       measureOptions: props.measureOptions || [],
       fridgeId: this.props.fridgeId,
     };
-    console.log("Constructor - Fridge ID:", this.state.fridgeId);
   }
 
   componentDidMount() {
@@ -58,7 +57,8 @@ class GroceryDialog extends Component {
       prevProps.groceryQuantity !== this.props.groceryQuantity ||
       prevProps.groceryUnit !== this.props.groceryUnit ||
       prevProps.foodOptions !== this.props.foodOptions ||
-      prevProps.measureOptions !== this.props.measureOptions
+      prevProps.measureOptions !== this.props.measureOptions ||
+      prevProps.curentGroceryId !== this.props.curentGroceryId
     ) {
       this.setState({
         groceryData: {
@@ -82,35 +82,40 @@ class GroceryDialog extends Component {
       measureOptions,
     } = this.state;
     const form = e.target.closest("form");
-
+  
     if (form.checkValidity()) {
-
-      this.props.handleCreateGroceries(groceryData);
-
-      // Check and handle newGrocery
-      if (!foodOptions.includes(newGrocery)) {
-        try {
-          await this.addGrocery(newGrocery);
+  
+      if (this.props.isEditMode) {
+        await this.handleUpdateGrocery(groceryData);
+      } else {
+        this.props.handleCreateGroceries(groceryData);
+  
+        // Check and handle newGrocery
+        if (!foodOptions.includes(newGrocery)) {
+          try {
+            await this.addGrocery(newGrocery);
+            await this.getGroceryByName();
+          } catch (error) {
+            console.error("Error adding grocery:", error);
+          }
+        } else {
           await this.getGroceryByName();
-        } catch (error) {
-          console.error("Error adding grocery:", error);
         }
-      } else {
-        await this.getGroceryByName();
-      }
-
-      // Check and handle newMeasurement
-      if (!measureOptions.includes(newMeasurement)) {
-        try {
-          await this.addMeasure(newMeasurement);
-        } catch (error) {
-          console.error("Error adding measurement:", error);
+  
+        // Check and handle newMeasurement
+        if (!measureOptions.includes(newMeasurement)) {
+          try {
+            await this.addMeasure(newMeasurement);
+          } catch (error) {
+            console.error("Error adding measurement:", error);
+          }
+        } else {
+          await this.getMeasureByName();
         }
-      } else {
-        await this.getMeasureByName();
+  
+        await this.handleAddGrocery();
       }
-
-      await this.handleAddGrocery();
+  
       this.props.refreshGroceryList();
       this.props.handlePopupGroceryClose();
     } else {
@@ -118,6 +123,7 @@ class GroceryDialog extends Component {
       this.setState({ showAlert: true });
     }
   };
+  
 
   addGroceryStatement = async (groceryId, measureId) => {
     const { groceryData, fridgeId } = this.state;
@@ -186,12 +192,6 @@ class GroceryDialog extends Component {
     }
   };
 
-  // handleAddGroceryStatement = async () => {
-  //   try {
-  //     const groceryStatementId = await this.addGroceryStatement();
-  //     console.log("Grocery statement added:", groceryStatementId);
-  //     await this.addGroceryStatement
-
   handleAddGrocery = async () => {
     try {
       const groceryId = await this.getGroceryByName();
@@ -202,11 +202,26 @@ class GroceryDialog extends Component {
     }
   };
 
-  // const { quantity } = this.state;
-  // useQuantityValue = (quantity) => {
-  //   console.log("Current Quantity:", quantity);
-  //   // You can add more logic here to use the quantity value
-  // };
+  handleUpdateGrocery = async (groceryData) => {
+    try {
+      const groceryId = await this.getGroceryByName(groceryData.name);
+      const measureId = await this.getMeasureByName(groceryData.unit);
+  
+      const updatedGroceryStatement = new GroceryStatementBO(
+        groceryId,
+        measureId,
+        groceryData.quantity
+      );
+
+      updatedGroceryStatement.setID(this.props.curentGroceryId); 
+      await SmartFridgeAPI.getAPI().updateGroceryStatement(updatedGroceryStatement);
+      
+      console.log('Updated grocery statement:', updatedGroceryStatement);
+    } catch (error) {
+      console.error("Error in handleUpdateGrocery:", error);
+    }
+  }
+
 
   getGrocery = () => {
     const { fridgeId } = this.state;
@@ -419,7 +434,7 @@ class GroceryDialog extends Component {
                     this.setState({
                       groceryData: {
                         ...this.state.groceryData,
-                        quantity: e.target.value,
+                        quantity: parseInt(e.target.value),
                       },
                     })
                   }
