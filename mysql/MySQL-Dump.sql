@@ -103,8 +103,8 @@ CREATE TABLE IF NOT EXISTS `grocerystatement` (
   PRIMARY KEY (`id`),
   KEY `grocery_id` (`grocery_id`),
   KEY `unit_id` (`unit_id`),
-  CONSTRAINT `grocerystatement_fk1` FOREIGN KEY (`grocery_id`) REFERENCES `grocery` (`id`),
-  CONSTRAINT `grocerystatement_fk2` FOREIGN KEY (`unit_id`) REFERENCES `measure` (`id`)
+  CONSTRAINT `grocerystatement_fk1` FOREIGN KEY (`grocery_id`) REFERENCES `grocery` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `grocerystatement_fk2` FOREIGN KEY (`unit_id`) REFERENCES `measure` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
