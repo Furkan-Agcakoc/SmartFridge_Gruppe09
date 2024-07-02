@@ -414,7 +414,7 @@ class FridgePage extends Component {
         if (this.state.value === "1") {
           this.handlePopupGroceryOpen(true, grocery);
         } else if (this.state.value === "2") {
-          this.handlePopupRecipeOpen(true, grocery);
+          this.handlePopupRecipeOpen(true, recipe);
         }
       }
     );
