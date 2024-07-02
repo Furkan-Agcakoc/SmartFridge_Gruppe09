@@ -396,6 +396,8 @@ class FridgePage extends Component {
     const grocery = this.state.updatedGroceryStatements.find(
       (g) => g.id === Id
     );
+    const recipe = this.state.recipes.find((g) => g.id === Id);
+
     this.setState(
       (prevState) => {
         const newOpenMenus = {
