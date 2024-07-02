@@ -89,7 +89,10 @@ class FridgePage extends Component {
   loadRecipeList = async () => {
     try {
       const recipes = await SmartFridgeAPI.getAPI().getRecipe();
-      this.setState({ recipes });
+      // this.setState({ recipes });
+      this.setState({ recipes }, () => {
+        console.log("Recipes loaded ===============>", this.state.recipes);
+      });
     } catch (error) {
       console.error("Error fetching recipes:", error);
     }
@@ -349,6 +352,9 @@ class FridgePage extends Component {
   handleAnchorEdit = (Id) => {
     console.log("Editing:", Id);
     const grocery = this.state.updatedGroceryStatements.find(g => g.id === Id);
+    const recipe = this.state.recipes.find(g => g.id === Id);
+
+    console.log ('Selected Recipe ===>', recipe)
     this.setState(
       (prevState) => {
         const newOpenMenus = {
@@ -367,7 +373,7 @@ class FridgePage extends Component {
         if (this.state.value === "1") {
           this.handlePopupGroceryOpen(true, grocery);
         } else if (this.state.value === "2") {
-          this.handlePopupRecipeOpen(true, grocery);
+          this.handlePopupRecipeOpen(true, recipe);
         }
       }
     );
