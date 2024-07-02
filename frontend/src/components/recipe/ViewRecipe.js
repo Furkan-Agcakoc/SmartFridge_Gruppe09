@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import AlertComponent from "../dialogs/AlertComponent"; // Import AlertComponent
 
 const ViewRecipe = ({
   open,
@@ -22,6 +23,7 @@ const ViewRecipe = ({
   refreshGroceryList,
 }) => {
   const [nickname, setNickname] = useState("");
+  const [showAlert, setShowAlert] = useState(false); // State to control alert visibility
 
   useEffect(() => {
     const getUserNickname = async () => {
@@ -43,14 +45,28 @@ const ViewRecipe = ({
 
   if (!recipe) return null;
 
+  //How do I know whether the recipe has been cooked?
+  //Funktioniert nicht ganz noch nicht hinbekommen
+
   const handleOnCookRecipe = async () => {
     if (recipe.id && recipe.fridge_id) {
       try {
-        await SmartFridgeAPI.getAPI().cookRecipe(recipe.id, recipe.fridge_id);
+        const response = await SmartFridgeAPI.getAPI().cookRecipe(
+          recipe.id,
+          recipe.fridge_id
+        );
+        console.log("Response:", response);
+        if (response === "Rezept gekocht") {
+          setShowAlert(true);
+        } else {
+          setShowAlert(true);
+        }
         refreshGroceryList();
+        handleClose();
         console.log("Recipe cooked successfully!");
       } catch (error) {
         console.error("Error cooking recipe:", error);
+        setShowAlert(true); // Show alert on error
       }
     } else {
       console.error("Recipe ID or Fridge ID is undefined");
@@ -58,7 +74,7 @@ const ViewRecipe = ({
   };
 
   return (
-    <Paper sx={{  }}>
+    <Paper sx={{}}>
       <Dialog
         scroll="paper"
         open={open}
@@ -87,19 +103,18 @@ const ViewRecipe = ({
             </Button>
           </DialogActions>
         </DialogTitle>
-        <DialogContent >
+        <DialogContent>
+          <AlertComponent showAlert={showAlert} alertType="noGroceriesToCook" />
           <Typography>
             <strong>Dauer:</strong> {recipe.duration} Minuten
           </Typography>
           <Typography>
             <strong>Portionen:</strong> {recipe.portion}
           </Typography>
-          <Typography >
+          <Typography>
             <strong>Zubereitung:</strong>
           </Typography>
-          <Typography paragraph >
-            {recipe.instruction}
-          </Typography>
+          <Typography paragraph>{recipe.instruction}</Typography>
           <Typography>
             <strong>Zutaten:</strong>
           </Typography>

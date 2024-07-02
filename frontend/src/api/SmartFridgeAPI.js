@@ -66,7 +66,6 @@ export default class SmartFridgeAPI {
   #getGroceryInRecipeByIdURL = (recipe_id) =>
     `${this.#SmartFridgeBaseURL}/grocery_in_recipe/${recipe_id}`;
 
-
   // household related
   #getHouseholdURL = () => `${this.#SmartFridgeBaseURL}/household/`;
   #getHouseholdByIdURL = (id) => `${this.#SmartFridgeBaseURL}/household/${id}`;
@@ -93,7 +92,12 @@ export default class SmartFridgeAPI {
   #addRecipeURL = () => `${this.#SmartFridgeBaseURL}/recipe/`;
   #deleteRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
   #updateRecipeURL = (id) => `${this.#SmartFridgeBaseURL}/recipe/${id}`;
-  #cookRecipeURL = (recipeId, fridgeId) => `${this.#SmartFridgeBaseURL}/recipe/${recipeId}/${fridgeId}`;
+  #cookRecipeURL = (recipeId, fridgeId) =>
+    `${this.#SmartFridgeBaseURL}/recipe/${recipeId}/${fridgeId}`;
+  #getRecipeContentByFridgeIdURL = (fridgeId) =>
+    `${this.#SmartFridgeBaseURL}/fridge/${fridgeId}/recipes`;
+  #getRecipesByFridgeIdURL = (fridgeId) =>
+    `${this.#SmartFridgeBaseURL}/recipe/fridge_id/${fridgeId}`;
 
   // user related
   #getUserURL = () => `${this.#SmartFridgeBaseURL}/user`;
@@ -114,11 +118,6 @@ export default class SmartFridgeAPI {
   #getMeasureByNameURL = (unit) =>
     `${this.#SmartFridgeBaseURL}/measure/unit/${unit}`;
   #updateMeasureURL = (id) => `${this.#SmartFridgeBaseURL}/measure/${id}`;
-
-
-  
-
-
 
   /**
    *  Returns a Promise which resolves to a json object.
@@ -395,13 +394,14 @@ export default class SmartFridgeAPI {
         body: JSON.stringify(groceryStatementBO),
       }
     ).then((responseJSON) => {
-      let responseGroceryStatementBO = GroceryStatementBO.fromJSON(responseJSON)[0];
+      let responseGroceryStatementBO =
+        GroceryStatementBO.fromJSON(responseJSON)[0];
       return new Promise(function (resolve) {
         resolve(responseGroceryStatementBO);
       });
     });
   }
-  
+
   getGroceryInRecipeId(recipeId) {
     return this.#fetchAdvanced(this.#getGroceryInRecipeByIdURL(recipeId)).then(
       (responseJSON) => {
@@ -665,7 +665,6 @@ export default class SmartFridgeAPI {
       });
     });
   }
-    
 
   getRecipeById(recipeID) {
     return this.#fetchAdvanced(this.#getRecipeByIdURL(recipeID)).then(
@@ -701,8 +700,7 @@ export default class SmartFridgeAPI {
   }
 
   addRecipe(recipeBO) {
-
-    console.log('RECIPE BO ====>', recipeBO)
+    console.log("RECIPE BO ====>", recipeBO);
     return this.#fetchAdvanced(this.#addRecipeURL(), {
       method: "POST",
       headers: {
@@ -747,8 +745,31 @@ export default class SmartFridgeAPI {
         resolve(responseJSON);
       });
     });
-  };
-  
+  }
+
+  getRecipeByFridgeId(fridgeId) {
+    return this.#fetchAdvanced(this.#getRecipesByFridgeIdURL(fridgeId)).then(
+      (responseJSON) => {
+        let responseRecipeBOs = RecipeBO.fromJSON(responseJSON);
+        return new Promise(function (resolve) {
+          resolve(responseRecipeBOs);
+        });
+      }
+    );
+  }
+
+
+  getRecipeContentByFridgeId(fridgeId) {
+    return this.#fetchAdvanced(this.#getRecipeContentByFridgeIdURL(fridgeId)).then(
+      (responseJSON) => {
+        let responseRecipeBOs = RecipeBO.fromJSON(responseJSON);
+        return new Promise(function (resolve) {
+          resolve(responseRecipeBOs);
+        });
+      }
+    );
+  }
+
   /**  user related  **/
 
   getUser() {
@@ -815,26 +836,28 @@ export default class SmartFridgeAPI {
     });
   }
 
-
   updateUser(userBO) {
     return this.#fetchAdvanced(this.#updateUserURL(userBO.getID()), {
-        method: "PUT",
-        headers: {
-            Accept: "application/json, text/plain",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userBO),
-    }).then(response => {
+      method: "PUT",
+      headers: {
+        Accept: "application/json, text/plain",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userBO),
+    })
+      .then((response) => {
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+          throw new Error(
+            `HTTP error! status: ${response.status} - ${response.statusText}`
+          );
         }
         return response.json();
-    }).then(responseJSON => {
+      })
+      .then((responseJSON) => {
         let responseUserBO = UserBO.fromJSON(responseJSON)[0];
-        return new Promise(resolve => resolve(responseUserBO));
-    });
-}
-
+        return new Promise((resolve) => resolve(responseUserBO));
+      });
+  }
 
   /**  Measure related  **/
 
@@ -906,7 +929,7 @@ export default class SmartFridgeAPI {
       });
     });
   }
-  
+
   updateMeasure(measureBO) {
     return this.#fetchAdvanced(this.#updateMeasureURL(measureBO.id), {
       method: "PUT",
@@ -922,7 +945,4 @@ export default class SmartFridgeAPI {
       });
     });
   }
-
 }
-
-

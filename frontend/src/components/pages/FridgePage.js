@@ -22,6 +22,7 @@ import RecipeDialog from "../recipe/RecipeDialog";
 import Settings from "../household/Settings";
 import UserContext from "../contexts/UserContext";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import AlertComponent from "../dialogs/AlertComponent";
 import { useParams } from "react-router-dom";
 
 function withRouter(Component) {
@@ -50,7 +51,10 @@ class FridgePage extends Component {
       openMenus: {},
       popupRecipeOpen: false,
       recipeCount: 0,
-      recipes: [],
+      allRecipes: [], //Hier werden alle Rezepte gespeichert
+      recipes: [], //Hier werden alle Rezepte gespeichert, die in der Fridge enthalten sind
+      availableRecipes: [],
+      showRecipeAlert: false,
       recipeIdToDelete: null,
       dialogopen: false,
       households: [],
@@ -69,14 +73,14 @@ class FridgePage extends Component {
   }
 
   componentDidMount() {
-    const { householdId } = this.props.params; // HouseholdId aus den Props ziehen
-    this.setState({ householdId });
-    // console.log("HouseholdId von FridgePage", householdId);
-    this.getFridgeByHouseholdId(householdId);
-    this.getHouseholdNameById(householdId); // Den Haushaltsnamen laden
-    // this.getGroceries(); // Lebensmittel laden
-    this.getGroceryInFridgeId(householdId);
-    this.loadRecipeList();
+    const { householdId, fridgeId } = this.props.params; // Extract householdId and fridgeId from props
+    this.setState({ householdId, fridgeId }, () => {
+      // Callback function to ensure state is updated before making API calls
+      this.getFridgeByHouseholdId(householdId);
+      this.getHouseholdNameById(householdId); // Load household name
+      this.getGroceryInFridgeId(householdId);
+      this.loadRecipeList();
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -88,11 +92,30 @@ class FridgePage extends Component {
 
   loadRecipeList = async () => {
     try {
-      const recipes = await SmartFridgeAPI.getAPI().getRecipe();
-      this.setState({ recipes });
+      const allRecipes = await SmartFridgeAPI.getAPI().getRecipe();
+      this.setState({ allRecipes });
+      console.log("allRecipes", allRecipes);
+
+      // Fetch recipes by fridge ID after getting all recipes
+      const { fridgeId } = this.state;
+      if (fridgeId) {
+        this.loadRecipeByFridgeId(fridgeId);
+      }
     } catch (error) {
       console.error("Error fetching recipes:", error);
     }
+  };
+
+  loadRecipeByFridgeId = (fridgeId) => {
+    SmartFridgeAPI.getAPI()
+      .getRecipeByFridgeId(fridgeId)
+      .then((recipes) => {
+        this.setState({ recipes });
+        console.log("recipes", this.state.recipes);
+      })
+      .catch((error) => {
+        console.error("Error fetching recipes by fridge ID:", error);
+      });
   };
 
   getGroceryInFridgeId = async (fridgeId) => {
@@ -158,9 +181,33 @@ class FridgePage extends Component {
 
   refreshGroceryList = async () => {
     const { fridgeId } = this.state;
+    this.setState({
+      showRecipeAlert: false,
+    });
     await this.getGroceryInFridgeId(fridgeId);
   };
 
+  getRecipeContentByFridgeId = async () => {
+    const { recipes, fridgeId } = this.state;
+
+    if (recipes.length === 0) {
+      this.setState({
+        availableRecipes: "Es gibt keine Rezepte im Kühlschrank!",
+        showRecipeAlert: true,
+      });
+      return;
+    }
+
+    const availableRecipes =
+      await SmartFridgeAPI.getAPI().getRecipeContentByFridgeId(fridgeId);
+
+    let formattedMessage = availableRecipes.join("<br />");
+
+    this.setState({
+      availableRecipes: formattedMessage,
+      showRecipeAlert: true,
+    });
+  };
   // #######################NO APIs###############################
 
   groceryStatement(statement) {
@@ -228,12 +275,12 @@ class FridgePage extends Component {
   };
 
   handleCreateGroceries = (groceryData) => {
-    const { currentlyEditing, groceries, updatedGroceryStatements } = this.state;
-    console.log('groceryData in handleCreateGroceries', groceryData)
+    const { currentlyEditing, groceries, updatedGroceryStatements } =
+      this.state;
+    console.log("groceryData in handleCreateGroceries", groceryData);
 
     if (currentlyEditing !== null) {
       const updatedGroceries = updatedGroceryStatements.map((grocery) => {
-
         if (grocery.id === currentlyEditing.id) {
           return {
             ...grocery,
@@ -244,7 +291,6 @@ class FridgePage extends Component {
         }
         return grocery;
       });
-  
 
       this.setState(
         {
@@ -253,12 +299,11 @@ class FridgePage extends Component {
           currentlyEditing: null,
         },
         () => {
-          console.log('Updated groceries:', this.state.groceries);
+          console.log("Updated groceries:", this.state.groceries);
         }
       );
 
-      console.log('Updated grocery ===>', updatedGroceries)
-
+      console.log("Updated grocery ===>", updatedGroceries);
     } else {
       // Hinzufügen eines neuen Lebensmittels, wenn es im Bearbeitungsmodus nicht existiert
       const existingGrocery = groceries.find(
@@ -348,7 +393,9 @@ class FridgePage extends Component {
 
   handleAnchorEdit = (Id) => {
     console.log("Editing:", Id);
-    const grocery = this.state.updatedGroceryStatements.find(g => g.id === Id);
+    const grocery = this.state.updatedGroceryStatements.find(
+      (g) => g.id === Id
+    );
     this.setState(
       (prevState) => {
         const newOpenMenus = {
@@ -388,17 +435,18 @@ class FridgePage extends Component {
 
   deleteRecipe = async (recipeID) => {
     try {
-      const groceryStatementsPromise = await SmartFridgeAPI.getAPI().getGroceryInRecipeId(recipeID);
+      const groceryStatementsPromise =
+        await SmartFridgeAPI.getAPI().getGroceryInRecipeId(recipeID);
       const groceryStatements = await groceryStatementsPromise;
-      
-      console.log('groceryStatements =>', groceryStatements)
-      
+
+      console.log("groceryStatements =>", groceryStatements);
+
       const deletePromises = groceryStatements.map((statement) =>
         SmartFridgeAPI.getAPI().deleteGroceryStatement(statement.id)
-    );
+      );
       await Promise.all(deletePromises);
-    
-      await SmartFridgeAPI.getAPI().getGroceryInRecipeId(recipeID)
+
+      await SmartFridgeAPI.getAPI().getGroceryInRecipeId(recipeID);
       await SmartFridgeAPI.getAPI().deleteRecipe(recipeID);
 
       this.setState((prevState) => ({
@@ -408,27 +456,24 @@ class FridgePage extends Component {
       console.error("Error deleting recipe:", error);
     }
   };
-  
 
-  
   handleAnchorDelete = async (Id) => {
     try {
       if (this.state.value === "1") {
         await this.deleteGroceryStatement(Id);
-      } else if (this.state.value === '2') {
-        await this.deleteRecipe(Id)
+      } else if (this.state.value === "2") {
+        await this.deleteRecipe(Id);
       }
     } catch (error) {
       console.error("Error deleting item:", error);
     }
   };
 
-
   handleConfirmDelete() {
     const { groceryIdToDelete, recipeIdToDelete, value } = this.state;
     console.log("App => Confirm delete");
 
-    console.log('groceryIdToDelete', groceryIdToDelete)
+    console.log("groceryIdToDelete", groceryIdToDelete);
     if (value === "1" && groceryIdToDelete !== null) {
       this.handleAnchorDelete(groceryIdToDelete);
     } else if (value === "2" && recipeIdToDelete !== null) {
@@ -449,6 +494,7 @@ class FridgePage extends Component {
       popupRecipeOpen: true,
       isEditMode,
       currentlyEditing: recipe,
+      showRecipeAlert: false,
     });
   };
 
@@ -461,7 +507,7 @@ class FridgePage extends Component {
   };
 
   handleCreateRecipes = async (recipeData) => {
-    const { currentlyEditing, recipes, fridgeId } = this.state;
+    const { currentlyEditing, fridgeId, recipes } = this.state;
     const userId = this.context.id;
 
     const { ingredients, groceryUnit, ...rest } = recipeData;
@@ -479,7 +525,10 @@ class FridgePage extends Component {
     );
 
     if (currentlyEditing !== null) {
-      console.log('currentlyEditing in currentlyEditing ======>', currentlyEditing)
+      console.log(
+        "currentlyEditing in currentlyEditing ======>",
+        currentlyEditing
+      );
 
       const updatedRecipes = this.updateRecipe({
         recipe_id: currentlyEditing,
@@ -490,7 +539,7 @@ class FridgePage extends Component {
         ingredients: recipeData.ingredients,
       });
 
-      console.log('Updated Recipes ======>', updatedRecipes)
+      console.log("Updated Recipes ======>", updatedRecipes);
 
       this.setState({
         recipes: updatedRecipes,
@@ -523,7 +572,7 @@ class FridgePage extends Component {
       });
       this.loadRecipeList();
       return createdRecipe;
-      console.log("Hier sind alle Rezepte ", recipes);
+      // console.log("Hier sind alle Rezepte ", recipes);
     }
   };
 
@@ -538,6 +587,11 @@ class FridgePage extends Component {
     return updatedRecipes;
   };
 
+  handleAvailableRecipes = () => {
+    console.log("Verfügbare Rezepte");
+    this.getRecipeContentByFridgeId();
+  };
+
   render() {
     const {
       value,
@@ -550,13 +604,14 @@ class FridgePage extends Component {
       recipes,
       isEditMode,
       householdName,
+      showRecipeAlert,
     } = this.state;
 
     const { dialogOpen, dialogType } = this.props;
 
-    const editingGrocery = currentlyEditing
-      ? groceries.find((g) => g.groceryId === currentlyEditing)
-      : null;
+    // const editingGrocery = currentlyEditing
+    //   ? groceries.find((g) => g.groceryId === currentlyEditing)
+    //   : null;
 
     const editingRecipe = currentlyEditing
       ? recipes.find((r) => r.recipeId === currentlyEditing)
@@ -715,7 +770,11 @@ class FridgePage extends Component {
                       handleCreateGroceries={this.handleCreateGroceries}
                       foodOptions={groceries.map((g) => g.groceryName)}
                       refreshGroceryList={this.refreshGroceryList}
-                      curentGroceryId={this.state.currentlyEditing ? this.state.currentlyEditing.id : null}
+                      curentGroceryId={
+                        this.state.currentlyEditing
+                          ? this.state.currentlyEditing.id
+                          : null
+                      }
                     />
                   )}
                   <DeleteConfirmationDialog
@@ -768,11 +827,21 @@ class FridgePage extends Component {
                             backgroundColor: "success.gwhite",
                           },
                         }}
-                        // onClick={this.handleAvailableRecipes}
+                        onClick={this.handleAvailableRecipes}
                       >
                         Verfügbare Rezepte
                       </Button>
+                      <AlertComponent
+                        showAlert={showRecipeAlert}
+                        alertType="availableRecipes"
+                        severity="info"
+                        customMessage={this.state.availableRecipes}
+                        onClose={() =>
+                          this.setState({ showRecipeAlert: false })
+                        }
+                      />
                     </Container>
+
                     <Link onClick={() => this.handlePopupRecipeOpen(false)}>
                       <Tooltip
                         title="Neues Rezept hinzufügen"
@@ -835,6 +904,7 @@ class FridgePage extends Component {
                       anchorEls={anchorEls}
                       openMenus={openMenus}
                       refreshGroceryList={this.refreshGroceryList}
+                      showRecipeAlert={this.state.showRecipeAlert}
                     />
                   </TabPanel>
                   {popupRecipeOpen && (
