@@ -179,6 +179,7 @@ class Settings extends Component {
       const updatedGrocery = await SmartFridgeAPI.getAPI().updateGrocery(
         grocery
       );
+      this.props.refreshGroceryList()
       this.setState((prevState) => ({
         groceries: prevState.groceries.map((g) =>
           g.id === updatedGrocery.id ? updatedGrocery : g
@@ -205,6 +206,7 @@ class Settings extends Component {
       const updatedMeasure = await SmartFridgeAPI.getAPI().updateMeasure(
         measure
       );
+      this.props.refreshGroceryList()
       this.setState((prevState) => ({
         measures: prevState.measures.map((m) =>
           m.id === updatedMeasure.id ? updatedMeasure : m

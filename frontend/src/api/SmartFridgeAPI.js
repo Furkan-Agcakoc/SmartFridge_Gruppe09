@@ -762,13 +762,13 @@ export default class SmartFridgeAPI {
   getRecipeContentByFridgeId(fridgeId) {
     return this.#fetchAdvanced(this.#getRecipeContentByFridgeIdURL(fridgeId)).then(
       (responseJSON) => {
-        let responseRecipeBOs = RecipeBO.fromJSON(responseJSON);
         return new Promise(function (resolve) {
-          resolve(responseRecipeBOs);
+          resolve(responseJSON);
         });
       }
     );
   }
+  
 
   /**  user related  **/
 
