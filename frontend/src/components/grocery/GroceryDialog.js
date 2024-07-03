@@ -41,6 +41,8 @@ class GroceryDialog extends Component {
       foodOptions: props.foodOptions || [],
       measureOptions: props.measureOptions || [],
       fridgeId: this.props.fridgeId,
+      showDuplicateAlert: false,
+      duplicateGroceryName: "",
     };
   }
 
@@ -82,13 +84,22 @@ class GroceryDialog extends Component {
       measureOptions,
     } = this.state;
     const form = e.target.closest("form");
-
+  
     if (form.checkValidity()) {
       if (this.props.isEditMode) {
         await this.handleUpdateGrocery(groceryData);
       } else {
+        const isDuplicated = this.props.groceryStatements.some(statement => statement.grocery_name === newGrocery)
+        if (isDuplicated) {
+          this.setState({
+            showDuplicateAlert: true,
+            duplicateGroceryName: newGrocery,
+          });
+          return;
+        }
+  
         this.props.handleCreateGroceries(groceryData);
-
+  
         // Check and handle newGrocery
         if (!foodOptions.includes(newGrocery)) {
           try {
@@ -100,7 +111,7 @@ class GroceryDialog extends Component {
         } else {
           await this.getGroceryByName(newGrocery);
         }
-
+  
         // Check and handle newMeasurement
         if (!measureOptions.includes(newMeasurement)) {
           try {
@@ -111,10 +122,10 @@ class GroceryDialog extends Component {
         } else {
           await this.getMeasureByName(newMeasurement);
         }
-
+  
         await this.handleAddGrocery();
       }
-
+  
       this.props.refreshGroceryList();
       this.props.handlePopupGroceryClose();
     } else {
@@ -122,6 +133,7 @@ class GroceryDialog extends Component {
       this.setState({ showAlert: true });
     }
   };
+  
 
   addGroceryStatement = async (groceryId, measureId) => {
     const { groceryData, fridgeId } = this.state;
@@ -274,6 +286,8 @@ class GroceryDialog extends Component {
     const { handlePopupGroceryClose, isEditMode } = this.props;
     const {
       showAlert,
+      showDuplicateAlert,
+      duplicateGroceryName,
       groceryData: { name, quantity, unit },
       foodOptions,
       measureOptions,
@@ -337,6 +351,12 @@ class GroceryDialog extends Component {
                 : "Lebensmittel hinzufügen"}
             </Typography>
             <AlertComponent showAlert={showAlert} alertType="grocery" />
+            <AlertComponent
+              showAlert={showDuplicateAlert}
+              alertType="duplicateGrocery"
+              customMessage={`Du hast ${duplicateGroceryName} im Kühlschrank`}
+              onClose={() => this.setState({ showDuplicateAlert: false })}
+            />
             <Box
               sx={{
                 display: "flex",
