@@ -15,7 +15,7 @@ const Footer = () => {
           backgroundColor: "primary.main",
           position: "fixed",
           bottom: 0,
-          zIndex: 1,
+          zIndex: 99,
         }}
       >
         <Container

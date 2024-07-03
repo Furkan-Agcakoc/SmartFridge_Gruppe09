@@ -238,9 +238,12 @@ class HouseholdDialog extends Component {
         />
         <Box
           sx={{
-            width: { xs: "90%", sm: "1100px" },
+            width: { xs: "90%", sm: "90%", md: "1100px" },
             position: "fixed",
             zIndex: 2,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
           }}
           component="form"
           noValidate
@@ -250,14 +253,19 @@ class HouseholdDialog extends Component {
             sx={{
               display: "flex",
               flexDirection: "column",
-              padding: { xs: "20px", sm: "0 30px 50px 30px" },
+              padding: { xs: "20px", sm: "20px", md: "0 30px 50px 30px" },
               borderRadius: "50px",
               fontSize: "18px",
             }}
           >
             <Typography
               variant="h4"
-              sx={{ marginBottom: "20px", marginTop: "20px", fontWeight: 600 }}
+              sx={{
+                marginBottom: "20px",
+                marginTop: "20px",
+                fontWeight: 600,
+                fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" },
+              }}
             >
               {isEditMode ? "Haushalt bearbeiten" : "Haushalt hinzufügen"}
             </Typography>
@@ -349,21 +357,28 @@ class HouseholdDialog extends Component {
                 justifyContent: "center",
                 position: "relative",
                 top: "25px",
+                mb: { xs: "20px", sm: "20px", md: "0px" },
               }}
             >
               <Box
-                sx={{ 
-                  display: "flex", 
-                  justifyContent: "center", 
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
                   gap: "10px",
-                  paddingBottom: { xs: "30px" }, 
+                  paddingBottom: { xs: "10px" },
+                  width: { xs: "100%", sm: "80%", md: "50%" }, // Adjust this as needed
                 }}
               >
                 <Button
                   variant="contained"
-                  endIcon={<CheckCircleOutlineRoundedIcon />}
+                  endIcon={
+                    <CheckCircleOutlineRoundedIcon
+                      sx={{ display: { xs: "none", sm: "inline-flex" } }}
+                    />
+                  }
                   onClick={this.handleClick}
                   sx={{
+                    flex: 1,
                     color: "success.dark",
                     bgcolor: "rgba(29, 151, 35, 0.2)",
                     border: "2px solid #06871d",
@@ -377,9 +392,14 @@ class HouseholdDialog extends Component {
                 </Button>
                 <Button
                   variant="contained"
-                  endIcon={<HighlightOffRoundedIcon />}
+                  endIcon={
+                    <HighlightOffRoundedIcon
+                      sx={{ display: { xs: "none", sm: "inline-flex" } }}
+                    />
+                  }
                   onClick={closePopup}
                   sx={{
+                    flex: 1,
                     bgcolor: "rgba(197, 0, 0, 0.1)",
                     color: "error.main",
                     border: "2px solid #c50000 ",

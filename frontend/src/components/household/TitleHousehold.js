@@ -25,6 +25,7 @@ const TitleHousehold = () => {
     <>
       <Typography
         sx={{
+          alignItems: "center",
           fontWeight: "bold",
           fontSize: { xs: "1.5rem", sm: "2rem" },
           fontStyle: "normal",
@@ -36,8 +37,8 @@ const TitleHousehold = () => {
           marginBottom: "0px",
         }}
       >
-        Welcome Back, {firstName} !
-        <CelebrationRoundedIcon fontSize="large" />
+        Willkommen {firstName} !
+        <CelebrationRoundedIcon sx={{width: { xs: "1.5rem", sm: "2rem", md: "3rem" },}}/>
       </Typography>
     </>
   );
