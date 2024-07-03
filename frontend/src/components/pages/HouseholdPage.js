@@ -307,7 +307,6 @@ class HouseholdPage extends Component {
             position: "relative",
             padding: { xs: "10px" },
             top: { xs: "150px" },
-            border: { xs: "1px solid green" },
           }}
         >
           <Box
@@ -323,7 +322,6 @@ class HouseholdPage extends Component {
               alignItems: { xs: "center" },
               width: { xs: "100%", sm: "1100px" },
               height: { xs: "auto", sm: "300px" },
-              border: "1px solid green",
             }}
           >
             <Typography
@@ -346,7 +344,6 @@ class HouseholdPage extends Component {
                 maxWidth: "1000px",
                 flexWrap: "wrap",
                 paddingBottom: { xs: "50px", sm: "200px" },
-                border: "1px solid red",
 
               }}
             >
