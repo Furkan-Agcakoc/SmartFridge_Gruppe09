@@ -582,12 +582,14 @@ class Administration():
 
                 for fridge_grocery in fridge_content:
                     if fridge_grocery.get_grocery_id() == recipe_grocery.get_grocery_id():
-                        fridge_qty = self.convert_unit(fridge_grocery.get_quantity(), fridge_grocery.get_unit_id(),
-                                                       recipe_unit_id)
-                        new_value = fridge_qty - recipe_qty
-                        new_value = max(0, new_value)  # Verhindert negative Werte
-                        fridge_grocery.set_quantity(new_value)
-                        self.update_gs(fridge_grocery)
+                        fridge_unit_id = fridge_grocery.get_unit_id()
+                        if self.are_units_compatible(recipe_unit_id, fridge_unit_id):
+                            fridge_qty = fridge_grocery.get_quantity()
+                            converted_recipe_qty = self.convert_unit(recipe_qty, recipe_unit_id, fridge_unit_id)
+                            new_value = fridge_qty - converted_recipe_qty
+                            new_value = max(0, new_value)  # Verhindert negative Werte
+                            fridge_grocery.set_quantity(new_value)
+                            self.update_gs(fridge_grocery)
 
             return "Rezept gekocht"
         else:
