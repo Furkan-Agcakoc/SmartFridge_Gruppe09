@@ -94,9 +94,9 @@ const Recipe = ({
             alignItems: "center",
             backgroundColor: "primary.light",
             color: "background.default",
-            width: "200px",
+            width: { xs: "150px", sm: "175px", md: "200px" },
             maxWidth: "200px",
-            height: "125px",
+            height: { xs: "100px", sm: "110px", md: "125px" },
             borderRadius: "10px",
             "&:hover": { boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)" },
           }}
@@ -116,8 +116,8 @@ const Recipe = ({
               position: "absolute",
               top: "2px",
               right: "2px",
-              width: "35px",
-              height: "35px",
+              width: { xs: "25px", sm: "30px", md: "35px" },
+              height: { xs: "25px", sm: "30px", md: "35px" },
               zIndex: 10,
             }}
           >
@@ -140,9 +140,15 @@ const Recipe = ({
               }}
               className="menu-item"
               disableRipple
+              sx={{ fontSize: { xs: "0.7rem", sm: "1rem" } }}
             >
-              <ListItemIcon>
-                <EditIcon />
+              <ListItemIcon
+                sx={{
+                  minWidth: { xs: "0px", sm: "40px" },
+                  display: { xs: "none", sm: "flex" },
+                }}
+              >
+                <EditIcon sx={{ fontSize: { xs: "0.9rem", sm: "1.25rem" } }} />
               </ListItemIcon>
               Edit
             </MenuItem>
@@ -154,9 +160,17 @@ const Recipe = ({
               }}
               className="menu-item"
               disableRipple
+              sx={{ fontSize: { xs: "0.7rem", sm: "1rem" } }}
             >
-              <ListItemIcon>
-                <DeleteIcon />
+              <ListItemIcon
+                sx={{
+                  minWidth: { xs: "0px", sm: "40px" },
+                  display: { xs: "none", sm: "flex" },
+                }}
+              >
+                <DeleteIcon
+                  sx={{ fontSize: { xs: "0.9rem", sm: "1.25rem" } }}
+                />
               </ListItemIcon>
               Delete
             </MenuItem>
@@ -168,7 +182,6 @@ const Recipe = ({
               flexDirection: "column",
               height: "125px",
               width: "200px",
-              // pmarginBottom:"100px",
             }}
             onClick={() => handleRecipeClick(recipe)}
           >
@@ -179,6 +192,12 @@ const Recipe = ({
                 justifyContent: "center",
                 color: "background.default",
                 maxWidth: "200px",
+                fontSize: {
+                  xs: "1rem",
+                  sm: "1.2rem",
+                  md: "1.5rem",
+                  xl: "1.5rem",
+                },
               }}
             >
               {recipe.recipe_name}
@@ -190,6 +209,12 @@ const Recipe = ({
                 justifyContent: "center",
                 color: "background.default",
                 maxWidth: "200px",
+                fontSize: {
+                  xs: "0.8rem",
+                  sm: "1rem",
+                  md: "1.2rem",
+                  xl: "1.2rem",
+                },
               }}
             >
               Dauer: {recipe.duration} Minuten

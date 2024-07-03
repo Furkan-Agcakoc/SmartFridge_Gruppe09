@@ -96,10 +96,10 @@ class EditProfilePage extends Component {
 
   handleClickDelete = () => {
     const userId = this.context.id;
-    console.log(userId)
+    console.log(userId);
     this.deleteUser(userId);
     this.props.handleSignOut();
-  }
+  };
 
   deleteUser = async (userId) => {
     try {
@@ -126,19 +126,19 @@ class EditProfilePage extends Component {
         <Paper
           component="form"
           sx={{
-            maxWidth: "xs",
+            maxWidth: { xs: "90%", sm: "xs" },
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             position: "fixed",
-            top: "40%",
+            top: { xs: "50%", sm: "40%" },
             left: "50%",
             transform: "translate(-50%, -50%)",
             zIndex: 1001,
             backgroundColor: "white",
-            padding: "20px",
+            padding: { xs: "50px", sm: "20px" },
             boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
-            width: "600px",
+            width: { xs: "50%", sm: "600px" },
             height: "auto",
           }}
         >

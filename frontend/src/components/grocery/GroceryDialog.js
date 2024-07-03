@@ -204,14 +204,16 @@ class GroceryDialog extends Component {
         groceryData.quantity
       );
 
-      updatedGroceryStatement.setID(this.props.curentGroceryId); 
-      await SmartFridgeAPI.getAPI().updateGroceryStatement(updatedGroceryStatement);
-      
-      console.log('Updated grocery statement:', updatedGroceryStatement);
+      updatedGroceryStatement.setID(this.props.curentGroceryId);
+      await SmartFridgeAPI.getAPI().updateGroceryStatement(
+        updatedGroceryStatement
+      );
+
+      console.log("Updated grocery statement:", updatedGroceryStatement);
     } catch (error) {
       console.error("Error in handleUpdateGrocery:", error);
     }
-  }
+  };
 
   getGrocery = () => {
     const { fridgeId } = this.state;
@@ -303,10 +305,10 @@ class GroceryDialog extends Component {
           component="form"
           noValidate
           sx={{
-            width: "1100px",
+            width: { xs: "90%", sm: "1100px" },
             height: "auto",
             position: "fixed",
-            top: "35%",
+            top: { xs: "20%", sm: "35%" },
             zIndex: 2,
           }}
         >
@@ -315,7 +317,7 @@ class GroceryDialog extends Component {
             sx={{
               display: "flex",
               flexDirection: "column",
-              padding: "0 30px 50px 30px",
+              padding: { xs: "20px", sm: "0 30px 50px 30px" },
               borderRadius: "40px",
               fontSize: "17px",
             }}
@@ -327,6 +329,7 @@ class GroceryDialog extends Component {
                 marginTop: "20px",
                 fontWeight: 600,
                 color: "text.primary",
+                fontSize: { xs: "1.5rem", sm: "2rem" },
               }}
             >
               {isEditMode
@@ -414,6 +417,7 @@ class GroceryDialog extends Component {
               <Box
                 sx={{
                   display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
                   justifyContent: "center",
                   gap: "10px",
                 }}
@@ -436,7 +440,7 @@ class GroceryDialog extends Component {
                   placeholder="Menge"
                   type="number"
                   InputLabelProps={{ style: { fontSize: "15px" } }}
-                  sx={{ width: "775px" }}
+                  sx={{ width: { xs: "100%", sm: "775px" } }}
                 />
                 <Autocomplete
                   id="measurements-box"
@@ -501,7 +505,7 @@ class GroceryDialog extends Component {
                       name="unit"
                       label="Mengeneinheit angeben"
                       placeholder="Mengeneinheit"
-                      sx={{ width: "250px" }}
+                      sx={{ width: { xs: "100%", sm: "250px" } }}
                       InputLabelProps={{
                         style: { fontSize: "15px" },
                       }}
@@ -521,8 +525,10 @@ class GroceryDialog extends Component {
               <Box
                 sx={{
                   display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
                   justifyContent: "center",
                   gap: "10px",
+                  paddingBottom: { xs: "30px" },
                 }}
               >
                 <Button
@@ -538,6 +544,7 @@ class GroceryDialog extends Component {
                       bgcolor: "success.dark",
                       color: "background.default",
                     },
+                    width: { xs: "100%", sm: "auto" },
                   }}
                 >
                   {isEditMode ? "Speichern" : "Hinzufügen"}
@@ -554,6 +561,7 @@ class GroceryDialog extends Component {
                       bgcolor: "error.main",
                       color: "background.default",
                     },
+                    width: { xs: "100%", sm: "auto" },
                   }}
                 >
                   Abbrechen

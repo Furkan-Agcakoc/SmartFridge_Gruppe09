@@ -196,7 +196,7 @@ class HouseholdPage extends Component {
   }
 
   handleAnchorClick = (household_id, event) => {
-    const { householdIdToDelete, households, anchorEls } = this.state;
+    // const { householdIdToDelete, households, anchorEls } = this.state;
     this.setState((prevState) => {
       const newOpenMenus = { ...prevState.openMenus, [household_id]: true };
       const newAnchorEls = {
@@ -338,13 +338,18 @@ class HouseholdPage extends Component {
             <Box
               sx={{
                 display: "flex",
-                width: {xs: "325px", sm: "100%", md: "100%", lg: "100%", xl: "100%" },
+                width: {
+                  xs: "325px",
+                  sm: "100%",
+                  md: "100%",
+                  lg: "100%",
+                  xl: "100%",
+                },
                 justifyContent: "flex-start",
                 gap: { xs: "25px", sm: "20px", md: "50px" },
                 maxWidth: "1000px",
                 flexWrap: "wrap",
                 paddingBottom: { xs: "50px", sm: "200px" },
-
               }}
             >
               <Tooltip

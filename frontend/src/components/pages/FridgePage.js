@@ -399,12 +399,20 @@ class FridgePage extends Component {
         const groceryStatementBOs = await api.getGroceryInRecipeId(recipeId);
         const detailedIngredientsPromises = groceryStatementBOs.map(
           async (ingredient) => {
-            const groceryResponse = await this.getGroceryById(ingredient.grocery_id);
-            const measureResponse = await this.getMeasureById(ingredient.unit_id);
-  
-            const grocery = Array.isArray(groceryResponse) ? groceryResponse[0] : groceryResponse;
-            const measure = Array.isArray(measureResponse) ? measureResponse[0] : measureResponse;
-  
+            const groceryResponse = await this.getGroceryById(
+              ingredient.grocery_id
+            );
+            const measureResponse = await this.getMeasureById(
+              ingredient.unit_id
+            );
+
+            const grocery = Array.isArray(groceryResponse)
+              ? groceryResponse[0]
+              : groceryResponse;
+            const measure = Array.isArray(measureResponse)
+              ? measureResponse[0]
+              : measureResponse;
+
             return {
               ...ingredient,
               grocery_name: grocery?.grocery_name ?? "Unknown",
@@ -412,7 +420,9 @@ class FridgePage extends Component {
             };
           }
         );
-        const detailedIngredientsResults = await Promise.all(detailedIngredientsPromises);
+        const detailedIngredientsResults = await Promise.all(
+          detailedIngredientsPromises
+        );
         return detailedIngredientsResults;
       } catch (error) {
         console.error("Error fetching ingredients:", error);
@@ -423,7 +433,6 @@ class FridgePage extends Component {
       return [];
     }
   };
-  
 
   handleAnchorEdit = async (Id) => {
     console.log("Editing:", Id);
@@ -431,37 +440,36 @@ class FridgePage extends Component {
       (g) => g.id === Id
     );
     const recipe = this.state.recipes.find((g) => g.id === Id);
-  
+
     if (recipe) {
       const ingredients = await this.fetchIngredients(Id);
-  
-      console.log('Ingredients ====>', ingredients);
+
+      console.log("Ingredients ====>", ingredients);
       recipe.ingredients = ingredients;
     }
-  
-      this.setState(
-        (prevState) => {
-          const newOpenMenus = {
-            ...prevState.openMenus,
-            [Id]: false,
-          };
-          return {
-            currentlyEditing: recipe,
-            openMenus: newOpenMenus,
-            popupGroceryOpen: prevState.value === "1",
-            popupRecipeOpen: prevState.value === "2",
-          };
-        },
-        () => {
-          if (this.state.value === "1") {
-            this.handlePopupGroceryOpen(true, grocery);
-          } else if (this.state.value === "2") {
-            this.handlePopupRecipeOpen(true, recipe);
-          }
+
+    this.setState(
+      (prevState) => {
+        const newOpenMenus = {
+          ...prevState.openMenus,
+          [Id]: false,
+        };
+        return {
+          currentlyEditing: recipe,
+          openMenus: newOpenMenus,
+          popupGroceryOpen: prevState.value === "1",
+          popupRecipeOpen: prevState.value === "2",
+        };
+      },
+      () => {
+        if (this.state.value === "1") {
+          this.handlePopupGroceryOpen(true, grocery);
+        } else if (this.state.value === "2") {
+          this.handlePopupRecipeOpen(true, recipe);
         }
-      );
+      }
+    );
   };
-  
 
   deleteGroceryStatement = async (groceryStatementID) => {
     try {
@@ -552,12 +560,11 @@ class FridgePage extends Component {
   handleCreateRecipes = async (recipeData) => {
     const { currentlyEditing, fridgeId, recipes } = this.state;
     const userId = this.context.id;
-  
-    const { ingredients, groceryUnit, ...rest } = recipeData;
-  
 
-    // Ich glaube das macht die Probleme 
-    
+    const { ingredients, groceryUnit, ...rest } = recipeData;
+
+    // Ich glaube das macht die Probleme
+
     const newRecipeData = new RecipeBO(
       rest.recipe_name,
       rest.duration,
@@ -567,17 +574,17 @@ class FridgePage extends Component {
       fridgeId,
       currentlyEditing ? currentlyEditing.id : null
     );
-  
+
     let createdRecipe;
-  
+
     if (currentlyEditing) {
       createdRecipe = await SmartFridgeAPI.getAPI().updateRecipe(newRecipeData);
 
-      console.log('createdRecipe variable after Update ====>', createdRecipe)
+      console.log("createdRecipe variable after Update ====>", createdRecipe);
 
       const updatedRecipes = this.updateRecipe(newRecipeData);
 
-      console.log('updatedRecipes variable after Update ====>', createdRecipe)
+      console.log("updatedRecipes variable after Update ====>", createdRecipe);
 
       this.setState({
         recipes: updatedRecipes,
@@ -603,12 +610,9 @@ class FridgePage extends Component {
         currentlyEditing: null,
       });
     }
-  
+
     return createdRecipe;
   };
-  
-  
-
 
   updateRecipe = (recipe) => {
     const updatedRecipes = this.state.recipes.map((e) => {
@@ -656,7 +660,7 @@ class FridgePage extends Component {
             display: "flex",
             justifyContent: "center",
             position: "relative",
-            top: "200px",
+            top: { xs: "100px", md: "200px" },
           }}
         >
           <Box
@@ -666,14 +670,14 @@ class FridgePage extends Component {
               alignItems: "center",
               gap: "15px",
               border: "none",
-              width: "1100px",
+              width: { xs: "90%", md: "1100px" },
               height: "auto",
-              padding: "0px 50px 30px 50px",
+              padding: { xs: "0px 10px 30px 10px", md: "0px 50px 30px 50px" },
             }}
           >
             <Paper
               sx={{
-                width: "1000px",
+                width: { xs: "100%", md: "1000px" },
                 boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
                 backgroundColor: "background.default",
               }}
@@ -682,7 +686,7 @@ class FridgePage extends Component {
               <TabContext
                 value={value}
                 sx={{
-                  width: "1100px",
+                  width: "100%",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "row",
@@ -697,10 +701,18 @@ class FridgePage extends Component {
                     <Tab
                       label="Kühlschrank"
                       value="1"
-                      sx={{ width: "300px" }}
+                      sx={{ width: { xs: "auto", md: "300px" } }}
                     />
-                    <Tab label="Rezepte" value="2" sx={{ width: "300px" }} />
-                    <Tab label="Verwaltung" value="3" sx={{ width: "300px" }} />
+                    <Tab
+                      label="Rezepte"
+                      value="2"
+                      sx={{ width: { xs: "auto", md: "300px" } }}
+                    />
+                    <Tab
+                      label="Verwaltung"
+                      value="3"
+                      sx={{ width: { xs: "auto", md: "300px" } }}
+                    />
                   </TabList>
                 </Box>
                 <Container
@@ -715,7 +727,6 @@ class FridgePage extends Component {
                     value="1"
                     sx={{
                       display: "flex",
-                      flexDirection: "row",
                       flexWrap: "wrap",
                       justifyContent: "baseline",
                       marginTop: "10px",
@@ -736,8 +747,8 @@ class FridgePage extends Component {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            width: "200px",
-                            height: "125px",
+                            width: { xs: "150px", sm: "200px" },
+                            height: { xs: "100px", sm: "125px" },
                             borderRadius: "10px",
                             backgroundColor: "background.paper",
                             color: "primary.main",
@@ -750,19 +761,19 @@ class FridgePage extends Component {
                         >
                           <KitchenRoundedIcon
                             sx={{
-                              width: "75px",
+                              width: { xs: "50px", sm: "75px" },
                               height: "auto",
                               position: "absolute",
                             }}
                           />
                           <LoupeRoundedIcon
                             sx={{
-                              width: "30px",
+                              width: { xs: "20px", sm: "30px" },
                               height: "auto",
                               transform: "scaleX(-1)",
                               position: "relative",
-                              top: "-38px",
-                              left: "33px",
+                              top: { xs: "-25px", sm: "-38px" },
+                              left: { xs: "20px", sm: "33px" },
                             }}
                           />
                         </Paper>
@@ -772,7 +783,7 @@ class FridgePage extends Component {
                       measureName={this.measureName}
                       groceryName={this.groceryName}
                       groceryStatement={this.groceryStatement}
-                      getGroceryInFridgeId={this.getGroceryInFridgeId} // Neue Prop hinzufügen
+                      getGroceryInFridgeId={this.getGroceryInFridgeId}
                       fridgeId={this.state.fridgeId}
                       groceries={groceries}
                       handleAnchorClick={this.handleAnchorClick}
@@ -828,7 +839,6 @@ class FridgePage extends Component {
                     value="2"
                     sx={{
                       display: "flex",
-                      flexDirection: "row",
                       flexWrap: "wrap",
                       justifyContent: "baseline",
                       marginTop: "10px",
@@ -845,11 +855,22 @@ class FridgePage extends Component {
                       <Button
                         variant="text"
                         sx={{
-                          width: "200px",
-                          position: "relative",
-                          left: "-25px",
-                          top: "-10px",
-                          m: "0",
+                          border: "1px solid green",
+                          fontSize: {
+                            xs: "0.55rem",
+                            sm: "0.8rem",
+                            md: "0.8rem",
+                            lg: "0.8rem",
+                            xl: "0.9rem",
+                          },
+                          width: {
+                            xs: "130px",
+                            sm: "200px",
+                            md: "200px",
+                            lg: "200px",
+                            xl: "200px",
+                          },
+
                           boxShadow: "10px",
                           bgcolor: "primary.main",
                           color: "background.card",
@@ -885,8 +906,8 @@ class FridgePage extends Component {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            width: "200px",
-                            height: "125px",
+                            width: { xs: "150px", sm: "200px" },
+                            height: { xs: "100px", sm: "125px" },
                             borderRadius: "10px",
                             backgroundColor: "background.paper",
                             color: "primary.main",
@@ -982,7 +1003,7 @@ class FridgePage extends Component {
                     value="3"
                     sx={{
                       display: "flex",
-                      flexDirection: "row",
+                      flexDirection: { xs: "column", md: "row" },
                       flexWrap: "wrap",
                       justifyContent: "baseline",
                       marginTop: "10px",

@@ -176,7 +176,9 @@ class Settings extends Component {
 
   updateGrocery = async (grocery) => {
     try {
-      const updatedGrocery = await SmartFridgeAPI.getAPI().updateGrocery(grocery);
+      const updatedGrocery = await SmartFridgeAPI.getAPI().updateGrocery(
+        grocery
+      );
       this.setState((prevState) => ({
         groceries: prevState.groceries.map((g) =>
           g.id === updatedGrocery.id ? updatedGrocery : g
@@ -189,7 +191,6 @@ class Settings extends Component {
     }
   };
 
-
   // {
   //   "id": 0,
   //   "firstname": "string",
@@ -201,7 +202,9 @@ class Settings extends Component {
 
   updateMeasure = async (measure) => {
     try {
-      const updatedMeasure = await SmartFridgeAPI.getAPI().updateMeasure(measure);
+      const updatedMeasure = await SmartFridgeAPI.getAPI().updateMeasure(
+        measure
+      );
       this.setState((prevState) => ({
         measures: prevState.measures.map((m) =>
           m.id === updatedMeasure.id ? updatedMeasure : m
@@ -260,15 +263,32 @@ class Settings extends Component {
           sx={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "start",
+            alignItems: "center",
             mt: 2,
+            width: {
+              xs: "100%",
+              sm: "100%",
+              md: "100%",
+              lg: "100%",
+              xl: "100%",
+            },
           }}
         >
-          <Paper>
+          <Paper
+            sx={{
+              width: {
+                xs: "100%",
+                sm: "100%",
+                md: "100%",
+                lg: "100%",
+                xl: "100%",
+              },
+            }}
+          >
             <Typography variant="h5" sx={{ ml: 1, p: 2, fontWeight: "bold" }}>
               Haushalt verwalten
             </Typography>
-            <Accordion sx={{ minWidth: "850px" }}>
+            <Accordion sx={{ minWidth: { xs: "100%", sm: "850px" } }}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
@@ -282,7 +302,15 @@ class Settings extends Component {
               <AccordionDetails
                 sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
               >
-                <List sx={{ width: "600px", marginBottom: "30px" }}>
+                <List
+                  sx={{
+                    width: { xs: "100%", sm: "600px" },
+                    marginBottom: "30px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
                   <AlertComponent
                     showAlert={showAlertGroceryDelete}
                     alertType="SettingsGroceryDelete"
@@ -292,6 +320,13 @@ class Settings extends Component {
                       key={grocery.id}
                       sx={{
                         m: "5px",
+                        width: {
+                          xs: "100%",
+                          sm: "100%",
+                          md: "100%",
+                          lg: "100%",
+                          xl: "100%",
+                        },
                         boxShadow: 2,
                         borderRadius: "10px",
                       }}
@@ -340,7 +375,7 @@ class Settings extends Component {
                 </List>
               </AccordionDetails>
             </Accordion>
-            <Accordion sx={{ minWidth: "850px" }}>
+            <Accordion sx={{ minWidth: { xs: "100%", sm: "850px" } }}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
@@ -354,7 +389,15 @@ class Settings extends Component {
               <AccordionDetails
                 sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
               >
-                <List sx={{ width: "600px", marginBottom: "30px" }}>
+                <List
+                  sx={{
+                    width: { xs: "100%", sm: "600px" },
+                    marginBottom: "30px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
                   <AlertComponent
                     showAlert={showAlertMeasureDelete}
                     alertType="SettingsMeasureDelete"
@@ -366,6 +409,13 @@ class Settings extends Component {
                         m: "5px",
                         boxShadow: 2,
                         borderRadius: "10px",
+                        width: {
+                          xs: "100%",
+                          sm: "100%",
+                          md: "100%",
+                          lg: "100%",
+                          xl: "100%",
+                        },
                       }}
                     >
                       <IconButton
@@ -434,10 +484,10 @@ class Settings extends Component {
               component="form"
               noValidate
               sx={{
-                width: "1100px",
+                width: { xs: "90%", sm: "1100px" },
                 height: "auto",
                 position: "fixed",
-                top: "35%",
+                top: { xs: "20%", sm: "35%" },
                 zIndex: 2,
               }}
             >
@@ -445,7 +495,7 @@ class Settings extends Component {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  padding: "0 30px 50px 30px",
+                  padding: { xs: "20px", sm: "0 30px 50px 30px" },
                   borderRadius: "40px",
                   fontSize: "17px",
                 }}
@@ -511,8 +561,10 @@ class Settings extends Component {
                   <Box
                     sx={{
                       display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
                       justifyContent: "center",
                       gap: "10px",
+                      paddingBottom: { xs: "30px" },
                     }}
                   >
                     <Button
@@ -528,6 +580,7 @@ class Settings extends Component {
                           bgcolor: "success.dark",
                           color: "background.default",
                         },
+                        width: { xs: "100%", sm: "auto" },
                       }}
                     >
                       Speichern
@@ -548,6 +601,7 @@ class Settings extends Component {
                           bgcolor: "error.main",
                           color: "background.default",
                         },
+                        width: { xs: "100%", sm: "auto" },
                       }}
                     >
                       Abbrechen

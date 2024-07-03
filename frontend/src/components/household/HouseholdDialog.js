@@ -314,7 +314,7 @@ class HouseholdDialog extends Component {
                 renderTags={() => null}
               />
               <Box sx={{ mt: { xs: 1, sm: 2, md: 3 } }}>
-                {inhabitants && inhabitants.length > 0 ? (
+                {inhabitants && inhabitants.length > 0 && 
                   inhabitants.map((inhabitant) => (
                     <Box
                       key={inhabitant.id}
@@ -340,9 +340,7 @@ class HouseholdDialog extends Component {
                       </IconButton>
                     </Box>
                   ))
-                ) : (
-                  <Typography>Momentan keine Bewohner verfügbar</Typography>
-                )}
+                }
               </Box>
             </Box>
             <Box
@@ -358,7 +356,7 @@ class HouseholdDialog extends Component {
                   display: "flex", 
                   justifyContent: "center", 
                   gap: "10px",
-                  paddingBottom: { xs: "10px" } 
+                  paddingBottom: { xs: "30px" }, 
                 }}
               >
                 <Button

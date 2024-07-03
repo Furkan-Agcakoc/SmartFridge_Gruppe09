@@ -46,9 +46,9 @@ const Grocery = ({
         alignItems: "center",
         backgroundColor: "primary.light",
         color: "background.default",
-        width: "200px",
+        width: { xs: "150px", sm: "175px", md: "200px" },
         maxWidth: "200px",
-        height: "125px",
+        height: { xs: "100px", sm: "110px", md: "125px" },
         borderRadius: "10px",
         "&:hover": { boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)" },
       }}
@@ -60,12 +60,12 @@ const Grocery = ({
         aria-expanded={openMenus[grocery.id] ? "true" : undefined}
         aria-haspopup="true"
         onClick={(event) => handleAnchorClick(grocery.id, event)}
-        style={{
+        sx={{
           position: "absolute",
           top: "2px",
           right: "2px",
-          width: "35px",
-          height: "35px",
+          width: { xs: "25px", sm: "30px", md: "35px" },
+          height: { xs: "25px", sm: "30px", md: "35px" },
         }}
       >
         <MoreVertIcon sx={{ color: "background.default" }} />
@@ -81,9 +81,15 @@ const Grocery = ({
           onClick={() => handleAnchorEdit(grocery.id)}
           className="menu-item"
           disableRipple
+          sx={{ fontSize: { xs: "0.7rem", sm: "1rem" } }}
         >
-          <ListItemIcon>
-            <EditIcon />
+          <ListItemIcon
+            sx={{
+              minWidth: { xs: "0px", sm: "40px" },
+              display: { xs: "none", sm: "flex" },
+            }}
+          >
+            <EditIcon sx={{ fontSize: { xs: "0.9rem", sm: "1.25rem" } }} />
           </ListItemIcon>
           Edit
         </MenuItem>
@@ -92,9 +98,15 @@ const Grocery = ({
           onClick={() => handleDeleteClick(grocery.id)}
           className="menu-item"
           disableRipple
+          sx={{ fontSize: { xs: "0.7rem", sm: "1rem" } }}
         >
-          <ListItemIcon>
-            <DeleteIcon />
+          <ListItemIcon
+            sx={{
+              minWidth: { xs: "0px", sm: "40px" },
+              display: { xs: "none", sm: "flex" },
+            }}
+          >
+            <DeleteIcon sx={{ fontSize: { xs: "0.9rem", sm: "1.25rem" } }} />
           </ListItemIcon>
           Delete
         </MenuItem>
@@ -104,6 +116,8 @@ const Grocery = ({
           display: "flex",
           justifyContent: "center",
           flexDirection: "column",
+          maxWidth: "200px",
+          padding: 0,
         }}
       >
         <Typography
@@ -112,7 +126,8 @@ const Grocery = ({
             display: "flex",
             justifyContent: "center",
             color: "background.default",
-            maxWidth: "200px",
+            width: "100%",
+            fontSize: { xs: "1rem", sm: "1.2rem", md: "1.5rem", xl: "1.5rem" },
           }}
         >
           {grocery.grocery_name}
@@ -123,7 +138,8 @@ const Grocery = ({
             display: "flex",
             justifyContent: "center",
             color: "background.default",
-            maxWidth: "200px",
+            width: "100%",
+            fontSize: { xs: "0.8rem", sm: "1rem", md: "1.2rem", xl: "1.2rem" },
           }}
         >
           {grocery.quantity} {grocery.unit_name}
