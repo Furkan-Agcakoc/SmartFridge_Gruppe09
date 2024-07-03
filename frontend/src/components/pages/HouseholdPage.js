@@ -32,23 +32,18 @@ class HouseholdPage extends Component {
   }
 
   componentDidMount() {
-    // console.log(this.context);
     this.checkContext();
   }
 
-  componentDidUpdate(prevProps, prevState) { 
-    // console.log(this.state.context);
+  componentDidUpdate(prevProps, prevState) {
     if (prevState.households !== this.state.households) {
-      // console.log("Households updated", this.state.households);
     }
   }
-
 
   checkContext = () => {
     if (this.context) {
       this.getHouseholdsByUserId();
     } else {
-      // console.error("User context is not initialized.");
       setTimeout(this.checkContext, 100);
     }
   };
@@ -58,44 +53,19 @@ class HouseholdPage extends Component {
     SmartFridgeAPI.getAPI()
       .getHouseholdsByUserId(userId)
       .then((households) => {
-        // console.log(households);
         this.setState({
           households: households,
         });
       })
       .catch((error) => {
-        // console.error("Error fetching households:", error);
+        console.error("Error fetching households:", error);
       });
   };
-
-  // getFridgeByHouseholdId = async (householdID) => {
-  //   try {
-  //     const response = await SmartFridgeAPI.getAPI().getFridgeByHouseholdId(
-  //       householdID
-  //     );
-  //     console.log("HouseholdID", householdID);
-
-  //     // Extrahiere die fridge_id aus der Antwort und speichere sie in einer Variablen
-  //     const fridge_id = response.id;
-
-  //     // Logge die fridge_id zur Überprüfung
-  //     console.log("Fridge ID", fridge_id);
-  //     this.props.setFridgeId(fridge_id);
-
-  //     // Hier kannst du die fridge_id weiter verarbeiten oder speichern
-  //     // Zum Beispiel in einer globalen Variable, einem Zustand (bei Verwendung von React) oder lokalem Speicher
-  //     return fridge_id;
-  //   } catch (error) {
-  //     console.error("Error fetching fridge by household ID:", error);
-  //   }
-  // };
-
 
   getInhabitantsByHouseholdId = (household_id) => {
     SmartFridgeAPI.getAPI()
       .getInhabitantsByHouseholdId(household_id)
       .then((inhabitants) => {
-        // console.log(inhabitants);
         this.setState((prevState) => {
           return {
             inhabitants: {
@@ -117,11 +87,9 @@ class HouseholdPage extends Component {
       isEditMode,
       currentlyEditing: household,
     });
-    // console.log("HouseholdPage => Popup opened");
   };
 
   closePopup = () => {
-    // console.log("HouseholdPage => Popup closed");
     this.setState({
       popupOpen: false,
       currentlyEditing: null,
@@ -131,9 +99,7 @@ class HouseholdPage extends Component {
   handleCreateObject = (householdData) => {
     const { currentlyEditing, households } = this.state;
 
-    // Sicherstellen, dass der Kontext initialisiert ist
     if (!this.context || !this.context.id) {
-      // console.error("User context is not initialized.");
       return;
     }
 
@@ -146,7 +112,7 @@ class HouseholdPage extends Component {
         householdData.household_name,
         this.context.id
       );
-      householdBO.setID(currentlyEditing); // Setze die ID für das Update
+      householdBO.setID(currentlyEditing);
       apiMethod = SmartFridgeAPI.getAPI().updateHousehold(householdBO);
       successCallback = (updatedHousehold) => {
         const updatedHouseholds = households.map((household) => {
@@ -231,7 +197,6 @@ class HouseholdPage extends Component {
 
   handleAnchorClick = (household_id, event) => {
     const { householdIdToDelete, households, anchorEls } = this.state;
-    // console.log(household_id);
     this.setState((prevState) => {
       const newOpenMenus = { ...prevState.openMenus, [household_id]: true };
       const newAnchorEls = {
@@ -241,12 +206,8 @@ class HouseholdPage extends Component {
       return {
         anchorEls: newAnchorEls,
         openMenus: newOpenMenus,
-        // householdIdToDelete: household_id,
       };
     });
-    // console.log(households);
-    // console.log(anchorEls);
-    // console.log(householdIdToDelete);
   };
 
   handleAnchorClose = (household_id) => {
@@ -259,8 +220,6 @@ class HouseholdPage extends Component {
   };
 
   handleAnchorEdit = (household_id) => {
-    // console.log(this.state.inhabitants[household_id]);
-    // console.log(this.state.inhabitants);
     this.getInhabitantsByHouseholdId(household_id);
 
     this.setState(
@@ -287,8 +246,6 @@ class HouseholdPage extends Component {
       .then(() => {
         this.setState(
           (prevState) => {
-            // console.log("HouseholdPage => Household deleted", household_id);
-
             const newOpenMenus = {
               ...prevState.openMenus,
               [household_id]: false,
@@ -302,20 +259,16 @@ class HouseholdPage extends Component {
               openMenus: newOpenMenus,
             };
           },
-          () => {
-            // Callback after setState to ensure state is updated before logging
-            // console.log("Updated households list:", this.state.households);
-          }
+          () => {}
         );
       })
       .catch((error) => {
-        // console.error("Error deleting household:", error);
+        console.error("Error deleting household:", error);
       });
   };
 
   handleConfirmDelete = () => {
     const { householdIdToDelete } = this.state;
-    // console.log("Household => Confirm delete");
     if (householdIdToDelete !== null) {
       this.handleAnchorDelete(householdIdToDelete);
     }
@@ -346,43 +299,55 @@ class HouseholdPage extends Component {
     return (
       <>
         <TitleHH />
+
         <Box
           sx={{
             display: "flex",
             justifyContent: "center",
             position: "relative",
-            top: "150px",
+            padding: { xs: "10px" },
+            top: { xs: "150px" },
+            border: { xs: "1px solid green" },
           }}
         >
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "flex-start",
-              gap: "10px",
-              alignItems: "center",
-              width: "1100px",
-              height: "300px",
+              justifyContent: {
+                xs: "center",
+                sm: "flex-start",
+                md: "flex-start",
+              },
+              gap: { xs: "10px" },
+              alignItems: { xs: "center" },
+              width: { xs: "100%", sm: "1100px" },
+              height: { xs: "auto", sm: "300px" },
+              border: "1px solid green",
             }}
           >
             <Typography
               variant="h5"
-              fontSize={"24.2px"}
+              fontSize={{ xs: "20px", sm: "24.2px" }}
+              textAlign={{ xs: "center" }}
               fontWeight={600}
-              sx={{ color: "third.main", width: "1000px" }}
+              sx={{ color: "third.main", width: { xs: "100%", sm: "1000px" } }}
             >
               Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
               deine Lebensmittel!
             </Typography>
+
             <Box
               sx={{
                 display: "flex",
-                width: "100%",
+                width: {xs: "325px", sm: "100%", md: "100%", lg: "100%", xl: "100%" },
                 justifyContent: "flex-start",
-                gap: "50px",
+                gap: { xs: "25px", sm: "20px", md: "50px" },
                 maxWidth: "1000px",
                 flexWrap: "wrap",
-                paddingBottom: "200px",
+                paddingBottom: { xs: "50px", sm: "200px" },
+                border: "1px solid red",
+
               }}
             >
               <Tooltip
@@ -395,8 +360,8 @@ class HouseholdPage extends Component {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    width: "200px",
-                    height: "125px",
+                    width: { xs: "150px", sm: "200px" },
+                    height: { xs: "100px", sm: "125px" },
                     borderRadius: "10px",
                     backgroundColor: "background.default",
                     color: "primary.main",
@@ -409,10 +374,11 @@ class HouseholdPage extends Component {
                   onClick={() => this.openPopup(false)}
                 >
                   <AddHomeWorkRoundedIcon
-                    sx={{ width: "75px", height: "auto" }}
+                    sx={{ width: { xs: "50px", sm: "75px" }, height: "auto" }}
                   />
                 </Paper>
               </Tooltip>
+
               <HouseholdAnchor
                 households={households}
                 handleAnchorClick={this.handleAnchorClick}
@@ -425,6 +391,7 @@ class HouseholdPage extends Component {
                 setHouseholdIdToDelete={this.setHouseholdIdToDelete}
               />
             </Box>
+
             {popupOpen && (
               <HouseholdDialog
                 isEditMode={isEditMode}
@@ -434,12 +401,13 @@ class HouseholdPage extends Component {
                 inhabitants={
                   editingHousehold ? inhabitants[editingHousehold.id] : []
                 }
-                household_id={editingHousehold ? editingHousehold.id : null} // Hier wird die household_id übergeben
+                household_id={editingHousehold ? editingHousehold.id : null}
                 closePopup={this.closePopup}
                 handleCreateObject={this.handleCreateObject}
                 households={households}
               />
             )}
+
             <DeleteConfirmationDialog
               dialogOpen={dialogOpen}
               dialogType={dialogType}

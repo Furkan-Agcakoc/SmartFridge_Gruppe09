@@ -26,7 +26,7 @@ const TitleHousehold = () => {
       <Typography
         sx={{
           fontWeight: "bold",
-          fontSize: "2rem",
+          fontSize: { xs: "1.5rem", sm: "2rem" },
           fontStyle: "normal",
           color: "text.primary",
           display: "flex",

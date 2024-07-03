@@ -35,7 +35,7 @@ class Header extends Component {
               zIndex: 2,
             }}
           >
-            <Link to="/home">
+            <Link to="/household">
               <Box
                 component={"img"}
                 src={Logo}

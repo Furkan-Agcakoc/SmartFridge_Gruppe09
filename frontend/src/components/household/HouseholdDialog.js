@@ -237,7 +237,11 @@ class HouseholdDialog extends Component {
           }}
         />
         <Box
-          sx={{ width: "1100px", position: "fixed", zIndex: 2 }}
+          sx={{
+            width: { xs: "90%", sm: "1100px" },
+            position: "fixed",
+            zIndex: 2,
+          }}
           component="form"
           noValidate
         >
@@ -246,7 +250,7 @@ class HouseholdDialog extends Component {
             sx={{
               display: "flex",
               flexDirection: "column",
-              padding: "0 30px 50px 30px",
+              padding: { xs: "20px", sm: "0 30px 50px 30px" },
               borderRadius: "50px",
               fontSize: "18px",
             }}
@@ -309,32 +313,36 @@ class HouseholdDialog extends Component {
                 )}
                 renderTags={() => null}
               />
-              <Box sx={{ mt: 2 }}>
-                {inhabitants.map((inhabitant) => (
-                  <Box
-                    key={inhabitant.id}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "5px 0",
-                    }}
-                  >
-                    <Typography>{inhabitant.email}</Typography>
-                    <IconButton
-                      size="small"
-                      onClick={() =>
-                        this.deleteInhabitantByUserIdHouseholdId(
-                          inhabitant.id,
-                          household_id
-                        )
-                      }
-                      sx={{ color: "error.main" }}
+              <Box sx={{ mt: { xs: 1, sm: 2, md: 3 } }}>
+                {inhabitants && inhabitants.length > 0 ? (
+                  inhabitants.map((inhabitant) => (
+                    <Box
+                      key={inhabitant.id}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "5px 0",
+                      }}
                     >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                ))}
+                      <Typography>{inhabitant.email}</Typography>
+                      <IconButton
+                        size="small"
+                        onClick={() =>
+                          this.deleteInhabitantByUserIdHouseholdId(
+                            inhabitant.id,
+                            household_id
+                          )
+                        }
+                        sx={{ color: "error.main" }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  ))
+                ) : (
+                  <Typography>Momentan keine Bewohner verfügbar</Typography>
+                )}
               </Box>
             </Box>
             <Box
@@ -346,7 +354,12 @@ class HouseholdDialog extends Component {
               }}
             >
               <Box
-                sx={{ display: "flex", justifyContent: "center", gap: "10px" }}
+                sx={{ 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  gap: "10px",
+                  paddingBottom: { xs: "10px" } 
+                }}
               >
                 <Button
                   variant="contained"

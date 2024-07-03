@@ -54,9 +54,9 @@ const Household = ({
         alignItems: "center",
         backgroundColor: "primary.light",
         color: "background.default",
-        width: "200px",
+        width: { xs: "150px", sm: "175px", md: "200px" },
         maxWidth: "200px",
-        height: "125px",
+        height: { xs: "100px", sm: "110px", md: "125px" },
         borderRadius: "10px",
         zIndex: 1,
         "&:hover": { boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)" },
@@ -72,12 +72,12 @@ const Household = ({
             event.stopPropagation(); // Prevents triggering the Box click handler
             handleAnchorClick(household.id, event);
           }}
-          style={{
+          sx={{
             position: "absolute",
             top: "2px",
             right: "2px",
-            width: "35px",
-            height: "35px",
+            width: { xs: "25px", sm: "30px", md: "35px" },
+            height: { xs: "25px", sm: "30px", md: "35px" },
             zIndex: 2,
           }}
         >
@@ -89,30 +89,55 @@ const Household = ({
         MenuListProps={{ "aria-labelledby": "long-button" }}
         anchorEl={anchorEls[household.id]}
         open={openMenus[household.id] || false}
-        onClose={() => handleAnchorClose(household.id)}
-        sx={{ zIndex: 2 }}
+        onClose={(event) => {
+          event.stopPropagation();
+          handleAnchorClose(household.id);
+        }}
+        sx={{
+          zIndex: 2,
+        }}
       >
         <MenuItem
-          onClick={(event) => handleEditClick(household.id, event)}
+          onClick={(event) => {
+            event.stopPropagation();
+            handleEditClick(household.id, event);
+          }}
           disableRipple
-          sx={{ zIndex: 2 }}
+          sx={{ zIndex: 2, fontSize: { xs: "0.7rem", sm: "1rem" } }}
         >
-          <ListItemIcon sx={{ zIndex: 2 }}>
-            <EditIcon />
+          <ListItemIcon
+            sx={{
+              zIndex: 2,
+              minWidth: { xs: "0px", sm: "40px" },
+              display: { xs: "none", sm: "flex" },
+            }}
+          >
+            <EditIcon sx={{ fontSize: { xs: "0.9rem", sm: "1.25rem" } }} />
           </ListItemIcon>
           Edit
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem
-          onClick={(event) => handleDeleteClick(household.id, event)}
+          onClick={(event) => {
+            event.stopPropagation();
+            handleDeleteClick(household.id, event);
+          }}
           disableRipple
+          sx={{ zIndex: 2, fontSize: { xs: "0.7rem", sm: "1rem" } }}
         >
-          <ListItemIcon>
-            <DeleteIcon />
+          <ListItemIcon
+            sx={{
+              zIndex: 2,
+              minWidth: { xs: "0px", sm: "40px" },
+              display: { xs: "none", sm: "flex" },
+            }}
+          >
+            <DeleteIcon sx={{ fontSize: { xs: "0.9rem", sm: "1.25rem" } }} />
           </ListItemIcon>
           Delete
         </MenuItem>
       </Menu>
+
       <Typography
         variant="h5"
         sx={{
@@ -123,6 +148,7 @@ const Household = ({
           width: "200px",
           maxWidth: "200px",
           height: "125px",
+          fontSize: { xs: "1rem", sm: "1.2rem", md: "1.5rem", xl: "1.5rem" },
         }}
       >
         {household.household_name}
