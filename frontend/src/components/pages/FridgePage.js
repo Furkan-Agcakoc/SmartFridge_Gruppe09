@@ -95,9 +95,7 @@ class FridgePage extends Component {
     try {
       const allRecipes = await SmartFridgeAPI.getAPI().getRecipe();
       this.setState({ allRecipes });
-      console.log("allRecipes", allRecipes);
 
-      // Fetch recipes by fridge ID after getting all recipes
       const { fridgeId } = this.state;
       if (fridgeId) {
         this.loadRecipeByFridgeId(fridgeId);
@@ -112,7 +110,6 @@ class FridgePage extends Component {
       .getRecipeByFridgeId(fridgeId)
       .then((recipes) => {
         this.setState({ recipes });
-        console.log("recipes", this.state.recipes);
       })
       .catch((error) => {
         console.error("Error fetching recipes by fridge ID:", error);
@@ -203,27 +200,18 @@ class FridgePage extends Component {
       await SmartFridgeAPI.getAPI().getRecipeContentByFridgeId(fridgeId);
 
     let formattedMessage = availableRecipes.join("<br />");
-
     this.setState({
       availableRecipes: formattedMessage,
       showRecipeAlert: true,
     });
   };
+
+
   // #######################NO APIs###############################
 
   groceryStatement(statement) {
-    console.log("Statement von Fridgepage", statement);
     const quantity = statement.map((statement) => statement.quantity);
-    console.log("Quantity", quantity);
-  }
-
-  groceryName(groceryName) {
-    console.log("GroceryName von Fridgepage", groceryName);
-    // console.log(groceryName.grocery.grocery_name);
-  }
-
-  measureName(measureName) {
-    console.log("MeasureName von Fridgepage", measureName);
+    return quantity;
   }
 
   getHouseholdNameById = (householdId) => {
@@ -1099,7 +1087,7 @@ class FridgePage extends Component {
                       top: "-100px",
                     }}
                   >
-                    <Settings fridgeId={this.state.fridgeId} />
+                    <Settings fridgeId={this.state.fridgeId}  refreshGroceryList={this.refreshGroceryList}/>
                   </TabPanel>
                 </Container>
               </TabContext>
