@@ -89,7 +89,8 @@ class GroceryDialog extends Component {
       if (this.props.isEditMode) {
         await this.handleUpdateGrocery(groceryData);
       } else {
-        if (foodOptions.includes(newGrocery)) {
+        const isDuplicated = this.props.groceryStatements.some(statement => statement.grocery_name === newGrocery)
+        if (isDuplicated) {
           this.setState({
             showDuplicateAlert: true,
             duplicateGroceryName: newGrocery,

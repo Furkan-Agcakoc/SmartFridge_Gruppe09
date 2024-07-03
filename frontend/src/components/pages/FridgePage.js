@@ -829,6 +829,7 @@ class FridgePage extends Component {
                       handlePopupGroceryClose={this.handlePopupGroceryClose}
                       handleCreateGroceries={this.handleCreateGroceries}
                       foodOptions={groceries.map((g) => g.groceryName)}
+                      groceryStatements={this.state.updatedGroceryStatements}
                       refreshGroceryList={this.refreshGroceryList}
                       curentGroceryId={
                         this.state.currentlyEditing

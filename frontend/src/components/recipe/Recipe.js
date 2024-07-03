@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useContext } from "react";
 import {
   Paper,
   Typography,
@@ -14,6 +14,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ViewRecipe from "./ViewRecipe";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
+import UserContext from "../contexts/UserContext";
 
 const Recipe = ({
   recipes,
@@ -29,6 +30,7 @@ const Recipe = ({
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [detailedIngredients, setDetailedIngredients] = useState([]);
+  const { id: currentUserId } = useContext(UserContext);
 
   const handleRecipeClick = async (recipe) => {
     setSelectedRecipe(recipe);
@@ -42,9 +44,9 @@ const Recipe = ({
   };
 
   const handleDeleteClick = (recipeId) => {
-    setIdToDelete(recipeId);
-    handleOpenDialog(recipeId, "recipe");
-    handleAnchorClose(recipeId);
+      setIdToDelete(recipeId);
+      handleOpenDialog(recipeId, "recipe");
+      handleAnchorClose(recipeId);
   };
 
 
@@ -103,7 +105,8 @@ const Recipe = ({
           }}
           onClick={() => handleRecipeClick(recipe)}
         >
-          <IconButton
+          {recipe.user_id === currentUserId && (
+            <IconButton
             aria-label="more"
             id="long-button"
             aria-controls={openMenus[recipe.id] ? "long-menu" : undefined}
@@ -124,7 +127,8 @@ const Recipe = ({
           >
             <MoreVertIcon sx={{ color: "background.default" }} />
           </IconButton>
-
+          )}
+          
           <Menu
             MenuListProps={{ "aria-labelledby": "long-button" }}
             anchorEl={anchorEls[recipe.id] || null}
