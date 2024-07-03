@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
-import AlertComponent from "../dialogs/AlertComponent"; // Import AlertComponent
+import AlertComponent from "../dialogs/AlertComponent";
 
 const ViewRecipe = ({
   open,
@@ -23,7 +23,9 @@ const ViewRecipe = ({
   refreshGroceryList,
 }) => {
   const [nickname, setNickname] = useState("");
-  const [showAlert, setShowAlert] = useState(false); // State to control alert visibility
+  const [showAlert, setShowAlert] = useState(false);
+  const [responseMessage, setResponseMessage] = useState(""); 
+  const [responseDialogOpen, setResponseDialogOpen] = useState(false); 
 
   useEffect(() => {
     const getUserNickname = async () => {
@@ -45,9 +47,6 @@ const ViewRecipe = ({
 
   if (!recipe) return null;
 
-  //How do I know whether the recipe has been cooked?
-  //Funktioniert nicht ganz noch nicht hinbekommen
-
   const handleOnCookRecipe = async () => {
     if (recipe.id && recipe.fridge_id) {
       try {
@@ -55,107 +54,125 @@ const ViewRecipe = ({
           recipe.id,
           recipe.fridge_id
         );
-        console.log("Response:", response);
-        if (response === "Rezept gekocht") {
-          setShowAlert(true);
-        } else {
-          setShowAlert(true);
-        }
+        setResponseMessage(response); 
+        setResponseDialogOpen(true); 
         refreshGroceryList();
-        handleClose();
-        console.log("Recipe cooked successfully!");
       } catch (error) {
         console.error("Error cooking recipe:", error);
-        setShowAlert(true); // Show alert on error
+        setResponseMessage("Error cooking recipe");
+        setResponseDialogOpen(true);
       }
     } else {
       console.error("Recipe ID or Fridge ID is undefined");
     }
   };
 
+  const handleResponseDialogClose = () => {
+    setResponseDialogOpen(false);
+    setResponseMessage("");
+    handleClose(); 
+  };
+
   return (
-    <Paper sx={{}}>
-      <Dialog
-        scroll="paper"
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          sx: {
-            width: "100%",
-            height: "auto",
-            position: "absolute",
-            transform: "translate(0%, 0%)",
-          },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            fontWeight: "bold",
+    <>
+      <Paper sx={{}}>
+        <Dialog
+          scroll="paper"
+          open={open}
+          onClose={handleClose}
+          PaperProps={{
+            sx: {
+              width: "100%",
+              height: "auto",
+              position: "absolute",
+              transform: "translate(0%, 0%)",
+            },
           }}
         >
-          {recipe.recipe_name} von {nickname}
-          <DialogActions>
-            <Button onClick={handleClose}>
-              <CloseRoundedIcon />
+          <DialogTitle
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              fontWeight: "bold",
+            }}
+          >
+            {recipe.recipe_name} von {nickname}
+            <DialogActions>
+              <Button onClick={handleClose}>
+                <CloseRoundedIcon />
+              </Button>
+            </DialogActions>
+          </DialogTitle>
+          <DialogContent>
+            <AlertComponent showAlert={showAlert} alertType="noGroceriesToCook" />
+            <Typography>
+              <strong>Dauer:</strong> {recipe.duration} Minuten
+            </Typography>
+            <Typography>
+              <strong>Portionen:</strong> {recipe.portion}
+            </Typography>
+            <Typography>
+              <strong>Zubereitung:</strong>
+            </Typography>
+            <Typography paragraph>{recipe.instruction}</Typography>
+            <Typography>
+              <strong>Zutaten:</strong>
+            </Typography>
+            <List>
+              {ingredients.map((ingredient, index) => (
+                <ListItem key={index}>
+                  <ListItemText
+                    style={{ lineHeight: 1, margin: 0 }}
+                    primary={`${ingredient.quantity} ${ingredient.unit} / ${ingredient.grocery_name}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </DialogContent>
+          <DialogActions
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+              marginBottom: "10px",
+            }}
+          >
+            <Button
+              sx={{
+                bgcolor: "primary.main",
+                color: "background.paper",
+                boxShadow: 1,
+                "&:hover": {
+                  color: "success.dark",
+                  boxShadow: 3,
+                  backgroundColor: "success.gwhite",
+                },
+              }}
+              onClick={handleOnCookRecipe}
+            >
+              Zubereiten
             </Button>
           </DialogActions>
-        </DialogTitle>
+        </Dialog>
+      </Paper>
+      
+      <Dialog
+        open={responseDialogOpen}
+        onClose={handleResponseDialogClose}
+      >
+        <DialogTitle>Response</DialogTitle>
         <DialogContent>
-          <AlertComponent showAlert={showAlert} alertType="noGroceriesToCook" />
-          <Typography>
-            <strong>Dauer:</strong> {recipe.duration} Minuten
-          </Typography>
-          <Typography>
-            <strong>Portionen:</strong> {recipe.portion}
-          </Typography>
-          <Typography>
-            <strong>Zubereitung:</strong>
-          </Typography>
-          <Typography paragraph>{recipe.instruction}</Typography>
-          <Typography>
-            <strong>Zutaten:</strong>
-          </Typography>
-          <List>
-            {ingredients.map((ingredient, index) => (
-              <ListItem key={index}>
-                <ListItemText
-                  style={{ lineHeight: 1, margin: 0 }}
-                  primary={`⪧  ${ingredient.quantity} ${ingredient.unit} / ${ingredient.grocery_name}`}
-                />
-              </ListItem>
-            ))}
-          </List>
+          <Typography>{responseMessage}</Typography>
         </DialogContent>
-        <DialogActions
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            flexDirection: "column",
-            alignItems: "center",
-            marginBottom: "10px",
-          }}
-        >
-          <Button
-            sx={{
-              bgcolor: "primary.main",
-              color: "background.paper",
-              boxShadow: 1,
-              "&:hover": {
-                color: "success.dark",
-                boxShadow: 3,
-                backgroundColor: "success.gwhite",
-              },
-            }}
-            onClick={handleOnCookRecipe}
-          >
-            Zubereiten
+        <DialogActions>
+          <Button onClick={handleResponseDialogClose} color="primary">
+            Close
           </Button>
         </DialogActions>
       </Dialog>
-    </Paper>
+    </>
   );
 };
 

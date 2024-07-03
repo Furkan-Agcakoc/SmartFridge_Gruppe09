@@ -24,6 +24,7 @@ import UserContext from "../contexts/UserContext";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import AlertComponent from "../dialogs/AlertComponent";
 import { useParams } from "react-router-dom";
+import RecipeBO from "../../api/RecipeBO";
 
 function withRouter(Component) {
   function ComponentWithRouterProp(props) {
@@ -391,36 +392,76 @@ class FridgePage extends Component {
     });
   };
 
-  handleAnchorEdit = (Id) => {
+  fetchIngredients = async (recipeId) => {
+    if (recipeId) {
+      const api = SmartFridgeAPI.getAPI();
+      try {
+        const groceryStatementBOs = await api.getGroceryInRecipeId(recipeId);
+        const detailedIngredientsPromises = groceryStatementBOs.map(
+          async (ingredient) => {
+            const groceryResponse = await this.getGroceryById(ingredient.grocery_id);
+            const measureResponse = await this.getMeasureById(ingredient.unit_id);
+  
+            const grocery = Array.isArray(groceryResponse) ? groceryResponse[0] : groceryResponse;
+            const measure = Array.isArray(measureResponse) ? measureResponse[0] : measureResponse;
+  
+            return {
+              ...ingredient,
+              grocery_name: grocery?.grocery_name ?? "Unknown",
+              unit_name: measure?.unit ?? "Unknown",
+            };
+          }
+        );
+        const detailedIngredientsResults = await Promise.all(detailedIngredientsPromises);
+        return detailedIngredientsResults;
+      } catch (error) {
+        console.error("Error fetching ingredients:", error);
+        return [];
+      }
+    } else {
+      console.error("Recipe or recipe ID is undefined");
+      return [];
+    }
+  };
+  
+
+  handleAnchorEdit = async (Id) => {
     console.log("Editing:", Id);
     const grocery = this.state.updatedGroceryStatements.find(
       (g) => g.id === Id
     );
     const recipe = this.state.recipes.find((g) => g.id === Id);
-
-    this.setState(
-      (prevState) => {
-        const newOpenMenus = {
-          ...prevState.openMenus,
-          [Id]: false,
-        };
-        console.log(newOpenMenus);
-        return {
-          currentlyEditing: grocery,
-          openMenus: newOpenMenus,
-          popupGroceryOpen: prevState.value === "1",
-          popupRecipeOpen: prevState.value === "2",
-        };
-      },
-      () => {
-        if (this.state.value === "1") {
-          this.handlePopupGroceryOpen(true, grocery);
-        } else if (this.state.value === "2") {
-          this.handlePopupRecipeOpen(true, recipe);
+  
+    if (recipe) {
+      const ingredients = await this.fetchIngredients(Id);
+  
+      console.log('Ingredients ====>', ingredients);
+      recipe.ingredients = ingredients;
+    }
+  
+      this.setState(
+        (prevState) => {
+          const newOpenMenus = {
+            ...prevState.openMenus,
+            [Id]: false,
+          };
+          return {
+            currentlyEditing: recipe,
+            openMenus: newOpenMenus,
+            popupGroceryOpen: prevState.value === "1",
+            popupRecipeOpen: prevState.value === "2",
+          };
+        },
+        () => {
+          if (this.state.value === "1") {
+            this.handlePopupGroceryOpen(true, grocery);
+          } else if (this.state.value === "2") {
+            this.handlePopupRecipeOpen(true, recipe);
+          }
         }
-      }
-    );
+      );
   };
+  
 
   deleteGroceryStatement = async (groceryStatementID) => {
     try {
@@ -511,37 +552,32 @@ class FridgePage extends Component {
   handleCreateRecipes = async (recipeData) => {
     const { currentlyEditing, fridgeId, recipes } = this.state;
     const userId = this.context.id;
-
+  
     const { ingredients, groceryUnit, ...rest } = recipeData;
+  
 
-    const newRecipeData = {
-      ...rest,
-      fridge_id: fridgeId,
-      user_id: userId,
-      id: 0,
-      ingredients: ingredients,
-    };
-
-    const createdRecipe = await SmartFridgeAPI.getAPI().addRecipe(
-      newRecipeData
+    // Ich glaube das macht die Probleme 
+    
+    const newRecipeData = new RecipeBO(
+      rest.recipe_name,
+      rest.duration,
+      rest.portion,
+      rest.instruction,
+      userId,
+      fridgeId,
+      currentlyEditing ? currentlyEditing.id : null
     );
+  
+    let createdRecipe;
+  
+    if (currentlyEditing) {
+      createdRecipe = await SmartFridgeAPI.getAPI().updateRecipe(newRecipeData);
 
-    if (currentlyEditing !== null) {
-      console.log(
-        "currentlyEditing in currentlyEditing ======>",
-        currentlyEditing
-      );
+      console.log('createdRecipe variable after Update ====>', createdRecipe)
 
-      const updatedRecipes = this.updateRecipe({
-        recipe_id: currentlyEditing,
-        recipe_name: recipeData.recipe_name,
-        duration: recipeData.duration,
-        portion: recipeData.portion,
-        instruction: recipeData.instruction,
-        ingredients: recipeData.ingredients,
-      });
+      const updatedRecipes = this.updateRecipe(newRecipeData);
 
-      console.log("Updated Recipes ======>", updatedRecipes);
+      console.log('updatedRecipes variable after Update ====>', createdRecipe)
 
       this.setState({
         recipes: updatedRecipes,
@@ -549,34 +585,30 @@ class FridgePage extends Component {
         currentlyEditing: null,
       });
     } else {
-      const id = recipes.length + 1;
-
-      this.setState((prevState) => {
-        const newRecipes = [
-          ...prevState.recipes,
-          {
-            recipeId: id,
-            recipe_name: recipeData.recipe_name,
-            duration: recipeData.duration,
-            portion: recipeData.portion,
-            instruction: recipeData.instruction,
-            ingredients: recipeData.ingredients,
-          },
-        ];
-        const newOpenMenus = { ...prevState.openMenus, [id]: false };
-
-        return {
-          recipeCount: prevState.recipeCount + 1,
-          popupRecipeOpen: false,
-          recipes: newRecipes,
-          openMenus: newOpenMenus,
-        };
+      createdRecipe = await SmartFridgeAPI.getAPI().addRecipe(newRecipeData);
+      const newRecipes = [
+        ...recipes,
+        {
+          recipeId: createdRecipe.id,
+          recipe_name: createdRecipe.recipe_name,
+          duration: createdRecipe.duration,
+          portion: createdRecipe.portion,
+          instruction: createdRecipe.instruction,
+          ingredients: createdRecipe.ingredients,
+        },
+      ];
+      this.setState({
+        recipes: newRecipes,
+        popupRecipeOpen: false,
+        currentlyEditing: null,
       });
-      this.loadRecipeList();
-      return createdRecipe;
-      // console.log("Hier sind alle Rezepte ", recipes);
     }
+  
+    return createdRecipe;
   };
+  
+  
+
 
   updateRecipe = (recipe) => {
     const updatedRecipes = this.state.recipes.map((e) => {
@@ -615,9 +647,7 @@ class FridgePage extends Component {
     //   ? groceries.find((g) => g.groceryId === currentlyEditing)
     //   : null;
 
-    const editingRecipe = currentlyEditing
-      ? recipes.find((r) => r.recipeId === currentlyEditing)
-      : null;
+    const editingRecipe = currentlyEditing;
 
     return (
       <>
@@ -913,20 +943,21 @@ class FridgePage extends Component {
                     <RecipeDialog
                       fridgeId={this.state.fridgeId}
                       isEditMode={isEditMode}
+                      recipeId={currentlyEditing ? currentlyEditing.id : null}
                       recipeTitle={
-                        editingRecipe ? editingRecipe.recipeTitle : ""
+                        editingRecipe ? editingRecipe.recipe_name : ""
                       }
                       recipeDuration={
-                        editingRecipe ? editingRecipe.recipeDuration : ""
+                        editingRecipe ? editingRecipe.duration : ""
                       }
                       recipeServings={
-                        editingRecipe ? editingRecipe.recipeServings : ""
+                        editingRecipe ? editingRecipe.portion : ""
                       }
                       recipeInstructions={
-                        editingRecipe ? editingRecipe.recipeInstructions : ""
+                        editingRecipe ? editingRecipe.instruction : ""
                       }
                       recipeIngredients={
-                        editingRecipe ? editingRecipe.recipeIngredients : ""
+                        editingRecipe ? editingRecipe.ingredients : []
                       }
                       handlePopupRecipeClose={this.handlePopupRecipeClose}
                       handleCreateRecipes={this.handleCreateRecipes}

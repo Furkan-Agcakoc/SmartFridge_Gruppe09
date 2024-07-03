@@ -33,55 +33,60 @@ class RecipeDialog extends Component {
     this.state = {
       showAlert: false,
       fridgeId: this.props.fridgeId,
+      recipeId: this.props.recipeId,
       ingredientData: {
         amount: "",
         unit_name: "",
         grocery_name: "",
       },
       recipeData: {
-        recipe_name: props.isEditMode ? props.recipe_name : "",
-        duration: props.isEditMode ? props.duration : "",
-        portion: props.isEditMode ? props.portion : "",
-        instruction: props.isEditMode ? props.instruction : "",
-        groceryUnit: ["g", "kg", "ml", "l", "Stück"],
-        ingredients:
-          props.isEditMode && props.ingredients
-            ? props.ingredients
-            : [],
+        recipe_name: props.isEditMode ? props.recipeTitle : "",
+        duration: props.isEditMode ? props.recipeDuration : "",
+        portion: props.isEditMode ? props.recipeServings : "",
+        instruction: props.isEditMode ? props.recipeInstructions : "",
+        ingredients: props.isEditMode && props.recipeIngredients ? props.recipeIngredients : [],
       },
       foodOptions: props.foodOptions || [],
       measureOptions: props.measureOptions || [],
+      removedIngredientIds: [],
     };
   }
 
   componentDidMount() {
     this.getGrocery();
     this.getMeasure();
+    if (this.props.isEditMode) {
+      console.log("Selected Recipe:", this.props);
+    }
   }
 
   componentDidUpdate(prevProps) {
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
-      prevProps.recipe_name !== this.props.recipe_name ||
-      prevProps.duration !== this.props.duration ||
-      prevProps.portion !== this.props.portion ||
-      prevProps.instruction !== this.props.instruction ||
-      prevProps.ingredients !== this.props.ingredients
+      prevProps.recipeTitle !== this.props.recipeTitle ||
+      prevProps.recipeDuration !== this.props.recipeDuration ||
+      prevProps.recipeServings !== this.props.recipeServings ||
+      prevProps.recipeInstructions !== this.props.recipeInstructions ||
+      prevProps.recipeIngredients !== this.props.recipeIngredients
     ) {
       this.setState({
         recipeData: {
-          recipe_name: this.props.recipe_name,
-          duration: this.props.duration,
-          portion: this.props.portion,
-          instruction: this.props.instruction,
-          groceryUnit: ["g", "kg", "ml", "l", "Stück"],
-          ingredients: Array.isArray(this.props.ingredients)
-            ? this.props.ingredients
+          recipe_name: this.props.recipeTitle,
+          duration: this.props.recipeDuration,
+          portion: this.props.recipeServings,
+          instruction: this.props.recipeInstructions,
+          ingredients: Array.isArray(this.props.recipeIngredients)
+            ? this.props.recipeIngredients
             : [],
         },
+      }, () => {
+        if (this.props.isEditMode) {
+          console.log("Updated Selected Recipe:", this.state.recipeData);
+        }
       });
     }
   }
+
 
   handleAddIngredient = () => {
     const { ingredientData, recipeData } = this.state;
@@ -99,18 +104,34 @@ class RecipeDialog extends Component {
     }
   };
 
-  handleRemoveIngredient = (index) => {
-    const newIngredients = this.state.recipeData.ingredients.filter(
-      (_, i) => i !== index
-    );
-    this.setState((prevState) => ({
-      recipeData: {
-        ...prevState.recipeData,
-        ingredients: newIngredients,
-      },
-    }));
+  handleRemoveIngredient = (ingredientId) => {
+    console.log('Deleting ingredient with ID:', ingredientId);
+    this.setState((prevState) => {
+      const newIngredients = prevState.recipeData.ingredients.filter((ingredient) => ingredient.id !== ingredientId);
+      console.log('Updated ingredients:', newIngredients);
+  
+      return {
+        recipeData: {
+          ...prevState.recipeData,
+          ingredients: newIngredients,
+        },
+        removedIngredientIds: [...prevState.removedIngredientIds, ingredientId],
+      };
+    }, () => {
+      console.log('Updated removedIngredientIds:', this.state.removedIngredientIds);
+    });
   };
+  
 
+  removeIngredientsFromRecipe = async (groceryStatementId) => {
+    try {
+      await SmartFridgeAPI.getAPI().deleteGroceryStatement(groceryStatementId);
+      console.log(`Successfully deleted ingredient with ID: ${groceryStatementId}`);
+    } catch (error) {
+      console.error(`Error deleting ingredient with ID: ${groceryStatementId}`, error);
+    }
+  };
+  
   handleClick = (e) => {
     e.preventDefault();
     const form = e.target.closest("form");
@@ -123,17 +144,25 @@ class RecipeDialog extends Component {
   };
 
   updateStateAndSubmit = async () => {
-    const { recipeData, foodOptions, measureOptions } = this.state;
+    const { recipeData, foodOptions, measureOptions, removedIngredientIds  } = this.state;
   
     console.log("Form submitted: ", recipeData);
   
     const createdRecipe = await this.props.handleCreateRecipes(recipeData);
-    const recipeId = createdRecipe.id;
 
-    // Use a Set to keep track of new grocery names and measurement units to be added
+    console.log('Created Recipe ====>', createdRecipe)
+  
+    if (!createdRecipe || !createdRecipe.id) {
+      console.error('Failed to create or update recipe');
+      return;
+    }
+  
+    console.log('Recipe ID in =====>', createdRecipe.id);
+    const recipeId = createdRecipe.id;
+  
     const newGroceries = new Set();
     const newMeasurements = new Set();
-   
+  
     for (const ingredient of recipeData.ingredients) {
       if (!foodOptions.includes(ingredient.grocery_name)) {
         newGroceries.add(ingredient.grocery_name);
@@ -143,7 +172,6 @@ class RecipeDialog extends Component {
       }
     }
   
-    // Add new groceries
     for (const grocery of newGroceries) {
       try {
         await this.addGrocery(grocery);
@@ -153,7 +181,6 @@ class RecipeDialog extends Component {
       }
     }
   
-    // Add new measurements
     for (const measurement of newMeasurements) {
       try {
         await this.addMeasure(measurement);
@@ -162,17 +189,16 @@ class RecipeDialog extends Component {
         console.error("Error adding measurement:", error);
       }
     }
-
+  
     for (const ingredient of recipeData.ingredients) {
       try {
         const grocery_id = await SmartFridgeAPI.getAPI().getGroceryByName(ingredient.grocery_name);
         const measure_id = await SmartFridgeAPI.getAPI().getMeasureByName(ingredient.unit_name);
-        const amount = ingredient.amount
+        const amount = ingredient.amount;
   
         const groceryId = grocery_id.id;
         const measureId = measure_id.id;
   
-        // Call the addRecipeInFridge method for each ingredient
         await this.addRecipeInFridge(groceryId, measureId, amount, recipeId);
         console.log(`Added ingredient ${ingredient.grocery_name} with measure ${ingredient.unit_name} to fridge.`);
       } catch (error) {
@@ -180,9 +206,14 @@ class RecipeDialog extends Component {
       }
     }
   
+    if(removedIngredientIds && removedIngredientIds.length > 0) {
+      for (const ingredientId of removedIngredientIds) {
+        await this.removeIngredientsFromRecipe(ingredientId);
+      }
+    }
+    
     console.log("Hier sieht man recipeData", recipeData.ingredients);
   };
-  
 
   handleUnitInput = (event) => {
     this.setState({ showAlert: false });
@@ -201,7 +232,6 @@ class RecipeDialog extends Component {
       });
   };
 
-
   getMeasure = () => {
     const { fridgeId } = this.state;
     SmartFridgeAPI.getAPI()
@@ -216,7 +246,7 @@ class RecipeDialog extends Component {
   addGrocery = async (newGroceryName) => {
     const { fridgeId } = this.state;
     const newGrocery = new GroceryBO(newGroceryName, fridgeId);
-  
+
     try {
       const grocery = await SmartFridgeAPI.getAPI().addGrocery(newGrocery);
       this.setState((prevState) => ({
@@ -226,11 +256,11 @@ class RecipeDialog extends Component {
       console.error("Error adding grocery:", error);
     }
   };
-  
+
   addMeasure = async (newMeasurement) => {
     const { fridgeId } = this.state;
     const newMeasure = new MeasureBO(newMeasurement, fridgeId);
-  
+
     try {
       const measure = await SmartFridgeAPI.getAPI().addMeasure(newMeasure);
       this.setState((prevState) => ({
@@ -242,35 +272,19 @@ class RecipeDialog extends Component {
   };
 
   addRecipeInFridge = async (groceryId, measureId, amount, recipeId) => {
-    const { groceryData, fridgeId } = this.state;
-    const newGroceryStatement = new GroceryStatementBO(
-      groceryId,
-      measureId,
-      amount
-    );
+    const newGroceryStatement = new GroceryStatementBO(groceryId, measureId, amount);
 
     try {
-      const groceryStatement =
-        await SmartFridgeAPI.getAPI().addGroceryStatement(newGroceryStatement);
+      const groceryStatement = await SmartFridgeAPI.getAPI().addGroceryStatement(newGroceryStatement);
       const groceryStatementId = groceryStatement.id;
       console.log("groceryStatementId:", groceryStatementId);
 
-
-      //Change fridgeId
-      const groceryStatementAddedInFridge =
-        await SmartFridgeAPI.getAPI().addGroceryinRecipe(
-          groceryStatementId,
-          recipeId
-        );
-      console.log(
-        "groceryStatementAddedInFridge:",
-        groceryStatementAddedInFridge
-      );
+      const groceryStatementAddedInFridge = await SmartFridgeAPI.getAPI().addGroceryinRecipe(groceryStatementId, recipeId);
+      console.log("groceryStatementAddedInFridge:", groceryStatementAddedInFridge);
     } catch (error) {
       console.error("Error adding grocery statement:", error);
     }
   };
-  
 
   render() {
     const { handlePopupRecipeClose, isEditMode } = this.props;
@@ -283,10 +297,7 @@ class RecipeDialog extends Component {
     } = this.state;
 
     const sortedFoodOptions = foodOptions.sort((a, b) => a.localeCompare(b));
-    const sortedMeasureOptions = measureOptions.sort((a, b) =>
-      a.localeCompare(b)
-    );
-    
+    const sortedMeasureOptions = measureOptions.sort((a, b) => a.localeCompare(b));
 
     return (
       <>
@@ -432,7 +443,7 @@ class RecipeDialog extends Component {
                   alignItems: "center",
                 }}
               >
-                <TextField // Menge
+                <TextField
                   label="Menge"
                   placeholder="Menge"
                   name="amount"
@@ -648,7 +659,10 @@ class RecipeDialog extends Component {
                       <IconButton
                         edge="end"
                         aria-label="delete"
-                        onClick={() => this.handleRemoveIngredient(index)}
+                        onClick={() => {
+                          console.log('Deleting ingredient:', ingredient);
+                          this.handleRemoveIngredient(ingredient.id);
+                        }}
                         disableRipple
                       >
                         <RemoveCircleOutlineRoundedIcon
@@ -667,7 +681,7 @@ class RecipeDialog extends Component {
                     }
                   >
                     <ListItemText
-                      primary={`⪧ ${ingredient.amount} ${ingredient.unit_name} / ${ingredient.grocery_name}`}
+                      primary={`⪧ ${ingredient.quantity} ${ingredient.unit_name} / ${ingredient.grocery_name}`}
                       sx={{
                         color: "text.primary",
                       }}
