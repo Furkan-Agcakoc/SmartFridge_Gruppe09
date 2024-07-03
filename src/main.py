@@ -430,15 +430,13 @@ class GroceryOperations(Resource):
 
     #@secured
     def delete(self, id):
-        """Löschen eines Grocery Objekts"""
-        adm = Administration()
-        try:
-            grocery = adm.get_grocery_by_id(id)
-            adm.delete_grocery(grocery)
-        except Exception:
-            # Rückgabe einer Fehlermeldung, wenn während des Löschens ein Fehler auftritt
-            return "Lebensmittel wird im Kühlschrank/Rezept verwendet, erst dort löschen.", 400
-        return '', 200
+        """Löschen eines Grocery Objekts durch ID"""
+        admin = Administration()
+        grocery = admin.get_grocery_by_id(id)
+        if grocery is None:
+            return {'message': 'Grocery not found'}, 404
+        message = admin.delete_grocery(grocery)
+        return {'message': message}
 
     @smartfridge.marshal_with(grocery)
     @smartfridge.expect(grocery, validate=True)
@@ -845,15 +843,14 @@ class MeasureOperations(Resource):
 
     #@secured
     def delete(self, id):
-        """Löschen eines Measure Objekts"""
-        adm = Administration()
-        try:
-            measure = adm.get_measure_by_id(id)
-            adm.delete_measure(measure)
-        except Exception:
-            # Rückgabe einer Fehlermeldung, wenn während des Löschens ein Fehler auftritt
-            return "Maßeinheit wird im Kühlschrank/Rezept verwendet, erst dort löschen.", 400
-        return '', 200
+        """Löschen eines Measure Objekts durch ID"""
+        admin = Administration()
+        measure = admin.get_measure_by_id(id)
+        if measure is None:
+            return {'message': 'Unit not found'}, 404
+        message = admin.delete_measure(measure)
+        return {'message': message}
+
 
     @smartfridge.marshal_with(measure)
     @smartfridge.expect(measure, validate=True)

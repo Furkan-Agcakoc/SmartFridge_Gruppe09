@@ -118,6 +118,13 @@ class GroceryMapper(Mapper):
 
         self._cnx.commit()
         cursor.close()
+    def can_delete_grocery(self, grocery_id):
+        cursor = self._cnx.cursor()
+        command = "SELECT COUNT(*) FROM grocerystatement WHERE grocery_id = %s"
+        cursor.execute(command, (grocery_id,))
+        count = cursor.fetchone()[0]
+        cursor.close()
+        return count == 0
 
     def delete(self, grocery):
         cursor = self._cnx.cursor()

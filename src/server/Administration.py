@@ -236,7 +236,10 @@ class Administration():
 
     def delete_grocery(self, grocery):
         with GroceryMapper() as mapper:
-            mapper.delete(grocery)
+            if mapper.can_delete_grocery(grocery.get_id()):
+                mapper.delete(grocery)
+            else:
+                return "Lebensmittel kann nicht gelöscht werden, da es im Kühlschrank/Rezept verwendet wird."
 
     def check_grocery(self, grocerystatement_id, fridge_id):
         with GroceryMapper() as mapper:
@@ -339,14 +342,19 @@ class Administration():
 
     def delete_user(self, user):
         with UserMapper() as mapper:
+            # Check if the user is an owner of any households
+            households = self.get_households_by_user(user.get_id())
+            for household in households:
+                if household.get_owner_id() == user.get_id():
+                    self.delete_household(household)
 
+            # Continue with the rest of the method
             recipe = self.get_recipe_by_user_id(user.get_id())
             inhabitants = self.get_inhabitant_by_user_id(user.get_id())
 
             try:
                 for r in recipe:
                     self.delete_recipe(r)
-
             except Exception as e:
                 print("Error in delete_user in Administration: " + str(e))
                 u = "Error in delete_user in Administration: " + str(e)
@@ -354,7 +362,6 @@ class Administration():
             try:
                 for i in inhabitants:
                     self.delete_inhabitant(i)
-
             except Exception as e:
                 print("Error in delete_inhabitant in Administration: " + str(e))
                 u = "Error in delete_inhabitant in Administration: " + str(e)
@@ -481,7 +488,10 @@ class Administration():
 
     def delete_measure(self, measure):
         with MeasureMapper() as mapper:
-            mapper.delete(measure)
+            if mapper.can_delete_measure(measure.get_id()):
+                mapper.delete(measure)
+            else:
+                return "Einheit kann nicht gelöscht werden, da es im Kühlschrank/Rezept verwendet wird."
 
     """
     Abgleichen Kühlschrank Rezept
@@ -531,60 +541,57 @@ class Administration():
         response_messages = []
         can_cook = True
 
+        # Überprüfung der Zutaten außer "Prise"
         for recipe_grocery in recipe_content:
             recipe_qty, recipe_unit_id = recipe_grocery.get_quantity(), recipe_grocery.get_unit_id()
             recipe_unit = self.get_measure_by_id(recipe_unit_id).get_unit()
+
+            if recipe_unit.lower() == "prise":
+                continue  # Ignoriert die Überprüfung für "Prise"
+
             item_matched = False
+            total_fridge_qty = 0
 
             for fridge_grocery in fridge_content:
                 if fridge_grocery.get_grocery_id() == recipe_grocery.get_grocery_id():
                     fridge_unit_id = fridge_grocery.get_unit_id()
                     grocery_name = self.get_grocery_by_id(recipe_grocery.get_grocery_id()).get_grocery_name()
-                    if recipe_unit.lower() == "prise":
-                        if fridge_grocery.get_quantity() > 0:
-                            item_matched = True
-                            break
-                        else:
-                            response_messages.append(
-                                f"Es fehlen {recipe_qty} {recipe_unit} {grocery_name}.")
-                            can_cook = False
-                            break
-                    elif self.are_units_compatible(recipe_unit_id, fridge_unit_id):
-                        fridge_qty = self.convert_unit(fridge_grocery.get_quantity(), fridge_unit_id, recipe_unit_id)
-                        if fridge_qty < recipe_qty:
-                            response_messages.append(
-                                f"Es fehlen {recipe_qty - fridge_qty} {recipe_unit} {grocery_name}.")
-                            can_cook = False
-                            break
-                        else:
-                            item_matched = True
-                            break
-                    else:
-                        if fridge_unit_id == recipe_unit_id:
-                            continue
 
-            if not item_matched and recipe_unit.lower() != "prise":
+                    if self.are_units_compatible(recipe_unit_id, fridge_unit_id):
+                        fridge_qty = self.convert_unit(fridge_grocery.get_quantity(), fridge_unit_id, recipe_unit_id)
+                        total_fridge_qty += fridge_qty
+                    elif fridge_unit_id == recipe_unit_id:
+                        total_fridge_qty += fridge_grocery.get_quantity()
+
+                    item_matched = True  # Zutat wurde im Kühlschrank gefunden
+
+            if not item_matched or total_fridge_qty < recipe_qty:
                 grocery_name = self.get_grocery_by_id(recipe_grocery.get_grocery_id()).get_grocery_name()
-                response_messages.append(
-                    f"Es fehlen {recipe_qty} {recipe_unit} {grocery_name}.")
+                missing_qty = recipe_qty - total_fridge_qty
+                response_messages.append(f"{missing_qty} {recipe_unit} {grocery_name}")
                 can_cook = False
 
+        # Wenn alle benötigten Zutaten vorhanden sind, dann Abzug aus dem Kühlschrank
         if can_cook:
             for recipe_grocery in recipe_content:
                 recipe_qty, recipe_unit_id = recipe_grocery.get_quantity(), recipe_grocery.get_unit_id()
+                recipe_unit = self.get_measure_by_id(recipe_unit_id).get_unit()
+
+                if recipe_unit.lower() == "prise":
+                    continue  # Ignoriert die Abzug für "Prise"
+
                 for fridge_grocery in fridge_content:
                     if fridge_grocery.get_grocery_id() == recipe_grocery.get_grocery_id():
                         fridge_qty = self.convert_unit(fridge_grocery.get_quantity(), fridge_grocery.get_unit_id(),
                                                        recipe_unit_id)
                         new_value = fridge_qty - recipe_qty
-                        new_value = self.convert_unit(new_value, recipe_unit_id, fridge_grocery.get_unit_id())
+                        new_value = max(0, new_value)  # Verhindert negative Werte
                         fridge_grocery.set_quantity(new_value)
                         self.update_gs(fridge_grocery)
-                        break
 
             return "Rezept gekocht"
         else:
-            return " ".join(response_messages)
+            return "Rezept kann nicht gekocht werden. Es fehlen: " + ", ".join(response_messages) + "."
 
     def check_recipes(self, fridge_id):
         recipes = self.get_recipe_by_fridge_id(fridge_id)
@@ -603,6 +610,7 @@ class Administration():
                 grocery_name = self.get_grocery_by_id(recipe_grocery.get_grocery_id()).get_grocery_name()
                 item_matched = False
                 not_enough = False
+                total_fridge_qty = 0  # Track total quantity available in fridge
 
                 for fridge_grocery in fridge_content:
                     if fridge_grocery.get_grocery_id() == recipe_grocery.get_grocery_id():
@@ -618,7 +626,8 @@ class Administration():
                         elif self.are_units_compatible(recipe_unit_id, fridge_unit_id):
                             fridge_qty = self.convert_unit(fridge_grocery.get_quantity(), fridge_unit_id,
                                                            recipe_unit_id)
-                            if fridge_qty < recipe_qty:
+                            total_fridge_qty += fridge_qty
+                            if total_fridge_qty < recipe_qty:
                                 not_enough = True
                                 continue
                             else:
@@ -630,7 +639,8 @@ class Administration():
 
                 if not item_matched and recipe_unit.lower() != "prise":
                     if not_enough:
-                        missing_ingredients.append(f"Es fehlen {recipe_qty} {recipe_unit} von '{grocery_name}'")
+                        missing_qty = recipe_qty - total_fridge_qty
+                        missing_ingredients.append(f"Es fehlen {missing_qty} {recipe_unit} von '{grocery_name}'")
                     else:
                         missing_ingredients.append(f"Es fehlen {recipe_qty} {recipe_unit} von '{grocery_name}'")
                     can_cook = False
