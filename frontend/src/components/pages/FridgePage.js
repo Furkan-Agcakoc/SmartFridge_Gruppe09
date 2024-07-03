@@ -728,74 +728,94 @@ class FridgePage extends Component {
                     sx={{
                       display: "flex",
                       flexWrap: "wrap",
-                      justifyContent: "baseline",
+                      justifyContent: "flex-start",
                       marginTop: "10px",
                       marginBottom: "-40px",
-                      gap: "30px",
-                      width: "100%",
-                      maxWidth: "895px",
+                      px: "0px",
+                      gap: "25px",
+                      width: {
+                        xs: "120%",
+                        sm: "90%",
+                        md: "895px",
+                        lg: "895px",
+                        xl: "100%",
+                      },
                     }}
                   >
-                    <Link onClick={() => this.handlePopupGroceryOpen(false)}>
-                      <Tooltip
-                        title="Neues Lebensmittel hinzufügen"
-                        placement="bottom"
-                        arrow
-                      >
-                        <Paper
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            width: { xs: "150px", sm: "200px" },
-                            height: { xs: "100px", sm: "125px" },
-                            borderRadius: "10px",
-                            backgroundColor: "background.paper",
-                            color: "primary.main",
-                            "&:hover": {
-                              color: "success.dark",
-                              boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
-                              backgroundColor: "success.gwhite",
-                            },
-                          }}
+                    <Container
+                      sx={{
+                        display: { xs: "flex" },
+                        justifyContent: { xs: "flex-start" },
+                        alignItems: { xs: "center" },
+                        flexWrap: { xs: "wrap" },
+                        px: { xs: "0px" },
+                        gap: { xs: "25px" },
+                        width: { xs: "329px", sm: "85%", md: "80%", xl: "93%" },
+                      }}
+                    >
+                      <Link onClick={() => this.handlePopupGroceryOpen(false)}>
+                        <Tooltip
+                          title="Neues Lebensmittel hinzufügen"
+                          placement="bottom"
+                          arrow
                         >
-                          <KitchenRoundedIcon
+                          <Paper
                             sx={{
-                              width: { xs: "50px", sm: "75px" },
-                              height: "auto",
-                              position: "absolute",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              width: { xs: "150px", sm: "175px", md: "200px" },
+                              height: { xs: "100px", sm: "110px", md: "125px" },
+                              borderRadius: "10px",
+                              backgroundColor: "background.paper",
+                              color: "primary.main",
+                              "&:hover": {
+                                color: "success.dark",
+                                boxShadow:
+                                  "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                                backgroundColor: "success.gwhite",
+                              },
                             }}
-                          />
-                          <LoupeRoundedIcon
-                            sx={{
-                              width: { xs: "20px", sm: "30px" },
-                              height: "auto",
-                              transform: "scaleX(-1)",
-                              position: "relative",
-                              top: { xs: "-25px", sm: "-38px" },
-                              left: { xs: "20px", sm: "33px" },
-                            }}
-                          />
-                        </Paper>
-                      </Tooltip>
-                    </Link>
-                    <Grocery
-                      measureName={this.measureName}
-                      groceryName={this.groceryName}
-                      groceryStatement={this.groceryStatement}
-                      getGroceryInFridgeId={this.getGroceryInFridgeId}
-                      fridgeId={this.state.fridgeId}
-                      groceries={groceries}
-                      handleAnchorClick={this.handleAnchorClick}
-                      handleAnchorClose={this.handleAnchorClose}
-                      handleAnchorEdit={this.handleAnchorEdit}
-                      anchorEls={anchorEls}
-                      openMenus={openMenus}
-                      setIdToDelete={this.setIdToDelete}
-                      handleOpenDialog={this.props.handleOpenDialog}
-                      groceryStatements={this.state.updatedGroceryStatements}
-                    />
+                          >
+                            <KitchenRoundedIcon
+                              sx={{
+                                width: { xs: "50px", sm: "60px", md: "75px" },
+                                height: "auto",
+                                position: "absolute",
+                              }}
+                            />
+                            <LoupeRoundedIcon
+                              sx={{
+                                width: { xs: "20px", sm: "25px", md: "30px" },
+                                height: "auto",
+                                transform: "scaleX(-1)",
+                                position: "relative",
+                                top: { xs: "-25px", sm: "-30px", md: "-38px" },
+                                left: { xs: "23px", sm: "28px", md: "34px" },
+                              }}
+                            />
+                          </Paper>
+                        </Tooltip>
+                      </Link>
+                      <Grocery
+                        measureName={this.measureName}
+                        groceryName={this.groceryName}
+                        groceryStatement={this.groceryStatement}
+                        getGroceryInFridgeId={this.getGroceryInFridgeId}
+                        fridgeId={this.state.fridgeId}
+                        groceries={groceries}
+                        handleAnchorClick={this.handleAnchorClick}
+                        handleAnchorClose={this.handleAnchorClose}
+                        handleAnchorEdit={this.handleAnchorEdit}
+                        anchorEls={anchorEls}
+                        openMenus={openMenus}
+                        setIdToDelete={this.setIdToDelete}
+                        handleOpenDialog={this.props.handleOpenDialog}
+                        groceryStatements={this.state.updatedGroceryStatements}
+                      />
+                    </Container>
                   </TabPanel>
+
                   {popupGroceryOpen && (
                     <GroceryDialog
                       fridgeId={this.state.fridgeId}
@@ -840,125 +860,161 @@ class FridgePage extends Component {
                     sx={{
                       display: "flex",
                       flexWrap: "wrap",
-                      justifyContent: "baseline",
+                      justifyContent: "flex-start",
                       marginTop: "10px",
-                      marginLeft: "0px",
                       marginBottom: "0px",
-                      gap: "30px",
-                      width: "100%",
+                      px: "0px",
+                      gap: "25px",
+                      width: {
+                        xs: "110%",
+                        sm: "90%",
+                        md: "895px",
+                        lg: "895px",
+                        xl: "100%",
+                      },
                       maxWidth: "895px",
                       position: "relative",
                       top: "-18px",
                     }}
                   >
-                    <Container sx={{ m: "0", p: "0" }}>
-                      <Button
-                        variant="text"
-                        sx={{
-                          border: "1px solid green",
-                          fontSize: {
-                            xs: "0.55rem",
-                            sm: "0.8rem",
-                            md: "0.8rem",
-                            lg: "0.8rem",
-                            xl: "0.9rem",
-                          },
-                          width: {
-                            xs: "130px",
-                            sm: "200px",
-                            md: "200px",
-                            lg: "200px",
-                            xl: "200px",
-                          },
-
-                          boxShadow: "10px",
-                          bgcolor: "primary.main",
-                          color: "background.card",
-                          fontWeight: "bold",
-                          "&:hover": {
-                            color: "success.dark",
-                            backgroundColor: "success.gwhite",
-                          },
-                        }}
-                        onClick={this.handleAvailableRecipes}
-                      >
-                        Verfügbare Rezepte
-                      </Button>
-                      <AlertComponent
-                        showAlert={showRecipeAlert}
-                        alertType="availableRecipes"
-                        severity="info"
-                        customMessage={this.state.availableRecipes}
-                        onClose={() =>
-                          this.setState({ showRecipeAlert: false })
-                        }
-                      />
-                    </Container>
-
-                    <Link onClick={() => this.handlePopupRecipeOpen(false)}>
-                      <Tooltip
-                        title="Neues Rezept hinzufügen"
-                        placement="bottom"
-                        arrow
-                      >
-                        <Paper
+                    <Container
+                      sx={{
+                        display: { xs: "flex" },
+                        justifyContent: { xs: "flex-start" },
+                        alignItems: { xs: "center" },
+                        flexWrap: { xs: "wrap" },
+                        px: { xs: "0px" },
+                        gap: { xs: "25px" },
+                        width: {
+                          xs: "329px",
+                          sm: "85%",
+                          md: "80%",
+                          xl: "100%",
+                        },
+                      }}
+                    >
+                      <Container sx={{ m: "0", p: "0", px: "0px" }}>
+                        <Button
+                          variant="text"
                           sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            width: { xs: "150px", sm: "200px" },
-                            height: { xs: "100px", sm: "125px" },
-                            borderRadius: "10px",
-                            backgroundColor: "background.paper",
-                            color: "primary.main",
+                            px: "0px",
+                            fontSize: {
+                              xs: "0.55rem",
+                              sm: "0.8rem",
+                              md: "0.8rem",
+                              lg: "0.8rem",
+                              xl: "0.9rem",
+                            },
+                            width: {
+                              xs: "130px",
+                              sm: "200px",
+                              md: "200px",
+                              lg: "200px",
+                              xl: "200px",
+                            },
+                            position: "relative",
+                            left: {
+                              xs: "0",
+                              sm: "-25px",
+                              md: "-25px",
+                              lg: "-25px",
+                              xl: "-25px",
+                            },
+                            m: "0px",
+                            boxShadow: "10px",
+                            bgcolor: "primary.main",
+                            color: "background.card",
+                            fontWeight: "bold",
                             "&:hover": {
                               color: "success.dark",
-                              boxShadow: "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
                               backgroundColor: "success.gwhite",
                             },
                           }}
+                          onClick={this.handleAvailableRecipes}
                         >
-                          <ImportContactsRoundedIcon
+                          Verfügbare Rezepte
+                        </Button>
+                        <AlertComponent
+                          showAlert={showRecipeAlert}
+                          alertType="availableRecipes"
+                          severity="info"
+                          customMessage={this.state.availableRecipes}
+                          onClose={() =>
+                            this.setState({ showRecipeAlert: false })
+                          }
+                        />
+                      </Container>
+
+                      <Link onClick={() => this.handlePopupRecipeOpen(false)}>
+                        <Tooltip
+                          title="Neues Rezept hinzufügen"
+                          placement="bottom"
+                          arrow
+                        >
+                          <Paper
                             sx={{
-                              width: "75px",
-                              height: "auto",
-                              position: "absolute",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              width: { xs: "150px", sm: "175px", md: "200px" },
+                              height: { xs: "100px", sm: "110px", md: "125px" },
+                              borderRadius: "10px",
+                              backgroundColor: "background.paper",
+                              color: "primary.main",
+                              "&:hover": {
+                                color: "success.dark",
+                                boxShadow:
+                                  "3px 3px 6px 2px rgba(0, 0, 0, 0.25)",
+                                backgroundColor: "success.gwhite",
+                              },
                             }}
-                          />
-                          <LoupeRoundedIcon
-                            sx={{
-                              width: "30px",
-                              height: "auto",
-                              transform: "scaleX(-1)",
-                              position: "relative",
-                              top: "-30px",
-                              left: "54px",
-                            }}
-                          />
-                          <FlatwareRoundedIcon
-                            sx={{
-                              width: "25px",
-                              height: "auto",
-                              position: "relative",
-                              top: "2px",
-                              left: "-1px",
-                            }}
-                          />
-                        </Paper>
-                      </Tooltip>
-                    </Link>
-                    <Recipe
-                      recipes={recipes}
-                      handleAnchorClick={this.handleAnchorClick}
-                      handleAnchorEdit={this.handleAnchorEdit}
-                      handleAnchorClose={this.handleAnchorClose}
-                      handleOpenDialog={this.props.handleOpenDialog}
-                      setIdToDelete={this.setIdToDelete}
-                      anchorEls={anchorEls}
-                      openMenus={openMenus}
-                      refreshGroceryList={this.refreshGroceryList}
-                      showRecipeAlert={this.state.showRecipeAlert}
-                    />
+                          >
+                            <ImportContactsRoundedIcon
+                              sx={{
+                                width: { xs: "50px", sm: "60px", md: "75px" },
+                                height: "auto",
+                                position: "absolute",
+                              }}
+                            />
+                            <LoupeRoundedIcon
+                              sx={{
+                                width: { xs: "20px", sm: "25px", md: "30px" },
+                                height: "auto",
+                                transform: "scaleX(-1)",
+                                position: "relative",
+                                top: { xs: "-20px", sm: "-25px", md: "-30px" },
+                                left: { xs: "35px", sm: "45px", md: "54px" },
+                              }}
+                            />
+                            <FlatwareRoundedIcon
+                              sx={{
+                                width: { xs: "15px", sm: "20px", md: "25px" },
+                                height: "auto",
+                                position: "relative",
+                                top: { xs: "1px", sm: "1.5px", md: "2px" },
+                                left: {
+                                  xs: "-0.5px",
+                                  sm: "-0.75px",
+                                  md: "-1px",
+                                },
+                              }}
+                            />
+                          </Paper>
+                        </Tooltip>
+                      </Link>
+                      <Recipe
+                        recipes={recipes}
+                        handleAnchorClick={this.handleAnchorClick}
+                        handleAnchorEdit={this.handleAnchorEdit}
+                        handleAnchorClose={this.handleAnchorClose}
+                        handleOpenDialog={this.props.handleOpenDialog}
+                        setIdToDelete={this.setIdToDelete}
+                        anchorEls={anchorEls}
+                        openMenus={openMenus}
+                        refreshGroceryList={this.refreshGroceryList}
+                        showRecipeAlert={this.state.showRecipeAlert}
+                      />
+                    </Container>
                   </TabPanel>
                   {popupRecipeOpen && (
                     <RecipeDialog

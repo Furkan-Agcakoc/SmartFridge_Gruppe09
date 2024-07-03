@@ -8,7 +8,7 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { IconButton } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
-import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import SmartFridgeAPI from "../api/SmartFridgeAPI";
 
 const Search = styled("div")(({ theme }) => ({
@@ -16,7 +16,7 @@ const Search = styled("div")(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.08),
   "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.20),
+    backgroundColor: alpha(theme.palette.common.white, 0.2),
   },
   marginLeft: 0,
   width: "100%",
@@ -88,7 +88,10 @@ export default function FridgeSearchBar() {
         <Toolbar>
           <Link to="/household">
             <IconButton>
-              <ArrowBackIosNewRoundedIcon fontSize="small" sx={{ color: "background.paper" }} />
+              <ArrowBackIosNewRoundedIcon
+                fontSize="small"
+                sx={{ color: "background.paper" }}
+              />
             </IconButton>
           </Link>
           <Typography
@@ -97,11 +100,16 @@ export default function FridgeSearchBar() {
             component="div"
             fontStyle={"italic"}
             fontWeight={"bold"}
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" }, pl: "10px", }}
+            sx={{
+              flexGrow: 1,
+              display: { xs: "block", sm: "block" },
+              pl: "10px",
+              fontSize: { xs: "1.3rem", sm: "1.7rem" },
+            }}
           >
             {householdName}
           </Typography>
-          <Search>
+          {/* <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -109,7 +117,7 @@ export default function FridgeSearchBar() {
               placeholder="Suchen..."
               inputProps={{ "aria-label": "search" }}
             />
-          </Search>
+          </Search> */}
         </Toolbar>
       </AppBar>
     </Box>
