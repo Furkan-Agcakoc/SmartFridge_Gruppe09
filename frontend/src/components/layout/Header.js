@@ -20,7 +20,7 @@ class Header extends Component {
             position: "fixed",
             top: 0,
             p: 0,
-            zIndex: 1,
+            zIndex: 100,
           }}
         >
           <Box
@@ -32,7 +32,7 @@ class Header extends Component {
               justifyContent: "center",
               alignItems: "center",
               mt: { xs: "35px", md: "80px" },
-              zIndex: 2,
+              zIndex: 101,
             }}
           >
             <Link to="/household">
@@ -52,7 +52,7 @@ class Header extends Component {
               alignItems: "center",
               width: "100%",
               mx: "20px",
-              zIndex: 1,
+              zIndex: 102,
             }}
           >
             {user ? (

@@ -338,13 +338,18 @@ class HouseholdPage extends Component {
             <Box
               sx={{
                 display: "flex",
-                width: {xs: "325px", sm: "100%", md: "100%", lg: "100%", xl: "100%" },
+                width: {
+                  xs: "325px",
+                  sm: "100%",
+                  md: "100%",
+                  lg: "100%",
+                  xl: "100%",
+                },
                 justifyContent: "flex-start",
                 gap: { xs: "25px", sm: "20px", md: "50px" },
                 maxWidth: "1000px",
                 flexWrap: "wrap",
                 paddingBottom: { xs: "50px", sm: "200px" },
-
               }}
             >
               <Tooltip
@@ -357,8 +362,8 @@ class HouseholdPage extends Component {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    width: { xs: "150px", sm: "200px" },
-                    height: { xs: "100px", sm: "125px" },
+                    width: { xs: "150px", sm: "175px", md: "200px" },
+                    height: { xs: "100px", sm: "110px", md: "125px" },
                     borderRadius: "10px",
                     backgroundColor: "background.default",
                     color: "primary.main",
