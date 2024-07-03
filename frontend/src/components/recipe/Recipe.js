@@ -47,6 +47,7 @@ const Recipe = ({
     handleAnchorClose(recipeId);
   };
 
+
   const fetchIngredients = useCallback(async (recipeId) => {
     if (recipeId) {
       const api = SmartFridgeAPI.getAPI();
