@@ -366,10 +366,12 @@ class RecipeDialog extends Component {
           component="form"
           noValidate
           sx={{
-            width: { xs: "90%", sm: "1100px" },
+            width: { xs: "80%", sm: "80%", md: "85%", xl: "1100px" },
             height: "auto",
             position: "fixed",
-            top: { xs: "20%", sm: "10%" },
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
             zIndex: 2,
             maxHeight: "80vh",
             overflowY: "auto",
@@ -402,7 +404,7 @@ class RecipeDialog extends Component {
                 fontSize: { xs: "1.5rem", sm: "2rem" },
               }}
             >
-              {isEditMode ? "Rezept bearbeiten" : "Neues Rezept hinzufügen"}
+              {isEditMode ? "Rezept bearbeiten" : "Rezept hinzufügen"}
             </Typography>
             <AlertComponent showAlert={showAlert} alertType="recipe" />
             <Box
@@ -508,9 +510,10 @@ class RecipeDialog extends Component {
                   }}
                   type="number"
                   inputProps={{ min: "1" }}
-                  sx={{ width: "150px" }}
+                  sx={{ width: { xs: "100%", xl: "150px" } }}
                 />
                 <Autocomplete
+                  sx={{ width: { xs: "100%", xl: "150px" } }}
                   id="measurements-box"
                   options={sortedMeasureOptions.map((option) => ({
                     title: option,
@@ -572,12 +575,18 @@ class RecipeDialog extends Component {
                       name="unit"
                       label="Einheit"
                       placeholder="Einheit"
-                      sx={{ width: "150px" }}
+                      sx={{
+                        width: {
+                          xs: "100%",
+                          xl: "150px",
+                        },
+                      }}
                     />
                   )}
                 />
 
                 <Autocomplete
+
                   id="ingredient-box"
                   options={sortedFoodOptions.map((option) => ({
                     title: option,
@@ -642,7 +651,7 @@ class RecipeDialog extends Component {
                       sx={{ flex: 1 }}
                     />
                   )}
-                  sx={{ width: "100%" }}
+                  sx={{ width: {xs: "100%", xl: "100%"} }}
                 />
                 <IconButton disableRipple onClick={this.handleAddIngredient}>
                   <AddCircleOutlineRoundedIcon

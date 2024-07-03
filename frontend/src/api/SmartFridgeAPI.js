@@ -2,7 +2,6 @@ import FridgeBO from "./FridgeBO";
 import GroceryBO from "./GroceryBO";
 import GroceryStatementBO from "./GroceryStatementBO";
 import HouseholdBO from "./HouseholdBO";
-// import InhabitantBO from "./InhabitantBO";
 import RecipeBO from "./RecipeBO";
 import UserBO from "./UserBO";
 import MeasureBO from "./MeasureBO";
@@ -545,114 +544,7 @@ export default class SmartFridgeAPI {
     });
   }
 
-  //   getInhabitantsByHouseholdId(householdId) {
-  //     console.log(JSON.stringify("Das ist die householdID", householdId)); // Debugging-Zweck
-  //     const url = this.#getInhabitantByIdURL(householdId); // Annahme, dass die URL-Methode die householdId benötigt
-  //     console.log("Fetching URL erfolgreich:", url); // Debugging-Zweck
-  //     return this.#fetchAdvanced(url).then((responseJSON) => {
-  //         return new Promise(function (resolve) {
-  //             resolve(responseJSON); // Rückgabe des JSON-Antwortobjekts
-  //         });
-  //     });
-  // }
-
-  // getInhabitantById(householdId) {
-  //   return this.#fetchAdvanced(this.#getInhabitantByIdURL(householdId)).then(
-  //     (responseJSON) => {
-  //       let responseInhabitantBO = responseJSON;
-  //       return new Promise(function (resolve) {
-  //         resolve(responseInhabitantBO);
-  //       });
-  //     }
-  //   );
-  // }
-
-  // addInhabitant({householdId, userId}) {
-  //   console.log(JSON.stringify("Das ist die UserID", userId));
-  //   console.log(JSON.stringify("Das ist die householdID", householdId));
-  //   return this.#fetchAdvanced(this.#addInhabitantURL(), {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       user_id: userId,
-  //       household_id: householdId,
-  //     }),
-  //   });
-  // }
-
-  // addInhabitant(inhabitant) {
-  //   console.log(JSON.stringify(inhabitant));
-
-  //   return this.#fetchAdvanced(this.#addInhabitantURL(), {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json, text/plain",
-  //       "Content-type": "application/json",
-  //     },
-  //     body: JSON.stringify(inhabitant),
-  //   }).then((responseJSON) => {
-  //     let responseInhabitantBO = responseJSON; // Anpassen je nach tatsächlichem API-Response-Format
-  //     return new Promise(function (resolve) {
-  //       resolve(responseInhabitantBO);
-  //     });
-  //   });
-  // }
-
-  // addInhabitant(inhabitantBO) {
-  //   return this.#fetchAdvanced(this.#addInhabitantURL(), {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json, text/plain",
-  //       "Content-type": "application/json",
-  //     },
-  //     body: JSON.stringify(inhabitantBO),
-  //   }).then((responseJSON) => {
-  //     let responseInhabitantBO = InhabitantBO.fromJSON(responseJSON)[0];
-  //     return new Promise(function (resolve) {
-  //       resolve(responseInhabitantBO);
-  //     });
-  //   });
-  // }
-
-  // addInhabitant(inhabitantBO) {
-  //   return this.#fetchAdvanced(this.#addInhabitantURL(), {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json, text/plain",
-  //       "Content-type": "application/json",
-  //     },
-  //     body: JSON.stringify(inhabitantBO),
-  //   }).then((responseJSON) => {
-  //     let responseInhabitantBO = InhabitantBO.fromJSON(responseJSON)[0];
-  //     return new Promise(function (resolve) {
-  //       resolve(responseInhabitantBO);
-  //     });
-  //   });
-  // }
-
-  // addInhabitant(inhabitantBO) {
-  //   return this.#fetchAdvanced(this.#addInhabitantURL(), {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json, text/plain",
-  //       "Content-type": "application/json",
-  //     },
-  //     body: JSON.stringify(inhabitantBO),
-  //   }
-  // }
-
-  // deleteInhabitant(inhabitantID) {
-  //   return this.#fetchAdvanced(this.#deleteInhabitantURL(inhabitantID), {
-  //     method: "DELETE",
-  //   }).then((responseJSON) => {
-  //     let responseInhabitantBO = InhabitantBO.fromJSON(responseJSON)[0];
-  //     return new Promise(function (resolve) {
-  //       resolve(responseInhabitantBO);
-  //     });
-  //   });
-  // }
+  
 
   /**  recipe related **/
 

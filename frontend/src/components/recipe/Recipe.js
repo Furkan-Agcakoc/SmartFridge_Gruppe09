@@ -211,9 +211,9 @@ const Recipe = ({
                 maxWidth: "200px",
                 fontSize: {
                   xs: "0.8rem",
-                  sm: "1rem",
-                  md: "1.2rem",
-                  xl: "1.2rem",
+                  sm: "0.9rem",
+                  md: "1rem",
+                  xl: "1rem",
                 },
               }}
             >

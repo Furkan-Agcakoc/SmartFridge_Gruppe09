@@ -288,7 +288,7 @@ class Settings extends Component {
             <Typography variant="h5" sx={{ ml: 1, p: 2, fontWeight: "bold" }}>
               Haushalt verwalten
             </Typography>
-            <Accordion sx={{ minWidth: { xs: "100%", sm: "850px" } }}>
+            <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
@@ -375,7 +375,7 @@ class Settings extends Component {
                 </List>
               </AccordionDetails>
             </Accordion>
-            <Accordion sx={{ minWidth: { xs: "100%", sm: "850px" } }}>
+            <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
@@ -484,7 +484,7 @@ class Settings extends Component {
               component="form"
               noValidate
               sx={{
-                width: { xs: "90%", sm: "1100px" },
+                width: { xs: "80%", sm: "80%", md: "85%", xl: "1100px" },
                 height: "auto",
                 position: "fixed",
                 top: { xs: "20%", sm: "35%" },
@@ -507,6 +507,7 @@ class Settings extends Component {
                     marginTop: "20px",
                     fontWeight: 600,
                     color: "text.primary",
+                    fontSize: { xs: "1.5rem", sm: "2rem" },
                   }}
                 >
                   {popupGroceryOpen

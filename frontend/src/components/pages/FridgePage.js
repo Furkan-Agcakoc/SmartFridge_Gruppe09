@@ -730,7 +730,7 @@ class FridgePage extends Component {
                       flexWrap: "wrap",
                       justifyContent: "flex-start",
                       marginTop: "10px",
-                      marginBottom: "-40px",
+                      marginBottom: "0px",
                       px: "0px",
                       gap: "25px",
                       width: {
@@ -866,15 +866,14 @@ class FridgePage extends Component {
                       px: "0px",
                       gap: "25px",
                       width: {
-                        xs: "110%",
+                        xs: "120%",
                         sm: "90%",
                         md: "895px",
                         lg: "895px",
                         xl: "100%",
                       },
-                      maxWidth: "895px",
                       position: "relative",
-                      top: "-18px",
+                      top: "-75px",
                     }}
                   >
                     <Container
@@ -889,62 +888,68 @@ class FridgePage extends Component {
                           xs: "329px",
                           sm: "85%",
                           md: "80%",
-                          xl: "100%",
+                          xl: "93%",
                         },
                       }}
                     >
-                      <Container sx={{ m: "0", p: "0", px: "0px" }}>
-                        <Button
-                          variant="text"
-                          sx={{
-                            px: "0px",
-                            fontSize: {
-                              xs: "0.55rem",
-                              sm: "0.8rem",
-                              md: "0.8rem",
-                              lg: "0.8rem",
-                              xl: "0.9rem",
-                            },
-                            width: {
-                              xs: "130px",
-                              sm: "200px",
-                              md: "200px",
-                              lg: "200px",
-                              xl: "200px",
-                            },
-                            position: "relative",
-                            left: {
-                              xs: "0",
-                              sm: "-25px",
-                              md: "-25px",
-                              lg: "-25px",
-                              xl: "-25px",
-                            },
-                            m: "0px",
-                            boxShadow: "10px",
-                            bgcolor: "primary.main",
-                            color: "background.card",
-                            fontWeight: "bold",
-                            "&:hover": {
-                              color: "success.dark",
-                              backgroundColor: "success.gwhite",
-                            },
-                          }}
-                          onClick={this.handleAvailableRecipes}
-                        >
-                          Verfügbare Rezepte
-                        </Button>
-                        <AlertComponent
-                          showAlert={showRecipeAlert}
-                          alertType="availableRecipes"
-                          severity="info"
-                          customMessage={this.state.availableRecipes}
-                          onClose={() =>
-                            this.setState({ showRecipeAlert: false })
-                          }
-                        />
-                      </Container>
-
+                      <Button
+                        variant="text"
+                        sx={{
+                          px: "0px",
+                          fontSize: {
+                            xs: "0.55rem",
+                            sm: "0.8rem",
+                            md: "0.8rem",
+                            lg: "0.8rem",
+                            xl: "0.9rem",
+                          },
+                          width: {
+                            xs: "130px",
+                            sm: "200px",
+                            md: "200px",
+                            lg: "200px",
+                            xl: "200px",
+                          },
+                          m: "0px",
+                          boxShadow: "10px",
+                          bgcolor: "primary.main",
+                          color: "background.card",
+                          fontWeight: "bold",
+                          "&:hover": {
+                            color: "success.dark",
+                            backgroundColor: "success.gwhite",
+                          },
+                        }}
+                        onClick={this.handleAvailableRecipes}
+                      >
+                        Verfügbare Rezepte
+                      </Button>
+                      <AlertComponent
+                        showAlert={showRecipeAlert}
+                        alertType="availableRecipes"
+                        severity="info"
+                        customMessage={this.state.availableRecipes}
+                        onClose={() =>
+                          this.setState({ showRecipeAlert: false })
+                        }
+                      />
+                    </Container>
+                    <Container
+                      sx={{
+                        display: { xs: "flex" },
+                        justifyContent: { xs: "flex-start" },
+                        alignItems: { xs: "center" },
+                        flexWrap: { xs: "wrap" },
+                        px: { xs: "0px" },
+                        gap: { xs: "25px" },
+                        width: {
+                          xs: "329px",
+                          sm: "85%",
+                          md: "80%",
+                          xl: "93%",
+                        },
+                      }}
+                    >
                       <Link onClick={() => this.handlePopupRecipeOpen(false)}>
                         <Tooltip
                           title="Neues Rezept hinzufügen"
@@ -956,8 +961,16 @@ class FridgePage extends Component {
                               display: "flex",
                               justifyContent: "center",
                               alignItems: "center",
-                              width: { xs: "150px", sm: "175px", md: "200px" },
-                              height: { xs: "100px", sm: "110px", md: "125px" },
+                              width: {
+                                xs: "150px",
+                                sm: "175px",
+                                md: "200px",
+                              },
+                              height: {
+                                xs: "100px",
+                                sm: "110px",
+                                md: "125px",
+                              },
                               borderRadius: "10px",
                               backgroundColor: "background.paper",
                               color: "primary.main",
@@ -982,7 +995,11 @@ class FridgePage extends Component {
                                 height: "auto",
                                 transform: "scaleX(-1)",
                                 position: "relative",
-                                top: { xs: "-20px", sm: "-25px", md: "-30px" },
+                                top: {
+                                  xs: "-20px",
+                                  sm: "-24px",
+                                  md: "-30px",
+                                },
                                 left: { xs: "35px", sm: "45px", md: "54px" },
                               }}
                             />
