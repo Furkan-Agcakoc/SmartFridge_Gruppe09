@@ -13,6 +13,9 @@ export default class RecipeBO extends BusinessObject {
         this.instruction = aInstruction;
         this.user_id = aUser_id;
         this.fridge_id = aFridge_id;
+        if (aId) {
+            this.setID(aId);
+        }
     }
 
     setRecipeName(aRecipe_name) {
@@ -63,19 +66,18 @@ export default class RecipeBO extends BusinessObject {
         this.fridge_id = aFridge_id;
     }
 
-
     static fromJSON(recipe) {
         let result = [];
 
         if (Array.isArray(recipe)) {
             recipe.forEach((a) => {
-                Object.setPrototypeOf(a, RecipeBO.prototype);
-                result.push(a);
-            })
+                let obj = new RecipeBO(a.recipe_name, a.duration, a.portion, a.instruction, a.user_id, a.fridge_id, a.id);
+                result.push(obj);
+            });
         } else {
             let a = recipe;
-            Object.setPrototypeOf(a, RecipeBO.prototype);
-            result.push(a);
+            let obj = new RecipeBO(a.recipe_name, a.duration, a.portion, a.instruction, a.user_id, a.fridge_id, a.id);
+            result.push(obj);
         }
 
         return result;
