@@ -560,11 +560,9 @@ class FridgePage extends Component {
   handleCreateRecipes = async (recipeData) => {
     const { currentlyEditing, fridgeId, recipes } = this.state;
     const userId = this.context.id;
-
+  
     const { ingredients, groceryUnit, ...rest } = recipeData;
-
-    // Ich glaube das macht die Probleme
-
+  
     const newRecipeData = new RecipeBO(
       rest.recipe_name,
       rest.duration,
@@ -574,18 +572,20 @@ class FridgePage extends Component {
       fridgeId,
       currentlyEditing ? currentlyEditing.id : null
     );
-
+  
     let createdRecipe;
-
+  
     if (currentlyEditing) {
       createdRecipe = await SmartFridgeAPI.getAPI().updateRecipe(newRecipeData);
-
+  
       console.log("createdRecipe variable after Update ====>", createdRecipe);
-
-      const updatedRecipes = this.updateRecipe(newRecipeData);
-
+  
+      const updatedRecipes = recipes.map((recipe) =>
+        recipe.id === createdRecipe.id ? createdRecipe : recipe
+      );
+  
       console.log("updatedRecipes variable after Update ====>", createdRecipe);
-
+  
       this.setState({
         recipes: updatedRecipes,
         popupRecipeOpen: false,
@@ -610,9 +610,23 @@ class FridgePage extends Component {
         currentlyEditing: null,
       });
     }
-
+    this.loadRecipeList();
     return createdRecipe;
   };
+  
+
+  
+  updateRecipe = (recipe) => {
+    const updatedRecipes = this.state.recipes.map((e) => {
+      if (recipe.recipeId === e.recipeId) {
+        return recipe;
+      }
+      return e;
+    });
+    console.log("Recipe updated:", updatedRecipes);
+    return updatedRecipes;
+  };
+  
 
   updateRecipe = (recipe) => {
     const updatedRecipes = this.state.recipes.map((e) => {
@@ -646,11 +660,6 @@ class FridgePage extends Component {
     } = this.state;
 
     const { dialogOpen, dialogType } = this.props;
-
-    // const editingGrocery = currentlyEditing
-    //   ? groceries.find((g) => g.groceryId === currentlyEditing)
-    //   : null;
-
     const editingRecipe = currentlyEditing;
 
     return (
@@ -1055,6 +1064,7 @@ class FridgePage extends Component {
                       }
                       handlePopupRecipeClose={this.handlePopupRecipeClose}
                       handleCreateRecipes={this.handleCreateRecipes}
+                      refreshRecipeList={this.loadRecipeList}
                     />
                   )}
                   <DeleteConfirmationDialog
