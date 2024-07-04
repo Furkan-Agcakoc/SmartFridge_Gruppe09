@@ -116,6 +116,8 @@ class FridgePage extends Component {
       });
   };
 
+
+
   getGroceryInFridgeId = async (fridgeId) => {
     try {
       const groceryStatements =

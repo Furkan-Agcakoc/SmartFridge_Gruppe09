@@ -40,6 +40,7 @@ class Settings extends Component {
       popupMeasureOpen: false,
       selectedGrocery: null,
       selectedMeasure: null,
+      GroceryList: [],
     };
     console.log("Constructor - Fridge ID:", this.state.fridgeId);
   }
@@ -51,7 +52,7 @@ class Settings extends Component {
 
     // Event listener to hide alerts on document click
     document.addEventListener("click", this.handleDocumentClick);
-    console.log("Groceries", this.state.groceries);
+    this.loadGroceryStatements();
   }
 
   componentWillUnmount() {
@@ -59,7 +60,11 @@ class Settings extends Component {
     document.removeEventListener("click", this.handleDocumentClick);
   }
 
-  componentDidUpdate() {}
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.GroceryList !== this.state.GroceryList) {
+      console.log("GroceryList ===>", this.state.GroceryList);
+    }
+  }
 
   handleDocumentClick = () => {
     this.setState({
@@ -220,9 +225,21 @@ class Settings extends Component {
   };
 
   handleDeleteGrocery = (groceryId) => (e) => {
+    const isExisting = this.state.GroceryList.some(grocery => grocery.grocery_id === groceryId)
+    if (isExisting) {
+      alert('Grocery is already in use');
+      return;
+    }
+
     e.stopPropagation();
     this.deleteGrocery(groceryId);
   };
+
+  loadGroceryStatements = async () => {
+    const Groceries = await SmartFridgeAPI.getAPI().getGroceryStatement()
+    console.log('Groceries after fetch ===>', Groceries)
+    this.setState({ GroceryList: Groceries });
+  }
 
   handleDeleteMeasure = (measureId) => (e) => {
     e.stopPropagation();
@@ -257,6 +274,7 @@ class Settings extends Component {
       popupMeasureOpen,
       selectedGrocery,
       selectedMeasure,
+      GroceryList,
     } = this.state;
 
     return (
