@@ -37,7 +37,7 @@ const AlertComponent = ({
     <Alert
       severity={severity}
       onClose={onClose}
-      sx={{ width: "auto", marginBottom: "20px" }}
+      sx={{ width: "auto", marginBottom: "20px", mx: "5px" }}
     >
       <Box dangerouslySetInnerHTML={{ __html: message }} />
     </Alert>

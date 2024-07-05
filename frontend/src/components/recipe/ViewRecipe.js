@@ -23,7 +23,7 @@
     refreshGroceryList,
   }) => {
     const [nickname, setNickname] = useState("");
-    const [showAlert, setShowAlert] = useState(false);
+    const [showAlert] = useState(false);
     const [responseMessage, setResponseMessage] = useState(""); 
     const [responseDialogOpen, setResponseDialogOpen] = useState(false); 
 
@@ -162,7 +162,6 @@
           open={responseDialogOpen}
           onClose={handleResponseDialogClose}
         >
-          <DialogTitle>Response</DialogTitle>
           <DialogContent>
             <Typography>{responseMessage}</Typography>
           </DialogContent>

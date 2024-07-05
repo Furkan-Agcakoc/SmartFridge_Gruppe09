@@ -449,7 +449,7 @@ class GroceryDialog extends Component {
                     this.setState({
                       groceryData: {
                         ...this.state.groceryData,
-                        quantity: parseInt(e.target.value),
+                        quantity: parseFloat(e.target.value)
                       },
                     })
                   }

@@ -500,7 +500,7 @@ class RecipeDialog extends Component {
                     this.setState((prevState) => ({
                       ingredientData: {
                         ...prevState.ingredientData,
-                        [name]: parseInt(value),
+                        [name]: parseFloat(value),
                       },
                     }));
                   }}
