@@ -43,7 +43,7 @@ CREATE TABLE `household` (
   `id` int NOT NULL DEFAULT '0',
   `household_name` varchar(100) NOT NULL DEFAULT '',
   `owner_id` int,
-  FOREIGN KEY (`owner_id`) REFERENCES users (`id`),
+  FOREIGN KEY (`owner_id`) REFERENCES user (`id`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -108,15 +108,15 @@ CREATE TABLE IF NOT EXISTS `grocerystatement` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Table structure for table `users`
+-- Table structure for table `user`
 --
 
-DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `user`;
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 
-CREATE TABLE `users` (
+CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `firstname` varchar(128) NOT NULL DEFAULT '',
   `lastname` varchar(256) NOT NULL DEFAULT '',
@@ -146,44 +146,44 @@ CREATE TABLE `recipe` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `fridge_id` (`fridge_id`),
-  CONSTRAINT `recipe_fk1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `recipe_fk1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `recipe_fk2` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Table structure for table `grocery_in_recipe`
+-- Table structure for table `grocerystatement_in_recipe`
 --
 
-DROP TABLE IF EXISTS `grocery_in_recipe`;
+DROP TABLE IF EXISTS `grocerystatement_in_recipe`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 
-CREATE TABLE `grocery_in_recipe` (
+CREATE TABLE `grocerystatement_in_recipe` (
   `grocerystatement_id` int NOT NULL DEFAULT '0',
   `recipe_id` int NOT NULL DEFAULT '0',
     PRIMARY KEY (`grocerystatement_id`, `recipe_id`),
     KEY `grocerystatement_id` (`grocerystatement_id`),
     KEY `recipe_id` (`recipe_id`),
-    CONSTRAINT `grocery_in_recipe_fk1` FOREIGN KEY (`grocerystatement_id`) REFERENCES `grocerystatement` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `grocery_in_recipe_fk2` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`) ON DELETE CASCADE
+    CONSTRAINT `grocerystatement_in_recipe_fk1` FOREIGN KEY (`grocerystatement_id`) REFERENCES `grocerystatement` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `grocerystatement_in_recipe_fk2` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
--- Table structure for table `grocery_in_fridge`
+-- Table structure for table `grocerystatement_in_fridge`
 --
 
-DROP TABLE IF EXISTS `grocery_in_fridge`;
+DROP TABLE IF EXISTS `grocerystatement_in_fridge`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 
-CREATE TABLE `grocery_in_fridge` (
+CREATE TABLE `grocerystatement_in_fridge` (
   `grocerystatement_id` int NOT NULL DEFAULT '0',
   `fridge_id` int NOT NULL DEFAULT '0',
     PRIMARY KEY (`grocerystatement_id`, `fridge_id`),
     KEY `grocerystatement_id` (`grocerystatement_id`),
     KEY `fridge_id` (`fridge_id`),
-    CONSTRAINT `grocery_in_fridge_fk1` FOREIGN KEY (`grocerystatement_id`) REFERENCES `grocerystatement` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `grocery_in_fridge_fk2` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
+    CONSTRAINT `grocerystatement_in_fridge_fk1` FOREIGN KEY (`grocerystatement_id`) REFERENCES `grocerystatement` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `grocerystatement_in_fridge_fk2` FOREIGN KEY (`fridge_id`) REFERENCES `fridge` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
@@ -201,7 +201,7 @@ CREATE TABLE `inhabitant` (
   KEY `household_id` (`household_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `inhabitant_fk1` FOREIGN KEY (`household_id`) REFERENCES `household` (`id`),
-  CONSTRAINT `inhabitant_fk2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  CONSTRAINT `inhabitant_fk2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

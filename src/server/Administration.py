@@ -95,14 +95,14 @@ class Administration():
         with HouseholdMapper() as mapper:
 
             fridge = self.get_frdige_by_household_id(household.get_id())
-            users = self.get_users_by_household_id(household.get_id())
+            user = self.get_user_by_household_id(household.get_id())
 
             try:
                 for i in fridge:
                     self.delete_fridge(i)
 
-                if len(users) > 0:
-                    for i in users:
+                if len(user) > 0:
+                    for i in user:
                         self.delete_inhabitant(i.get_id(), household.get_id())
 
                 if i in fridge:
@@ -332,7 +332,7 @@ class Administration():
             return mapper.find_by_google_user_id(id)
 
 
-    def get_all_users(self):
+    def get_all_user(self):
         with UserMapper() as mapper:
             return mapper.find_all()
 
@@ -404,10 +404,10 @@ class Administration():
             return i
 
 
-    def get_users_by_household_id(self, household_id):
+    def get_user_by_household_id(self, household_id):
 
         with HouseholdMapper() as mapper:
-            user_ids = mapper.get_users_by_household_id(household_id)
+            user_ids = mapper.get_user_by_household_id(household_id)
             result = []
 
             for i in user_ids:
@@ -420,7 +420,7 @@ class Administration():
             return mapper.find_by_user_id(user_id)
 
     """
-    Grocery_In_Fridge Spezifische Methoden
+    grocerystatement_in_fridge Spezifische Methoden
     """
     def create_grocery_in_frige(self, grocerystatement_id, fridge_id):
         with GroceryStatementMapper() as mapper:
@@ -431,24 +431,24 @@ class Administration():
         with GroceryStatementMapper() as mapper:
             return mapper.deleteGroceryInFridge(grocerystatement_id, fridge_id)
 
-    def get_grocery_in_fridge(self, fridge_id):
+    def get_grocerystatement_in_fridge(self, fridge_id):
         with GroceryStatementMapper() as mapper:
             return mapper.find_by_fridge_id(fridge_id)
 
 
     """
-    Grocery_in_Recipe Spezifische Methoden
+    grocerystatement_in_recipe Spezifische Methoden
     """
 
-    def create_grocery_in_recipe(self, grocerystatement_id, recipe_id):
+    def create_grocerystatement_in_recipe(self, grocerystatement_id, recipe_id):
         with GroceryStatementMapper() as mapper:
             return mapper.createGroceryInRecipe(grocerystatement_id, recipe_id)
 
-    def delete_grocery_in_recipe(self, grocerystatement_id, recipe_id):
+    def delete_grocerystatement_in_recipe(self, grocerystatement_id, recipe_id):
         with GroceryStatementMapper() as mapper:
             return mapper.deleteGroceryInRecipe(grocerystatement_id, recipe_id)
 
-    def get_grocery_in_recipe(self, recipe_id):
+    def get_grocerystatement_in_recipe(self, recipe_id):
         with GroceryStatementMapper() as mapper:
             return mapper.find_by_recipe_id(recipe_id)
 
@@ -597,7 +597,7 @@ class Administration():
 
     def check_recipes(self, fridge_id):
         recipes = self.get_recipe_by_fridge_id(fridge_id)
-        fridge_content = self.get_grocery_in_fridge(fridge_id)
+        fridge_content = self.get_grocerystatement_in_fridge(fridge_id)
 
         response_messages = []
 

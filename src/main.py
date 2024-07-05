@@ -65,7 +65,7 @@ recipe = api.inherit('Recipe', bo, {
     'portion': fields.Integer(attribute='_portion', description='Portion eines Rezepts'),
     'instruction': fields.String(attribute='_instruction', description='Anleitung eines Rezepts'),
     'duration': fields.String(attribute='_duration', description='Dauer eines Rezepts'),
-    'user_id': fields.Integer(attribute='_user_id', description='Die Id eines Users'),
+    'user_id': fields.Integer(attribute='_user_id', description='Die Id eines user'),
     'fridge_id': fields.Integer(attribute='_fridge_id', description='Die Id eines Kühlschrankes'),
 })
 
@@ -76,7 +76,7 @@ grocery = api.inherit('Grocery', bo, {
 
 household = api.inherit('Household', bo, {
     'household_name': fields.String(attribute='_household_name', description='Name des Haushalts'),
-    'owner_id': fields.Integer(attribute='_owner_id', description='Die Id eines Users')
+    'owner_id': fields.Integer(attribute='_owner_id', description='Die Id eines user')
 })
 
 grocerystatement = api.inherit('GroceryStatement', bo, {
@@ -126,15 +126,15 @@ class InhabitantOperations(Resource):
     @secured
     def get(self, household_id):
 
-        'Wiedergabe von Users durch Household ID'
+        'Wiedergabe von user durch Household ID'
 
         adm = Administration()
-        return adm.get_users_by_household_id(household_id)
+        return adm.get_user_by_household_id(household_id)
 
 
-# Grocery_in_Fridge
+# grocerystatement_in_fridge
 
-@smartfridge.route('/grocery_in_fridge')
+@smartfridge.route('/grocerystatement_in_fridge')
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class GroceryInFridgeOperations(Resource):
 
@@ -149,7 +149,7 @@ class GroceryInFridgeOperations(Resource):
         adm = Administration()
         return adm.create_grocery_in_frige(grocerystatement_id, frdige_id)
 
-@smartfridge.route('/grocery_in_fridge/<int:grocerystatement_id>/<int:fridge_id>')
+@smartfridge.route('/grocerystatement_in_fridge/<int:grocerystatement_id>/<int:fridge_id>')
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class GroceryInFridgeOperations(Resource):
     def delete(self, grocerystatement_id, fridge_id):
@@ -159,7 +159,7 @@ class GroceryInFridgeOperations(Resource):
         adm.delete_grocery_in_frige(grocerystatement_id, fridge_id)
         return "", 200
 
-@smartfridge.route('/grocery_in_fridge/<int:fridge_id>')
+@smartfridge.route('/grocerystatement_in_fridge/<int:fridge_id>')
 @smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
 @smartfridge.param('fridge_id', 'fridge_id')
 class GroceryInFridgeOperations(Resource):
@@ -176,7 +176,7 @@ class GroceryInFridgeOperations(Resource):
 """
 Grocery in Recipe
 """
-@smartfridge.route('/grocery_in_recipe')
+@smartfridge.route('/grocerystatement_in_recipe')
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class GroceryInRecipeOperations(Resource):
 
@@ -189,19 +189,19 @@ class GroceryInRecipeOperations(Resource):
         recipe_id = api.payload["recipe_id"]
 
         adm = Administration()
-        return adm.create_grocery_in_recipe(grocerystatement_id, recipe_id)
+        return adm.create_grocerystatement_in_recipe(grocerystatement_id, recipe_id)
 
-@smartfridge.route('/grocery_in_recipe/<int:grocerystatement_id>/<int:recipe_id>')
+@smartfridge.route('/grocerystatement_in_recipe/<int:grocerystatement_id>/<int:recipe_id>')
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class GroceryInFridgeOperations(Resource):
     def delete(self, grocerystatement_id, recipe_id):
         'Löschen eines Inhabitants aus dem Household'
 
         adm = Administration()
-        adm.delete_grocery_in_recipe(grocerystatement_id, recipe_id)
+        adm.delete_grocerystatement_in_recipe(grocerystatement_id, recipe_id)
         return "", 200
 
-@smartfridge.route('/grocery_in_recipe/<int:recipe_id>')
+@smartfridge.route('/grocerystatement_in_recipe/<int:recipe_id>')
 @smartfridge.response(500,'Wenn es zu einem Server Fehler kommt.')
 @smartfridge.param('recipe_id', 'recipe_id')
 class GroceryInFridgeOperations(Resource):
@@ -212,7 +212,7 @@ class GroceryInFridgeOperations(Resource):
         'Wiedergabe von Grocerystatement durch Recipe ID'
 
         adm = Administration()
-        gsr = adm.get_grocery_in_recipe(recipe_id)
+        gsr = adm.get_grocerystatement_in_recipe(recipe_id)
         return gsr
 
 
@@ -227,7 +227,7 @@ class UserListOperations(Resource):
     def get(self):
         "Wiedergabe der User Objekts"
         adm = Administration()
-        user_list = adm.get_all_users()
+        user_list = adm.get_all_user()
         if len(user_list) == 0:
             return {'message': 'Liste ist leer'}
         return user_list

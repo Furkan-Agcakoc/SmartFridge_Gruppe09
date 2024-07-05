@@ -11,7 +11,7 @@ class UserMapper (Mapper):
 
         result = []
         cursor = self._cnx.cursor()
-        cursor.execute("SELECT * FROM users")
+        cursor.execute("SELECT * FROM user")
         tuples = cursor.fetchall()
 
         for (id, firstname, lastname, nickname, email, google_user_id) in tuples:
@@ -33,7 +33,7 @@ class UserMapper (Mapper):
 
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT * from users WHERE firstname LIKE '{}' ORDER BY firstname".format(firstname)
+        command = "SELECT * from user WHERE firstname LIKE '{}' ORDER BY firstname".format(firstname)
         cursor.excecute(command)
         tuples = cursor.fetchall()
 
@@ -56,7 +56,7 @@ class UserMapper (Mapper):
 
         result = []
         cursor = self._cnx.cursor()
-        command = "SELECT * from users WHERE lastname LIKE '{}' ORDER BY lastname".format(lastname)
+        command = "SELECT * from user WHERE lastname LIKE '{}' ORDER BY lastname".format(lastname)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
@@ -79,7 +79,7 @@ class UserMapper (Mapper):
 
         result = None
         cursor = self._cnx.cursor()
-        command = "SELECT * from users WHERE nickname={}".format(nickname)
+        command = "SELECT * from user WHERE nickname={}".format(nickname)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
@@ -105,7 +105,7 @@ class UserMapper (Mapper):
 
         result = None
         cursor = self._cnx.cursor()
-        command = "SELECT * from users WHERE email={}".format(email)
+        command = "SELECT * from user WHERE email={}".format(email)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
@@ -131,7 +131,7 @@ class UserMapper (Mapper):
         result = None
 
         with self._cnx.cursor() as cursor:
-            command = "SELECT * FROM users WHERE google_user_id = %s"
+            command = "SELECT * FROM user WHERE google_user_id = %s"
             cursor.execute(command, (google_user_id,))
             tuples = cursor.fetchall()
 
@@ -152,7 +152,7 @@ class UserMapper (Mapper):
 
         result = None
         cursor = self._cnx.cursor()
-        command = "SELECT * from users WHERE id={}".format(key)
+        command = "SELECT * from user WHERE id={}".format(key)
         cursor.execute(command)
         tuples = cursor.fetchall()
 
@@ -195,7 +195,7 @@ class UserMapper (Mapper):
     def insert(self, user):
 
         cursor = self._cnx.cursor()
-        cursor.execute("SELECT MAX(id) AS maxid FROM users")
+        cursor.execute("SELECT MAX(id) AS maxid FROM user")
         tuples = cursor.fetchall()
 
         for (maxid) in tuples:
@@ -204,7 +204,7 @@ class UserMapper (Mapper):
             else:
                 user.set_id(1)
 
-        command = "INSERT INTO users (id, firstname, lastname, nickname,email,google_user_id) VALUES (%s,%s,%s,%s,%s,%s)"
+        command = "INSERT INTO user (id, firstname, lastname, nickname,email,google_user_id) VALUES (%s,%s,%s,%s,%s,%s)"
         data = (user.get_id(), user.get_firstname(), user.get_lastname(), user.get_nickname(), user.get_email(), user.get_google_user_id())
         cursor.execute(command, data)
 
@@ -215,7 +215,7 @@ class UserMapper (Mapper):
 
     def update(self, user):
         cursor = self._cnx.cursor()
-        command = "UPDATE users SET firstname=%s, lastname=%s, nickname=%s, email=%s, google_user_id=%s WHERE id=%s"
+        command = "UPDATE user SET firstname=%s, lastname=%s, nickname=%s, email=%s, google_user_id=%s WHERE id=%s"
         data = (user.get_firstname(),user.get_lastname(), user.get_nickname(), user.get_email(), user.get_google_user_id(), user.get_id())
         cursor.execute(command, data)
 
@@ -226,7 +226,7 @@ class UserMapper (Mapper):
         if user is None:
             return
         cursor = self._cnx.cursor()
-        command = "DELETE FROM users WHERE id={}".format(user.get_id())
+        command = "DELETE FROM user WHERE id={}".format(user.get_id())
         cursor.execute(command)
         self._cnx.commit()
         cursor.close()
