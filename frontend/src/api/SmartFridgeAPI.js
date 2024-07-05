@@ -11,7 +11,7 @@ export default class SmartFridgeAPI {
   static #api = null;
 
   // Local Python backend
-  #SmartFridgeBaseURL = "http://127.0.0.1:5000/Smartfridge";
+  #SmartFridgeBaseURL = "/Smartfridge";
 
   /**
    * Get the Singelton instance

@@ -36,15 +36,17 @@ def secured(function):
                 # http://flask.pocoo.org/docs/1.0/quickstart/#sessions).
                 claims = google.oauth2.id_token.verify_firebase_token(
                     id_token, firebase_request_adapter)
+                print("claims:", claims)
+
 
                 if claims is not None:
                     adm = Administration()
 
                     google_user_id = claims.get("user_id")
                     email = claims.get("email")
-                    firstname = claims.get("firstname")
-                    lastname = claims.get("lastname")
-                    nickname = claims.get("nickname")
+                    firstname = claims.get("name").split(" ")[0]
+                    lastname = claims.get("name").split(" ")[1]
+                    nickname = claims.get("email").split("@")[0]
 
                     user = adm.get_user_by_google_user_id(google_user_id)
                     if user is not None:
@@ -53,12 +55,13 @@ def secured(function):
                         Wohl aber können sich der zugehörige Klarname (name) und die
                         E-Mail-Adresse ändern. Daher werden diese beiden Daten sicherheitshalber
                         in unserem System geupdated."""
-                        user.set_user_id(id)
+                        #user.set_user_id(id)
                         user.set_email(email)
                         user.set_firstname(firstname)
                         user.set_lastname(lastname)
                         user.set_nickname(nickname)
-                        adm.update_user(user)
+                        user.set_google_user_id(google_user_id)
+                        #adm.update_user(user)
 
                     else:
                         """Fall: Der Benutzer war bislang noch nicht eingelogged. 

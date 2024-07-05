@@ -33,13 +33,14 @@ class Settings extends Component {
       groceries: [],
       measures: [],
       fridgeId: this.props.fridgeId,
-      showAlertGroceryDelete: false,
-      showAlertMeasureDelete: false,
       showAlertEdit: false,
+      showAlertMeasureDelete: false,
+      showAlertGroceryDelete: false,
       popupGroceryOpen: false,
       popupMeasureOpen: false,
       selectedGrocery: null,
       selectedMeasure: null,
+      GroceryList: [],
     };
     console.log("Constructor - Fridge ID:", this.state.fridgeId);
   }
@@ -51,7 +52,7 @@ class Settings extends Component {
 
     // Event listener to hide alerts on document click
     document.addEventListener("click", this.handleDocumentClick);
-    console.log("Groceries", this.state.groceries);
+    this.loadGroceryStatements();
   }
 
   componentWillUnmount() {
@@ -59,14 +60,12 @@ class Settings extends Component {
     document.removeEventListener("click", this.handleDocumentClick);
   }
 
-  componentDidUpdate() {}
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.GroceryList !== this.state.GroceryList) {
+      console.log("GroceryList ===>", this.state.GroceryList);
+    }
+  }
 
-  handleDocumentClick = () => {
-    this.setState({
-      showAlertGroceryDelete: false,
-      showAlertMeasureDelete: false,
-    });
-  };
 
   handleClick = (e) => {
     const form = e.target.closest("form");
@@ -108,6 +107,68 @@ class Settings extends Component {
     this.setState({
       measures: measures,
     });
+  };
+
+  editGrocery = (groceryId) => {
+    const selectedGrocery = this.state.groceries.find(
+      (grocery) => grocery.id === groceryId
+    );
+    this.setState({
+      popupGroceryOpen: true,
+      selectedGrocery,
+    });
+  };
+
+  editMeasure = (measureId) => {
+    const selectedMeasure = this.state.measures.find(
+      (measure) => measure.id === measureId
+    );
+    this.setState({
+      popupMeasureOpen: true,
+      selectedMeasure,
+    });
+  };
+
+  updateGrocery = async (grocery) => {
+    try {
+      const updatedGrocery = await SmartFridgeAPI.getAPI().updateGrocery(
+        grocery
+      );
+      this.props.refreshGroceryList();
+      this.setState((prevState) => ({
+        groceries: prevState.groceries.map((g) =>
+          g.id === updatedGrocery.id ? updatedGrocery : g
+        ),
+        popupGroceryOpen: false,
+        selectedGrocery: null,
+      }));
+    } catch (error) {
+      this.setState({ showAlertEdit: true });
+    }
+  };
+
+  updateMeasure = async (measure) => {
+    try {
+      const updatedMeasure = await SmartFridgeAPI.getAPI().updateMeasure(
+        measure
+      );
+      this.props.refreshGroceryList();
+      this.setState((prevState) => ({
+        measures: prevState.measures.map((m) =>
+          m.id === updatedMeasure.id ? updatedMeasure : m
+        ),
+        popupMeasureOpen: false,
+        selectedMeasure: null,
+      }));
+    } catch (error) {
+      this.setState({ showAlertEdit: true });
+    }
+  };
+
+  loadGroceryStatements = async () => {
+    const Groceries = await SmartFridgeAPI.getAPI().getGroceryStatement();
+    console.log("Groceries after fetch ===>", Groceries);
+    this.setState({ GroceryList: Groceries });
   };
 
   deleteGrocery = async (groceryId) => {
@@ -154,81 +215,32 @@ class Settings extends Component {
       });
   };
 
-  editGrocery = (groceryId) => {
-    const selectedGrocery = this.state.groceries.find(
-      (grocery) => grocery.id === groceryId
-    );
-    this.setState({
-      popupGroceryOpen: true,
-      selectedGrocery,
-    });
-  };
-
-  editMeasure = (measureId) => {
-    const selectedMeasure = this.state.measures.find(
-      (measure) => measure.id === measureId
-    );
-    this.setState({
-      popupMeasureOpen: true,
-      selectedMeasure,
-    });
-  };
-
-  updateGrocery = async (grocery) => {
-    try {
-      const updatedGrocery = await SmartFridgeAPI.getAPI().updateGrocery(
-        grocery
-      );
-      this.props.refreshGroceryList()
-      this.setState((prevState) => ({
-        groceries: prevState.groceries.map((g) =>
-          g.id === updatedGrocery.id ? updatedGrocery : g
-        ),
-        popupGroceryOpen: false,
-        selectedGrocery: null,
-      }));
-    } catch (error) {
-      this.setState({ showAlertEdit: true });
-    }
-  };
-
-  // {
-  //   "id": 0,
-  //   "firstname": "string",
-  //   "lastname": "string",
-  //   "nickname": "string",
-  //   "email": "string",
-  //   "google_user_id": "string"
-  // }
-
-  updateMeasure = async (measure) => {
-    try {
-      const updatedMeasure = await SmartFridgeAPI.getAPI().updateMeasure(
-        measure
-      );
-      this.props.refreshGroceryList()
-      this.setState((prevState) => ({
-        measures: prevState.measures.map((m) =>
-          m.id === updatedMeasure.id ? updatedMeasure : m
-        ),
-        popupMeasureOpen: false,
-        selectedMeasure: null,
-      }));
-    } catch (error) {
-      this.setState({ showAlertEdit: true });
-    }
-  };
-
+ 
   handleDeleteGrocery = (groceryId) => (e) => {
+    const isExisting = this.state.GroceryList.some(
+      (grocery) => grocery.grocery_id === groceryId
+    );
+    if (isExisting) {
+      this.setState({ showAlertGroceryDelete: true });
+      return;
+    }
+
     e.stopPropagation();
     this.deleteGrocery(groceryId);
   };
 
   handleDeleteMeasure = (measureId) => (e) => {
+    const isExisting = this.state.GroceryList.some(
+      (measure) => measure.unit_id === measureId
+    );
+    if (isExisting) {
+      this.setState({ showAlertMeasureDelete: true });
+      return;
+    }
+
     e.stopPropagation();
     this.deleteMeasure(measureId);
   };
-
   handleEditGrocery = (groceryId) => (e) => {
     e.stopPropagation();
     this.editGrocery(groceryId);
@@ -257,6 +269,7 @@ class Settings extends Component {
       popupMeasureOpen,
       selectedGrocery,
       selectedMeasure,
+      showAlertEdit,
     } = this.state;
 
     return (
@@ -300,7 +313,6 @@ class Settings extends Component {
                   Lebensmittel bearbeiten{" "}
                 </Typography>
               </AccordionSummary>
-
               <AccordionDetails
                 sx={{ display: "flex", justifyContent: "center", m: 0, p: 0 }}
               >
@@ -308,6 +320,7 @@ class Settings extends Component {
                   sx={{
                     width: { xs: "100%", sm: "600px" },
                     marginBottom: "30px",
+                    mx: "5px",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -316,6 +329,9 @@ class Settings extends Component {
                   <AlertComponent
                     showAlert={showAlertGroceryDelete}
                     alertType="SettingsGroceryDelete"
+                    onClose={() =>
+                      this.setState({ showAlertGroceryDelete: false })
+                    }
                   />
                   {groceries.map((grocery) => (
                     <ListItem
@@ -395,6 +411,7 @@ class Settings extends Component {
                   sx={{
                     width: { xs: "100%", sm: "600px" },
                     marginBottom: "30px",
+                    mx: "5px",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -402,7 +419,10 @@ class Settings extends Component {
                 >
                   <AlertComponent
                     showAlert={showAlertMeasureDelete}
-                    alertType="SettingsMeasureDelete"
+                    alertType="SettingsEdit"
+                    onClose={() =>
+                      this.setState({ showAlertMeasureDelete: false })
+                    }
                   />
                   {measures.map((measure) => (
                     <ListItem
@@ -517,8 +537,9 @@ class Settings extends Component {
                     : "Einheit bearbeiten"}
                 </Typography>
                 <AlertComponent
-                  showAlert={this.state.showAlertEdit}
+                  showAlert={showAlertEdit}
                   alertType="SettingsEdit"
+                  onClose={() => this.setState({ showAlertEdit: false })}
                 />
                 <Box
                   sx={{
