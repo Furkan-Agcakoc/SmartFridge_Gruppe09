@@ -214,7 +214,7 @@ User
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class UserListOperations(Resource):
     @smartfridge.marshal_list_with(user)
-   # @secured
+    @secured
     def get(self):
         "Wiedergabe der User Objekts"
         adm = Administration()
@@ -226,7 +226,7 @@ class UserListOperations(Resource):
     @smartfridge.marshal_with(user, code=200)
 
     @smartfridge.expect(user)
-    # @secured
+    @secured
     def post(self):
         """Erstellen eines User Objekts"""
 
@@ -247,14 +247,14 @@ class UserListOperations(Resource):
 @smartfridge.param('id', 'Die ID des User-Objekts')
 class UserOperations(Resource):
     @smartfridge.marshal_with(user)
-   # @secured
+    @secured
     def get(self, id):
         "Wiedergabe eines User Objekts durch ID"
         adm = Administration()
         user = adm.get_user_by_id(id)
         return user
 
-   # @secured
+    @secured
     def delete(self, id):
         "Löschen eines User Objekts"
         adm = Administration()
@@ -264,7 +264,7 @@ class UserOperations(Resource):
 
     @smartfridge.marshal_with(user)
     @smartfridge.expect(user, validate=True)
-   # @secured
+    @secured
     def put(self, id):
         "Updaten eines User Objekts"
         adm = Administration()
@@ -281,6 +281,7 @@ class UserOperations(Resource):
 @smartfridge.param('google_user_id', 'Die Google ID des User-Objekts')
 class GoogleOperations(Resource):
     @smartfridge.marshal_with(user)
+    @secured
     def get(self, google_user_id):
         "Wiedergabe eines User Objekts durch GoogleID"
         adm = Administration()
@@ -297,7 +298,7 @@ Household
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class HouseholdListOperations(Resource):
     @smartfridge.marshal_list_with(household)
-   # @secured
+    @secured
     def get(self):
         "Wiedergabe der Household Objekts"
         adm = Administration()
@@ -308,7 +309,7 @@ class HouseholdListOperations(Resource):
 
     @smartfridge.marshal_with(household, code=200)
     @smartfridge.expect(household)
-    # @secured
+    @secured
     def post(self):
         
         """Erstellen eines Household Objekts"""
