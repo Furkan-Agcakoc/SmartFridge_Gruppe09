@@ -33,7 +33,7 @@ const Grocery = ({
   };
 
   if (!groceryStatements || Object.keys(groceryStatements).length === 0) {
-    return <div>Loading...</div>;
+    return;
   }
 
   return groceryStatements.map((grocery) => (

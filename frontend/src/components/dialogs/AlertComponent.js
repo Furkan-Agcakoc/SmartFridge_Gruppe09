@@ -7,13 +7,8 @@ import Box from "@mui/material/Box"; // Import Box
 const alertMessages = {
   household: "Bitte geben Sie einen Haushaltsnamen ein!",
   grocery: "Bitte füllen Sie alle Felder aus!",
-  recipe: (
-    <Box>
-      Bitte füllen Sie aller Felder aus! <br />
-      Beachten Sie, dass mindestens eine Zutat in der Zutatenliste enthalten
-      ist!
-    </Box>
-  ),
+  recipe:
+    "Bitte füllen Sie aller Felder aus! Beachten Sie, dass mindestens eine Zutat in der Zutatenliste enthalten ist!",
   profile: "Bitte füllen Sie alle Felder aus!",
   SettingsGroceryDelete:
     "Lebensmittel kann nicht gelöscht werden, da es im Kühlschrank verwendet wird!",
@@ -39,7 +34,11 @@ const AlertComponent = ({
   const message = customMessage || alertMessages[alertType];
 
   return (
-    <Alert severity={severity} onClose={onClose} sx={{ width: "auto", marginBottom: "20px" }}>
+    <Alert
+      severity={severity}
+      onClose={onClose}
+      sx={{ width: "auto", marginBottom: "20px" }}
+    >
       <Box dangerouslySetInnerHTML={{ __html: message }} />
     </Alert>
   );

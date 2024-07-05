@@ -87,7 +87,7 @@ measure = api.inherit('Measure', bo, {
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class InhabitantOperations(Resource):
 
- #   @secured
+    @secured
     def post(self):
 
         'Erstellen eines Inhabitant Objekts.'
@@ -114,7 +114,7 @@ class InhabitantDeleteOperations(Resource):
 @smartfridge.param('household_id', 'household_id')
 class InhabitantOperations(Resource):
     @smartfridge.marshal_list_with(user)
-    #@secured
+    @secured
     def get(self, household_id):
 
         'Wiedergabe von Users durch Household ID'
@@ -129,7 +129,7 @@ class InhabitantOperations(Resource):
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class GroceryInFridgeOperations(Resource):
 
- #   @secured
+    @secured
     def post(self):
 
         'Erstellen eines GroceryInFridge Objekts.'
@@ -155,7 +155,7 @@ class GroceryInFridgeOperations(Resource):
 @smartfridge.param('fridge_id', 'fridge_id')
 class GroceryInFridgeOperations(Resource):
     @smartfridge.marshal_list_with(grocerystatement)
-    #@secured
+    @secured
     def get(self, fridge_id):
 
         'Wiedergabe von Grocerystatement durch Fridge ID'
@@ -171,7 +171,7 @@ Grocery in Recipe
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
 class GroceryInRecipeOperations(Resource):
 
- #   @secured
+    @secured
     def post(self):
 
         'Erstellen eines GroceryInRecipe Objekts.'
@@ -197,7 +197,7 @@ class GroceryInFridgeOperations(Resource):
 @smartfridge.param('recipe_id', 'recipe_id')
 class GroceryInFridgeOperations(Resource):
     @smartfridge.marshal_list_with(grocerystatement)
-    #@secured
+    @secured
     def get(self, recipe_id):
 
         'Wiedergabe von Grocerystatement durch Recipe ID'
@@ -332,7 +332,7 @@ class HouseholdListOperations(Resource):
 @smartfridge.param('id', 'Die ID des Haushalts.')
 class HouseholdOperations(Resource):
     @smartfridge.marshal_with(household)
-   # @secured
+    @secured
     def get(self, id):
         """Wiedergeben von Household ID"""
         adm = Administration()
@@ -341,7 +341,7 @@ class HouseholdOperations(Resource):
             return "Haushalt mit der ID " + str(id) + " wurde nicht gefunden.", 404
         return household, 200
 
-   # @secured
+    @secured
     def delete(self, id):
         """Löschen eines Household Objekts"""
         adm = Administration()
@@ -354,7 +354,7 @@ class HouseholdOperations(Resource):
 
     @smartfridge.marshal_with(household)
     @smartfridge.expect(household, validate=True)
-   # @secured
+    @secured
     def put(self, id):
         """Updaten eines Household Objekts"""
         adm = Administration()
@@ -386,7 +386,7 @@ grocery
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class GroceryListOperations(Resource):
     @smartfridge.marshal_list_with(grocery)
-    #@secured
+    @secured
     def get(self):
         """Wiedergebe eines Grocery Objekts"""
         adm = Administration()
@@ -396,7 +396,7 @@ class GroceryListOperations(Resource):
     @smartfridge.marshal_with(grocery, code=200)
 
     @smartfridge.expect(grocery)
-    #@secured
+    @secured
     def post(self):
         """Erstellen eines Grocery Objekts"""
 
@@ -422,14 +422,14 @@ class GroceryListOperations(Resource):
 @smartfridge.param('id', 'Die ID des Grocery-Objekts')
 class GroceryOperations(Resource):
     @smartfridge.marshal_with(grocery)
-    #@secured
+    @secured
     def get(self, id):
         """Wiedergabe eines Grocery Objekts durch ID"""
         adm = Administration()
         grocery = adm.get_grocery_by_id(id)
         return grocery
 
-    #@secured
+    @secured
     def delete(self, id):
         """Löschen eines Grocery Objekts durch ID"""
         admin = Administration()
@@ -441,7 +441,7 @@ class GroceryOperations(Resource):
 
     @smartfridge.marshal_with(grocery)
     @smartfridge.expect(grocery, validate=True)
-    #@secured
+    @secured
     def put(self, id):
         """Updaten eines Grocery Objekts"""
         adm = Administration()
@@ -469,7 +469,7 @@ class GroceryNameOperations(Resource):
 @smartfridge.param('fridge_id', 'fridge_id')
 class GroceryInFridgeOperations(Resource):
     @smartfridge.marshal_list_with(grocery)
-    #@secured
+    @secured
     def get(self, fridge_id):
 
         'Wiedergabe von Grocerys durch Fridge ID'
@@ -498,7 +498,7 @@ class RecipeOperations(Resource):
 
     @smartfridge.marshal_with(recipe, code=200)
     @smartfridge.expect(recipe)
-    # @secured
+    @secured
     def post(self):
         "Erstellen eines Recipe Objekts"
         adm = Administration()
@@ -518,14 +518,14 @@ class RecipeOperations(Resource):
 @smartfridge.param('id', 'Die ID des Recipe-Objekts')
 class RecipeOperations(Resource):
     @smartfridge.marshal_with(recipe)
-    #@secured
+    @secured
     def get(self, id):
         """Wiedergabe eines Recipe Objekts durch ID"""
         adm = Administration()
         recipe = adm.get_recipe_by_id(id)
         return recipe
 
-    #@secured
+    @secured
     def delete(self, id):
         """Löschen eines Recipe Objekts"""
         adm = Administration()
@@ -535,7 +535,7 @@ class RecipeOperations(Resource):
 
     @smartfridge.marshal_with(recipe)
     @smartfridge.expect(recipe, validate=True)
-    #@secured
+    @secured
     def put(self, id):
         """Updaten eines Recipe Objekts"""
         adm = Administration()
@@ -580,7 +580,7 @@ fridge
 class FridgeOperations(Resource):
     @smartfridge.marshal_list_with(fridge)
     @smartfridge.param('household_id', 'ID von dem Haushalt, in dem der Kühlschrank ist.')
-    # @secured
+    @secured
     def get(self):
         """
         Wiedergabe von einerm bestimmten Fridge Objekt.
@@ -592,7 +592,7 @@ class FridgeOperations(Resource):
 
     @smartfridge.marshal_with(fridge, code=200)
     @smartfridge.expect(fridge)
-    # @secured
+    @secured
     def post(self):
         "Erstellen eines Fridge Objekts"
         adm = Administration()
@@ -615,7 +615,7 @@ class FridgeOperations(Resource):
 @smartfridge.param('id', 'Die ID des Fridge-Objekts')
 class FridgeOperations(Resource):
     @smartfridge.marshal_list_with(fridge)
-   # @secured
+    @secured
     def get(self,id):
         "Wiedergabe eines Fridge Objekts durch ID"
 
@@ -623,7 +623,7 @@ class FridgeOperations(Resource):
         fri = adm.get_fridge_by_id(id)
         return fri
 
-   # @secured
+    @secured
     def delete(self,id):
         "Löschen des Inhalts eines Fridge Objekts"
 
@@ -634,7 +634,7 @@ class FridgeOperations(Resource):
 
     @smartfridge.marshal_with(fridge)
     @smartfridge.expect(fridge, validate=True)
-   # @secured
+    @secured
     def put(self,id):
         "Updaten eines Fridge Objekts"
 
@@ -654,7 +654,7 @@ class FridgeOperations(Resource):
 @smartfridge.param('id', 'Die ID des Household-Objekts')
 class HouseholdRelatedFridgeOperations(Resource):
     @smartfridge.marshal_with(fridge)
-   # @secured
+    @secured
     def get(self,id):
         adm = Administration()
         house = adm.get_household_by_id(id)
@@ -667,7 +667,7 @@ class HouseholdRelatedFridgeOperations(Resource):
             return " Household not found", 500
 
     @smartfridge.marshal_with(fridge, code=201)
-   # @secured
+    @secured
     def post(self,id):
         adm = Administration()
 
@@ -720,7 +720,7 @@ grocerystatement
 @smartfridge.response(500,'Falls es zu einem Server Fehler kommt.')
 class GrocerystatementListOperations(Resource):
     @smartfridge.marshal_list_with(grocerystatement)
-    # @secured
+    @secured
     def get(self):
         "Wiedergabe der Grocerystatement Objekte"
         adm = Administration()
@@ -730,7 +730,7 @@ class GrocerystatementListOperations(Resource):
         return grocerystatement_list
     @smartfridge.marshal_with(grocerystatement, code=200)
     @smartfridge.expect(grocerystatement)
-    # @secured
+    @secured
     def post(self):
         "Erstellen eines Grocerystatement Objekts"
         adm = Administration()
@@ -749,7 +749,7 @@ class GrocerystatementListOperations(Resource):
 @smartfridge.param('id', 'Die ID des Grocerystatement-Objekts')
 class FridgeOperations(Resource):
     @smartfridge.marshal_list_with(grocerystatement)
-   # @secured
+    @secured
     def get(self,id):
         "Wiedergabe eines Groceriesstatement Objekts durch ID"
 
@@ -757,7 +757,7 @@ class FridgeOperations(Resource):
         gst = adm.get_grocerystatement_by_id(id)
         return gst
 
-   # @secured
+    @secured
     def delete(self,id):
         "Löschen eines Groceriesstatement Objekts"
 
@@ -768,7 +768,7 @@ class FridgeOperations(Resource):
 
     @smartfridge.marshal_with(grocerystatement)
     @smartfridge.expect(grocerystatement, validate=True)
-    #@secured
+    @secured
     def put(self, id):
         """Updaten eines Groceiresstatement Objekts"""
         adm = Administration()
@@ -788,7 +788,7 @@ measure
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
 class MeasureListOperations(Resource):
     @smartfridge.marshal_list_with(measure)
-    #@secured
+    @secured
     def get(self):
         """Wiedergebe eines Measure Objekts"""
         adm = Administration()
@@ -798,7 +798,7 @@ class MeasureListOperations(Resource):
     @smartfridge.marshal_with(measure, code=200)
 
     @smartfridge.expect(measure)
-    #@secured
+    @secured
     def post(self):
         """Erstellen eines Measure Objekts"""
 
@@ -835,14 +835,14 @@ class MeasureNameOperations(Resource):
 @smartfridge.param('id', 'Die ID des Measure-Objekts')
 class MeasureOperations(Resource):
     @smartfridge.marshal_with(measure)
-    #@secured
+    @secured
     def get(self, id):
         """Wiedergabe eines Measure Objekts durch ID"""
         adm = Administration()
         measure = adm.get_measure_by_id(id)
         return measure
 
-    #@secured
+    @secured
     def delete(self, id):
         """Löschen eines Measure Objekts durch ID"""
         admin = Administration()
@@ -855,7 +855,7 @@ class MeasureOperations(Resource):
 
     @smartfridge.marshal_with(measure)
     @smartfridge.expect(measure, validate=True)
-    #@secured
+    @secured
     def put(self, id):
         """Updaten eines Measure Objekts"""
         adm = Administration()
@@ -874,7 +874,7 @@ class MeasureOperations(Resource):
 @smartfridge.param('fridge_id', 'fridge_id')
 class GroceryInFridgeOperations(Resource):
     @smartfridge.marshal_list_with(measure)
-    #@secured
+    @secured
     def get(self, fridge_id):
 
         'Wiedergabe von Grocerys durch Fridge ID'

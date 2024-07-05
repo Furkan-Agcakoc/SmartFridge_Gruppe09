@@ -27,9 +27,7 @@ import SmartFridgeAPI from "./api/SmartFridgeAPI"; // Import the API class
 import FridgePage from "./components/pages/FridgePage";
 import UserContext from "./components/contexts/UserContext";
 import { FridgeProvider } from "./components/contexts/FridgeContext";
-import { UserBO } from "./api";
 
-// import { Config } from "./config";
 
 class App extends Component {
   constructor(props) {
