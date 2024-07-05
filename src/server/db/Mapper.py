@@ -22,7 +22,7 @@ class Mapper (AbstractContextManager, ABC):
             Hierbei handelt es sich also um die Verbindung zwischen Google App Engine und Cloud SQL."""
 
             self._cnx = connector.connect(user='fridge', password='fridge',
-                                          unix_socket='',
+                                          unix_socket='/cloudsql/smart-fridge-sopra:europe-west3:sopra-db-smartfridge',
                                           database='Smartfridge')
         else:
             """Wenn wir hier ankommen, dann handelt sich offenbar um die Ausführung des Codes in einer lokalen Umgebung,

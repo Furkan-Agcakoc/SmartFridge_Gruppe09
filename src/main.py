@@ -16,7 +16,16 @@ from server.bo.Measure import Measure
 
 from SecurityDecorater import secured
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='build', static_url_path='/')
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
+
+
+@app.errorhandler(404)
+def not_found(e):
+    return app.send_static_file('index.html')
 
 
 # CORS(app)
@@ -27,7 +36,7 @@ app = Flask(__name__)
 #CORS(app, res)
 # CORS(app, resources={r"/Smartfridge/*": {"origins": "*"}})
 # CORS(app, resources={r"/Smartfridge/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
-CORS(app, resources={r"/": {"origins": "" }}, supports_credentials=True)
+CORS(app, resources=r"/Smartfridge/*")
 
 
 api = Api(app, version='1.0', title='Smartfridge API',
@@ -943,5 +952,5 @@ class CheckRecipesContents(Resource):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, port=5000)
 
