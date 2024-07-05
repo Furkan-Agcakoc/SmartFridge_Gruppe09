@@ -183,21 +183,21 @@ class HouseholdMapper(Mapper):
         except Exception as e:
             return str(e)
 
-    def get_users_by_household_id(self, household_id):
+    def get_user_by_household_id(self, household_id):
 
         try:
             cursor = self._cnx.cursor()
             command = "SELECT user_id from inhabitant WHERE household_id = {0}".format(household_id)
             cursor.execute(command)
             tuples = cursor.fetchall()
-            users = []
+            user = []
             for i in tuples:
-                users.append(i[0])
+                user.append(i[0])
 
             self._cnx.commit()
             cursor.close()
 
-            return users
+            return user
 
         except Exception as e:
             print(e)

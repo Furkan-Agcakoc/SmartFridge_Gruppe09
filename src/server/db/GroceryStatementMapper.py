@@ -76,8 +76,8 @@ class GroceryStatementMapper (Mapper):
         command = """
             SELECT grocerystatement.id, grocerystatement.grocery_id, grocerystatement.unit_id, grocerystatement.quantity 
             FROM grocerystatement
-            JOIN grocery_in_fridge ON grocerystatement.id = grocery_in_fridge.grocerystatement_id
-            WHERE grocery_in_fridge.fridge_id = {}
+            JOIN grocerystatement_in_fridge ON grocerystatement.id = grocerystatement_in_fridge.grocerystatement_id
+            WHERE grocerystatement_in_fridge.fridge_id = {}
             ORDER BY grocerystatement.id
             """.format(fridge_id)
         cursor.execute(command)
@@ -103,8 +103,8 @@ class GroceryStatementMapper (Mapper):
         command = """
             SELECT grocerystatement.id, grocerystatement.grocery_id, grocerystatement.unit_id, grocerystatement.quantity 
             FROM grocerystatement
-            JOIN grocery_in_recipe ON grocerystatement.id = grocery_in_recipe.grocerystatement_id
-            WHERE grocery_in_recipe.recipe_id = {}
+            JOIN grocerystatement_in_recipe ON grocerystatement.id = grocerystatement_in_recipe.grocerystatement_id
+            WHERE grocerystatement_in_recipe.recipe_id = {}
             ORDER BY grocerystatement.id
             """.format(recipe_id)
         cursor.execute(command)
@@ -130,7 +130,7 @@ class GroceryStatementMapper (Mapper):
     def checkGroceryInFridge(self, grocerysatement_id, fridge_id):  #anschauen
         try:
             cursor = self._cnx.cursor()
-            command = "SELECT `grocerystatement_id`,`fridge_id` FROM grocery_in_fridge WHERE `grocerystatement_id`={0} AND `fridge_id`={1}".format(
+            command = "SELECT `grocerystatement_id`,`fridge_id` FROM grocerystatement_in_fridge WHERE `grocerystatement_id`={0} AND `fridge_id`={1}".format(
                 grocerysatement_id, fridge_id)
             cursor.execute(command)
             tuples = cursor.fetchall()
@@ -147,7 +147,7 @@ class GroceryStatementMapper (Mapper):
     def createGroceryInFridge(self, grocerystatement_id, fridge_id):
 
             cursor = self._cnx.cursor()
-            command = "INSERT INTO grocery_in_fridge (grocerystatement_id, fridge_id) VALUES ('{0}', '{1}')".format(grocerystatement_id, fridge_id)
+            command = "INSERT INTO grocerystatement_in_fridge (grocerystatement_id, fridge_id) VALUES ('{0}', '{1}')".format(grocerystatement_id, fridge_id)
             cursor.execute(command)
             self._cnx.commit()
             cursor.close()
@@ -156,7 +156,7 @@ class GroceryStatementMapper (Mapper):
 
         try:
             cursor = self._cnx.cursor()
-            command = "DELETE FROM grocery_in_fridge WHERE grocerystatement_id = {0} AND fridge_id =  {1}".format(
+            command = "DELETE FROM grocerystatement_in_fridge WHERE grocerystatement_id = {0} AND fridge_id =  {1}".format(
                 grocerystatement_id, fridge_id)
             cursor.execute(command)
             self._cnx.commit()
@@ -170,7 +170,7 @@ class GroceryStatementMapper (Mapper):
     def checkGroceryInRecipe(self, grocerysatement_id, recipe_id):  #anschauen
         try:
             cursor = self._cnx.cursor()
-            command = "SELECT `grocerystatement_id`,`recipe_id` FROM grocery_in_recipe WHERE `grocerystatement_id`={0} AND `recipe_id`={1}".format(
+            command = "SELECT `grocerystatement_id`,`recipe_id` FROM grocerystatement_in_recipe WHERE `grocerystatement_id`={0} AND `recipe_id`={1}".format(
                 grocerysatement_id, recipe_id)
             cursor.execute(command)
             tuples = cursor.fetchall()
@@ -187,7 +187,7 @@ class GroceryStatementMapper (Mapper):
     def createGroceryInRecipe(self, grocerystatement_id, recipe_id):
 
             cursor = self._cnx.cursor()
-            command = "INSERT INTO grocery_in_recipe (grocerystatement_id, recipe_id) VALUES ('{0}', '{1}')".format(grocerystatement_id, recipe_id)
+            command = "INSERT INTO grocerystatement_in_recipe (grocerystatement_id, recipe_id) VALUES ('{0}', '{1}')".format(grocerystatement_id, recipe_id)
             cursor.execute(command)
             self._cnx.commit()
             cursor.close()
@@ -199,7 +199,7 @@ class GroceryStatementMapper (Mapper):
 
         try:
             cursor = self._cnx.cursor()
-            command = "DELETE FROM grocery_in_recipe WHERE grocerystatement_id = {0} AND recipe_id =  {1}".format(
+            command = "DELETE FROM grocerystatement_in_recipe WHERE grocerystatement_id = {0} AND recipe_id =  {1}".format(
                 grocerystatement_id, recipe_id)
             cursor.execute(command)
             self._cnx.commit()

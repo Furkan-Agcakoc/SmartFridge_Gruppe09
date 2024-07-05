@@ -76,7 +76,7 @@ class GroceryMapper(Mapper):
     def checkGroceryInFridge(self, grocerystatement_id, fridge_id):
         try:
             cursor = self._cnx.cursor()
-            command = "SELECT `grocerystatement_id`,`fridge_id` FROM grocery_in_fridge WHERE `grocerystatement_id`={0} AND `fridge_id`={1}".format(
+            command = "SELECT `grocerystatement_id`,`fridge_id` FROM grocerystatement_in_fridge WHERE `grocerystatement_id`={0} AND `fridge_id`={1}".format(
                 grocerystatement_id, fridge_id)
             cursor.execute(command)
             tuples = cursor.fetchall()
