@@ -129,7 +129,6 @@ class InhabitantOperations(Resource):
         return adm.get_user_by_household_id(household_id)
 
 
-# grocerystatement_in_fridge
 
 @smartfridge.route('/grocerystatement_in_fridge')
 @smartfridge.response(500, 'Wenn es zu einem Server Fehler kommt.')
@@ -245,7 +244,6 @@ class UserListOperations(Resource):
                 proposal.get_firstname(),proposal.get_lastname(),proposal.get_nickname(),proposal.get_email(),proposal.get_google_user_id())
             return u, 200
         else:
-            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
 @smartfridge.route('/user/<int:id>')
@@ -294,7 +292,6 @@ class GoogleOperations(Resource):
         user = adm.get_user_by_google_user_id(google_user_id)
         return user
 
-# Muss hier eventuell noch eine route mit Haushalt ? Create_Household_for_User
 
 '''
 Household
@@ -331,7 +328,6 @@ class HouseholdListOperations(Resource):
                 )
             return hh, 200
         else:
-            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 @smartfridge.route('/household/<int:id>')
 @smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
@@ -415,7 +411,6 @@ class GroceryListOperations(Resource):
                 proposal.get_grocery_name(), proposal.get_fridge_id())
             return g, 200
         else:
-            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
 
@@ -516,7 +511,6 @@ class RecipeOperations(Resource):
                 proposal.get_recipe_name(), proposal.get_duration(), proposal.get_portion(), proposal.get_instruction(), proposal.get_fridge_id(), proposal.get_user_id())
             return rec, 200
         else:
-            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
 @smartfridge.route('/recipe/<int:id>')
@@ -610,7 +604,6 @@ class FridgeOperations(Resource):
                 proposal.get_household_id())
             return fri, 200
         else:
-            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
 
@@ -654,72 +647,8 @@ class FridgeOperations(Resource):
         else:
             return '',500
 
-''''
-@smartfridge.route('/household/<int:id>/fridge')
-@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
-@smartfridge.param('id', 'Die ID des Household-Objekts')
-class HouseholdRelatedFridgeOperations(Resource):
-    @smartfridge.marshal_with(fridge)
-    @secured
-    def get(self,id):
-        adm = Administration()
-        house = adm.get_household_by_id(id)
 
-        if house is not None:
-
-            fridge_list = adm.get_fridge_of_household(house)
-            return fridge_list
-        else:
-            return " Household not found", 500
-
-    @smartfridge.marshal_with(fridge, code=201)
-    @secured
-    def post(self,id):
-        adm = Administration()
-
-        house = adm.get_household_by_id(id)
-
-        if house is not None:
-            result = adm.create_fridge_of_household(house)
-            return result
-        else:
-            return "Household unkown", 500
-''''''
-
-'''
-#Hier noch das gleiche mit Grocerystatement related to fridge
-'''
-@smartfridge.route('/grocerystatement/<int:id>/fridge')
-@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
-@smartfridge.param('id', 'Die ID des Household-Objekts')
-class GrocerystatementRelatedFridgeOperations(Resource):
-    @smartfridge.marshal_with(fridge)
-    @secured
-    def get(self,id):
-        adm = Administration()
-        gst = adm.get_grocerystatement_by_id(id)
-
-        if gst is not None:
-
-            fridge_list = adm.get_grocerystatement_by_fridge(gst)
-            return fridge_list
-        else:
-            return " Grocery not found", 500
-
-    @smartfridge.marshal_with(fridge, code=201)
-    @secured
-    def post(self,id):
-        adm = Administration()
-
-        gst = adm.get_grocerystatement_by_id(id)
-
-        if gst is not None:
-            result = adm.create_grocerystatement_for_fridge(gst) #methode muss implementiert werden
-            return result
-        else:
-            return "Grocery unkown", 500
-'''
-"""
+""""
 grocerystatement
 """
 @smartfridge.route('/grocerystatement')
@@ -747,7 +676,6 @@ class GrocerystatementListOperations(Resource):
                 proposal.get_grocery_id(), proposal.get_unit_id(),proposal.get_quantity())
             return gs, 200
         else:
-            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
             return '', 500
 
 @smartfridge.route('/grocerystatement/<int:id>')
@@ -817,7 +745,7 @@ class MeasureListOperations(Resource):
                 proposal.get_unit(), proposal.get_fridge_id())
             return m, 200
         else:
-            # Wenn irgendetwas schiefgeht, dann geben wir nichts zurück und werfen einen Server-Fehler.
+
             return '', 500
 
 @smartfridge.route('/measure/unit/<string:unit>')
@@ -883,35 +811,11 @@ class GroceryInFridgeOperations(Resource):
     @secured
     def get(self, fridge_id):
 
-        'Wiedergabe von Grocerys durch Fridge ID'
+        'Wiedergabe von Measure durch Fridge ID'
 
         adm = Administration()
         measure = adm.get_measure_by_fridge_id(fridge_id)
         return measure
-
-"""
-@smartfridge.route('/convert')
-@smartfridge.response(500, 'Falls es zu einem Server Fehler kommt.')
-class UnitConversion(Resource):
-    @smartfridge.expect(api.model('Conversion', {
-        'value': fields.Float(required=True, description='Der Wert, der konvertiert werden soll'),
-        'unit_from': fields.String(required=True, description='Die Ausgangseinheit'),
-        'unit_to': fields.String(required=True, description='Die Zieleinheit')
-    }))
-    def post(self):
-        "Konvertiert Einheiten"
-        data = request.json
-        value = data['value']
-        unit_from = data['unit_from']
-        unit_to = data['unit_to']
-
-        adm = Administration()
-        result = adm.convert_unit(value, unit_from, unit_to)
-
-        if isinstance(result, str):
-            return {'message': result}, 400
-        return {'Konvertierter Wert': result}, 200
-"""
 
 
 @smartfridge.route('/recipe/<int:recipe_id>/<int:fridge_id>')
@@ -919,13 +823,10 @@ class UnitConversion(Resource):
 class CalculateRecipeFridge(Resource):
     def post(self, recipe_id, fridge_id):
         """ Rezepte Kochen"""
-        # Instanz der Administrationsklasse erstellen
         adm = Administration()
 
-        # Methode calculate_recipe_fridge aufrufen
         result = adm.cook_recipe(recipe_id, fridge_id)
 
-        # Rückgabe des Ergebnisses
         return result, 200
 
 @smartfridge.route('/fridge/<int:fridge_id>/recipes')
@@ -934,8 +835,7 @@ class CalculateRecipeFridge(Resource):
 class CheckRecipesContents(Resource):
     def get(self, fridge_id):
         """
-        Retrieve recipes that can be made with the contents of the fridge within the specified household.
-        It also lists ingredients that are missing to complete each recipe.
+        Methode, um zu überprüfen, welche Rezepte mit den aktuellen Kühlschrankinhalten zubereitet werden können.
         """
         adm = Administration()
         try:

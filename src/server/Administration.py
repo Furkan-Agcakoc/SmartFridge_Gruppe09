@@ -42,9 +42,9 @@ class Administration():
         with FridgeMapper() as mapper:
             return mapper.find_by_key(number)
 
-    def get_fridge_of_household(self, household_id):  # müssen die logik prüfen
+    def get_fridge_of_household(self, household_id):
         with FridgeMapper() as mapper:
-            return mapper.find_by_household_id(household_id) #prüfen
+            return mapper.find_by_household_id(household_id)
 
     def get_all_fridges(self):
         with FridgeMapper() as mapper:
@@ -126,20 +126,6 @@ class Administration():
 
         return household
 
-    """
-    def delete_household(self, household):  # prüfen
-        with HouseholdMapper() as mapper:
-            fridge = self.get_fridge_of_household(household)
-
-            if not (fridge is None):
-                for a in fridge:
-                    self.delete_fridge(a)
-
-            mapper.delete(household)
-
-    """
-
-
 
     """
     Recipe Spezifische Methoden
@@ -194,12 +180,6 @@ class Administration():
         with RecipeMapper() as mapper:
             mapper.delete(recipe)
 
-   # def get_recipe_by_user(self, user_id):
-   #    with RecipeMapper() as mapper:
-      #      return mapper.find_by_user_id(user_id)
-
-
-#recipe of user?
 
     """
     Grocery Spezifische Methoden
@@ -250,7 +230,7 @@ class Administration():
     """
 
     def create_grocerystatement(self, grocery_name, unit, quantity):
-        grocerystatement = GroceryStatement()  # anschauen
+        grocerystatement = GroceryStatement()
         grocerystatement.set_grocery_id(grocery_name)
         grocerystatement.set_unit_id(unit)
         grocerystatement.set_quantity(quantity)
@@ -286,9 +266,6 @@ class Administration():
         with GroceryStatementMapper() as mapper:
             mapper.delete(grocerystatement)
 
-
-
-
     """
        User Spezifische Methoden
     """
@@ -303,8 +280,6 @@ class Administration():
         user.set_id(1)
         with UserMapper() as mapper:
             return mapper.insert(user)
-
-    #user of household
 
     def get_user_by_firstname(self, firstsname):
         with UserMapper() as mapper:
@@ -342,13 +317,11 @@ class Administration():
 
     def delete_user(self, user):
         with UserMapper() as mapper:
-            # Check if the user is an owner of any households
             households = self.get_households_by_user(user.get_id())
             for household in households:
                 if household.get_owner_id() == user.get_id():
                     self.delete_household(household)
 
-            # Continue with the rest of the method
             recipe = self.get_recipe_by_user_id(user.get_id())
             inhabitants = self.get_inhabitant_by_user_id(user.get_id())
 
@@ -376,7 +349,7 @@ class Administration():
 
 
     '''
-    #inhabitent 
+    Inhabitant speziefische Methoden
     '''
 
     def create_inhabitant(self, user_id, household_id):
@@ -420,7 +393,7 @@ class Administration():
             return mapper.find_by_user_id(user_id)
 
     """
-    grocerystatement_in_fridge Spezifische Methoden
+    Grocery_in_Fridge Spezifische Methoden
     """
     def create_grocery_in_frige(self, grocerystatement_id, fridge_id):
         with GroceryStatementMapper() as mapper:
@@ -437,7 +410,7 @@ class Administration():
 
 
     """
-    grocerystatement_in_recipe Spezifische Methoden
+    Grocery_in_Recipe Spezifische Methoden
     """
 
     def create_grocerystatement_in_recipe(self, grocerystatement_id, recipe_id):
@@ -494,8 +467,9 @@ class Administration():
                 return "Einheit kann nicht gelöscht werden, da es im Kühlschrank/Rezept verwendet wird."
 
     """
-    Abgleichen Kühlschrank Rezept
+    Kochen und Überprüfen von Rezepten
     """
+
     def update_gs(self,gs):
         with GroceryStatementMapper() as mapper:
             mapper.update_grocerystatement_quantity(gs)
@@ -541,13 +515,12 @@ class Administration():
         response_messages = []
         can_cook = True
 
-        # Überprüfung der Zutaten außer "Prise"
         for recipe_grocery in recipe_content:
             recipe_qty, recipe_unit_id = recipe_grocery.get_quantity(), recipe_grocery.get_unit_id()
             recipe_unit = self.get_measure_by_id(recipe_unit_id).get_unit()
 
             if recipe_unit.lower() == "prise":
-                continue  # Ignoriert die Überprüfung für "Prise"
+                continue
 
             item_matched = False
             total_fridge_qty = 0
@@ -563,7 +536,7 @@ class Administration():
                     elif fridge_unit_id == recipe_unit_id:
                         total_fridge_qty += fridge_grocery.get_quantity()
 
-                    item_matched = True  # Zutat wurde im Kühlschrank gefunden
+                    item_matched = True
 
             if not item_matched or total_fridge_qty < recipe_qty:
                 grocery_name = self.get_grocery_by_id(recipe_grocery.get_grocery_id()).get_grocery_name()
@@ -571,14 +544,13 @@ class Administration():
                 response_messages.append(f"{missing_qty} {recipe_unit} {grocery_name}")
                 can_cook = False
 
-        # Wenn alle benötigten Zutaten vorhanden sind, dann Abzug aus dem Kühlschrank
         if can_cook:
             for recipe_grocery in recipe_content:
                 recipe_qty, recipe_unit_id = recipe_grocery.get_quantity(), recipe_grocery.get_unit_id()
                 recipe_unit = self.get_measure_by_id(recipe_unit_id).get_unit()
 
                 if recipe_unit.lower() == "prise":
-                    continue  # Ignoriert die Abzug für "Prise"
+                    continue
 
                 for fridge_grocery in fridge_content:
                     if fridge_grocery.get_grocery_id() == recipe_grocery.get_grocery_id():
@@ -587,7 +559,7 @@ class Administration():
                             fridge_qty = fridge_grocery.get_quantity()
                             converted_recipe_qty = self.convert_unit(recipe_qty, recipe_unit_id, fridge_unit_id)
                             new_value = fridge_qty - converted_recipe_qty
-                            new_value = max(0, new_value)  # Verhindert negative Werte
+                            new_value = max(0, new_value)
                             fridge_grocery.set_quantity(new_value)
                             self.update_gs(fridge_grocery)
 
@@ -612,7 +584,7 @@ class Administration():
                 grocery_name = self.get_grocery_by_id(recipe_grocery.get_grocery_id()).get_grocery_name()
                 item_matched = False
                 not_enough = False
-                total_fridge_qty = 0  # Track total quantity available in fridge
+                total_fridge_qty = 0
 
                 for fridge_grocery in fridge_content:
                     if fridge_grocery.get_grocery_id() == recipe_grocery.get_grocery_id():
