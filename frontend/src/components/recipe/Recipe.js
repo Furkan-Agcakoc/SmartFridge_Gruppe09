@@ -32,24 +32,27 @@ const Recipe = ({
   const [detailedIngredients, setDetailedIngredients] = useState([]);
   const { id: currentUserId } = useContext(UserContext);
 
+  // Handhabt den Klick auf ein Rezept und ruft die Zutaten ab
   const handleRecipeClick = async (recipe) => {
     setSelectedRecipe(recipe);
     await fetchIngredients(recipe.id);
   };
 
+  // Schließt den Rezeptdetail-Dialog
   const handleDetailDialogClose = () => {
     setDetailDialogOpen(false);
     setSelectedRecipe(null);
     setDetailedIngredients([]);
   };
 
+  // Handhabt den Klick auf die Löschen-Schaltfläche
   const handleDeleteClick = (recipeId) => {
-      setIdToDelete(recipeId);
-      handleOpenDialog(recipeId, "recipe");
-      handleAnchorClose(recipeId);
+    setIdToDelete(recipeId);
+    handleOpenDialog(recipeId, "recipe");
+    handleAnchorClose(recipeId);
   };
 
-
+  // Ruft die Zutaten für ein Rezept ab
   const fetchIngredients = useCallback(async (recipeId) => {
     if (recipeId) {
       const api = SmartFridgeAPI.getAPI();
@@ -72,13 +75,14 @@ const Recipe = ({
         setDetailedIngredients(detailedIngredientsResults);
         setDetailDialogOpen(true);
       } catch (error) {
-        console.error("Error fetching ingredients:", error);
+        console.error("Fehler beim Abrufen der Zutaten:", error);
       }
     } else {
-      console.error("Recipe or recipe ID is undefined");
+      console.error("Rezept oder Rezept-ID ist undefiniert");
     }
   }, []);
 
+  // Effekt zum Abrufen der Zutaten, wenn ein Rezept ausgewählt ist
   useEffect(() => {
     if (selectedRecipe) {
       fetchIngredients(selectedRecipe.id);
@@ -89,7 +93,7 @@ const Recipe = ({
     <>
       {recipes.map((recipe) => (
         <Paper
-          key={recipe.id}
+          key={recipe.id} // Added unique key prop here
           sx={{
             position: "relative",
             display: "flex",
@@ -107,28 +111,28 @@ const Recipe = ({
         >
           {recipe.user_id === currentUserId && (
             <IconButton
-            aria-label="more"
-            id="long-button"
-            aria-controls={openMenus[recipe.id] ? "long-menu" : undefined}
-            aria-expanded={openMenus[recipe.id] ? "true" : undefined}
-            aria-haspopup="true"
-            onClick={(event) => {
-              event.stopPropagation();
-              handleAnchorClick(recipe.id, event);
-            }}
-            style={{
-              position: "absolute",
-              top: "2px",
-              right: "2px",
-              width: { xs: "25px", sm: "30px", md: "35px" },
-              height: { xs: "25px", sm: "30px", md: "35px" },
-              zIndex: 10,
-            }}
-          >
-            <MoreVertIcon sx={{ color: "background.default" }} />
-          </IconButton>
+              aria-label="more"
+              id="long-button"
+              aria-controls={openMenus[recipe.id] ? "long-menu" : undefined}
+              aria-expanded={openMenus[recipe.id] ? "true" : undefined}
+              aria-haspopup="true"
+              onClick={(event) => {
+                event.stopPropagation();
+                handleAnchorClick(recipe.id, event);
+              }}
+              style={{
+                position: "absolute",
+                top: "2px",
+                right: "2px",
+                width: { xs: "25px", sm: "30px", md: "35px" },
+                height: { xs: "25px", sm: "30px", md: "35px" },
+                zIndex: 10,
+              }}
+            >
+              <MoreVertIcon sx={{ color: "background.default" }} />
+            </IconButton>
           )}
-          
+
           <Menu
             MenuListProps={{ "aria-labelledby": "long-button" }}
             anchorEl={anchorEls[recipe.id] || null}

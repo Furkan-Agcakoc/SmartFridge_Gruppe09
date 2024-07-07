@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import FontLogin from "../dialogs/FontLogin";
-import Logo from "../../images/Fridge_Logo.png";
-import { Typography, Card, Button, Box } from "@mui/material";
+import React, { Component } from "react"; 
+import FontLogin from "../dialogs/FontLogin"; 
+import Logo from "../../images/Fridge_Logo.png"; 
+import { Typography, Card, Button, Box } from "@mui/material"; 
 
 class LoginPage extends Component {
   render() {
-    const { onSignIn } = this.props;
+    const { onSignIn } = this.props; // Extrahiert die onSignIn-Funktion aus den Props.
 
     return (
       <>
@@ -16,7 +16,7 @@ class LoginPage extends Component {
             alignItems: "center",
           }}
         >
-          <FontLogin />
+          <FontLogin /> 
         </Box>
         <Box
           sx={{
@@ -50,13 +50,13 @@ class LoginPage extends Component {
               textAlign="center"
             >
               Anmeldung bei Smart Fridge!
-            </Typography>
+            </Typography> 
             <Box
               component="img"
               src={Logo}
               alt="fridge-logo"
               sx={{ width: "100px", mb: 3, zIndex: 1000 }}
-            />
+            /> 
             <Button
               onClick={onSignIn}
               sx={{
@@ -78,7 +78,7 @@ class LoginPage extends Component {
               <Typography fontSize={"18px"} fontWeight={600}>
                 Login
               </Typography>
-            </Button>
+            </Button> 
           </Card>
         </Box>
       </>
@@ -86,4 +86,4 @@ class LoginPage extends Component {
   }
 }
 
-export default LoginPage;
+export default LoginPage; // Exportiert die LoginPage-Komponente.

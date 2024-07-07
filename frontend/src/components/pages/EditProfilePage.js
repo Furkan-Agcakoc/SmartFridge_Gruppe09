@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { useNavigate } from "react-router-dom";
-import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
-import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
-import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import React, { Component } from "react"; 
+import { useNavigate } from "react-router-dom"; 
+import CreateRoundedIcon from "@mui/icons-material/CreateRounded"; 
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded"; 
+import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded"; 
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded"; 
 import {
   Alert,
   Avatar,
@@ -14,21 +14,20 @@ import {
   Typography,
   IconButton,
   TextField,
-} from "@mui/material";
-import UserBO from "../../api/UserBO";
+} from "@mui/material"; 
+import UserBO from "../../api/UserBO"; 
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
-import UserContext from "../contexts/UserContext";
+import UserContext from "../contexts/UserContext"; 
 
-// Funktionskomponente, um `useNavigate` zu verwenden und als Prop weiterzugeben
 const withNavigation = (Component) => {
   return (props) => {
     const navigate = useNavigate();
     return <Component {...props} navigate={navigate} />;
-  };
+  }; // Definiert eine höhere Ordnungskomponente, um den useNavigate-Hook zu verwenden und als Prop weiterzugeben.
 };
 
 class EditProfilePage extends Component {
-  static contextType = UserContext;
+  static contextType = UserContext; // Setzt den UserContext als Kontext für die Komponente.
 
   constructor(props) {
     super(props);
@@ -37,16 +36,16 @@ class EditProfilePage extends Component {
       lastName: "",
       nickName: "",
       showAlertSignin: false,
-    };
+    }; // Initialisiert den Zustand der Komponente.
   }
 
   handleBackClick = () => {
-    this.props.navigate(-1);
+    this.props.navigate(-1); // Navigiert eine Seite zurück.
   };
 
   componentDidMount() {
     const userId = this.context.id;
-    this.getUserById(userId);
+    this.getUserById(userId); // Ruft die Benutzerdaten beim Mounten der Komponente ab.
   }
 
   handleSaveClick = async (e) => {
@@ -54,11 +53,9 @@ class EditProfilePage extends Component {
     const form = e.target.closest("form");
 
     if (form.checkValidity()) {
-      console.log("Form is valid, proceeding to update user");
       await this.updateUser(userId);
-      this.props.navigate("/household");
+      this.props.navigate("/household"); // Speichert die Änderungen und navigiert zur Household-Seite.
     } else {
-      console.log("Form is invalid");
       this.setState({ showAlertSignin: true });
     }
   };
@@ -71,7 +68,7 @@ class EditProfilePage extends Component {
       firstName: user.firstname,
       lastName: user.lastname,
       nickName: user.nickname,
-    });
+    }); // Setzt die Benutzerinformationen in den Zustand.
   };
 
   updateUser = async (userId) => {
@@ -88,7 +85,7 @@ class EditProfilePage extends Component {
       );
       updatedUser.setID(userId);
 
-      await SmartFridgeAPI.getAPI().updateUser(updatedUser);
+      await SmartFridgeAPI.getAPI().updateUser(updatedUser); // Aktualisiert die Benutzerdaten.
     } catch (error) {
       this.setState({ showAlertSignin: true });
     }
@@ -96,21 +93,20 @@ class EditProfilePage extends Component {
 
   handleClickDelete = () => {
     const userId = this.context.id;
-    console.log(userId);
     this.deleteUser(userId);
-    this.props.handleSignOut();
+    this.props.handleSignOut(); // Löscht den Benutzer und meldet ihn ab.
   };
 
   deleteUser = async (userId) => {
     try {
-      await SmartFridgeAPI.getAPI().deleteUser(userId);
+      await SmartFridgeAPI.getAPI().deleteUser(userId); // Löscht den Benutzer.
     } catch (error) {
       this.setState({ showAlertDelete: true });
     }
   };
 
   handleCloseAlert = () => {
-    this.setState({ showAlertSignin: false });
+    this.setState({ showAlertSignin: false }); // Schließt den Alert.
   };
 
   render() {
@@ -120,7 +116,8 @@ class EditProfilePage extends Component {
       <Alert severity="error" sx={{ marginBottom: "20px" }}>
         Bitte füllen Sie alle Felder aus!
       </Alert>
-    );
+    ); // Zeigt einen Alert an, wenn nicht alle Felder ausgefüllt sind.
+    
     return (
       <>
         <Paper
@@ -171,13 +168,13 @@ class EditProfilePage extends Component {
                     height: "auto",
                   }}
                 />
-              </IconButton>
+              </IconButton> 
               <Typography
                 variant="h4"
                 sx={{ color: "third.main", margin: "5px", fontWeight: "bold" }}
               >
                 Profildaten
-              </Typography>
+              </Typography> 
               <Avatar sx={{ margin: "5px", bgcolor: "background.white" }}>
                 <CreateRoundedIcon
                   sx={{
@@ -186,7 +183,7 @@ class EditProfilePage extends Component {
                     height: "auto",
                   }}
                 />
-              </Avatar>
+              </Avatar> 
             </Box>
             {showAlertSigninComp}
             <Box sx={{ mt: 1 }}>
@@ -209,7 +206,7 @@ class EditProfilePage extends Component {
                     }
                     onInput={() => this.setState({ showAlertSignin: false })}
                   />
-                </Grid>
+                </Grid> 
                 <Grid item xs={12} sm={6}>
                   <TextField
                     required
@@ -227,7 +224,7 @@ class EditProfilePage extends Component {
                     }
                     onInput={() => this.setState({ showAlertSignin: false })}
                   />
-                </Grid>
+                </Grid> 
                 <Grid item xs={12}>
                   <TextField
                     required
@@ -245,7 +242,7 @@ class EditProfilePage extends Component {
                     }
                     onInput={() => this.setState({ showAlertSignin: false })}
                   />
-                </Grid>
+                </Grid> 
                 <Grid
                   item
                   xs={12}
@@ -320,4 +317,4 @@ class EditProfilePage extends Component {
   }
 }
 
-export default withNavigation(EditProfilePage);
+export default withNavigation(EditProfilePage); // Exportiert die Komponente mit Navigation.

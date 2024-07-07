@@ -26,42 +26,39 @@ import FridgeContext from "../contexts/FridgeContext";
 const filter = createFilterOptions();
 
 class RecipeDialog extends Component {
-  static contextType = FridgeContext;
+  static contextType = FridgeContext; // Setzt den Kontexttyp auf FridgeContext.
 
   constructor(props) {
     super(props);
     this.state = {
-      showAlert: false,
-      fridgeId: this.props.fridgeId,
-      recipeId: this.props.recipeId,
+      showAlert: false, // Status für die Anzeige eines Warnhinweises.
+      fridgeId: this.props.fridgeId, // ID des Kühlschranks aus den Eigenschaften.
+      recipeId: this.props.recipeId, // ID des Rezepts aus den Eigenschaften.
       ingredientData: {
-        quantity: "",
-        unit_name: "",
-        grocery_name: "",
+        quantity: "", // Menge der Zutat.
+        unit_name: "", // Einheit der Zutat.
+        grocery_name: "", // Name der Zutat.
       },
       recipeData: {
-        recipe_name: props.isEditMode ? props.recipeTitle : "",
-        duration: props.isEditMode ? props.recipeDuration : "",
-        portion: props.isEditMode ? props.recipeServings : "",
-        instruction: props.isEditMode ? props.recipeInstructions : "",
+        recipe_name: props.isEditMode ? props.recipeTitle : "", // Rezeptname.
+        duration: props.isEditMode ? props.recipeDuration : "", // Dauer des Rezepts.
+        portion: props.isEditMode ? props.recipeServings : "", // Portionenanzahl.
+        instruction: props.isEditMode ? props.recipeInstructions : "", // Zubereitungsanleitung.
         ingredients:
           props.isEditMode && props.recipeIngredients
             ? props.recipeIngredients
-            : [],
+            : [], // Zutatenliste.
       },
-      foodOptions: props.foodOptions || [],
-      measureOptions: props.measureOptions || [],
-      removedIngredientIds: [],
-      newIngredients: [],
+      foodOptions: props.foodOptions || [], // Verfügbare Lebensmitteloptionen.
+      measureOptions: props.measureOptions || [], // Verfügbare Maßeinheiten.
+      removedIngredientIds: [], // IDs der entfernten Zutaten.
+      newIngredients: [], // Neue hinzugefügte Zutaten.
     };
   }
 
   componentDidMount() {
-    this.getGrocery();
-    this.getMeasure();
-    if (this.props.isEditMode) {
-      console.log("Selected Recipe:", this.props);
-    }
+    this.getGrocery(); // Ruft die Lebensmitteloptionen ab.
+    this.getMeasure(); // Ruft die Maßeinheiten ab.
   }
 
   componentDidUpdate(prevProps) {
@@ -73,85 +70,78 @@ class RecipeDialog extends Component {
       prevProps.recipeInstructions !== this.props.recipeInstructions ||
       prevProps.recipeIngredients !== this.props.recipeIngredients
     ) {
-      this.setState(
-        {
-          recipeData: {
-            recipe_name: this.props.recipeTitle,
-            duration: this.props.recipeDuration,
-            portion: this.props.recipeServings,
-            instruction: this.props.recipeInstructions,
-            ingredients: Array.isArray(this.props.recipeIngredients)
-              ? this.props.recipeIngredients
-              : [],
-          },
-          newIngredients: [],
+      this.setState({
+        recipeData: {
+          recipe_name: this.props.recipeTitle, // Aktualisiert den Rezeptnamen.
+          duration: this.props.recipeDuration, // Aktualisiert die Rezeptdauer.
+          portion: this.props.recipeServings, // Aktualisiert die Portionenanzahl.
+          instruction: this.props.recipeInstructions, // Aktualisiert die Zubereitungsanleitung.
+          ingredients: Array.isArray(this.props.recipeIngredients)
+            ? this.props.recipeIngredients
+            : [], // Aktualisiert die Zutatenliste.
         },
-        () => {
-          if (this.props.isEditMode) {
-            console.log("Updated Selected Recipe:", this.state.recipeData);
-          }
-        }
-      );
+        newIngredients: [], // Setzt die neuen Zutaten zurück.
+      });
     }
   }
 
   handleAddIngredient = () => {
     const { ingredientData, recipeData } = this.state;
-    console.log('ingredientData', ingredientData)
-    if (ingredientData.quantity && ingredientData.unit_name && ingredientData.grocery_name) {
-      this.setState(
-        (prevState) => ({
-          recipeData: {
-            ...recipeData,
-            ingredients: [...recipeData.ingredients, ingredientData],
-          },
-          newIngredients: [...prevState.newIngredients, ingredientData], 
-          ingredientData: { quantity: "", unit_name: "", grocery_name: "" },
-          showAlert: false,
-        }),
-        () => {
-          console.log('Ingredients after addition:', this.state.recipeData.ingredients);
-        }
-      );
+    if (
+      ingredientData.quantity &&
+      ingredientData.unit_name &&
+      ingredientData.grocery_name
+    ) {
+      this.setState((prevState) => ({
+        recipeData: {
+          ...recipeData,
+          ingredients: [...recipeData.ingredients, ingredientData], // Fügt die Zutat zur Zutatenliste hinzu.
+        },
+        newIngredients: [...prevState.newIngredients, ingredientData], // Fügt die Zutat zu den neuen Zutaten hinzu.
+        ingredientData: { quantity: "", unit_name: "", grocery_name: "" }, // Setzt die Zutateneingabe zurück.
+        showAlert: false, // Versteckt den Warnhinweis.
+      }));
     } else {
-      this.setState({ showAlert: true });
+      this.setState({ showAlert: true }); // Zeigt den Warnhinweis an, wenn Eingaben fehlen.
     }
   };
 
   handleRemoveIngredient = (ingredientIdOrIndex) => {
-    console.log('Deleting ingredient:', ingredientIdOrIndex);
     this.setState((prevState) => {
       let newIngredients;
       let removedIngredientIds = prevState.removedIngredientIds;
 
       if (this.props.isEditMode) {
-        newIngredients = prevState.recipeData.ingredients.filter((ingredient) => ingredient.id !== ingredientIdOrIndex);
-        removedIngredientIds = [...prevState.removedIngredientIds, ingredientIdOrIndex];
+        newIngredients = prevState.recipeData.ingredients.filter(
+          (ingredient) => ingredient.id !== ingredientIdOrIndex
+        ); // Entfernt die Zutat anhand der ID im Bearbeitungsmodus.
+        removedIngredientIds = [
+          ...prevState.removedIngredientIds,
+          ingredientIdOrIndex,
+        ]; // Fügt die ID zur Liste der entfernten Zutaten hinzu.
       } else {
-        newIngredients = prevState.recipeData.ingredients.filter((_, index) => index !== ingredientIdOrIndex);
+        newIngredients = prevState.recipeData.ingredients.filter(
+          (_, index) => index !== ingredientIdOrIndex
+        ); // Entfernt die Zutat anhand des Index im Hinzufügungsmodus.
       }
-
-      console.log('Updated ingredients:', newIngredients);
-
       return {
         recipeData: {
           ...prevState.recipeData,
-          ingredients: newIngredients,
+          ingredients: newIngredients, // Aktualisiert die Zutatenliste.
         },
-        removedIngredientIds: removedIngredientIds,
+        removedIngredientIds: removedIngredientIds, // Aktualisiert die Liste der entfernten Zutaten.
       };
-    }, () => {
-      console.log('Ingredients after deletion:', this.state.recipeData.ingredients);
-      console.log('Updated removedIngredientIds:', this.state.removedIngredientIds);
     });
   };
 
   removeIngredientsFromRecipe = async (groceryStatementId) => {
     try {
-      await SmartFridgeAPI.getAPI().deleteGroceryStatement(groceryStatementId);
-      console.log(`Successfully deleted ingredient with ID: ${groceryStatementId}`);
+      await SmartFridgeAPI.getAPI().deleteGroceryStatement(groceryStatementId); // Löscht eine Zutat aus der Datenbank.
     } catch (error) {
-      console.error(`Error deleting ingredient with ID: ${groceryStatementId}`, error);
+      console.error(
+        `Error deleting ingredient with ID: ${groceryStatementId}`,
+        error
+      );
     }
   };
 
@@ -160,92 +150,89 @@ class RecipeDialog extends Component {
     const form = e.target.closest("form");
 
     if (form.checkValidity()) {
-      this.updateStateAndSubmit();
+      this.updateStateAndSubmit(); // Aktualisiert den Zustand und übermittelt das Formular, wenn es gültig ist.
     } else {
-      this.setState({ showAlert: true });
+      this.setState({ showAlert: true }); // Zeigt den Warnhinweis an, wenn das Formular ungültig ist.
     }
   };
 
   updateStateAndSubmit = async () => {
-    const { recipeData, foodOptions, measureOptions, removedIngredientIds, newIngredients } = this.state;
-  
-    console.log("Form submitted: ", recipeData);
-  
-    const createdRecipe = await this.props.handleCreateRecipes(recipeData);
-  
-    console.log("Created Recipe ====>", createdRecipe);
-  
+    const {
+      recipeData,
+      foodOptions,
+      measureOptions,
+      removedIngredientIds,
+      newIngredients,
+    } = this.state;
+
+    const createdRecipe = await this.props.handleCreateRecipes(recipeData); // Erstellt oder aktualisiert das Rezept.
+
     if (!createdRecipe || !createdRecipe.id) {
       console.error("Failed to create or update recipe");
       return;
     }
-  
-    console.log("Recipe ID in =====>", createdRecipe.id);
+
     const recipeId = createdRecipe.id;
-  
     const newGroceries = new Set();
     const newMeasurements = new Set();
-  
+
     for (const ingredient of newIngredients) {
       if (!foodOptions.includes(ingredient.grocery_name)) {
-        newGroceries.add(ingredient.grocery_name);
+        newGroceries.add(ingredient.grocery_name); // Fügt neue Lebensmittel zur Set hinzu.
       }
       if (!measureOptions.includes(ingredient.unit_name)) {
-        newMeasurements.add(ingredient.unit_name);
+        newMeasurements.add(ingredient.unit_name); // Fügt neue Maßeinheiten zur Set hinzu.
       }
     }
-  
+
     for (const grocery of newGroceries) {
       try {
-        await this.addGrocery(grocery);
-        console.log("Grocery added successfully.");
+        await this.addGrocery(grocery); // Fügt neue Lebensmittel zur Datenbank hinzu.
       } catch (error) {
         console.error("Error adding grocery:", error);
       }
     }
-  
+
     for (const measurement of newMeasurements) {
       try {
-        await this.addMeasure(measurement);
-        console.log("Measurement added successfully.");
+        await this.addMeasure(measurement); // Fügt neue Maßeinheiten zur Datenbank hinzu.
       } catch (error) {
         console.error("Error adding measurement:", error);
       }
     }
-  
+
     for (const ingredient of newIngredients) {
       try {
-        const grocery_id = await SmartFridgeAPI.getAPI().getGroceryByName(ingredient.grocery_name);
-        const measure_id = await SmartFridgeAPI.getAPI().getMeasureByName(ingredient.unit_name);
+        const grocery_id = await SmartFridgeAPI.getAPI().getGroceryByName(
+          ingredient.grocery_name
+        );
+        const measure_id = await SmartFridgeAPI.getAPI().getMeasureByName(
+          ingredient.unit_name
+        );
         const quantity = ingredient.quantity;
-  
+
         const groceryId = grocery_id.id;
         const measureId = measure_id.id;
-  
-        await this.addRecipeInFridge(groceryId, measureId, quantity, recipeId);
-        console.log(`Added ingredient ${ingredient.grocery_name} with measure ${ingredient.unit_name} to fridge.`);
+
+        await this.addRecipeInFridge(groceryId, measureId, quantity, recipeId); // Fügt die Zutat zum Rezept im Kühlschrank hinzu.
       } catch (error) {
         console.error("Error adding ingredient to fridge:", error);
       }
     }
-  
+
     if (removedIngredientIds && removedIngredientIds.length > 0) {
       for (const ingredientId of removedIngredientIds) {
-        console.log('Ingredient about to be removed ===>', ingredientId)
-        await this.removeIngredientsFromRecipe(ingredientId);
+        await this.removeIngredientsFromRecipe(ingredientId); // Entfernt Zutaten aus dem Rezept.
       }
     }
-  
-    console.log("Hier sieht man recipeData", recipeData.ingredients);
-  
-    this.props.refreshRecipeList();
-    this.props.handlePopupRecipeClose();
+    this.props.refreshRecipeList(); // Aktualisiert die Rezeptliste.
+    this.props.handlePopupRecipeClose(); // Schließt das Rezept-Popup.
   };
-  
+
   handleUnitInput = (event) => {
     this.setState({ showAlert: false });
     const value = event.target.value;
-    event.target.value = value.replace(/[^a-zA-ZäöüÄÖÜß]/g, ""); // Regex to allow only letters including German umlauts
+    event.target.value = value.replace(/[^a-zA-ZäöüÄÖÜß]/g, ""); // Erlaubt nur Buchstaben, einschließlich deutscher Umlaute.
   };
 
   getGrocery = () => {
@@ -254,7 +241,7 @@ class RecipeDialog extends Component {
       .getGroceryByFridgeId(fridgeId)
       .then((groceries) => {
         this.setState({
-          foodOptions: groceries.map((grocery) => grocery.getGroceryName()),
+          foodOptions: groceries.map((grocery) => grocery.getGroceryName()), // Aktualisiert die Lebensmitteloptionen.
         });
       });
   };
@@ -265,7 +252,7 @@ class RecipeDialog extends Component {
       .getMeasureByFridgeId(fridgeId)
       .then((measures) => {
         this.setState({
-          measureOptions: measures.map((measure) => measure.getUnit()),
+          measureOptions: measures.map((measure) => measure.getUnit()), // Aktualisiert die Maßeinheitenoptionen.
         });
       });
   };
@@ -277,7 +264,7 @@ class RecipeDialog extends Component {
     try {
       const grocery = await SmartFridgeAPI.getAPI().addGrocery(newGrocery);
       this.setState((prevState) => ({
-        foodOptions: [...prevState.foodOptions, grocery.getGroceryName()],
+        foodOptions: [...prevState.foodOptions, grocery.getGroceryName()], // Fügt das neue Lebensmittel zu den Optionen hinzu.
       }));
     } catch (error) {
       console.error("Error adding grocery:", error);
@@ -291,7 +278,7 @@ class RecipeDialog extends Component {
     try {
       const measure = await SmartFridgeAPI.getAPI().addMeasure(newMeasure);
       this.setState((prevState) => ({
-        measureOptions: [...prevState.measureOptions, measure.getUnit()],
+        measureOptions: [...prevState.measureOptions, measure.getUnit()], // Fügt die neue Maßeinheit zu den Optionen hinzu.
       }));
     } catch (error) {
       console.error("Error adding measurement:", error);
@@ -308,18 +295,13 @@ class RecipeDialog extends Component {
     try {
       const groceryStatement =
         await SmartFridgeAPI.getAPI().addGroceryStatement(newGroceryStatement);
-      const groceryStatementId = groceryStatement.id;
-      console.log("groceryStatementId:", groceryStatementId);
 
-      const groceryStatementAddedInFridge =
-        await SmartFridgeAPI.getAPI().addGroceryinRecipe(
-          groceryStatementId,
-          recipeId
-        );
-      console.log(
-        "groceryStatementAddedInFridge:",
-        groceryStatementAddedInFridge
-      );
+      const groceryStatementId = groceryStatement.id;
+
+      await SmartFridgeAPI.getAPI().addGroceryinRecipe(
+        groceryStatementId,
+        recipeId
+      ); // Fügt die Zutat zum Rezept in der Datenbank hinzu.
     } catch (error) {
       console.error("Error adding grocery statement:", error);
     }
@@ -582,7 +564,6 @@ class RecipeDialog extends Component {
                 />
 
                 <Autocomplete
-
                   id="ingredient-box"
                   options={sortedFoodOptions.map((option) => ({
                     title: option,
@@ -647,7 +628,7 @@ class RecipeDialog extends Component {
                       sx={{ flex: 1 }}
                     />
                   )}
-                  sx={{ width: {xs: "100%", xl: "100%"} }}
+                  sx={{ width: { xs: "100%", xl: "100%" } }}
                 />
                 <IconButton disableRipple onClick={this.handleAddIngredient}>
                   <AddCircleOutlineRoundedIcon
@@ -713,8 +694,9 @@ class RecipeDialog extends Component {
                         edge="end"
                         aria-label="delete"
                         onClick={() => {
-                          console.log("Deleting ingredient:", ingredient);
-                          this.props.isEditMode ? this.handleRemoveIngredient(ingredient.id) : this.handleRemoveIngredient(index);
+                          this.props.isEditMode
+                            ? this.handleRemoveIngredient(ingredient.id)
+                            : this.handleRemoveIngredient(index);
                         }}
                         disableRipple
                       >

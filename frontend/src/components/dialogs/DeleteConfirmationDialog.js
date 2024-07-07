@@ -9,7 +9,6 @@ import {
   Slide,
 } from "@mui/material";
 
-// Texts for different dialog types
 const dialogTexts = {
   household: {
     title: "Haushalt löschen?",
@@ -34,13 +33,12 @@ const DeleteConfirmationDialog = ({
   handleCloseDialog,
   handleConfirmDelete,
 }) => {
-  const dialogText = dialogTexts[dialogType] || {};
+  const dialogText = dialogTexts[dialogType] || {}; // Wählt den passenden Text basierend auf dem Dialogtyp.
 
   const handleClickDelete = () => {
-    handleConfirmDelete();
-    handleCloseDialog();
+    handleConfirmDelete(); // Führt die Löschbestätigung aus.
+    handleCloseDialog(); // Schließt den Dialog.
   };
-
   return (
     <Dialog
       open={dialogOpen}
@@ -56,7 +54,11 @@ const DeleteConfirmationDialog = ({
       </DialogTitle>
       <DialogContent>
         <hr
-          style={{ marginTop: "0", padding: "0", borderColor: "rgba(0, 50, 0, 0.1)" }}
+          style={{
+            marginTop: "0",
+            padding: "0",
+            borderColor: "rgba(0, 50, 0, 0.1)",
+          }}
         />
         <DialogContentText id="alert-dialog-slide-description">
           {dialogText.description}
@@ -72,7 +74,7 @@ const DeleteConfirmationDialog = ({
             "&:hover": {
               bgcolor: "primary.dark",
               color: "background.default",
-              border: "none"
+              border: "none",
             },
           }}
         >

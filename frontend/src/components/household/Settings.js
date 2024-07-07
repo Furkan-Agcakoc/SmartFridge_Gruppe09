@@ -23,56 +23,60 @@ import EditIcon from "@mui/icons-material/Edit";
 import FridgeContext from "../contexts/FridgeContext";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import AlertComponent from "../dialogs/AlertComponent";
+import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import { Link } from "react-router-dom";
 
 class Settings extends Component {
-  static contextType = FridgeContext;
+  static contextType = FridgeContext; // Definiert den Kontexttyp für den Zugriff auf den FridgeContext.
 
   constructor(props) {
     super(props);
     this.state = {
-      groceries: [],
-      measures: [],
-      fridgeId: this.props.fridgeId,
-      showAlertEdit: false,
-      showAlertMeasureDelete: false,
-      showAlertGroceryDelete: false,
-      popupGroceryOpen: false,
-      popupMeasureOpen: false,
-      selectedGrocery: null,
-      selectedMeasure: null,
-      GroceryList: [],
+      groceries: [], // Array zur Speicherung von Lebensmitteln.
+      measures: [], // Array zur Speicherung von Maßeinheiten.
+      fridgeId: this.props.fridgeId, // Kühlschrank-ID aus den Eigenschaften.
+      showAlertEdit: false, // Status zur Anzeige des Bearbeitungswarnhinweises.
+      showAlertMeasureDelete: false, // Status zur Anzeige des Löschwarnhinweises für Maßeinheiten.
+      showAlertGroceryDelete: false, // Status zur Anzeige des Löschwarnhinweises für Lebensmittel.
+      popupGroceryOpen: false, // Status zur Anzeige des Lebensmittel-Popups.
+      popupMeasureOpen: false, // Status zur Anzeige des Maßeinheiten-Popups.
+      selectedGrocery: null, // Ausgewähltes Lebensmittel zum Bearbeiten.
+      selectedMeasure: null, // Ausgewählte Maßeinheit zum Bearbeiten.
+      GroceryList: [], // Liste aller Lebensmittel.
+      household_id: this.props.householdId, // Haushalts-ID aus den Eigenschaften.
+      user_id: this.props.userId, // Benutzer-ID aus den Eigenschaften.
+      owner_id: null, // Eigentümer-ID des Haushalts.
     };
-    console.log("Constructor - Fridge ID:", this.state.fridgeId);
   }
 
   componentDidMount() {
     const { fridgeId } = this.state;
-    this.getGroceryByFridgeId(fridgeId);
-    this.getMeausresByFridgeId(fridgeId);
+    this.getGroceryByFridgeId(fridgeId); // Lädt Lebensmittel basierend auf der Kühlschrank-ID.
+    this.getMeausresByFridgeId(fridgeId); // Lädt Maßeinheiten basierend auf der Kühlschrank-ID.
 
-    // Event listener to hide alerts on document click
+    // Event-Listener, um Warnhinweise bei Klick auf das Dokument auszublenden.
     document.addEventListener("click", this.handleDocumentClick);
-    this.loadGroceryStatements();
+    this.loadGroceryStatements(); // Lädt alle Lebensmittel.
+    this.getHouseholdById(this.state.household_id); // Lädt den Haushalt basierend auf der Haushalts-ID.
   }
 
   componentWillUnmount() {
-    // Clean up the event listener
+    // Entfernt den Event-Listener bei der Demontage des Komponenten.
     document.removeEventListener("click", this.handleDocumentClick);
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.GroceryList !== this.state.GroceryList) {
-      console.log("GroceryList ===>", this.state.GroceryList);
+      // Aktion, wenn sich die GroceryList ändert.
     }
   }
-
 
   handleClick = (e) => {
     const form = e.target.closest("form");
     if (form.checkValidity()) {
-      this.handleSave();
+      this.handleSave(); // Speichert die Änderungen, wenn das Formular gültig ist.
     } else {
-      this.setState({ showAlertEdit: true });
+      this.setState({ showAlertEdit: true }); // Zeigt einen Warnhinweis an, wenn das Formular ungültig ist.
     }
   };
 
@@ -82,10 +86,10 @@ class Settings extends Component {
 
     if (popupGroceryOpen) {
       const updatedGrocery = { ...selectedGrocery, grocery_name: name };
-      this.updateGrocery(updatedGrocery);
+      this.updateGrocery(updatedGrocery); // Aktualisiert das ausgewählte Lebensmittel.
     } else {
       const updatedMeasure = { ...selectedMeasure, unit: name };
-      this.updateMeasure(updatedMeasure);
+      this.updateMeasure(updatedMeasure); // Aktualisiert die ausgewählte Maßeinheit.
     }
   };
 
@@ -93,9 +97,8 @@ class Settings extends Component {
     const groceries = await SmartFridgeAPI.getAPI().getGroceryByFridgeId(
       fridgeId
     );
-    console.log(groceries);
     this.setState({
-      groceries: groceries,
+      groceries: groceries, // Setzt die geladenen Lebensmittel in den Zustand.
     });
   };
 
@@ -103,9 +106,8 @@ class Settings extends Component {
     const measures = await SmartFridgeAPI.getAPI().getMeasureByFridgeId(
       fridgeId
     );
-    console.log(measures);
     this.setState({
-      measures: measures,
+      measures: measures, // Setzt die geladenen Maßeinheiten in den Zustand.
     });
   };
 
@@ -114,8 +116,8 @@ class Settings extends Component {
       (grocery) => grocery.id === groceryId
     );
     this.setState({
-      popupGroceryOpen: true,
-      selectedGrocery,
+      popupGroceryOpen: true, // Öffnet das Lebensmittel-Popup.
+      selectedGrocery, // Setzt das ausgewählte Lebensmittel in den Zustand.
     });
   };
 
@@ -124,8 +126,8 @@ class Settings extends Component {
       (measure) => measure.id === measureId
     );
     this.setState({
-      popupMeasureOpen: true,
-      selectedMeasure,
+      popupMeasureOpen: true, // Öffnet das Maßeinheiten-Popup.
+      selectedMeasure, // Setzt die ausgewählte Maßeinheit in den Zustand.
     });
   };
 
@@ -138,12 +140,12 @@ class Settings extends Component {
       this.setState((prevState) => ({
         groceries: prevState.groceries.map((g) =>
           g.id === updatedGrocery.id ? updatedGrocery : g
-        ),
-        popupGroceryOpen: false,
-        selectedGrocery: null,
+        ), // Aktualisiert die Lebensmittel in der Liste.
+        popupGroceryOpen: false, // Schließt das Lebensmittel-Popup.
+        selectedGrocery: null, // Setzt das ausgewählte Lebensmittel zurück.
       }));
     } catch (error) {
-      this.setState({ showAlertEdit: true });
+      this.setState({ showAlertEdit: true }); // Zeigt einen Warnhinweis bei Fehlern an.
     }
   };
 
@@ -156,19 +158,18 @@ class Settings extends Component {
       this.setState((prevState) => ({
         measures: prevState.measures.map((m) =>
           m.id === updatedMeasure.id ? updatedMeasure : m
-        ),
-        popupMeasureOpen: false,
-        selectedMeasure: null,
+        ), // Aktualisiert die Maßeinheiten in der Liste.
+        popupMeasureOpen: false, // Schließt das Maßeinheiten-Popup.
+        selectedMeasure: null, // Setzt die ausgewählte Maßeinheit zurück.
       }));
     } catch (error) {
-      this.setState({ showAlertEdit: true });
+      this.setState({ showAlertEdit: true }); // Zeigt einen Warnhinweis bei Fehlern an.
     }
   };
 
   loadGroceryStatements = async () => {
     const Groceries = await SmartFridgeAPI.getAPI().getGroceryStatement();
-    console.log("Groceries after fetch ===>", Groceries);
-    this.setState({ GroceryList: Groceries });
+    this.setState({ GroceryList: Groceries }); // Lädt und setzt die Lebensmittel in den Zustand.
   };
 
   deleteGrocery = async (groceryId) => {
@@ -178,7 +179,7 @@ class Settings extends Component {
         this.setState((prevState) => ({
           groceries: prevState.groceries.filter(
             (grocery) => grocery.id !== groceryId
-          ),
+          ), // Entfernt das Lebensmittel aus der Liste.
         }));
       })
       .catch((error) => {
@@ -200,7 +201,7 @@ class Settings extends Component {
         this.setState((prevState) => ({
           measures: prevState.measures.filter(
             (measure) => measure.id !== measureId
-          ),
+          ), // Entfernt die Maßeinheit aus der Liste.
         }));
       })
       .catch((error) => {
@@ -215,18 +216,17 @@ class Settings extends Component {
       });
   };
 
- 
   handleDeleteGrocery = (groceryId) => (e) => {
     const isExisting = this.state.GroceryList.some(
       (grocery) => grocery.grocery_id === groceryId
     );
     if (isExisting) {
-      this.setState({ showAlertGroceryDelete: true });
+      this.setState({ showAlertGroceryDelete: true }); // Zeigt einen Warnhinweis, wenn das Lebensmittel existiert.
       return;
     }
 
     e.stopPropagation();
-    this.deleteGrocery(groceryId);
+    this.deleteGrocery(groceryId); // Löscht das Lebensmittel.
   };
 
   handleDeleteMeasure = (measureId) => (e) => {
@@ -234,29 +234,55 @@ class Settings extends Component {
       (measure) => measure.unit_id === measureId
     );
     if (isExisting) {
-      this.setState({ showAlertMeasureDelete: true });
+      this.setState({ showAlertMeasureDelete: true }); // Zeigt einen Warnhinweis, wenn die Maßeinheit existiert.
       return;
     }
 
     e.stopPropagation();
-    this.deleteMeasure(measureId);
+    this.deleteMeasure(measureId); // Löscht die Maßeinheit.
   };
+
   handleEditGrocery = (groceryId) => (e) => {
     e.stopPropagation();
-    this.editGrocery(groceryId);
+    this.editGrocery(groceryId); // Bearbeitet das ausgewählte Lebensmittel.
   };
 
   handleEditMeasure = (measureId) => (e) => {
     e.stopPropagation();
-    this.editMeasure(measureId);
+    this.editMeasure(measureId); // Bearbeitet die ausgewählte Maßeinheit.
   };
 
   handlePopupGroceryClose = () => {
-    this.setState({ popupGroceryOpen: false, selectedGrocery: null });
+    this.setState({ popupGroceryOpen: false, selectedGrocery: null }); // Schließt das Lebensmittel-Popup.
   };
 
   handlePopupMeasureClose = () => {
-    this.setState({ popupMeasureOpen: false, selectedMeasure: null });
+    this.setState({ popupMeasureOpen: false, selectedMeasure: null }); // Schließt das Maßeinheiten-Popup.
+  };
+
+  deleteInhabitant = async () => {
+    const { user_id } = this.state;
+    const household_id = this.state.household_id;
+    const updateInhabitant = await SmartFridgeAPI.getAPI().deleteInhabitant(
+      user_id,
+      household_id
+    );
+    return updateInhabitant; // Löscht den Bewohner aus dem Haushalt.
+  };
+
+  getHouseholdById = async (householdId) => {
+    const household = await SmartFridgeAPI.getAPI().getHouseholdById(
+      householdId
+    );
+    // Sicherstellen, dass das Array existiert und nicht leer ist
+    if (household && household.length > 0) {
+      const owner_id = household[0].owner_id;
+      this.setState({ household, owner_id }); // Setzt den Haushalt und die Eigentümer-ID.
+    } else {
+      console.error("No household data found");
+    }
+
+    return household; // Gibt den Haushalt zurück.
   };
 
   render() {
@@ -270,6 +296,8 @@ class Settings extends Component {
       selectedGrocery,
       selectedMeasure,
       showAlertEdit,
+      user_id,
+      owner_id,
     } = this.state;
 
     return (
@@ -310,7 +338,7 @@ class Settings extends Component {
                 id="panel1-header"
               >
                 <Typography sx={{ ml: 1, fontWeight: "bold" }}>
-                  Lebensmittel bearbeiten{" "}
+                  Lebensmittel
                 </Typography>
               </AccordionSummary>
               <AccordionDetails
@@ -396,11 +424,11 @@ class Settings extends Component {
             <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
+                aria-controls="panel2-content"
+                id="panel2-header"
               >
                 <Typography sx={{ ml: 1, fontWeight: "bold" }}>
-                  Einheit bearbeiten
+                  Einheiten
                 </Typography>
               </AccordionSummary>
 
@@ -419,7 +447,7 @@ class Settings extends Component {
                 >
                   <AlertComponent
                     showAlert={showAlertMeasureDelete}
-                    alertType="SettingsEdit"
+                    alertType="SettingsMeasureDelete"
                     onClose={() =>
                       this.setState({ showAlertMeasureDelete: false })
                     }
@@ -484,6 +512,56 @@ class Settings extends Component {
                 </List>
               </AccordionDetails>
             </Accordion>
+            {owner_id !== user_id && (
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel3-content"
+                  id="panel3-header"
+                >
+                  <Typography sx={{ ml: 1, fontWeight: "bold" }}>
+                    Haushaltsaufenthalt
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Link to="/household">
+                    <Button
+                      onClick={this.deleteInhabitant}
+                      variant="contained"
+                      endIcon={<DeleteForeverRoundedIcon />}
+                      sx={{
+                        marginBottom: "15px",
+                        width: "100%",
+                        bgcolor: "rgba(197, 0, 0, 0.1)",
+                        color: "error.main",
+                        border: "2px solid #c50000 ",
+                        "&:hover": {
+                          bgcolor: "error.main",
+                          color: "background.default",
+                        },
+                      }}
+                    >
+                      Haushalt verlassen
+                    </Button>
+                  </Link>
+                  <Container
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      textAlign: "center",
+                    }}
+                  >
+                    <Typography
+                      variant="h7"
+                      sx={{ fontSize: "9pt", color: "grey" }}
+                    >
+                      Sorgt für die Entziehung der Zugriffsrechte in diesem
+                      Haushalt!
+                    </Typography>
+                  </Container>
+                </AccordionDetails>
+              </Accordion>
+            )}
           </Paper>
         </Container>
         {(popupGroceryOpen || popupMeasureOpen) && (

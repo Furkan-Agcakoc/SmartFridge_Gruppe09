@@ -16,7 +16,7 @@ import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import UserContext from "../contexts/UserContext";
 
 class HouseholdDialog extends Component {
-  static contextType = UserContext;
+  static contextType = UserContext; // Setzt den UserContext als Kontext für die Komponente.
 
   constructor(props) {
     super(props);
@@ -29,14 +29,14 @@ class HouseholdDialog extends Component {
       allInhabitants: [],
       showAlert: false,
       contextLoaded: false,
-    };
+    }; // Initialisiert den Zustand der Komponente.
   }
 
   componentDidMount() {
     const checkContext = () => {
       if (this.context) {
         this.setState({ contextLoaded: true });
-        this.updateState();
+        this.updateState(); // Überprüft den Kontext und aktualisiert den Zustand beim Mounten der Komponente.
       }
     };
     checkContext();
@@ -44,7 +44,7 @@ class HouseholdDialog extends Component {
 
   updateState = () => {
     this.fetchInhabitants();
-    setTimeout(this.updatestate, 30000); // wait 100ms then re-check
+    setTimeout(this.updateState, 30000); // Aktualisiert den Zustand alle 30 Sekunden.
   };
 
   fetchInhabitants = () => {
@@ -56,32 +56,14 @@ class HouseholdDialog extends Component {
           email: user.email,
           id: user.id,
         }));
-        this.setState({ allInhabitants: inhabitants });
+        this.setState({ allInhabitants: inhabitants }); // Ruft alle Bewohner ab und setzt sie in den Zustand.
       })
       .catch((error) => {
         console.error("Fehler beim Abrufen der Einwohnerdaten:", error);
       });
   };
 
-  // componentDidUpdate(prevProps) {
-  //   if (
-  //     prevProps.isEditMode !== this.props.isEditMode ||
-  //     prevProps.household_name !== this.props.household_name ||
-  //     prevProps.inhabitants !== this.props.inhabitants
-  //   ) {
-  //     this.setState({
-  //       householdData: {
-  //         household_name: this.props.household_name,
-  //         inhabitants: this.props.inhabitants || [], // ÄNDERUNG 2
-  //         // inhabitants: this.props.inhabitants,
-  //       },
-  //     });
-  //   }
-  // }
-
   componentDidUpdate(prevProps, prevState) {
-    // console.log("Householddata aus State", this.state.householdData);
-    // console.log("Inhabitants aus Dialog", this.props.inhabitants);
     if (
       prevProps.isEditMode !== this.props.isEditMode ||
       prevProps.household_name !== this.props.household_name ||
@@ -93,11 +75,11 @@ class HouseholdDialog extends Component {
           inhabitants: this.props.inhabitants || [],
           household_id: this.props.household_id,
         },
-      });
+      }); // Aktualisiert den Zustand, wenn sich die Props ändern.
     }
 
     if (!prevState.contextLoaded && this.state.contextLoaded) {
-      this.getAvailableInhabitants();
+      this.getAvailableInhabitants(); // Ruft verfügbare Bewohner ab, wenn der Kontext geladen ist.
     }
   }
 
@@ -105,55 +87,43 @@ class HouseholdDialog extends Component {
     const { householdData } = this.state;
     const form = e.target.closest("form");
     if (form.checkValidity()) {
-      this.props.handleCreateObject(householdData);
-      // console.log("Form is valid");
+      this.props.handleCreateObject(householdData); // Überprüft die Gültigkeit des Formulars und erstellt ein Haushaltsobjekt.
     } else {
-      this.setState({ showAlert: true });
+      this.setState({ showAlert: true }); // Zeigt eine Warnung an, wenn das Formular ungültig ist.
     }
   };
 
   getAvailableInhabitants = () => {
     const { allInhabitants, householdData } = this.state;
-
     const currentInhabitantsIds =
       householdData?.inhabitants?.map((inhabitant) => inhabitant.id) || [];
-
     return allInhabitants.filter(
       (inhabitant) =>
         !currentInhabitantsIds.includes(inhabitant.id) &&
         (this.context && this.context.id
           ? inhabitant.id !== this.context.id
           : true)
-    );
+    ); // Filtert die verfügbaren Bewohner basierend auf aktuellen Bewohnern und dem Benutzerkontext.
   };
 
   getInhabitantById = (id) => {
-    return this.state.allInhabitants.find((inhabitant) => inhabitant.id === id);
+    return this.state.allInhabitants.find((inhabitant) => inhabitant.id === id); // Findet einen Bewohner anhand der ID.
   };
 
   deleteInhabitantByUserIdHouseholdId = (userId, household_id) => {
-    // console.log("Bewohner erfolgreich gelöscht");
-    // console.log(userId, household_id);
-    // console.log(
-    //   "Das sind die Inhabitants die gelöscht wurden",
-    //   this.state.householdData.inhabitants
-    // );
-
     SmartFridgeAPI.getAPI()
       .deleteInhabitant(userId, household_id)
       .then(() => {
         this.setState((prevState) => {
-          // Entfernen des Benutzers aus der Liste der Bewohner
           const updatedInhabitants = prevState.householdData.inhabitants.filter(
             (inh) => inh.id !== userId
           );
-
           return {
             householdData: {
               ...prevState.householdData,
               inhabitants: updatedInhabitants,
             },
-          };
+          }; // Entfernt einen Bewohner aus dem Haushalt.
         });
       })
       .catch((error) => {
@@ -161,33 +131,7 @@ class HouseholdDialog extends Component {
       });
   };
 
-  // deleteInhabitantByUserIdHouseholdId = (userId, household_id) => {
-  //   console.log("Bewohner erfolgreich gelöscht");
-  //   console.log(userId, household_id);
-  //   console.log(
-  //     "Das sind die Inhabitants die gelöscht wurden",
-  //     this.state.householdData.inhabitants
-  //   );
-  //   SmartFridgeAPI.getAPI()
-  //     .deleteInhabitant(userId, household_id)
-  //     .then(() => {
-  //       this.setState((prevState) => ({
-  //         householdData: {
-  //           ...prevState.householdData,
-  //           inhabitants: prevState.householdData.inhabitants.filter(
-  //             (inh) => inh.id !== userId
-  //           ),
-  //         },
-  //       }));
-  //     })
-  //     .catch((error) => {
-  //       console.error("Fehler beim Löschen des Bewohners:", error);
-  //     });
-  // };
-
   handleDeleteInhabitant = (inhabitant) => {
-    // console.log(inhabitant);
-
     this.setState((prevState) => ({
       householdData: {
         ...prevState.householdData,
@@ -195,20 +139,17 @@ class HouseholdDialog extends Component {
           (inh) => inh.id !== inhabitant.id
         ),
       },
-    }));
+    })); // Entfernt einen Bewohner aus dem Zustand.
   };
 
   getHouseholdsByUserId = () => {
     const user = this.context;
-    // console.log(user);
-
     SmartFridgeAPI.getAPI()
       .getHouseholdsByUserId(user.id)
       .then((households) => {
-        // console.log(households);
         this.setState({
           households: households,
-        });
+        }); // Ruft Haushaltsdaten des Benutzers ab und setzt sie in den Zustand.
       });
   };
 
@@ -322,7 +263,8 @@ class HouseholdDialog extends Component {
                 renderTags={() => null}
               />
               <Box sx={{ mt: { xs: 1, sm: 2, md: 3 } }}>
-                {inhabitants && inhabitants.length > 0 && 
+                {inhabitants &&
+                  inhabitants.length > 0 &&
                   inhabitants.map((inhabitant) => (
                     <Box
                       key={inhabitant.id}
@@ -347,8 +289,7 @@ class HouseholdDialog extends Component {
                         <DeleteIcon />
                       </IconButton>
                     </Box>
-                  ))
-                }
+                  ))}
               </Box>
             </Box>
             <Box

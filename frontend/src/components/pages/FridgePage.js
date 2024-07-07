@@ -15,7 +15,7 @@ import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 import Recipe from "../recipe/Recipe";
 import Grocery from "../grocery/Grocery";
-import FridgeSearchBar from "../FridgeSearchBar";
+import FridgeBar from "../FridgeBar";
 import GroceryDialog from "../grocery/GroceryDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 import RecipeDialog from "../recipe/RecipeDialog";
@@ -52,8 +52,8 @@ class FridgePage extends Component {
       openMenus: {},
       popupRecipeOpen: false,
       recipeCount: 0,
-      allRecipes: [], //Hier werden alle Rezepte gespeichert
-      recipes: [], //Hier werden alle Rezepte gespeichert, die in der Fridge enthalten sind
+      allRecipes: [], // Alle Rezepte werden hier gespeichert
+      recipes: [], // Rezepte, die im Kühlschrank enthalten sind, werden hier gespeichert
       availableRecipes: [],
       showRecipeAlert: false,
       recipeIdToDelete: null,
@@ -65,6 +65,7 @@ class FridgePage extends Component {
       groceryStatements: {},
       groceryName: {},
       measureName: {},
+      ownerName: "",
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -73,24 +74,25 @@ class FridgePage extends Component {
     this.handleAnchorDelete = this.handleAnchorDelete.bind(this);
   }
 
+  // Komponenten-Lebenszyklusmethode zum Laden der Anfangsdaten
   componentDidMount() {
-    const { householdId, fridgeId } = this.props.params; // Extract householdId and fridgeId from props
+    const { householdId, fridgeId } = this.props.params;
     this.setState({ householdId, fridgeId }, () => {
-      // Callback function to ensure state is updated before making API calls
       this.getFridgeByHouseholdId(householdId);
-      this.getHouseholdNameById(householdId); // Load household name
+      this.getHouseholdNameById(householdId);
       this.getGroceryInFridgeId(householdId);
       this.loadRecipeList();
     });
   }
 
+  // Komponenten-Lebenszyklusmethode zum Aktualisieren der Daten, wenn sich die fridgeId ändert
   componentDidUpdate(prevProps, prevState) {
     if (prevState.fridgeId !== this.state.fridgeId) {
       this.loadRecipeList();
     }
   }
-  // #####################APIs###########################
 
+  // Alle Rezepte laden
   loadRecipeList = async () => {
     try {
       const allRecipes = await SmartFridgeAPI.getAPI().getRecipe();
@@ -101,10 +103,11 @@ class FridgePage extends Component {
         this.loadRecipeByFridgeId(fridgeId);
       }
     } catch (error) {
-      console.error("Error fetching recipes:", error);
+      console.error("Fehler beim Abrufen der Rezepte:", error);
     }
   };
 
+  // Rezepte nach Kühlschrank-ID laden
   loadRecipeByFridgeId = (fridgeId) => {
     SmartFridgeAPI.getAPI()
       .getRecipeByFridgeId(fridgeId)
@@ -112,12 +115,14 @@ class FridgePage extends Component {
         this.setState({ recipes });
       })
       .catch((error) => {
-        console.error("Error fetching recipes by fridge ID:", error);
+        console.error(
+          "Fehler beim Abrufen der Rezepte nach Kühlschrank-ID:",
+          error
+        );
       });
   };
 
-
-
+  // Lebensmittel im Kühlschrank nach Kühlschrank-ID abrufen
   getGroceryInFridgeId = async (fridgeId) => {
     try {
       const groceryStatements =
@@ -142,43 +147,50 @@ class FridgePage extends Component {
 
             return {
               ...statement,
-              grocery_name: grocery?.grocery_name ?? "Unknown",
-              unit_name: measure?.unit ?? "Unknown",
+              grocery_name: grocery?.grocery_name ?? "Unbekannt",
+              unit_name: measure?.unit ?? "Unbekannt",
             };
           } catch (error) {
-            console.error("Error processing statement:", statement, error);
+            console.error(
+              "Fehler beim Verarbeiten der Aussage:",
+              statement,
+              error
+            );
             return {
               ...statement,
-              grocery_name: "Unknown",
-              unit_name: "Unknown",
+              grocery_name: "Unbekannt",
+              unit_name: "Unbekannt",
             };
           }
         })
       );
       this.setState({ updatedGroceryStatements });
     } catch (error) {
-      // console.error("Error fetching grocery statements:", error);
+      console.error("Fehler beim Abrufen der Lebensmittelangaben:", error);
     }
   };
 
+  // Lebensmittel nach ID abrufen
   getGroceryById = async (groceryId) => {
     try {
       const grocery = await SmartFridgeAPI.getAPI().getGroceryById(groceryId);
       return grocery;
     } catch (error) {
-      console.error("Error fetching grocery:", error);
+      console.error("Fehler beim Abrufen des Lebensmittels:", error);
     }
   };
 
+  // Einheit nach ID abrufen
   getMeasureById = async (measureId) => {
     try {
       const measure = await SmartFridgeAPI.getAPI().getMeasureById(measureId);
       return measure;
     } catch (error) {
-      console.error("Error fetching measure:", error);
+      console.error("Fehler beim Abrufen der Einheit:", error);
     }
   };
 
+  // Die Lebensmittelliste aktualisieren
   refreshGroceryList = async () => {
     const { fridgeId } = this.state;
     this.setState({
@@ -187,6 +199,7 @@ class FridgePage extends Component {
     await this.getGroceryInFridgeId(fridgeId);
   };
 
+  // Rezeptinhalt nach Kühlschrank-ID abrufen
   getRecipeContentByFridgeId = async () => {
     const { recipes, fridgeId } = this.state;
 
@@ -208,9 +221,7 @@ class FridgePage extends Component {
     });
   };
 
-
-  // #######################NO APIs###############################
-
+  // Menge aus der Lebensmittelangabe extrahieren
   groceryStatement(statement) {
     const quantity = statement.map((statement) => statement.quantity);
     return quantity;
@@ -219,14 +230,31 @@ class FridgePage extends Component {
   getHouseholdNameById = (householdId) => {
     SmartFridgeAPI.getAPI()
       .getHouseholdById(householdId)
-      .then((household) => {
-        this.setState({ householdName: household.household_name });
+      .then((households) => {
+        const household = households[0];
+        this.setState({
+          householdName: household.household_name,
+          ownerId: household.owner_id,
+        });
+        return household.owner_id;
       })
+      .then((ownerId) =>
+        SmartFridgeAPI.getAPI()
+          .getUserById(ownerId)
+          .then((users) => {
+            const user = users[0];
+            this.setState({ ownerName: user.firstname });
+          })
+      )
       .catch((error) => {
-        console.error("Error fetching household name:", error);
+        console.error(
+          "Fehler beim Abrufen des Haushaltsnamens oder Benutzers:",
+          error
+        );
       });
   };
 
+  // Kühlschrank nach Haushalts-ID abrufen
   getFridgeByHouseholdId = (householdID) => {
     SmartFridgeAPI.getAPI()
       .getFridgeByHouseholdId(householdID)
@@ -237,19 +265,22 @@ class FridgePage extends Component {
         });
       })
       .catch((error) => {
-        console.error("Error fetching fridge by household ID:", error);
+        console.error(
+          "Fehler beim Abrufen des Kühlschranks nach Haushalts-ID:",
+          error
+        );
       });
   };
 
+  // Tab-Wechsel handhaben
   handleTabChange(event, newValue) {
-    console.log("Tab changed:", newValue);
     this.setState({
       value: newValue,
     });
   }
 
+  // Lebensmittel-Popup öffnen
   handlePopupGroceryOpen = (isEditMode = false, grocery = null) => {
-    console.log("Grocery-Popup opened", grocery);
     this.setState({
       popupGroceryOpen: true,
       isEditMode,
@@ -257,18 +288,18 @@ class FridgePage extends Component {
     });
   };
 
+  // Lebensmittel-Popup schließen
   handlePopupGroceryClose = () => {
-    console.log("Grocery-Popup closed");
     this.setState({
       popupGroceryOpen: false,
       currentlyEditing: null,
     });
   };
 
+  // Lebensmittel erstellen oder aktualisieren
   handleCreateGroceries = (groceryData) => {
     const { currentlyEditing, groceries, updatedGroceryStatements } =
       this.state;
-    console.log("groceryData in handleCreateGroceries", groceryData);
 
     if (currentlyEditing !== null) {
       const updatedGroceries = updatedGroceryStatements.map((grocery) => {
@@ -283,26 +314,19 @@ class FridgePage extends Component {
         return grocery;
       });
 
-      this.setState(
-        {
-          groceries: updatedGroceries,
-          popupGroceryOpen: false,
-          currentlyEditing: null,
-        },
-        () => {
-          console.log("Updated groceries:", this.state.groceries);
-        }
-      );
-
-      console.log("Updated grocery ===>", updatedGroceries);
+      this.setState({
+        groceries: updatedGroceries,
+        popupGroceryOpen: false,
+        currentlyEditing: null,
+      });
     } else {
-      // Hinzufügen eines neuen Lebensmittels, wenn es im Bearbeitungsmodus nicht existiert
+      // Neues Lebensmittel hinzufügen, wenn nicht im Bearbeitungsmodus
       const existingGrocery = groceries.find(
         (grocery) => grocery.groceryName === groceryData.name
       );
 
       if (existingGrocery) {
-        // Menge zum existierenden Lebensmittel addieren
+        // Menge zum vorhandenen Lebensmittel hinzufügen
         const updatedGroceries = groceries.map((grocery) => {
           if (grocery.groceryName === groceryData.name) {
             return {
@@ -345,6 +369,7 @@ class FridgePage extends Component {
     }
   };
 
+  // Lebensmittelzustand aktualisieren
   updateGrocery = (grocery) => {
     const updatedGroceries = this.state.groceries.map((e) => {
       if (grocery.groceryId === e.groceryId) {
@@ -352,19 +377,17 @@ class FridgePage extends Component {
       }
       return e;
     });
-    console.log("Grocery updated:", updatedGroceries);
     return updatedGroceries;
   };
 
+  // Ankerklick für Menüs handhaben
   handleAnchorClick = (Id, event) => {
-    console.log("Anchor clicked for grocery ID:", Id);
     this.setState((prevState) => {
       const newOpenMenus = { ...prevState.openMenus, [Id]: true };
       const newAnchorEls = {
         ...prevState.anchorEls,
         [Id]: event.target,
       };
-      console.log("newOpenMenus:", newOpenMenus);
       return {
         anchorEls: newAnchorEls,
         openMenus: newOpenMenus,
@@ -372,8 +395,8 @@ class FridgePage extends Component {
     });
   };
 
+  // Anker schließen für Menüs
   handleAnchorClose = (Id) => {
-    console.log("Anchor closed:", Id);
     this.setState((prevState) => {
       const newOpenMenus = { ...prevState.openMenus, [Id]: false };
       return {
@@ -382,6 +405,7 @@ class FridgePage extends Component {
     });
   };
 
+  // Zutaten für ein Rezept abrufen
   fetchIngredients = async (recipeId) => {
     if (recipeId) {
       const api = SmartFridgeAPI.getAPI();
@@ -405,8 +429,8 @@ class FridgePage extends Component {
 
             return {
               ...ingredient,
-              grocery_name: grocery?.grocery_name ?? "Unknown",
-              unit_name: measure?.unit ?? "Unknown",
+              grocery_name: grocery?.grocery_name ?? "Unbekannt",
+              unit_name: measure?.unit ?? "Unbekannt",
             };
           }
         );
@@ -415,17 +439,17 @@ class FridgePage extends Component {
         );
         return detailedIngredientsResults;
       } catch (error) {
-        console.error("Error fetching ingredients:", error);
+        console.error("Fehler beim Abrufen der Zutaten:", error);
         return [];
       }
     } else {
-      console.error("Recipe or recipe ID is undefined");
+      console.error("Rezept oder Rezept-ID ist undefiniert");
       return [];
     }
   };
 
+  // Anker bearbeiten für Lebensmittel oder Rezept
   handleAnchorEdit = async (Id) => {
-    console.log("Editing:", Id);
     const grocery = this.state.updatedGroceryStatements.find(
       (g) => g.id === Id
     );
@@ -434,7 +458,6 @@ class FridgePage extends Component {
     if (recipe) {
       const ingredients = await this.fetchIngredients(Id);
 
-      console.log("Ingredients ====>", ingredients);
       recipe.ingredients = ingredients;
     }
 
@@ -461,6 +484,7 @@ class FridgePage extends Component {
     );
   };
 
+  // Lebensmittelangabe löschen
   deleteGroceryStatement = async (groceryStatementID) => {
     try {
       await SmartFridgeAPI.getAPI().deleteGroceryStatement(groceryStatementID);
@@ -470,17 +494,16 @@ class FridgePage extends Component {
         ),
       }));
     } catch (error) {
-      console.error("Error deleting grocery statement:", error);
+      console.error("Fehler beim Löschen der Lebensmittelangabe:", error);
     }
   };
 
+  // Rezept löschen
   deleteRecipe = async (recipeID) => {
     try {
       const groceryStatementsPromise =
         await SmartFridgeAPI.getAPI().getGroceryInRecipeId(recipeID);
       const groceryStatements = await groceryStatementsPromise;
-
-      console.log("groceryStatements =>", groceryStatements);
 
       const deletePromises = groceryStatements.map((statement) =>
         SmartFridgeAPI.getAPI().deleteGroceryStatement(statement.id)
@@ -494,10 +517,11 @@ class FridgePage extends Component {
         recipes: prevState.recipes.filter((recipe) => recipe.id !== recipeID),
       }));
     } catch (error) {
-      console.error("Error deleting recipe:", error);
+      console.error("Fehler beim Löschen des Rezepts:", error);
     }
   };
 
+  // Anker löschen für Lebensmittel oder Rezept
   handleAnchorDelete = async (Id) => {
     try {
       if (this.state.value === "1") {
@@ -506,15 +530,14 @@ class FridgePage extends Component {
         await this.deleteRecipe(Id);
       }
     } catch (error) {
-      console.error("Error deleting item:", error);
+      console.error("Fehler beim Löschen des Elements:", error);
     }
   };
 
+  // Bestätigen der Löschung von Lebensmitteln oder Rezept
   handleConfirmDelete() {
     const { groceryIdToDelete, recipeIdToDelete, value } = this.state;
-    console.log("App => Confirm delete");
 
-    console.log("groceryIdToDelete", groceryIdToDelete);
     if (value === "1" && groceryIdToDelete !== null) {
       this.handleAnchorDelete(groceryIdToDelete);
     } else if (value === "2" && recipeIdToDelete !== null) {
@@ -522,6 +545,7 @@ class FridgePage extends Component {
     }
   }
 
+  // Zu löschende ID für Lebensmittel oder Rezept festlegen
   setIdToDelete(Id) {
     this.setState((prevState) => ({
       groceryIdToDelete: prevState.value === "1" ? Id : null,
@@ -529,8 +553,8 @@ class FridgePage extends Component {
     }));
   }
 
+  // Rezept-Popup öffnen
   handlePopupRecipeOpen = (isEditMode = false, recipe = null) => {
-    console.log("Recipe-Popup opened");
     this.setState({
       popupRecipeOpen: true,
       isEditMode,
@@ -539,20 +563,21 @@ class FridgePage extends Component {
     });
   };
 
+  // Rezept-Popup schließen
   handlePopupRecipeClose = () => {
-    console.log("Recipe-Popup closed recipe recipe");
     this.setState({
       popupRecipeOpen: false,
       currentlyEditing: null,
     });
   };
 
+  // Rezepte erstellen oder aktualisieren
   handleCreateRecipes = async (recipeData) => {
     const { currentlyEditing, fridgeId, recipes } = this.state;
     const userId = this.context.id;
-  
+
     const { ingredients, groceryUnit, ...rest } = recipeData;
-  
+
     const newRecipeData = new RecipeBO(
       rest.recipe_name,
       rest.duration,
@@ -562,20 +587,16 @@ class FridgePage extends Component {
       fridgeId,
       currentlyEditing ? currentlyEditing.id : null
     );
-  
+
     let createdRecipe;
-  
+
     if (currentlyEditing) {
       createdRecipe = await SmartFridgeAPI.getAPI().updateRecipe(newRecipeData);
-  
-      console.log("createdRecipe variable after Update ====>", createdRecipe);
-  
+
       const updatedRecipes = recipes.map((recipe) =>
         recipe.id === createdRecipe.id ? createdRecipe : recipe
       );
-  
-      console.log("updatedRecipes variable after Update ====>", createdRecipe);
-  
+
       this.setState({
         recipes: updatedRecipes,
         popupRecipeOpen: false,
@@ -603,9 +624,8 @@ class FridgePage extends Component {
     this.loadRecipeList();
     return createdRecipe;
   };
-  
 
-  
+  // Rezeptzustand aktualisieren
   updateRecipe = (recipe) => {
     const updatedRecipes = this.state.recipes.map((e) => {
       if (recipe.recipeId === e.recipeId) {
@@ -613,24 +633,11 @@ class FridgePage extends Component {
       }
       return e;
     });
-    console.log("Recipe updated:", updatedRecipes);
-    return updatedRecipes;
-  };
-  
-
-  updateRecipe = (recipe) => {
-    const updatedRecipes = this.state.recipes.map((e) => {
-      if (recipe.recipeId === e.recipeId) {
-        return recipe;
-      }
-      return e;
-    });
-    console.log("Recipe updated:", updatedRecipes);
     return updatedRecipes;
   };
 
+  // Verfügbare Rezepte handhaben
   handleAvailableRecipes = () => {
-    console.log("Verfügbare Rezepte");
     this.getRecipeContentByFridgeId();
   };
 
@@ -646,6 +653,7 @@ class FridgePage extends Component {
       recipes,
       isEditMode,
       householdName,
+      ownerName,
       showRecipeAlert,
     } = this.state;
 
@@ -681,7 +689,7 @@ class FridgePage extends Component {
                 backgroundColor: "background.default",
               }}
             >
-              <FridgeSearchBar householdName={householdName} />
+              <FridgeBar householdName={householdName} ownerName={ownerName} />
               <TabContext
                 value={value}
                 sx={{
@@ -1090,7 +1098,12 @@ class FridgePage extends Component {
                       top: "-100px",
                     }}
                   >
-                    <Settings fridgeId={this.state.fridgeId}  refreshGroceryList={this.refreshGroceryList}/>
+                    <Settings
+                      fridgeId={this.state.fridgeId}
+                      refreshGroceryList={this.refreshGroceryList}
+                      householdId={this.state.householdId}
+                      userId={this.context.id}
+                    />
                   </TabPanel>
                 </Container>
               </TabContext>

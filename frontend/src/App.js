@@ -23,11 +23,10 @@ import Theme from "./Theme";
 import Footer from "./components/layout/Footer";
 import AboutPage from "./components/pages/AboutPage";
 import EditProfilePage from "./components/pages/EditProfilePage";
-import SmartFridgeAPI from "./api/SmartFridgeAPI"; // Import the API class
+import SmartFridgeAPI from "./api/SmartFridgeAPI";
 import FridgePage from "./components/pages/FridgePage";
 import UserContext from "./components/contexts/UserContext";
 import { FridgeProvider } from "./components/contexts/FridgeContext";
-
 
 class App extends Component {
   constructor(props) {
@@ -40,7 +39,7 @@ class App extends Component {
       showAlert: false,
       dialogOpen: false,
       dialogType: "",
-    };
+    }; // Initialisiert den Zustand der App-Komponente.
   }
 
   handleSignIn = () => {
@@ -48,15 +47,15 @@ class App extends Component {
     const auth = getAuth(initializeApp(firebaseConfig));
     const provider = new GoogleAuthProvider();
     auth.languageCode = "en";
-    signInWithPopup(auth, provider);
+    signInWithPopup(auth, provider); // Führt die Anmeldung über Google durch.
   };
 
   handleSignOut = () => {
     const auth = getAuth(initializeApp(firebaseConfig));
     if (auth.currentUser) {
       signOut(auth)
-        .then(() => console.log("User signed out successfully."))
-        .catch((error) => console.error("Error signing out:", error));
+        .then(() => {})
+        .catch((error) => console.error("Error signing out:", error)); // Führt die Abmeldung durch.
     }
   };
 
@@ -70,9 +69,8 @@ class App extends Component {
         return userBOs;
       })
       .catch((e) => {
-        // console.error("Error loading users: ", e);
         throw e;
-      });
+      }); // Ruft Benutzerdaten von der API ab.
   };
 
   getUserByGoogleId = (currentUser) => {
@@ -85,7 +83,7 @@ class App extends Component {
       .catch((e) => {
         this.setState({ user: null });
         throw e;
-      });
+      }); // Ruft Benutzerdaten anhand der Google-ID ab.
   };
 
   componentDidMount() {
@@ -118,23 +116,18 @@ class App extends Component {
           authLoading: false,
         });
       }
-    });
+    }); // Überwacht den Authentifizierungszustand und setzt den Zustand entsprechend.
   }
 
   handleOpenDialog = (Id, type) => {
-    // console.log(Id, type)
-    // console.log("App.js => Dialog opened");
-    // console.log(deleteId);
     this.setState({
       dialogType: type,
       dialogOpen: true,
-    });
-    console.log(Id, type);
+    }); // Öffnet den Dialog und setzt den Dialogtyp.
   };
 
   handleCloseDialog = () => {
-    // console.log("App.js => Dialog closed");
-    this.setState({ dialogOpen: false, dialogType: "" });
+    this.setState({ dialogOpen: false, dialogType: "" }); // Schließt den Dialog und setzt den Dialogtyp zurück.
   };
 
   render() {
@@ -142,76 +135,76 @@ class App extends Component {
     return (
       <>
         <UserContext.Provider value={user}>
-        <FridgeProvider>
-          <ThemeProvider theme={Theme}>
-            <Router>
-              <Header
-                user={currentUser}
-                onSignIn={this.handleSignIn}
-                onSignOut={this.handleSignOut}
-              />
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    currentUser ? (
-                      <Navigate replace to={"/household"} />
-                    ) : (
-                      <LoginPage onSignIn={this.handleSignIn} />
-                    )
-                  }
+          <FridgeProvider>
+            <ThemeProvider theme={Theme}>
+              <Router>
+                <Header
+                  user={currentUser}
+                  onSignIn={this.handleSignIn}
+                  onSignOut={this.handleSignOut}
                 />
-                <Route
-                  path="/login"
-                  element={
-                    <Secured user={currentUser}>
-                      <LoginPage />
-                    </Secured>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <Secured user={currentUser}>
-                      <EditProfilePage handleSignOut={this.handleSignOut} />
-                    </Secured>
-                  }
-                />
-                <Route
-                  path="/household"
-                  element={
-                    <Secured user={currentUser}>
-                      <HouseholdPage
-                        dialogOpen={dialogOpen}
-                        dialogType={dialogType}
-                        handleOpenDialog={this.handleOpenDialog}
-                        handleCloseDialog={this.handleCloseDialog}
-                      />
-                    </Secured>
-                  }
-                />
-                <Route
-                  path="/home/:householdId"
-                  element={
-                    <Secured user={currentUser}>
-                      <FridgePage
-                        dialogOpen={dialogOpen}
-                        dialogType={dialogType}
-                        handleOpenDialog={this.handleOpenDialog}
-                        handleCloseDialog={this.handleCloseDialog}
-                      />
-                    </Secured>
-                  }
-                />
-                <Route path="/about" element={<AboutPage />}></Route>
-              </Routes>
-              <Footer />
-            </Router>
-          </ThemeProvider>
-        </FridgeProvider>
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      currentUser ? (
+                        <Navigate replace to={"/household"} />
+                      ) : (
+                        <LoginPage onSignIn={this.handleSignIn} />
+                      )
+                    }
+                  />
+                  <Route
+                    path="/login"
+                    element={
+                      <Secured user={currentUser}>
+                        <LoginPage />
+                      </Secured>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <Secured user={currentUser}>
+                        <EditProfilePage handleSignOut={this.handleSignOut} />
+                      </Secured>
+                    }
+                  />
+                  <Route
+                    path="/household"
+                    element={
+                      <Secured user={currentUser}>
+                        <HouseholdPage
+                          dialogOpen={dialogOpen}
+                          dialogType={dialogType}
+                          handleOpenDialog={this.handleOpenDialog}
+                          handleCloseDialog={this.handleCloseDialog}
+                        />
+                      </Secured>
+                    }
+                  />
+                  <Route
+                    path="/home/:householdId"
+                    element={
+                      <Secured user={currentUser}>
+                        <FridgePage
+                          dialogOpen={dialogOpen}
+                          dialogType={dialogType}
+                          handleOpenDialog={this.handleOpenDialog}
+                          handleCloseDialog={this.handleCloseDialog}
+                        />
+                      </Secured>
+                    }
+                  />
+                  <Route path="/about" element={<AboutPage />}></Route>
+                </Routes>
+                <Footer />
+              </Router>
+            </ThemeProvider>
+          </FridgeProvider>
         </UserContext.Provider>
       </>
-    );
+    ); // Rendert die App-Komponente und definiert die Routen.
   }
 }
 
@@ -231,4 +224,4 @@ function Secured(props) {
   }
 
   return props.children;
-}
+} // Definiert die Secured-Komponente, die den Zugriff auf geschützte Routen kontrolliert.

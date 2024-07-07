@@ -6,20 +6,22 @@ import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 
 const TitleHousehold = () => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null); // Zustand zur Speicherung des aktuellen Benutzers.
 
   useEffect(() => {
-    const auth = getAuth();
+    const auth = getAuth(); // Holt die Firebase-Auth-Instanz.
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+      setCurrentUser(user); // Setzt den aktuellen Benutzerzustand, wenn sich der Authentifizierungszustand ändert.
     });
 
-    return unsubscribe;
+    return unsubscribe; // Bereinigt den Listener bei der Demontage.
   }, []);
 
   const firstName = currentUser?.displayName
     ? currentUser.displayName.split(" ")[0]
-    : "";
+    : ""; // Holt den Vornamen des aktuellen Benutzers.
+
+
 
   return (
     <>

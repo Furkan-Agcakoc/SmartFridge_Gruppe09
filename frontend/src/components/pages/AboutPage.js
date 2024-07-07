@@ -116,14 +116,14 @@ const AboutPage = () => {
             Unser Projekt "Smart Fridge" ist eine Webanwendung, die es
             ermöglicht, den Inhalt eines Kühlschranks zu verwalten. Dabei kann
             der Nutzer Lebensmittel hinzufügen, entfernen und verwalten. Die
-            Anwendung bietet eine Übersicht über alle Ihre Lebensmittel in Ihrem
-            jeweiligen Haushalt. Außerdem kann jeder Nutzer sein eigenes Rezept
-            erstellen, entfernen und bearbeiten. Möchte der Nutzer ein Rezept
-            kochen, so kann er mit einem Klick alle möglichen Rezepte mit den
-            Lebensmitteln anzeigen lassen, die er bereits in seinem Kühlschrank
-            hat. Zudem werden bei mit der Funktion Rezept zu kochen, alle
-            Zutaten von dem Lebensmitteln aus dem Kühlschrank entfernt ohne das
-            der Nutzer jedes Lebensmittel selber bearbeiten muss.
+            Anwendung bietet eine Übersicht über alle Lebensmittel in Ihrem
+            Haushalt. Außerdem kann jeder Nutzer eigene Rezepte erstellen,
+            entfernen und bearbeiten. Möchte der Nutzer ein Rezept kochen, kann
+            er mit einem Klick alle möglichen Rezepte anzeigen lassen, die die
+            vorhandenen Lebensmittel im Kühlschrank nutzen. Zudem werden bei der
+            Funktion "Rezept kochen" alle benötigten Zutaten automatisch aus dem
+            Kühlschrankbestand entfernt, ohne dass der Nutzer jedes Lebensmittel
+            einzeln bearbeiten muss.
             <br /> <br />
             Wir wünschen Ihnen viel Spaß beim Ausprobieren!
             <br />

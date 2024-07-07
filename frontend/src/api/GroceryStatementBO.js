@@ -6,7 +6,7 @@ import BusinessObject from "./BusinessObject";
 export default class GroceryStatementBO extends BusinessObject {
   constructor(aGrocery_id, aUnit_id, aQuantity) {
     super();
-    this.grocery_id= aGrocery_id;
+    this.grocery_id = aGrocery_id;
     this.unit_id = aUnit_id;
     this.quantity = aQuantity;
   }

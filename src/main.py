@@ -16,16 +16,18 @@ from server.bo.Measure import Measure
 
 from SecurityDecorater import secured
 
-app = Flask(__name__, static_folder='build', static_url_path='/')
+app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return app.send_static_file('index.html')
+# app = Flask(__name__, static_folder='build', static_url_path='/')
+
+# @app.route('/')
+# def index():
+#     return app.send_static_file('index.html')
 
 
-@app.errorhandler(404)
-def not_found(e):
-    return app.send_static_file('index.html')
+# @app.errorhandler(404)
+# def not_found(e):
+#     return app.send_static_file('index.html')
 
 
 # CORS(app)
@@ -952,5 +954,6 @@ class CheckRecipesContents(Resource):
 
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5000)
+    app.run(debug=True)
+    # app.run(debug=False, port=5000)
 

@@ -135,9 +135,6 @@ export default class SmartFridgeAPI {
   // ###########grocerystatement_in_fridge
 
   addGroceryinFridge(grocerystatementId, fridgeId) {
-    console.log(
-      JSON.stringify("Das ist die GrocerystatementID", grocerystatementId)
-    );
     return this.#fetchAdvanced(this.#addGroceryinFridgeURL(), {
       method: "POST",
       headers: {
@@ -250,7 +247,6 @@ export default class SmartFridgeAPI {
   }
 
   getGrocery() {
-    console.log("Fetching URL erfolgreich:", this.#getGroceryURL()); // Debugging-Zweck
     return this.#fetchAdvanced(this.#getGroceryURL()).then((responseJSON) => {
       let groceryBOs = GroceryBO.fromJSON(responseJSON);
       return new Promise(function (resolve) {
@@ -413,9 +409,6 @@ export default class SmartFridgeAPI {
   }
 
   addGroceryinRecipe(grocerystatementId, recipeId) {
-    console.log(
-      JSON.stringify("Das ist die GrocerystatementID", grocerystatementId)
-    );
     return this.#fetchAdvanced(this.#addGroceryinRecipeURL(), {
       method: "POST",
       headers: {
@@ -473,7 +466,6 @@ export default class SmartFridgeAPI {
   }
 
   addHouseHold(householdBO) {
-    console.log("von smartfridge.api", JSON.stringify(householdBO));
     return this.#fetchAdvanced(this.#addHouseholdURL(), {
       method: "POST",
       headers: {
@@ -508,8 +500,6 @@ export default class SmartFridgeAPI {
   /** inhabitant related **/
 
   addInhabitant(userId, householdId) {
-    console.log(JSON.stringify("Das ist die UserID", userId));
-    console.log(JSON.stringify("Das ist die householdID", householdId));
     return this.#fetchAdvanced(this.#addInhabitantURL(), {
       method: "POST",
       headers: {
@@ -590,7 +580,6 @@ export default class SmartFridgeAPI {
   }
 
   addRecipe(recipeBO) {
-    console.log("RECIPE BO ====>", recipeBO);
     return this.#fetchAdvanced(this.#addRecipeURL(), {
       method: "POST",
       headers: {
@@ -662,7 +651,6 @@ export default class SmartFridgeAPI {
 
   getUser() {
     const url = this.#getUserURL();
-    // console.log("Fetching URL:", url); // Debugging-Zweck
     return this.#fetchAdvanced(url)
       .then((responseJSON) => {
         let userBOs = UserBO.fromJSON(responseJSON);

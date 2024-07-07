@@ -24,23 +24,23 @@ const Household = ({
   setHouseholdIdToDelete,
   handleOpenDialog,
 }) => {
-  const userContext = useContext(UserContext);
-  const navigate = useNavigate();
+  const userContext = useContext(UserContext); // Verwendet den UserContext.
+  const navigate = useNavigate(); // Verwendet den useNavigate-Hook für die Navigation.
 
   const handleDeleteClick = (householdId, event) => {
-    event.stopPropagation(); // Prevents triggering the Box click handler
-    setHouseholdIdToDelete(householdId);
-    handleOpenDialog(householdId, "household");
-    handleAnchorClose(householdId);
+    event.stopPropagation(); // Verhindert das Auslösen des Box-Klickhandlers.
+    setHouseholdIdToDelete(householdId); // Setzt die ID des zu löschenden Haushalts.
+    handleOpenDialog(householdId, "household"); // Öffnet den Bestätigungsdialog.
+    handleAnchorClose(householdId); // Schließt das Menü.
   };
 
   const handleEditClick = (householdId, event) => {
-    event.stopPropagation(); // Prevents triggering the Box click handler
-    handleAnchorEdit(householdId);
+    event.stopPropagation(); // Verhindert das Auslösen des Box-Klickhandlers.
+    handleAnchorEdit(householdId); // Bearbeitet den Haushalt.
   };
 
   const handleBoxClick = (householdId) => {
-    navigate(`/home/${householdId}`);
+    navigate(`/home/${householdId}`); // Navigiert zur Haushalt-Seite.
   };
 
   return households.map((household) => (
@@ -69,7 +69,7 @@ const Household = ({
           aria-expanded={openMenus[household.id] ? "true" : undefined}
           aria-haspopup="true"
           onClick={(event) => {
-            event.stopPropagation(); // Prevents triggering the Box click handler
+            event.stopPropagation();
             handleAnchorClick(household.id, event);
           }}
           sx={{

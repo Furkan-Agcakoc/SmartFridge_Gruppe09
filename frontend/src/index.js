@@ -9,5 +9,5 @@ root.render(
     <App />
   </React.StrictMode>
 );
+// Rendert die App-Komponente innerhalb des StrictMode-Containers in das Root-Element.
 
-// Kommentar

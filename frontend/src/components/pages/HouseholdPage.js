@@ -6,14 +6,14 @@ import AddHomeWorkRoundedIcon from "@mui/icons-material/AddHomeWorkRounded";
 import Tooltip from "@mui/material/Tooltip";
 import HouseholdDialog from "../household/HouseholdDialog";
 import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
-import HouseholdAnchor from "../household/Household";
+import Household from "../household/Household";
 import SmartFridgeAPI from "../../api/SmartFridgeAPI";
 import UserContext from "../contexts/UserContext";
 import FridgeContext from "../contexts/FridgeContext";
 import HouseholdBO from "../../api/HouseholdBO";
 
 class HouseholdPage extends Component {
-  static contextType = UserContext;
+  static contextType = UserContext; // Setzt den UserContext als Kontext für die Komponente.
 
   constructor(props) {
     super(props);
@@ -28,23 +28,24 @@ class HouseholdPage extends Component {
       householdIdToDelete: null,
       inhabitants: [],
       fridgeDetails: null,
-    };
+    }; // Initialisiert den Zustand der Komponente.
   }
 
   componentDidMount() {
-    this.checkContext();
+    this.checkContext(); // Überprüft den Kontext beim Mounten der Komponente.
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.households !== this.state.households) {
+      // Logik bei Zustandsänderung
     }
   }
 
   checkContext = () => {
     if (this.context) {
-      this.getHouseholdsByUserId();
+      this.getHouseholdsByUserId(); // Holt Haushaltsdaten des Benutzers, wenn der Kontext vorhanden ist.
     } else {
-      setTimeout(this.checkContext, 100);
+      setTimeout(this.checkContext, 100); // Wiederholt die Überprüfung, wenn der Kontext nicht vorhanden ist.
     }
   };
 
@@ -55,7 +56,7 @@ class HouseholdPage extends Component {
       .then((households) => {
         this.setState({
           households: households,
-        });
+        }); // Setzt die Haushaltsdaten in den Zustand.
       })
       .catch((error) => {
         console.error("Error fetching households:", error);
@@ -72,13 +73,13 @@ class HouseholdPage extends Component {
               ...prevState.inhabitants,
               [household_id]: inhabitants,
             },
-          };
+          }; // Setzt die Bewohnerdaten in den Zustand.
         });
       });
   };
 
   updateHouseholdId = (newId) => {
-    this.setState({ householdIdToDelete: newId });
+    this.setState({ householdIdToDelete: newId }); // Aktualisiert die ID des zu löschenden Haushalts.
   };
 
   openPopup = (isEditMode = false, household = null) => {
@@ -86,14 +87,14 @@ class HouseholdPage extends Component {
       popupOpen: true,
       isEditMode,
       currentlyEditing: household,
-    });
+    }); // Öffnet das Popup zum Erstellen oder Bearbeiten eines Haushalts.
   };
 
   closePopup = () => {
     this.setState({
       popupOpen: false,
       currentlyEditing: null,
-    });
+    }); // Schließt das Popup.
   };
 
   handleCreateObject = (householdData) => {
@@ -140,7 +141,7 @@ class HouseholdPage extends Component {
             popupOpen: false,
             currentlyEditing: null,
             inhabitants: newInhabitants,
-          });
+          }); // Aktualisiert den Haushalt und dessen Bewohner im Zustand.
         });
       };
     } else {
@@ -174,7 +175,7 @@ class HouseholdPage extends Component {
             households: newHouseholds,
             openMenus: newOpenMenus,
             inhabitants: newInhabitants,
-          });
+          }); // Fügt einen neuen Haushalt und dessen Bewohner zum Zustand hinzu.
         });
       };
     }
@@ -192,11 +193,10 @@ class HouseholdPage extends Component {
       return e;
     });
 
-    return updatedHouseholds;
+    return updatedHouseholds; // Aktualisiert einen Haushalt im Zustand.
   }
 
   handleAnchorClick = (household_id, event) => {
-    // const { householdIdToDelete, households, anchorEls } = this.state;
     this.setState((prevState) => {
       const newOpenMenus = { ...prevState.openMenus, [household_id]: true };
       const newAnchorEls = {
@@ -206,7 +206,7 @@ class HouseholdPage extends Component {
       return {
         anchorEls: newAnchorEls,
         openMenus: newOpenMenus,
-      };
+      }; // Öffnet das Menü für einen bestimmten Haushalt.
     });
   };
 
@@ -215,7 +215,7 @@ class HouseholdPage extends Component {
       const newOpenMenus = { ...prevState.openMenus, [household_id]: false };
       return {
         openMenus: newOpenMenus,
-      };
+      }; // Schließt das Menü für einen bestimmten Haushalt.
     });
   };
 
@@ -235,7 +235,7 @@ class HouseholdPage extends Component {
         };
       },
       () => {
-        this.openPopup(true, household_id);
+        this.openPopup(true, household_id); // Öffnet das Popup zum Bearbeiten eines Haushalts.
       }
     );
   };
@@ -257,7 +257,7 @@ class HouseholdPage extends Component {
             return {
               households: newHouseholds,
               openMenus: newOpenMenus,
-            };
+            }; // Löscht einen Haushalt und aktualisiert den Zustand.
           },
           () => {}
         );
@@ -270,12 +270,12 @@ class HouseholdPage extends Component {
   handleConfirmDelete = () => {
     const { householdIdToDelete } = this.state;
     if (householdIdToDelete !== null) {
-      this.handleAnchorDelete(householdIdToDelete);
+      this.handleAnchorDelete(householdIdToDelete); // Bestätigt das Löschen eines Haushalts.
     }
   };
 
   setHouseholdIdToDelete = (household_id) => {
-    this.setState({ householdIdToDelete: household_id });
+    this.setState({ householdIdToDelete: household_id }); // Setzt die ID des zu löschenden Haushalts.
   };
 
   render() {
@@ -294,12 +294,11 @@ class HouseholdPage extends Component {
 
     const editingHousehold = currentlyEditing
       ? households.find((h) => h.id === currentlyEditing)
-      : null;
+      : null; // Findet den aktuellen zu bearbeitenden Haushalt.
 
     return (
       <>
         <TitleHH />
-
         <Box
           sx={{
             display: "flex",
@@ -333,8 +332,7 @@ class HouseholdPage extends Component {
             >
               Dein Haushalt, deine Regeln! Erstelle einen individuellen Raum für
               deine Lebensmittel!
-            </Typography>
-
+            </Typography>{" "}
             <Box
               sx={{
                 display: "flex",
@@ -379,9 +377,8 @@ class HouseholdPage extends Component {
                     sx={{ width: { xs: "50px", sm: "75px" }, height: "auto" }}
                   />
                 </Paper>
-              </Tooltip>
-
-              <HouseholdAnchor
+              </Tooltip>{" "}
+              <Household
                 households={households}
                 handleAnchorClick={this.handleAnchorClick}
                 handleAnchorClose={this.handleAnchorClose}
@@ -391,9 +388,8 @@ class HouseholdPage extends Component {
                 handleOpenDialog={handleOpenDialog}
                 householdIdToDelete={this.state.householdIdToDelete}
                 setHouseholdIdToDelete={this.setHouseholdIdToDelete}
-              />
+              />{" "}
             </Box>
-
             {popupOpen && (
               <HouseholdDialog
                 isEditMode={isEditMode}
@@ -408,14 +404,13 @@ class HouseholdPage extends Component {
                 handleCreateObject={this.handleCreateObject}
                 households={households}
               />
-            )}
-
+            )}{" "}
             <DeleteConfirmationDialog
               dialogOpen={dialogOpen}
               dialogType={dialogType}
               handleCloseDialog={handleCloseDialog}
               handleConfirmDelete={this.handleConfirmDelete}
-            />
+            />{" "}
           </Box>
         </Box>
       </>
@@ -425,7 +420,7 @@ class HouseholdPage extends Component {
 
 const HouseholdPageWithFridgeContext = (props) => {
   const { setFridgeId } = useContext(FridgeContext);
-  return <HouseholdPage {...props} setFridgeId={setFridgeId} />;
+  return <HouseholdPage {...props} setFridgeId={setFridgeId} />; // Komponente, die den FridgeContext verwendet.
 };
 
-export default HouseholdPageWithFridgeContext;
+export default HouseholdPageWithFridgeContext; // Exportiert die Komponente mit FridgeContext.

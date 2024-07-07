@@ -21,10 +21,7 @@ const Grocery = ({
   openMenus,
   handleOpenDialog,
   setIdToDelete,
-  grocery,
   groceryStatements,
-  measureNames,
-  groceryNames,
 }) => {
   const handleDeleteClick = (groceryId) => {
     setIdToDelete(groceryId);
